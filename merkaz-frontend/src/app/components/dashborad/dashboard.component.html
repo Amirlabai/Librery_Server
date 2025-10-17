@@ -1,0 +1,74 @@
+<div class="container">
+  <div class="header">
+    <h1><a routerLink="/dashboard">Public Files</a></h1>
+    <div class="header-right">
+      <a routerLink="/my-uploads" class="my-uploads-btn">My Uploads</a>
+      <a routerLink="/upload" class="upload-btn">Upload File</a>
+      <a *ngIf="isAdmin" routerLink="/admin" class="admin-dashboard-btn">Admin Dashboard</a>
+      <a (click)="logout()" class="logout-btn">Logout</a>
+    </div>
+  </div>
+
+  <div *ngIf="flashMessages.length > 0" class="flash-messages">
+    <ul>
+      <li *ngFor="let msg of flashMessages" [ngClass]="'flash-' + msg.type">{{ msg.text }}</li>
+    </ul>
+  </div>
+
+  <div class="path-bar">
+    <span>/{{ currentPath }}</span>
+    <a *ngIf="currentPath" (click)="goUp()" style="margin-left: 15px;">⬆️ Go Up</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th style="width: 200px; text-align:center;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of items">
+        <td (click)="navigate(item)">
+          <div class="item-name">
+            <ng-container *ngIf="item.isFolder; else fileIcon">
+              <svg viewBox="0 0 24 24">
+                <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"></path>
+              </svg>
+              <span>{{ item.name }}/</span>
+            </ng-container>
+            <ng-template #fileIcon>
+              <svg viewBox="0 0 24 24">
+                <path d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z"></path>
+              </svg>
+              <span>{{ item.name }}</span>
+            </ng-template>
+          </div>
+        </td>
+        <td style="text-align: center;">
+          <div class="action-cell">
+            <button (click)="download(item)" class="action-btn download-btn">Download</button>
+            <button *ngIf="isAdmin" (click)="deleteItem(item)" class="action-btn delete-btn">Delete</button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="items.length === 0">
+        <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
+          This folder is empty.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="suggestion-box">
+    <h2>Have a Suggestion? (Cooldown: Level {{ cooldownLevel }})</h2>
+    <p *ngIf="suggestionSuccess" class="flash-success">{{ suggestionSuccess }}</p>
+    <p *ngIf="suggestionError" class="flash-error">{{ suggestionError }}</p>
+
+    <form (ngSubmit)="submitSuggestion()">
+      <textarea [(ngModel)]="suggestionText" name="suggestion" rows="4" placeholder="Type your suggestion here..." required></textarea>
+      <br />
+      <button type="submit">Submit Suggestion</button>
+    </form>
+  </div>
+</div>

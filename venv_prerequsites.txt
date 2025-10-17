@@ -1,0 +1,26 @@
+## establish venv
+python -m venv .venv
+
+## activate venv
+.venv\Scripts\Activate.ps1
+    ##if not working in terminal(powershell):
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
+## deactivate venv
+.venv\Scripts\deactivate.ps1
+
+## install pip requirements
+pip install -r requirements.txt
+
+## print library list
+pip freeze
+
+## genrate requirements
+pip freeze > requirements.txt
+    *note*: venv is to ilsolate the repo and genrate an exe with only dependent libraries
+
+## view working envioement
+Get-Command pip
+
+## when a new venv is genrated no libraries will be installed, so the code mignt not run if external libraries were used.
+

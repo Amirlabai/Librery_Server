@@ -1,0 +1,90 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.container {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 20px 40px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+h1 a {
+  font-size: 24px;
+  font-weight: 500;
+  text-decoration: none;
+  color: #202124;
+}
+.logout-btn, .my-uploads-btn { /* Unified button style */
+  background-color: #e8eaed;
+  color: #3c4043;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+.logout-btn:hover, .my-uploads-btn:hover {
+  background-color: #d2d5d9;
+}
+.admin-dashboard-btn, .upload-btn {
+  background-color: #1a73e8;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+.admin-dashboard-btn:hover, .upload-btn:hover {
+  background-color: #185abc;
+}
+.path-bar { color: #5f6368; font-size: 14px; margin-bottom: 20px; }
+.path-bar a { color: #1a73e8; text-decoration: none; }
+.path-bar a:hover { text-decoration: underline; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; vertical-align: middle;}
+th { color: #5f6368; font-weight: 500; }
+tr:hover { background-color: #f1f3f4; }
+.item-name { display: flex; align-items: center; cursor: pointer; }
+.item-name svg { margin-right: 12px; width: 20px; height: 20px; fill: #5f6368; }
+.action-cell { display: flex; gap: 8px; }
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  border: 1px solid #ccc;
+}
+.download-btn { background-color: #e8f0fe; color: #1967d2; }
+.download-btn:hover { background-color: #d2e3fc; }
+.delete-btn { background-color: #fce8e6; color: #c5221f; cursor: pointer; }
+.delete-btn:hover { background-color: #f9d8d6; }
+.suggestion-box { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; }
+.suggestion-box h2 { font-size: 18px; font-weight: 500; margin-bottom: 15px; }
+.suggestion-box textarea { width: 100%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+.suggestion-box button { margin-top: 10px; padding: 10px 20px; background-color: #1a73e8; color: white; border: none; border-radius: 4px; font-weight: 500; cursor: pointer; }
+.suggestion-box button:hover { background-color: #185abc; }
+.flash-messages { list-style: none; padding: 0; margin-bottom: 15px; }
+.flash-messages li { padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+.flash-success { color: #1e8e3e; background-color: #e6f4ea; }
+.flash-error { color: #d93025; background-color: #fce8e6; }

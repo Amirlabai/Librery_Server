@@ -1,0 +1,44 @@
+<div class="login-container">
+  <h1>Sign In</h1>
+  <p style="margin-top: -15px; margin-bottom: 25px; color: #5f6368;">
+    to access your files
+  </p>
+
+  <p *ngIf="message" class="message">{{ message }}</p>
+  <p *ngIf="error" class="error">{{ error }}</p>
+
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+    <input type="email" name="email" [(ngModel)]="email" placeholder="Email" required />
+
+    <div class="password-wrapper">
+      <input
+        type="{{ showPassword ? 'text' : 'password' }}"
+        name="password"
+        [(ngModel)]="password"
+        placeholder="Password"
+        required
+      />
+      <span class="toggle-password" (click)="togglePasswordVisibility()">
+        <img
+          *ngIf="!showPassword"
+          src="../../../assets/icons/eye.png"
+          alt="Show password"
+
+        />
+      <img
+        *ngIf="showPassword"
+        src="../../../assets/icons/eye-crossed.png"
+        alt="Hide password"
+
+      />
+
+      </span>
+    </div>
+
+
+    <button type="submit">Login</button>
+  </form>
+
+  <p><a class="forgot-pass" routerLink="/forgot-password">Forgot password?</a></p>
+  <p>Don't have an account? <a class="create" routerLink="/register">Create one</a></p>
+</div>
