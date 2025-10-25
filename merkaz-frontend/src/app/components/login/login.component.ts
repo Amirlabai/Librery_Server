@@ -73,7 +73,7 @@ export class LoginComponent {
 
     this.message = res.message || 'Login successful';
     if(res.role === 'admin'){
-      this.router.navigate(['/metrics']);
+      this.router.navigate(['/dashboard']);
     } else {  
     this.router.navigate(['/dashboard']);
     }

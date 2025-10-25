@@ -1,0 +1,38 @@
+<div class="container">
+  <div class="header">
+    <h1>My Upload History</h1>
+    <a routerLink="/dashboard">Back to Files</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>Filename</th>
+        <th>Suggested Path</th>
+        <th style="width: 20%;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let upload of uploads">
+        <td>{{ upload.timestamp }}</td>
+        <td>{{ upload.filename }}</td>
+        <td>/{{ upload.path || 'Home' }}</td>
+        <td>
+          <span [ngClass]="{
+            'status-pending': upload.status === 'Pending Review',
+            'status-declined': upload.status === 'Declined',
+            'status-approved': upload.status === 'Approved'
+          }">
+            {{ upload.status }}
+          </span>
+        </td>
+      </tr>
+      <tr *ngIf="uploads.length === 0">
+        <td colspan="4" style="text-align: center; color: #5f6368; padding: 30px;">
+          You have not uploaded any files.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

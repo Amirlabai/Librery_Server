@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 20px 40px;
+  margin: 0 auto;
+  margin-top: 40px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+.header a {
+  background-color: #e8eaed;
+  color: #3c4043;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+}
+.header a:hover {
+  background-color: #d2d5d9;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+th, td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+th {
+  color: #5f6368;
+  font-weight: 500;
+}
+.status-pending {
+  color: #f29900;
+  font-weight: 500;
+}
+.status-approved {
+  color: #1e8e3e;
+  font-weight: 500;
+}
+.status-declined {
+  color: #c5221f;
+  font-weight: 500;
+}

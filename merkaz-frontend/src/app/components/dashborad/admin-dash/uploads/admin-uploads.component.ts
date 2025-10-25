@@ -36,23 +36,30 @@ export class AdminUploadsComponent {
   }
 
   approve(upload: UploadItem, index: number) {
-    this.http.post(`http://localhost:8000/admin/move-upload/${upload.filename}`, {
-      target_path: upload.path
-    }, { withCredentials: true }).subscribe({
-      next: () => {
-        this.flashMessages = [{ type: 'success', text: `Approved ${upload.filename}` }];
-        this.uploads.splice(index, 1);
-      },
-      error: () => this.flashMessages = [{ type: 'error', text: `Failed to approve ${upload.filename}` }]
-    });
-  }
+  const formData = new FormData();
+  formData.append('target_path', upload.path);
+
+  this.http.post(`http://localhost:8000/admin/move_upload/${upload.filename}`, formData, {
+    withCredentials: true
+  }).subscribe({
+    next: () => {
+      this.flashMessages = [{ type: 'success', text: `Approved ${upload.filename}` }];
+      this.uploads.splice(index, 1);
+    },
+    error: () => this.flashMessages = [{ type: 'error', text: `Failed to approve ${upload.filename}` }]
+  });
+}
 
   decline(upload: UploadItem, index: number) {
+    
     if (!confirm('Are you sure you want to decline and delete this item?')) return;
 
-    this.http.post(`http://localhost:8000/admin/decline-upload/${upload.filename}`, {
-      email: upload.email
-    }, { withCredentials: true }).subscribe({
+    const formData = new FormData();
+    formData.append('email', upload.email);
+
+    this.http.post(`http://localhost:8000/admin/decline_upload/${upload.filename}`, formData, {
+      withCredentials: true
+    }).subscribe({
       next: () => {
         this.flashMessages = [{ type: 'success', text: `Declined ${upload.filename}` }];
         this.uploads.splice(index, 1);

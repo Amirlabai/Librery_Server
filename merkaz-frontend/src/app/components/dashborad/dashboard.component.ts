@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -12,7 +12,8 @@ import { CommonModule } from '@angular/common';
   imports: [
     NgClass,
     FormsModule,
-    CommonModule 
+    CommonModule,
+    RouterModule 
   ],
   styleUrls: ['./dashboard.component.css']
 })
@@ -38,7 +39,7 @@ export class DashboardComponent {
   }
 
   loadFiles() {
-  this.http.get('http://localhost:8000/api/files', { withCredentials: true }).subscribe({
+  this.http.get('http://localhost:8000/files', { withCredentials: true }).subscribe({
     next: (res: any) => this.items = res.items || [],
     error: err => console.error(err)
   });
@@ -61,7 +62,7 @@ export class DashboardComponent {
       if (role === 'admin') {
         this.isAdmin = true;
       if (this.isAdmin) {
-        this.router.navigate(['/admin-dash']);
+        this.router.navigate(['/metrics']);
       }
     }
   }
