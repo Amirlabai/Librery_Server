@@ -1,0 +1,58 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <a routerLink="/dashboard" class="back-link">Back to Files</a>
+  </div>
+
+  <!-- Navigation Tabs -->
+    <div class="admin-nav">
+            <a routerLink="/metrics"  class="nav-tab">Metrics</a>
+            <a routerLink="/users"  class="nav-tab">Users</a>
+            <a routerLink="/pending"  class="nav-tab active">Pending</a>
+            <a routerLink="/denied"  class="nav-tab">Denied</a>
+            <a routerLink="/uploads" class="nav-tab">Uploads</a>
+        </div>
+
+  <!-- Flash Messages -->
+  <ul *ngIf="flashMessages.length > 0" class="flash-messages">
+    <li *ngFor="let msg of flashMessages" [class]="'flash-' + msg.type">
+      {{ msg.text }}
+    </li>
+  </ul>
+
+  <!-- Users Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th style="width: 25%; text-align: center;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.email }}</td>
+        <td style="text-align: center;">
+          <button
+            class="action-btn approve-btn"
+            (click)="approveUser(user.email)"
+          >
+            Approve
+          </button>
+          <button
+            class="action-btn deny-btn"
+            (click)="denyUser(user.email)"
+          >
+            Deny
+          </button>
+        </td>
+      </tr>
+
+      <tr *ngIf="users.length === 0">
+        <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
+          No users are pending approval.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -59,7 +59,9 @@ if __name__ == "__main__":
     create_file_with_header(config.DECLINED_UPLOAD_LOG_FILE, ["timestamp", "email", "filename"])
 
     app = create_app()
-    CORS(app, resources={r"/*": {"origins": "http://localhost:4200"}}, supports_credentials=True)
+    CORS(app,
+     resources={r"/*": {"origins": "http://localhost:4200"}},
+     supports_credentials=True)
 
 
     print("Starting server with Waitress...")

@@ -1,0 +1,125 @@
+:host {
+            font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
+            margin: 0;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            padding-top: 40px;
+        }
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 20px 40px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: #202124;
+            margin: 0;
+        }
+        .header a {
+            background-color: #e8eaed;
+            color: #3c4043;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .header a:hover {
+            background-color: #d2d5d9;
+        }
+        .admin-nav {
+            display: flex;
+            gap: 5px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 25px;
+        }
+        .nav-tab {
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #5f6368;
+            border-radius: 6px 6px 0 0;
+            font-weight: 500;
+        }
+        .nav-tab.active {
+            color: #1a73e8;
+            border-bottom: 3px solid #1a73e8;
+        }
+        .nav-tab:not(.active):hover {
+            background-color: #f1f3f4;
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; vertical-align: middle;}
+        th { color: #5f6368; font-weight: 500; }
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .make-admin { background-color: #e8f0fe; color: #1967d2; }
+        .make-admin:hover { background-color: #d2e3fc; }
+        .remove-admin { background-color: #fce8e6; color: #c5221f; }
+        .remove-admin:hover { background-color: #f9d8d6; }
+        .activate-user { background-color: #e6f4ea; color: #1e8e3e; }
+        .activate-user:hover { background-color: #c6e6d4; }
+        .deactivate-user { background-color: #fce8e6; color: #c5221f; }
+        .deactivate-user:hover { background-color: #f9d8d6; }
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .role-admin { background-color: #e8f0fe; color: #1967d2; }
+        .role-user { background-color: #e8eaed; color: #3c4043; }
+        .status-active { background-color: #e6f4ea; color: #1e8e3e; }
+        .status-inactive { background-color: #fce8e6; color: #c5221f; }
+        .online-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .online { background-color: #1e8e3e; }
+        .offline { background-color: #ccc; }
+        .flash-messages { list-style: none; padding: 0; margin-bottom: 15px; }
+        .flash-messages li { padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+        .flash-success { color: #1e8e3e; background-color: #e6f4ea; }
+        .flash-error { color: #d93025; background-color: #fce8e6; }
+        .actions-cell { display: flex; gap: 5px; justify-content: center; }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            color: #1a73e8;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+        .pagination a.active {
+            background-color: #1a73e8;
+            color: white;
+            border: 1px solid #1a73e8;
+        }
