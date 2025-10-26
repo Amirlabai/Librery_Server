@@ -1,2 +1,0 @@
-email,password,role,status
-amirlabay@gmail.com,scrypt:32768:8:1$AXkNPlV7plrF0w3n$23dfc37dfcaa8c6ef3ebbb7991930c162c17e3513fef0c8f694d3d125d9386d2f4e8577173be483c2f97427b99aa35993f7d6c5a984d230effac8f2af4cb905d,admin,active
