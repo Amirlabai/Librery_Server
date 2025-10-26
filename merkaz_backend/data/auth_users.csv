@@ -1,2 +1,0 @@
-email,password,role,status
-yosinago5@gmail.com,scrypt:32768:8:1$ERBhhkYkYkHUXYm7$7fbe0bae449bd07428994ff3ae665e6eb5673704f4117e2f8d57350835bcd4e16910921ab1611bc7fd2ea9065229ab51bd2ee21171a5b46b48f3cae492561447,admin,active
