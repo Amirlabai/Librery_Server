@@ -4,7 +4,7 @@
     <div class="header-right">
       <a routerLink="/my-uploads" class="my-uploads-btn">My Uploads</a>
       <a routerLink="/upload" class="upload-btn">Upload File</a>
-      <a *ngIf="isAdmin" routerLink="/admin" class="admin-dashboard-btn">Admin Dashboard</a>
+      <a *ngIf="navAdmin" (click)="navAdmin()" routerLink="/admin-dash" class="admin-dashboard-btn">Admin Dashboard</a>
       <a (click)="logout()" class="logout-btn">Logout</a>
     </div>
   </div>

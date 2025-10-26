@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,13 +11,16 @@ import {FormsModule} from '@angular/forms';
   templateUrl: './dashboard.component.html',
   imports: [
     NgClass,
-    FormsModule
+    FormsModule,
+    CommonModule,
+    RouterModule 
   ],
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
   items: any[] = [];
   isAdmin = false;
+  userRole = '';
   currentPath = '';
   flashMessages: { type: string, text: string }[] = [];
   cooldownLevel = 0;
@@ -27,15 +31,19 @@ export class DashboardComponent {
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
+    const role = localStorage.getItem('role');
+    this.userRole = role || '';
+    
+    this.isAdmin = this.userRole === 'admin'; 
     this.loadFiles();
   }
 
   loadFiles() {
-    this.http.get('http://localhost:8000/api/files').subscribe({
-      next: (res: any) => this.items = res.items || [],
-      error: err => console.error(err)
-    });
-  }
+  this.http.get('http://localhost:8000/files', { withCredentials: true }).subscribe({
+    next: (res: any) => this.items = res.items || [],
+    error: err => console.error(err)
+  });
+}
 
   navigate(item: any) {
     if (item.isFolder) {
@@ -45,10 +53,20 @@ export class DashboardComponent {
       this.download(item);
     }
   }
-
   goUp() {
-
+    this.currentPath = ''; 
+    this.loadFiles();
   }
+  navAdmin(){
+    const role = localStorage.getItem('role');
+      if (role === 'admin') {
+        this.isAdmin = true;
+      if (this.isAdmin) {
+        this.router.navigate(['/metrics']);
+      }
+    }
+  }
+
 
   download(item: any) {
     window.open(`http://localhost:8000/api/download/${item.path}`, '_blank');

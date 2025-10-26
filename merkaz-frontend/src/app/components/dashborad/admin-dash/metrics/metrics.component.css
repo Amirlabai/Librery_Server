@@ -1,13 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>TobeKK - Admin Metrics</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body {
+:host {
             font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
             margin: 0;
             background-color: #f0f2f5;
@@ -101,33 +92,3 @@
         .download-btn:hover {
             background-color: #185abc;
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Admin Dashboard</h1>
-            <a href="{{ url_for('files.downloads') }}">Back to Files</a>
-        </div>
-
-        <div class="admin-nav">
-            <a href="{{ url_for('admin.admin_metrics') }}" class="nav-tab">Metrics</a>
-            <a href="{{ url_for('admin.admin_users') }}" class="nav-tab">Users</a>
-            <a href="{{ url_for('admin.admin_pending') }}" class="nav-tab">Pending</a>
-            <a href="{{ url_for('admin.admin_denied') }}" class="nav-tab">Denied</a>
-            <a href="{{ url_for('uploads.admin_uploads') }}" class="nav-tab">Uploads</a>
-        </div>
-
-        {% for log in log_files %}
-        <div class="log-item">
-            <div class="log-details">
-                <h2>{{ log.name }}</h2>
-                <p>{{ log.description }}</p>
-            </div>
-            <a href="{{ url_for('admin.download_metrics_xlsx', log_type=log.type) }}" class="download-btn">Download as Excel</a>
-        </div>
-        {% endfor %}
-
-    </div>
-</body>
-</html>

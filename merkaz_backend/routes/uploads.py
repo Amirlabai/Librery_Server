@@ -3,7 +3,7 @@ import csv
 import shutil
 import magic
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash, abort
+from flask import Blueprint, session, abort, jsonify, request, current_app, send_file
 
 import config
 from utils import log_event
@@ -34,7 +34,7 @@ def is_file_malicious(file_stream):
 @uploads_bp.route("/upload/<path:subpath>", methods=["GET", "POST"])
 def upload_file(subpath):
     if not session.get("logged_in"):
-        return redirect(url_for("auth.login"))
+        return redirect(url_for("auth.api_login"))
         
     upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
         
@@ -99,7 +99,7 @@ def my_uploads():
     upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
     user_email = session.get('email')
     user_uploads = []
-    
+
     declined_items = set()
     try:
         with open(config.DECLINED_UPLOAD_LOG_FILE, 'r', newline='', encoding='utf-8') as f:
@@ -129,8 +129,7 @@ def my_uploads():
         pass
 
     user_uploads.reverse()
-    return render_template('my_uploads.html', uploads=user_uploads)
-
+    return jsonify(user_uploads), 200
 @uploads_bp.route("/admin/uploads")
 def admin_uploads():
     if not session.get("is_admin"):
@@ -164,8 +163,7 @@ def admin_uploads():
         pass
         
     final_uploads_list = sorted(list(grouped_uploads.values()), key=lambda x: x['timestamp'])
-    return render_template("admin_uploads.html", uploads=final_uploads_list)
-
+    return jsonify(final_uploads_list), 200
 
 @uploads_bp.route("/admin/move_upload/<path:filename>", methods=["POST"])
 def move_upload(filename):

@@ -1,0 +1,23 @@
+<div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <a routerLink="/dashboard">Back to Files</a>        
+        </div>
+
+         <div class="admin-nav">
+            <a routerLink="/metrics"  class="nav-tab active">Metrics</a>
+            <a routerLink="/users"  class="nav-tab">Users</a>
+            <a routerLink="/pending"  class="nav-tab">Pending</a>
+            <a routerLink="/denied"  class="nav-tab">Denied</a>
+            <a routerLink="/uploads"  class="nav-tab">Uploads</a>
+        </div>
+       
+        <div *ngFor="let log of logs" class="log-item">
+            <div class="log-details">
+                <h2>{{ log.name }}</h2>
+                <p>{{ log.description }}</p>
+        </div>
+    <button (click)="downloadLog(log.type)" class="download-btn">Download as Excel</button>
+  </div>
+  
+</div>

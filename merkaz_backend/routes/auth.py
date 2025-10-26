@@ -22,7 +22,6 @@ def before_request():
     session.permanent = True
 
 @auth_bp.route("/login", methods=["POST"])
-@cross_origin()  # מאפשר גישה מ- http://localhost:4200
 def api_login():
     data = request.get_json()
     if not data:
@@ -56,7 +55,6 @@ def api_login():
     }), 200
 
 @auth_bp.route("/register", methods=["POST"])
-@cross_origin()
 def api_register():
     data = request.get_json()
     if not data:
@@ -85,7 +83,6 @@ def logout():
     return redirect(url_for("auth.login"))
 
 @auth_bp.route("/forgot-password", methods=["POST"])
-@cross_origin()
 def api_forgot_password():
     data = request.get_json()
     email = data.get("email")

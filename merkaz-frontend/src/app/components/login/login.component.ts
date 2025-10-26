@@ -60,26 +60,29 @@ export class LoginComponent {
       password: this.password.trim()
     };
 
-    this.http.post('http://localhost:8000/login',payload).subscribe({
-      next: (res :any)=>{
-        this.isLoading = false;
+    this.http.post('http://localhost:8000/login', payload, { withCredentials: true }).subscribe({
+    next: (res: any) => {
+    this.isLoading = false;
 
-        this.authService.saveToken(res.token);
+    if (res.token) {
+      this.authService.saveToken(res.token);
+    }
+    if (res.role) {
+      localStorage.setItem('role', res.role);
+    }
 
-        this.message = res.message || 'Login successful';
-
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        this.isLoading = false;
-
-
-        this.error =
-          err.error?.error ||
-          err.error?.message ||
-          'Invalid credentials or server error';
-      }
-    });
+    this.message = res.message || 'Login successful';
+    if(res.role === 'admin'){
+      this.router.navigate(['/dashboard']);
+    } else {  
+    this.router.navigate(['/dashboard']);
+    }
+  },
+  error: (err) => {
+    this.isLoading = false;
+    this.error = err.error?.error || err.error?.message || 'Invalid credentials or server error';
+  }
+});
 
   }
 }

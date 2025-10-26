@@ -1,0 +1,55 @@
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>Admin Dashboard</h1>
+    <a routerLink="/dashboard">Back to Files</a>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="admin-nav">
+    <a routerLink="/metrics" class="nav-tab">Metrics</a>
+    <a routerLink="/users" class="nav-tab">Users</a>
+    <a routerLink="/pending" class="nav-tab">Pending</a>
+    <a routerLink="/denied" class="nav-tab">Denied</a>
+    <a routerLink="/uploads" class="nav-tab active">Uploads</a>
+  </div>
+
+  <!-- Flash Messages -->
+  <ul *ngIf="flashMessages.length" class="flash-messages">
+    <li *ngFor="let msg of flashMessages" [ngClass]="'flash-' + msg.type">{{ msg.text }}</li>
+  </ul>
+
+  <!-- Uploads Table -->
+  <table>
+    <thead>
+      <tr>
+        <th>Timestamp</th>
+        <th>User Email</th>
+        <th>Uploaded Item</th>
+        <th style="width: 40%;">Approve Location</th>
+        <th style="width: 15%; text-align: center;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let upload of uploads; let i = index">
+        <td>{{ upload.timestamp }}</td>
+        <td>{{ upload.email }}</td>
+        <td>{{ upload.filename }}</td>
+        <td>
+          <input type="text" [(ngModel)]="upload.path" />
+        </td>
+        <td style="text-align: center;">
+          <div style="display: flex; gap: 8px; justify-content: center;">
+            <button class="action-btn approve-btn" (click)="approve(upload, i)">Approve</button>
+            <button class="action-btn decline-btn" (click)="decline(upload, i)">Decline</button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="uploads.length === 0">
+        <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">
+          No files are pending review.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

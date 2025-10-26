@@ -1,0 +1,24 @@
+<div class="container">
+  <h1>Forgot Password</h1>
+
+  <div *ngIf="message" class="flash-success">{{ message }}</div>
+  <div *ngIf="error" class="flash-error">{{ error }}</div>
+
+  <form (ngSubmit)="onSubmit()" #forgotForm="ngForm">
+    <input
+      type="email"
+      name="email"
+      [(ngModel)]="email"
+      placeholder="Enter your email"
+      required
+      email
+    />
+    <button type="submit" [disabled]="isLoading || forgotForm.invalid">
+      {{ isLoading ? 'Sending...' : 'Send Reset Link' }}
+    </button>
+  </form>
+
+  <p>
+    <a routerLink="/login">Back to Login</a>
+  </p>
+</div>
