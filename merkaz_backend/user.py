@@ -100,3 +100,11 @@ class User:
             writer.writerow(["email", "password", "role", "status"]) # Write header
             for user in users:
                 writer.writerow([user.email, user.password, user.role, user.status])
+
+    def to_dict(self):
+        """Returns a dictionary representation of the user, safe for JSON serialization."""
+        return {
+            "email": self.email,
+            "role": self.role,
+            "status": self.status
+        }

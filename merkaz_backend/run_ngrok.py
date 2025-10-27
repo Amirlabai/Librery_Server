@@ -10,7 +10,7 @@ import subprocess
 
 
 def main():
-    port = sys.argv[1] if len(sys.argv) > 1 else "80"
+    port = sys.argv[1] if len(sys.argv) > 1 else "8000"
     ngrok_path = shutil.which("ngrok")
     if not ngrok_path:
         print("Error: 'ngrok' not found in PATH. Install ngrok and add it to PATH.")

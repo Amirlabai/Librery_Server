@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common'; // ← חובה
 
 interface PendingUser {
   email: string;
+  role: string;
+  status: string;
 }
 
 @Component({

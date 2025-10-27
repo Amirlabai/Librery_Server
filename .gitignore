@@ -2,3 +2,5 @@
 /__pycache__
 merkaz_backend\routes\__pycache__
 merkaz_backend\__pycache__
+/data
+/merkaz-frontend/.angular

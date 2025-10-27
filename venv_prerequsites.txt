@@ -4,7 +4,7 @@ python -m venv .venv
 ## activate venv
 .venv\Scripts\Activate.ps1
     ##if not working in terminal(powershell):
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process; .venv\Scripts\Activate.ps1
 
 ## deactivate venv
 .venv\Scripts\deactivate.ps1

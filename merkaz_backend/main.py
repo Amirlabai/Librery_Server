@@ -13,6 +13,7 @@ from routes.auth import auth_bp
 from routes.files import files_bp
 from routes.uploads import uploads_bp
 from routes.admin import admin_bp
+import run_ngrok
 
 def create_app():
     """Create and configure the Flask application."""
@@ -38,6 +39,7 @@ def create_app():
     return app
 
 if __name__ == "__main__":
+    #run_ngrok.main()
     # --- Directory and File Initialization ---
     share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), config.SHARE_FOLDER)
     trash_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), config.TRASH_FOLDER)
