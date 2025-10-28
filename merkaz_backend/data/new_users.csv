@@ -1,1 +1,7 @@
 email,password,role
+john.doe@example.com,Pass1234!,user
+sara.levi@example.com,Qwerty5678,admin
+amir.kohen@example.com,Abc12345,user
+michal.benari@example.com,SecurePass90,moderator
+yosef.nago@example.com,Test9876,admin
+lina.hassan@example.com,HelloWorld55,user
