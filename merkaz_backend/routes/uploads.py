@@ -7,7 +7,8 @@ from flask import Blueprint, session, abort, jsonify, request, current_app, send
 
 
 import config
-from utils import log_event
+from utils import log_event, get_project_root
+from user import User
 
 uploads_bp = Blueprint('uploads', __name__)
 
@@ -36,7 +37,9 @@ def upload_file():
     if not session.get("logged_in"):
         return jsonify({"error": "Not logged in"}), 401
         
-    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
+    # Ensure files are stored in project root
+    project_root = get_project_root()
+    upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
     
     uploaded_files = request.files.getlist("file")
     if not uploaded_files or (len(uploaded_files) == 1 and uploaded_files[0].filename == ''):
@@ -81,7 +84,19 @@ def upload_file():
                 # The suggested path for the file after admin approval
                 final_path_suggestion = os.path.join(upload_subpath, filename).replace('\\', '/')
                 
-                log_event(config.UPLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email"), filename, final_path_suggestion])
+                # Get user_id from session, fallback to finding user by email if not in session
+                user_id = session.get("user_id")
+                if user_id is None:
+                    user = User.find_by_email(session.get("email"))
+                    user_id = user.user_id if user else None
+                
+                log_event(config.UPLOAD_LOG_FILE, [
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
+                    session.get("email"), 
+                    user_id,  # Store user_id in log
+                    filename, 
+                    final_path_suggestion
+                ])
                 successful_uploads.append(filename)
             except Exception as e:
                 errors.append(f"Could not upload '{filename}'. Error: {e}")
@@ -103,8 +118,17 @@ def my_uploads():
     if not session.get('logged_in'):
         return jsonify({"error": "Not logged in"}), 401
 
-    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
+    # Ensure files are read from project root
+    project_root = get_project_root()
+    upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
     user_email = session.get('email')
+    user_id = session.get('user_id')
+    
+    # Get user_id if not in session
+    if user_id is None:
+        user = User.find_by_email(user_email)
+        user_id = user.user_id if user else None
+    
     user_uploads = []
 
     declined_items = set()
@@ -112,7 +136,9 @@ def my_uploads():
         with open(config.DECLINED_UPLOAD_LOG_FILE, 'r', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                if row['email'] == user_email:
+                # Check by email for backward compatibility, or by user_id if available
+                declined_user_id = row.get('user_id', '')
+                if (row['email'] == user_email) or (declined_user_id and str(user_id) == declined_user_id):
                     declined_items.add(row['filename'])
     except FileNotFoundError:
         pass
@@ -121,7 +147,18 @@ def my_uploads():
         with open(config.UPLOAD_LOG_FILE, 'r', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                if row['email'] == user_email:
+                # Filter by user_id if available, otherwise fallback to email
+                row_user_id = row.get('user_id', '')
+                matches_user = False
+                
+                if user_id and row_user_id:
+                    # New format: match by user_id
+                    matches_user = str(user_id) == row_user_id
+                else:
+                    # Old format or missing user_id: match by email
+                    matches_user = row['email'] == user_email
+                
+                if matches_user:
                     full_relative_path = row['filename']
                     top_level_item = full_relative_path.split('/')[0].split('\\')[0]
 
@@ -143,7 +180,9 @@ def admin_uploads():
     if not session.get("is_admin"):
         return jsonify({"error": "Access denied"}), 403
         
-    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes", ""), config.UPLOAD_FOLDER)
+    # Ensure files are read from project root
+    project_root = get_project_root()
+    upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
     grouped_uploads = {}
     
     try:
@@ -153,7 +192,15 @@ def admin_uploads():
             all_uploads_logged = list(reader)
 
         for row in reversed(all_uploads_logged):
-            timestamp, email, relative_path, suggested_full_path = row[0], row[1], row[2], row[3]
+            # Handle both old format (4 cols) and new format (5 cols with user_id)
+            if len(row) >= 5:
+                # New format: timestamp, email, user_id, filename, path
+                timestamp, email, user_id, relative_path, suggested_full_path = row[0], row[1], row[2], row[3], row[4]
+            else:
+                # Old format: timestamp, email, filename, path
+                timestamp, email, relative_path, suggested_full_path = row[0], row[1], row[2], row[3]
+                user_id = None
+            
             top_level_item = relative_path.split('/')[0].split('\\')[0]
 
             if top_level_item not in grouped_uploads:
@@ -161,9 +208,25 @@ def admin_uploads():
                     is_part_of_dir_upload = '/' in relative_path or '\\' in relative_path
                     final_approval_path = os.path.dirname(suggested_full_path) if is_part_of_dir_upload else suggested_full_path
                     
+                    # Get user information if user_id is available
+                    user_info = None
+                    if user_id:
+                        try:
+                            user = User.find_by_email(email)
+                            if user:
+                                user_info = {
+                                    "id": user.user_id,
+                                    "email": user.email,
+                                    "role": user.role
+                                }
+                        except:
+                            pass
+                    
                     grouped_uploads[top_level_item] = {
                         "timestamp": timestamp, 
-                        "email": email, 
+                        "email": email,
+                        "user_id": user_id if user_id else None,
+                        "user": user_info,  # User info visible only to admins
                         "filename": top_level_item,
                         "path": final_approval_path
                     }
@@ -178,8 +241,10 @@ def move_upload(filename):
     if not session.get("is_admin"):
         return jsonify({"error": "Access denied"}), 403
         
-    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
-    share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
+    # Ensure files are in project root
+    project_root = get_project_root()
+    upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
+    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
     
     data = request.get_json()
     if not data:
@@ -210,13 +275,26 @@ def decline_upload(filename):
     if not session.get("is_admin"):
         return jsonify({"error": "Access denied"}), 403
         
-    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
+    # Ensure files are in project root
+    project_root = get_project_root()
+    upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
     item_to_delete = os.path.join(upload_dir, filename)
     
     data = request.get_json() or {}
     user_email = data.get("email", "unknown")
+    user_id = data.get("user_id")
     
-    log_event(config.DECLINED_UPLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, filename])
+    # Get user_id if not provided in request
+    if not user_id:
+        user = User.find_by_email(user_email)
+        user_id = user.user_id if user else None
+    
+    log_event(config.DECLINED_UPLOAD_LOG_FILE, [
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
+        user_email, 
+        user_id if user_id else '',  # Store user_id in declined log
+        filename
+    ])
 
     try:
         if os.path.exists(item_to_delete):

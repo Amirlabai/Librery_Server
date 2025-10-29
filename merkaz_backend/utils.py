@@ -46,7 +46,7 @@ def create_file_with_header(filename, header):
 # ========== ID Sequence Management ==========
 ID_SEQUENCE_FILE = "data/user_id_sequence.txt"
 
-def _get_project_root():
+def get_project_root():
     """
     Determines the project root directory.
     If utils.py is in merkaz_backend/, go up one level to get project root.
@@ -56,6 +56,12 @@ def _get_project_root():
     # Go up one level to get project root
     project_root = os.path.dirname(utils_dir)
     return project_root
+
+def _get_project_root():
+    """
+    Private alias for backward compatibility.
+    """
+    return get_project_root()
 
 def _get_id_sequence_file_path():
     """
