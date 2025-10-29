@@ -18,7 +18,9 @@ def downloads(subpath=''):
     if not session.get("logged_in"):
         return jsonify({"error": "Not logged in"}), 401
     
-    share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
+    # Get project root (one level up from merkaz_backend directory)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
 
     safe_subpath = os.path.normpath(subpath).replace('\\', '/')
     if safe_subpath == '.':
@@ -73,8 +75,9 @@ def delete_item(item_path):
     if not session.get("is_admin"):
         return jsonify({"error": "Access denied"}), 403
     
-    share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
-    trash_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.TRASH_FOLDER)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
+    trash_dir = os.path.join(project_root, config.TRASH_FOLDER)
 
     source_path = os.path.join(share_dir, item_path)
 
@@ -98,7 +101,8 @@ def download_file(file_path):
     if not session.get("logged_in"):
         return jsonify({"error": "Not logged in"}), 401
     log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "FILE", file_path])
-    share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
 
     directory, filename = os.path.split(file_path)
     safe_dir = os.path.join(share_dir, directory)
@@ -111,7 +115,8 @@ def download_folder(folder_path):
     if not session.get("logged_in"):
         return jsonify({"error": "Not logged in"}), 401
     log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "FOLDER", folder_path])
-    share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
 
     absolute_folder_path = os.path.join(share_dir, folder_path)
     if not os.path.isdir(absolute_folder_path) or not absolute_folder_path.startswith(share_dir):

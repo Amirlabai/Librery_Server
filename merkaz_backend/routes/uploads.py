@@ -137,6 +137,7 @@ def my_uploads():
 
     user_uploads.reverse()
     return jsonify(user_uploads), 200
+
 @uploads_bp.route("/admin/uploads")
 def admin_uploads():
     if not session.get("is_admin"):
