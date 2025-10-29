@@ -15,7 +15,7 @@ Your upload will be submitted for admin review. If approved, it will be placed i
 You can select multiple files at once. Hold down the Ctrl (or Cmd on Mac) key while clicking to select more than one.
 </div>
 <form (ngSubmit)="onSubmitFiles()" #filesForm="ngForm">
-<input type="file" (change)="onFileChange($event)" multiple required>
+<input type="file"  (change)="onFileChange($event)" multiple required>
 <br>
 <button type="submit">Upload Files for Review</button>
 </form>
