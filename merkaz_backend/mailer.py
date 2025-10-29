@@ -35,6 +35,7 @@ def send_new_user_notification(app, user_email):
     """Notifies all admins that a new user has registered (asynchronously)."""
     # Generate URL in the request context before starting the thread
     pending_url = url_for('admin.admin_pending', _external=True)
+    pending_url = "http://localhost:4200/pending"
     thread = threading.Thread(target=_send_new_user_notification_sync, args=(app, user_email, pending_url))
     thread.daemon = True
     thread.start()
