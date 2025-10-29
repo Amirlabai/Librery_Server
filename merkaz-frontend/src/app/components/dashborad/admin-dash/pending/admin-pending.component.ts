@@ -1,13 +1,9 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common'; // ← חובה
+import { CommonModule } from '@angular/common'; 
+import { PendingUser } from '../../../../models/pending-user.model';
 
-interface PendingUser {
-  email: string;
-  role: string;
-  status: string;
-}
 
 @Component({
   selector: 'app-admin-pending',
@@ -28,10 +24,10 @@ export class AdminPendingComponent {
 
   loadPendingUsers() {
     this.http
-      .get<any>('http://localhost:8000/admin/pending', { withCredentials: true })
+      .get<PendingUser[]>('http://localhost:8000/admin/pending', { withCredentials: true })
       .subscribe({
         next: (res) => {
-          this.users = res.users || [];
+          this.users = res;
         },
         error: (err) => {
           console.error(err);

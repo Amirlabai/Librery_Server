@@ -6,6 +6,7 @@ import {
 import { provideRouter } from '@angular/router';
 import {
   provideHttpClient,
+  withFetch,
   withInterceptors
 } from '@angular/common/http';
 import { routes } from './app.routes';
@@ -16,6 +17,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor]))
+    provideHttpClient(
+    withFetch(), 
+    withInterceptors([authInterceptor])
+  )
   ]
 };

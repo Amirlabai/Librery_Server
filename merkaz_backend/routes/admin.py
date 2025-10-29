@@ -5,6 +5,7 @@ import config
 from user import User
 from utils import csv_to_xlsx_in_memory
 from mailer import send_approval_email, send_denial_email
+from routes.session_tracker import mark_user_online, mark_user_offline, active_sessions
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -14,6 +15,8 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 def admin_metrics():
     if not session.get("is_admin"):
         abort(403)
+
+    mark_user_online()    
 
     log_files = [
         {"type": "session", "name": "Session Log (Login/Logout)", "description": "Track user login and failure events."},
@@ -25,18 +28,47 @@ def admin_metrics():
 
 
 # ========== USERS ==========
+from datetime import datetime
+from flask import Blueprint, session, abort, jsonify
+import config
+from user import User
+from utils import csv_to_xlsx_in_memory
+from mailer import send_approval_email, send_denial_email
+from routes.session_tracker import mark_user_online, get_active_users
+
+admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
 @admin_bp.route("/users", methods=["GET"])
 def admin_users():
     if not session.get("is_admin"):
         abort(403)
 
+    mark_user_online()
+
     all_users = User.get_all()
-    users_list = [user.to_dict() if hasattr(user, "to_dict") else user for user in all_users]
+    users_list = []
+
+    active_now = get_active_users()
+    print("🟢 Active sessions right now:", active_now)
+
+    for user in all_users:
+        user_dict = user.to_dict() if hasattr(user, "to_dict") else {
+            "email": user.email,
+            "role": user.role,
+            "status": user.status,
+            "is_admin": getattr(user, "is_admin", False),
+            "is_active": getattr(user, "is_active", False)
+        }
+
+        user_dict["online_status"] = user.email in active_now
+        users_list.append(user_dict)
 
     return jsonify({
         "current_admin": session.get('email'),
         "users": users_list
     }), 200
+
+
 
 
 # ========== PENDING ==========
@@ -46,6 +78,8 @@ def admin_pending():
         abort(403)
 
     pending_users = User.get_pending()
+
+
     users_list = [user.to_dict() if hasattr(user, "to_dict") else user for user in pending_users]
 
     return jsonify(users_list), 200
@@ -212,3 +246,13 @@ def download_metrics_xlsx(log_type):
     except Exception as e:
         print(f"Error during XLSX conversion: {e}")
         abort(500)
+
+
+# ========== HEARTBEAT ==========
+@admin_bp.route("/heartbeat", methods=["POST"])
+def heartbeat():
+    
+    if "email" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    mark_user_online()
+    return jsonify({"message": "Heartbeat received"}), 200
