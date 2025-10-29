@@ -41,6 +41,45 @@ If you add or update dependencies, you can regenerate the `requirements.txt` fil
 pip freeze > requirements.txt
 ```
 
+## Frontend Installation (Angular)
+
+The frontend of Merkaz_lib is built with Angular. To run it, you need Node.js and Angular CLI installed.
+
+Install Node.js
+
+Download and install Node.js (which includes npm) from:
+https://nodejs.org
+
+After installation, verify versions:
+```bash
+node -v
+npm -v
+```
+
+## Install Angular CLI
+
+Install Angular CLI globally:
+```bash
+npm install -g @angular/cli
+```
+
+## Install Frontend Dependencies
+
+Navigate to the Angular project directory:
+```bash
+cd merkaz-frontend
+```
+
+## Install dependencies:
+```bash
+npm install
+```
+## Run Angular Development Server
+
+To start the Angular app (usually runs on port 4200):
+```bash
+ng serve
+```
 ## Ngrok Setup
 To expose the local server to the internet, you can use ngrok.
 visit the website https://dashboard.ngrok.com/get-started/setup/windows and follow the steps, options for MacOs and linux appear above
