@@ -64,9 +64,6 @@ export class RegisterComponent{
           this.success = res.message;
 
           setTimeout(() => this.router.navigate(['/login']), 2000);
-        } else {
-          this.success = 'Registered successfully.';
-          setTimeout(() => this.router.navigate(['/login']), 2000);
         }
       },
       error: (err) => {
