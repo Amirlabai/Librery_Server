@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -16,6 +16,8 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./upload-file.component.css']
 })
 export class UploadFileComponent {
+
+
   subpath: string = '';
   selectedFiles: File[] = [];
   selectedFolderFiles: File[] = [];
@@ -36,9 +38,15 @@ export class UploadFileComponent {
   formData.append('subpath', this.subpath);
 
   this.http.post('http://localhost:8000/upload', formData, { withCredentials: true }).subscribe({
-    next: () => alert('Files uploaded'),
-    error: err => console.error(err)
+    next: () => {
+      alert('Files uploaded successfully');
+      window.location.reload();
+    },
+    error: (err) => {
+      console.error(err);
+    }
   });
+  
 }
 
   onSubmitFolder() {
@@ -46,10 +54,15 @@ export class UploadFileComponent {
     this.selectedFolderFiles.forEach(file => formData.append('file', file));
     formData.append('subpath', this.subpath);
 
-    this.http.post('/upload/folder', formData).subscribe({
+    this.http.post('http://localhost:8000/upload/folder', formData,{ withCredentials: true }).subscribe({
       
-      next: () => alert('Folder uploaded'),
-      error: err => console.error(err)
+      next: () => {
+        alert('Folder uploaded');
+        window.location.reload();
+      },
+        error: err => {
+          console.error(err)
+        }
     });
   }
 }
