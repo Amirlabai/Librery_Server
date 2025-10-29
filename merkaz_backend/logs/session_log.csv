@@ -35,3 +35,8 @@ timestamp,email,event
 2025-10-29 11:39:39,lina.hassan@example.com,LOGOUT
 2025-10-29 11:39:47,yosinago5@gmail.com,LOGOUT
 2025-10-29 11:40:22,yosinago5@gmail.com,LOGIN_SUCCESS
+2025-10-29 12:37:01,unknown,LOGOUT
+2025-10-29 12:37:10,yosinago5@gmail.com,LOGIN_SUCCESS
+2025-10-29 12:40:20,lina.hassan@example.com,LOGIN_SUCCESS
+2025-10-29 12:40:37,lina.hassan@example.com,LOGOUT
+2025-10-29 12:40:38,lina.hassan@example.com,LOGIN_SUCCESS

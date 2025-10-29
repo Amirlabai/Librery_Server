@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router, RouterOutlet } from '@angular/router';
+import { Router } from '@angular/router';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,10 +14,12 @@ import { CommonModule } from '@angular/common';
     NgClass,
     FormsModule,
     CommonModule,
-    RouterOutlet 
+    RouterModule
   ],
   styleUrls: ['./dashboard.component.css']
 })
+
+
 export class DashboardComponent {
   items: any[] = [];
   isAdmin = false;
@@ -37,7 +40,7 @@ export class DashboardComponent {
   }
 
   loadFiles() {
-  this.http.get('http://localhost:8000/files', { withCredentials: true }).subscribe({
+  this.http.get('http://localhost:8000/browse', { withCredentials: true }).subscribe({
     next: (res: any) => this.items = res.items || [],
     error: err => console.error(err)
   });

@@ -7,6 +7,8 @@ from flask import Blueprint, render_template, redirect, url_for, session, send_f
 
 import config
 from utils import log_event
+from flask_cors import cross_origin
+
 
 files_bp = Blueprint('files', __name__)
 
