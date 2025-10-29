@@ -37,7 +37,7 @@ def send_approval_email(app, user_email):
     """Sends an email to the user when their account is approved."""
     with app.app_context():
         # Generate the URL for the login page
-        login_url = url_for('auth.login', _external=True)
+        login_url = url_for('auth.api_login', _external=True)
 
         msg = Message(
             'Your Account has been Approved!',

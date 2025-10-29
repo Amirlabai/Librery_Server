@@ -32,7 +32,7 @@ export class AdminDeniedComponent {
   }
 
   moveToPending(email: string, index: number) {
-    this.http.post(`http://localhost:8000/admin/repend/${email}`, {}, { withCredentials: true }).subscribe({
+    this.http.post(`http://localhost:8000/admin/re-pend/${email}`, {}, { withCredentials: true }).subscribe({
       next: () => {
         this.flashMessages = [{ type: 'success', text: `Moved ${email} back to pending.` }];
         this.users.splice(index, 1);
