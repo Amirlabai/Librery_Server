@@ -92,12 +92,12 @@ export class AdminUsersComponent implements OnInit { // Implement OnInit
       });
   }
   startHeartbeat() {
-  setInterval(() => {
-    this.http.post('http://localhost:8000/admin/heartbeat', {}, { withCredentials: true })
-      .subscribe({
-        next: res => console.log('✅ Heartbeat OK', res),
-        error: err => console.error('❌ Heartbeat failed', err)
-      });
-  }, 10000);
-}
+    setInterval(() => {
+      this.http.post('http://localhost:8000/admin/heartbeat', {}, { withCredentials: true })
+        .subscribe({
+          next: res => console.log('✅ Heartbeat OK', res),
+          error: err => console.error('❌ Heartbeat failed', err)
+        });
+    }, 900000);
+  }
 }

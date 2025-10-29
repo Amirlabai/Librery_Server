@@ -16,15 +16,21 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
-  { path: 'dashboard' ,component: DashboardComponent},
+
+  // ------------------- DASHBOARD -------------------
+  {
+    path: 'dashboard',
+    children: [
+      { path: '', component: DashboardComponent },         
+      { path: 'my-uploads', component: MyUploadsComponent },
+      { path: 'upload', component: UploadFileComponent }
+    ]
+  },
+
+  // ------------------- ADMIN -------------------
   { path: 'metrics', component: MetricsComponent },
   { path: 'users', component: AdminUsersComponent },
   { path: 'pending', component: AdminPendingComponent },
   { path: 'denied', component: AdminDeniedComponent },
-  { path: 'uploads', component: AdminUploadsComponent },
-  { path: 'my-uploads', component: MyUploadsComponent },
-  { path: 'upload', component: UploadFileComponent }
-    
-  
+  { path: 'uploads', component: AdminUploadsComponent }
 ];
-
