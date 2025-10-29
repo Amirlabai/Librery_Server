@@ -10,6 +10,7 @@ import { AdminUploadsComponent } from './components/dashborad/admin-dash/uploads
 import { AdminDeniedComponent } from './components/dashborad/admin-dash/denied/admin-denied.component';
 import { MyUploadsComponent } from './components/uploads/my-uploads.component';
 import { UploadFileComponent } from './components/uploads/upload-file.component';
+import { AuthGuard } from './services/auth.guard'; 
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -20,17 +21,19 @@ export const routes: Routes = [
   // ------------------- DASHBOARD -------------------
   {
     path: 'dashboard',
+    canActivate: [AuthGuard],
     children: [
-      { path: '', component: DashboardComponent },         
+      { path: '', component: DashboardComponent },
       { path: 'my-uploads', component: MyUploadsComponent },
       { path: 'upload', component: UploadFileComponent }
     ]
   },
 
   // ------------------- ADMIN -------------------
-  { path: 'metrics', component: MetricsComponent },
-  { path: 'users', component: AdminUsersComponent },
-  { path: 'pending', component: AdminPendingComponent },
-  { path: 'denied', component: AdminDeniedComponent },
-  { path: 'uploads', component: AdminUploadsComponent }
+  { path: 'metrics', component: MetricsComponent, canActivate: [AuthGuard] },
+  { path: 'users', component: AdminUsersComponent, canActivate: [AuthGuard] },
+  { path: 'pending', component: AdminPendingComponent, canActivate: [AuthGuard] },
+  { path: 'denied', component: AdminDeniedComponent, canActivate: [AuthGuard] },
+  { path: 'uploads', component: AdminUploadsComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: 'login' }
 ];
