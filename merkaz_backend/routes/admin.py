@@ -3,7 +3,7 @@ from flask import Blueprint, session, jsonify, request, current_app, send_file
 
 import config
 from user import User
-from utils import csv_to_xlsx_in_memory
+from utils import csv_to_xlsx_in_memory, get_next_user_id
 from mailer import send_approval_email, send_denial_email
 from routes.session_tracker import mark_user_online, mark_user_offline, active_sessions,get_active_users
 
@@ -99,6 +99,10 @@ def approve_user(email):
     if not user_to_approve:
         return jsonify({"error": f"User {email} not found in pending list"}), 404
 
+    # Ensure user has an ID (for backward compatibility with old data)
+    if user_to_approve.user_id is None:
+        user_to_approve.user_id = get_next_user_id()
+
     auth_users = User.get_all()
     user_to_approve.status = 'active'
     auth_users.append(user_to_approve)
@@ -123,6 +127,10 @@ def deny_user(email):
     if not user_to_deny:
         return jsonify({"error": f"User {email} not found"}), 404
 
+    # Ensure user has an ID (for backward compatibility with old data)
+    if user_to_deny.user_id is None:
+        user_to_deny.user_id = get_next_user_id()
+
     denied_users = User.get_denied()
     denied_users.append(user_to_deny)
     User.save_denied(denied_users)
@@ -145,6 +153,10 @@ def re_pend_user(email):
 
     if not user_to_re_pend:
         return jsonify({"error": f"User {email} not found"}), 404
+
+    # Ensure user has an ID (for backward compatibility with old data)
+    if user_to_re_pend.user_id is None:
+        user_to_re_pend.user_id = get_next_user_id()
 
     pending_users = User.get_pending()
     pending_users.append(user_to_re_pend)

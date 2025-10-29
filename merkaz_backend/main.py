@@ -64,9 +64,10 @@ if __name__ == "__main__":
     if not os.path.exists(upload_dir): os.makedirs(upload_dir)
 
     # Create necessary CSV files with headers if they don't exist
-    create_file_with_header(config.AUTH_USER_DATABASE, ["email", "password", "role", "status"])
-    create_file_with_header(config.NEW_USER_DATABASE, ["email", "password", "role"])
-    create_file_with_header(config.DENIED_USER_DATABASE, ["email", "password", "role"])
+    # User databases now include ID column
+    create_file_with_header(config.AUTH_USER_DATABASE, ["id", "email", "password", "role", "status"])
+    create_file_with_header(config.NEW_USER_DATABASE, ["id", "email", "password", "role", "status"])
+    create_file_with_header(config.DENIED_USER_DATABASE, ["id", "email", "password", "role", "status"])
     create_file_with_header(config.PASSWORD_RESET_DATABASE, ["email", "token", "timestamp"])
     create_file_with_header(config.SESSION_LOG_FILE, ["timestamp", "email", "event"])
     create_file_with_header(config.DOWNLOAD_LOG_FILE, ["timestamp", "email", "type", "path"])

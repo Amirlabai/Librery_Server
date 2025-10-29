@@ -4,7 +4,8 @@ from werkzeug.security import check_password_hash
 
 # --- User Class ---
 class User:
-    def __init__(self, email, password, role='user', status='active'):
+    def __init__(self, email, password, role='user', status='active', user_id=None):
+        self.user_id = user_id  # Unique user ID
         self.email = email
         self.password = password  # This will now be a hashed password
         self.role = role
@@ -84,10 +85,34 @@ class User:
             with open(filepath, mode='r', newline='', encoding='utf-8') as f:
                 reader = csv.reader(f)
                 header = next(reader, None) # Skip header
+                
+                # Determine if ID column exists (new format vs old format)
+                has_id_column = header and len(header) > 0 and header[0].lower() == 'id'
+                
                 for row in reader:
-                    if row and len(row) >= 3:
-                        status = row[3] if len(row) > 3 else 'active'
-                        users.append(User(email=row[0], password=row[1], role=row[2], status=status))
+                    if not row:
+                        continue
+                    
+                    if has_id_column:
+                        # New format: id,email,password,role,status
+                        if len(row) >= 4:
+                            try:
+                                user_id = int(row[0]) if row[0] else None
+                                email = row[1]
+                                password = row[2]
+                                role = row[3]
+                                status = row[4] if len(row) > 4 else 'active'
+                                users.append(User(email=email, password=password, role=role, status=status, user_id=user_id))
+                            except (ValueError, IndexError):
+                                continue
+                    else:
+                        # Old format: email,password,role,status (backward compatibility)
+                        if len(row) >= 3:
+                            email = row[0]
+                            password = row[1]
+                            role = row[2]
+                            status = row[3] if len(row) > 3 else 'active'
+                            users.append(User(email=email, password=password, role=role, status=status, user_id=None))
         except FileNotFoundError:
             return []
         return users
@@ -97,13 +122,20 @@ class User:
         """Helper to write a list of users to a given CSV file."""
         with open(filepath, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
-            writer.writerow(["email", "password", "role", "status"]) # Write header
+            writer.writerow(["id", "email", "password", "role", "status"]) # Write header with ID
             for user in users:
-                writer.writerow([user.email, user.password, user.role, user.status])
+                writer.writerow([
+                    user.user_id if user.user_id is not None else '',
+                    user.email,
+                    user.password,
+                    user.role,
+                    user.status
+                ])
 
     def to_dict(self):
         """Returns a dictionary representation of the user, safe for JSON serialization."""
         return {
+            "id": self.user_id,
             "email": self.email,
             "role": self.role,
             "status": self.status,

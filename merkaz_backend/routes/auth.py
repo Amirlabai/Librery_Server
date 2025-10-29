@@ -6,7 +6,7 @@ from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash
 import config
 from user import User
-from utils import log_event
+from utils import log_event, get_next_user_id
 from mailer import send_new_user_notification, send_password_reset_email
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from routes.session_tracker import mark_user_online, mark_user_offline, active_sessions
@@ -74,8 +74,15 @@ def api_register():
         return jsonify({"error": "Password must be at least 8 characters long"}), 400
 
     hashed_password = generate_password_hash(password)
-    with open(config.NEW_USER_DATABASE, mode='a', newline='', encoding='utf-8') as f:
-        csv.writer(f).writerow([email, hashed_password, 'user'])
+    user_id = get_next_user_id()
+    
+    # Create new user with ID
+    new_user = User(email=email, password=hashed_password, role='user', status='pending', user_id=user_id)
+    
+    # Get existing pending users and append new user
+    pending_users = User.get_pending()
+    pending_users.append(new_user)
+    User.save_pending(pending_users)
 
     send_new_user_notification(current_app._get_current_object(), email)
     return jsonify({"message": "Registration successful. Pending admin approval."}), 201
