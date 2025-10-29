@@ -3,6 +3,7 @@ import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 
 
 @Component({
@@ -12,10 +13,12 @@ import {HttpClient} from '@angular/common/http';
     CommonModule,
     FormsModule,
     RouterLink,
+    RouterModule
   ],
   styleUrls: ['./register.component.css'],
   standalone: true,
 })
+
 
 
 export class RegisterComponent{

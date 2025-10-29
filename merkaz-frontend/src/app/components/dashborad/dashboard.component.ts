@@ -70,12 +70,12 @@ export class DashboardComponent {
 
 
   download(item: any) {
-    window.open(`http://localhost:8000/api/download/${item.path}`, '_blank');
+    window.open(`http://localhost:8000/browse/download/${item.path}`, '_blank');
   }
 
   deleteItem(item: any) {
     if (!confirm(`Delete ${item.name}?`)) return;
-    this.http.delete(`http://localhost:8000/api/delete/${item.path}`).subscribe({
+    this.http.delete(`http://localhost:8000/browse/delete/${item.path}`).subscribe({
       next: () => this.loadFiles(),
       error: err => console.error(err)
     });
@@ -92,7 +92,7 @@ export class DashboardComponent {
   }
 
   submitSuggestion() {
-    this.http.post('http://localhost:8000/api/suggest', { suggestion: this.suggestionText }).subscribe({
+    this.http.post('http://localhost:8000/suggest', { suggestion: this.suggestionText }).subscribe({
       next: () => {
         this.suggestionSuccess = 'Suggestion submitted!';
         this.suggestionText = '';

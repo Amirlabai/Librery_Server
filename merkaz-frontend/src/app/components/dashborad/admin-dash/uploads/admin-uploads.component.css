@@ -27,6 +27,12 @@
 .header a:hover {
   background-color: #d2d5d9;
 }
+h1 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #202124;
+  margin-bottom: 15px;
+}
 .admin-nav {
   display: flex;
   gap: 5px;

@@ -1,94 +1,94 @@
 :host {
-            font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
-            margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            padding-top: 40px;
-        }
-        .container {
-            width: 100%;
-            max-width: 900px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            padding: 20px 40px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-        h1 {
-            font-size: 24px;
-            font-weight: 500;
-            color: #202124;
-            margin: 0;
-        }
-        .header a {
-            background-color: #e8eaed;
-            color: #3c4043;
-            padding: 8px 16px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .header a:hover {
-            background-color: #d2d5d9;
-        }
-        .admin-nav {
-            display: flex;
-            gap: 5px;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 25px;
-        }
-        .nav-tab {
-            padding: 10px 15px;
-            text-decoration: none;
-            color: #5f6368;
-            border-radius: 6px 6px 0 0;
-            font-weight: 500;
-        }
-        .nav-tab.active {
-            color: #1a73e8;
-            border-bottom: 3px solid #1a73e8;
-        }
-        .nav-tab:not(.active):hover {
-            background-color: #f1f3f4;
-        }
-        .log-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .log-details h2 {
-            margin: 0 0 8px 0;
-            font-size: 18px;
-            font-weight: 500;
-        }
-        .log-details p {
-            margin: 0;
-            color: #5f6368;
-            font-size: 14px;
-        }
-        .download-btn {
-            background-color: #1a73e8;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .download-btn:hover {
-            background-color: #185abc;
-        }
+    font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
+    margin: 0;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+}
+.container {
+    width: 100%;
+    max-width: 900px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px 40px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #202124;
+    margin: 0;
+}
+.header a {
+    background-color: #e8eaed;
+    color: #3c4043;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+.header a:hover {
+    background-color: #d2d5d9;
+}
+.admin-nav {
+    display: flex;
+    gap: 5px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 25px;
+}
+.nav-tab {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #5f6368;
+    border-radius: 6px 6px 0 0;
+    font-weight: 500;
+}
+.nav-tab.active {
+    color: #1a73e8;
+    border-bottom: 3px solid #1a73e8;
+}
+.nav-tab:not(.active):hover {
+    background-color: #f1f3f4;
+}
+.log-item {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.log-details h2 {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 500;
+}
+.log-details p {
+    margin: 0;
+    color: #5f6368;
+    font-size: 14px;
+}
+.download-btn {
+    background-color: #1a73e8;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+.download-btn:hover {
+    background-color: #185abc;
+}
