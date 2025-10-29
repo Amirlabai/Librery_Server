@@ -1,7 +1,7 @@
 import re
 import csv
 from datetime import datetime
-from flask import Blueprint, render_template, request, redirect, url_for, session, current_app, flash, jsonify
+from flask import Blueprint, request, session, current_app, jsonify
 from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash
 import config
@@ -107,32 +107,36 @@ def api_forgot_password():
     return jsonify({"message": "Password reset link sent"}), 200
 
 
-@auth_bp.route("/reset-password/<token>", methods=["GET", "POST"])
+@auth_bp.route("/reset-password/<token>", methods=["POST"])
 def reset_password(token):
     s = URLSafeTimedSerializer(config.TOKEN_SECRET_KEY)
     try:
         email = s.loads(token, salt='password-reset-salt', max_age=3600)  # 1 hour expiration
     except (SignatureExpired, BadTimeSignature):
-        flash("The password reset link is invalid or has expired.", "error")
-        return redirect(url_for("auth.forgot_password"))
+        return jsonify({"error": "The password reset link is invalid or has expired."}), 400
 
-    if request.method == "POST":
-        password = request.form["password"]
-        # Add password validation logic here (same as registration)
-        users = User.get_all()
-        user_found = False
-        for user in users:
-            if user.email == email:
-                user.password = generate_password_hash(password)
-                user_found = True
-                break
-        
-        if user_found:
-            User.save_all(users)
-            flash("Your password has been updated successfully.", "success")
-            return redirect(url_for("auth.login"))
-        else:
-            flash("An error occurred. Please try again.", "error")
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON body"}), 400
 
-    return render_template("reset_password.html", token=token)
+    password = data.get("password")
+    if not password:
+        return jsonify({"error": "Password is required"}), 400
+
+    if len(password) < 8:
+        return jsonify({"error": "Password must be at least 8 characters long"}), 400
+
+    users = User.get_all()
+    user_found = False
+    for user in users:
+        if user.email == email:
+            user.password = generate_password_hash(password)
+            user_found = True
+            break
+    
+    if user_found:
+        User.save_all(users)
+        return jsonify({"message": "Your password has been updated successfully."}), 200
+    else:
+        return jsonify({"error": "An error occurred. Please try again."}), 500
 

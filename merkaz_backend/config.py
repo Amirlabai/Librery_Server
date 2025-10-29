@@ -34,8 +34,8 @@ MAX_VIDEO_CONTENT_LENGTH = 1 * 1024 * 1024 * 1024
 # --- Mail Server ---
 MAIL_SERVER="smtp.gmail.com"
 MAIL_PORT=465
-MAIL_USERNAME="merkaztobekk@gmail.com"
-MAIL_PASSWORD="ypvqawnxcckfzynp"
+MAIL_USERNAME="amirlabay@gmail.com"
+MAIL_PASSWORD="tidvwqwiiolgmiio"
 MAIL_USE_TLS=False
 MAIL_USE_SSL=True
-MAIL_DEFAULT_SENDER="merkaztobekk@gmail.com"
+MAIL_DEFAULT_SENDER="amirlabay@gmail.com"

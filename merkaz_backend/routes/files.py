@@ -3,7 +3,7 @@ import shutil
 import zipfile
 from io import BytesIO
 from datetime import datetime
-from flask import Blueprint, render_template, redirect, url_for, session, send_from_directory, send_file, abort, flash, request
+from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
 
 import config
 from utils import log_event
@@ -12,11 +12,11 @@ from flask_cors import cross_origin
 
 files_bp = Blueprint('files', __name__)
 
-@files_bp.route('/')
-@files_bp.route('/browse/', defaults={'subpath': ''})
-@files_bp.route('/browse/<path:subpath>')
+@files_bp.route('/browse', defaults={'subpath': ''}, methods=["GET"])
+@files_bp.route('/browse/<path:subpath>', methods=["GET"])
 def downloads(subpath=''):
-    if not session.get("logged_in"): return redirect(url_for("auth.login"))
+    if not session.get("logged_in"):
+        return jsonify({"error": "Not logged in"}), 401
     
     share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
 
@@ -25,12 +25,12 @@ def downloads(subpath=''):
         safe_subpath = ''
         
     if '/.' in safe_subpath:
-        return abort(404)
+        return jsonify({"error": "Invalid path"}), 404
         
     current_path = os.path.join(share_dir, safe_subpath)
     
     if not os.path.abspath(current_path).startswith(os.path.abspath(share_dir)):
-        return abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     items = []
     if os.path.exists(current_path) and os.path.isdir(current_path):
@@ -57,20 +57,21 @@ def downloads(subpath=''):
         items = folders + files
     
     back_path = os.path.dirname(safe_subpath).replace('\\', '/') if safe_subpath else None
+    cooldown_level = session.get("cooldown_index", 0) + 1
 
-    return render_template("downloads.html", 
-                           items=items, 
-                           current_path=safe_subpath, 
-                           back_path=back_path,
-                           suggestion_error=session.pop('suggestion_error', None),
-                           suggestion_success=session.pop('suggestion_success', None),
-                           cooldown_level=session.get("cooldown_index", 0) + 1,
-                           is_admin=session.get('is_admin', False))
+    return jsonify({
+        "items": items,
+        "current_path": safe_subpath,
+        "back_path": back_path,
+        "is_admin": session.get('is_admin', False),
+        "cooldown_level": cooldown_level
+    }), 200
 
 
 @files_bp.route("/delete/<path:item_path>", methods=["POST"])
 def delete_item(item_path):
-    if not session.get("is_admin"): abort(403)
+    if not session.get("is_admin"):
+        return jsonify({"error": "Access denied"}), 403
     
     share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
     trash_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.TRASH_FOLDER)
@@ -78,8 +79,7 @@ def delete_item(item_path):
     source_path = os.path.join(share_dir, item_path)
 
     if not os.path.exists(source_path) or not source_path.startswith(share_dir):
-        flash("File or folder not found.", "error")
-        return redirect(request.referrer or url_for('files.downloads'))
+        return jsonify({"error": "File or folder not found"}), 404
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     base_name = os.path.basename(item_path)
@@ -88,35 +88,34 @@ def delete_item(item_path):
 
     try:
         shutil.move(source_path, dest_path)
-        flash(f"Successfully moved '{base_name}' to trash.", "success")
         log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "DELETE", item_path])
+        return jsonify({"message": f"Successfully moved '{base_name}' to trash."}), 200
     except Exception as e:
-        flash(f"Error deleting item: {e}", "error")
-
-    parent_folder = os.path.dirname(item_path)
-    if parent_folder:
-        return redirect(url_for('files.downloads', subpath=parent_folder))
-    return redirect(url_for('files.downloads'))
+        return jsonify({"error": f"Error deleting item: {e}"}), 500
 
 @files_bp.route("/download/file/<path:file_path>")
 def download_file(file_path):
-    if not session.get("logged_in"): return redirect(url_for("auth.login"))
+    if not session.get("logged_in"):
+        return jsonify({"error": "Not logged in"}), 401
     log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "FILE", file_path])
     share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
 
     directory, filename = os.path.split(file_path)
     safe_dir = os.path.join(share_dir, directory)
-    if not safe_dir.startswith(share_dir) or not os.path.isdir(safe_dir): return abort(403)
+    if not safe_dir.startswith(share_dir) or not os.path.isdir(safe_dir):
+        return jsonify({"error": "Access denied"}), 403
     return send_from_directory(safe_dir, filename, as_attachment=True)
 
 @files_bp.route("/download/folder/<path:folder_path>")
 def download_folder(folder_path):
-    if not session.get("logged_in"): return redirect(url_for("auth.login"))
+    if not session.get("logged_in"):
+        return jsonify({"error": "Not logged in"}), 401
     log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "FOLDER", folder_path])
     share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
 
     absolute_folder_path = os.path.join(share_dir, folder_path)
-    if not os.path.isdir(absolute_folder_path) or not absolute_folder_path.startswith(share_dir): return abort(404)
+    if not os.path.isdir(absolute_folder_path) or not absolute_folder_path.startswith(share_dir):
+        return jsonify({"error": "Folder not found"}), 404
     
     memory_file = BytesIO()
     with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
@@ -130,9 +129,16 @@ def download_folder(folder_path):
 COOLDOWN_LEVELS = [60, 300, 600, 1800, 3600]
 @files_bp.route("/suggest", methods=["POST"])
 def suggest():
-    if not session.get("logged_in"): return redirect(url_for("auth.login"))
-    suggestion_text = request.form.get("suggestion")
-    if not suggestion_text: return redirect(url_for("files.downloads"))
+    if not session.get("logged_in"):
+        return jsonify({"error": "Not logged in"}), 401
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON body"}), 400
+    
+    suggestion_text = data.get("suggestion")
+    if not suggestion_text:
+        return jsonify({"error": "Suggestion text is required"}), 400
     
     now = datetime.now()
     last_suggestion_time_str = session.get("last_suggestion_time")
@@ -147,12 +153,14 @@ def suggest():
         current_cooldown = COOLDOWN_LEVELS[cooldown_index]
         if elapsed_time < current_cooldown:
             remaining = max(1, round((current_cooldown - elapsed_time) / 60))
-            session['suggestion_error'] = f"You must wait another {remaining} minute(s) before submitting again."
-            return redirect(url_for('files.downloads'))
+            return jsonify({
+                "error": f"You must wait another {remaining} minute(s) before submitting again.",
+                "remaining_minutes": remaining
+            }), 429
             
     log_event(config.SUGGESTION_LOG_FILE, [now.strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), suggestion_text])
     session["last_suggestion_time"] = now.isoformat()
     if cooldown_index < len(COOLDOWN_LEVELS) - 1:
         session["cooldown_index"] = cooldown_index + 1
-    session['suggestion_success'] = "Thank you, your suggestion has been submitted!"
-    return redirect(url_for("files.downloads"))
+    
+    return jsonify({"message": "Thank you, your suggestion has been submitted!"}), 200
