@@ -36,12 +36,11 @@ export class AdminUploadsComponent {
   }
 
   approve(upload: UploadItem, index: number) {
-  const formData = new FormData();
-  formData.append('target_path', upload.path);
+    const payload = { target_path: upload.path };
 
-  this.http.post(`http://localhost:8000/admin/move_upload/${upload.filename}`, formData, {
-    withCredentials: true
-  }).subscribe({
+    this.http.post(`http://localhost:8000/admin/move_upload/${upload.filename}`, payload, {
+      withCredentials: true
+    }).subscribe({
     next: () => {
       this.flashMessages = [{ type: 'success', text: `Approved ${upload.filename}` }];
       this.uploads.splice(index, 1);
@@ -54,10 +53,10 @@ export class AdminUploadsComponent {
     
     if (!confirm('Are you sure you want to decline and delete this item?')) return;
 
-    const formData = new FormData();
-    formData.append('email', upload.email);
+    const payload = { target_path: upload.path };
+    
 
-    this.http.post(`http://localhost:8000/admin/decline_upload/${upload.filename}`, formData, {
+    this.http.post(`http://localhost:8000/admin/decline_upload/${upload.filename}`, payload, {
       withCredentials: true
     }).subscribe({
       next: () => {

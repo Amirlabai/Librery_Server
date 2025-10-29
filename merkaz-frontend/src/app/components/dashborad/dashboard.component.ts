@@ -70,16 +70,21 @@ export class DashboardComponent {
 
 
   download(item: any) {
-    window.open(`http://localhost:8000/browse/download/${item.path}`, '_blank');
+    window.open(`http://localhost:8000/download/file/${item.path}`, '_blank');
   }
 
   deleteItem(item: any) {
-    if (!confirm(`Delete ${item.name}?`)) return;
-    this.http.delete(`http://localhost:8000/browse/delete/${item.path}`).subscribe({
-      next: () => this.loadFiles(),
-      error: err => console.error(err)
-    });
-  }
+  if (!confirm(`Delete ${item.name}?`)) return;
+
+  this.http.post(
+    `http://localhost:8000/delete/${item.path}`,
+    {},
+    { withCredentials: true }
+  ).subscribe({
+    next: () => this.loadFiles(),
+    error: err => console.error(err)
+  });
+}
 
   logout() {
     this.http.post('http://localhost:8000/logout', {}, { withCredentials: true }).subscribe({
