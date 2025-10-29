@@ -72,8 +72,8 @@ if __name__ == "__main__":
     create_file_with_header(config.SESSION_LOG_FILE, ["timestamp", "email", "event"])
     create_file_with_header(config.DOWNLOAD_LOG_FILE, ["timestamp", "email", "type", "path"])
     create_file_with_header(config.SUGGESTION_LOG_FILE, ["timestamp", "email", "suggestion"])
-    create_file_with_header(config.UPLOAD_LOG_FILE, ["timestamp", "email", "filename", "path"])
-    create_file_with_header(config.DECLINED_UPLOAD_LOG_FILE, ["timestamp", "email", "filename"])
+    create_file_with_header(config.UPLOAD_LOG_FILE, ["timestamp", "email", "user_id", "filename", "path"])
+    create_file_with_header(config.DECLINED_UPLOAD_LOG_FILE, ["timestamp", "email", "user_id", "filename"])
 
     app = create_app()
     

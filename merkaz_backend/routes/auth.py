@@ -45,6 +45,7 @@ def api_login():
 
     session["logged_in"] = True
     session["email"] = user.email
+    session["user_id"] = user.user_id  # Store user ID in session
     session["is_admin"] = user.is_admin
 
     mark_user_online()
