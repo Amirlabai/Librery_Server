@@ -9,6 +9,7 @@ from user import User
 from utils import log_event
 from mailer import send_new_user_notification, send_password_reset_email
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
+from routes.session_tracker import mark_user_online, mark_user_offline, active_sessions
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -45,6 +46,9 @@ def api_login():
     session["logged_in"] = True
     session["email"] = user.email
     session["is_admin"] = user.is_admin
+
+    mark_user_online()
+
     log_event(config.SESSION_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGIN_SUCCESS"])
 
     return jsonify({
@@ -76,11 +80,16 @@ def api_register():
     send_new_user_notification(current_app._get_current_object(), email)
     return jsonify({"message": "Registration successful. Pending admin approval."}), 201
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout", methods=["POST"])
+@cross_origin(supports_credentials=True)
 def logout():
-    log_event(config.SESSION_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "LOGOUT"])
+    log_event(
+        config.SESSION_LOG_FILE,
+        [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "LOGOUT"]
+    )
+    mark_user_offline()
     session.clear()
-    return redirect(url_for("auth.login"))
+    return jsonify({"message": "Logged out"}), 200
 
 @auth_bp.route("/forgot-password", methods=["POST"])
 def api_forgot_password():

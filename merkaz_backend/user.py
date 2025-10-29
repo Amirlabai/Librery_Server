@@ -106,5 +106,7 @@ class User:
         return {
             "email": self.email,
             "role": self.role,
-            "status": self.status
+            "status": self.status,
+            "is_admin": self.is_admin,
+            "is_active": self.is_active
         }

@@ -9,7 +9,7 @@ interface User {
   status: string;
   is_admin: boolean;
   is_active: boolean;
-  online_status?: boolean; // Added optional online_status based on template
+  online_status?: boolean; 
 }
 
 @Component({
@@ -32,28 +32,29 @@ export class AdminUsersComponent implements OnInit { // Implement OnInit
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
+    console.log("✅ AdminUsersComponent loaded!");
     this.loadUsers(this.page); // Load the initial page
+    this.startHeartbeat();
   }
 
   loadUsers(page: number = 1) {
-    // Pass the page number as a query parameter
-    this.http
-      .get<any>(`http://localhost:8000/admin/users?page=${page}`, { withCredentials: true })
-      .subscribe({
-        next: (res) => {
-          this.users = res.users || [];
-          // --- Update pagination properties from response ---
-          // Assuming backend returns 'page' and 'total_pages'
-          this.page = res.page || 1;
-          this.totalPages = res.total_pages || 1; 
-          // ------------------------------------------------
-        },
-        error: (err) => {
-          console.error(err);
-          this.flashMessages = [{ type: 'error', text: 'Failed to load users.' }];
-        }
-      });
-  }
+  this.http
+    .get<any>(`http://localhost:8000/admin/users?page=${page}`, { withCredentials: true })
+    .subscribe({
+      next: (res) => {
+        this.currentUserEmail = res.current_admin || localStorage.getItem('email') || '';
+
+        this.users = res.users || [];
+
+        this.page = res.page || 1;
+        this.totalPages = res.total_pages || 1;
+      },
+      error: (err) => {
+        console.error(err);
+        this.flashMessages = [{ type: 'error', text: 'Failed to load users.' }];
+      }
+    });
+}
 
   // --- Added for Pagination ---
   loadPage(page: number) {
@@ -90,4 +91,13 @@ export class AdminUsersComponent implements OnInit { // Implement OnInit
         }
       });
   }
+  startHeartbeat() {
+  setInterval(() => {
+    this.http.post('http://localhost:8000/admin/heartbeat', {}, { withCredentials: true })
+      .subscribe({
+        next: res => console.log('✅ Heartbeat OK', res),
+        error: err => console.error('❌ Heartbeat failed', err)
+      });
+  }, 10000);
+}
 }
