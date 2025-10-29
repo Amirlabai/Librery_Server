@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
     NgClass,
     FormsModule,
     CommonModule,
-    RouterModule 
+    RouterOutlet 
   ],
   styleUrls: ['./dashboard.component.css']
 })
@@ -31,10 +31,8 @@ export class DashboardComponent {
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
-    const role = localStorage.getItem('role');
-    this.userRole = role || '';
-    
-    this.isAdmin = this.userRole === 'admin'; 
+    this.userRole = localStorage.getItem('role') || '';
+    this.isAdmin = this.userRole === 'admin';
     this.loadFiles();
   }
 
@@ -81,8 +79,13 @@ export class DashboardComponent {
   }
 
   logout() {
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    this.http.post('http://localhost:8000/logout', {}, { withCredentials: true }).subscribe({
+      next: () => {
+        localStorage.clear();
+        this.router.navigate(['/login']);
+      },
+      error: err => console.error('Logout failed', err)
+    });
   }
 
   submitSuggestion() {
@@ -94,4 +97,6 @@ export class DashboardComponent {
       error: () => this.suggestionError = 'Failed to send suggestion.'
     });
   }
+
+  
 }

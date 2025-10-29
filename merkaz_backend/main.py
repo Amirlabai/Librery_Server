@@ -1,4 +1,5 @@
-import os
+import sys, os
+
 from flask import Flask
 from waitress import serve
 from datetime import datetime, timedelta
@@ -29,6 +30,16 @@ def create_app():
     app.config['MAIL_USE_TLS'] = config.MAIL_USE_TLS
     app.config['MAIL_USE_SSL'] = config.MAIL_USE_SSL
     mail.init_app(app)
+
+    CORS(
+        app,
+        resources={r"/*": {
+            "origins": ["http://localhost:4200"],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        }},
+        supports_credentials=True
+    )
 
     # Register blueprints
     app.register_blueprint(auth_bp)
@@ -61,9 +72,7 @@ if __name__ == "__main__":
     create_file_with_header(config.DECLINED_UPLOAD_LOG_FILE, ["timestamp", "email", "filename"])
 
     app = create_app()
-    CORS(app,
-     resources={r"/*": {"origins": "http://localhost:4200"}},
-     supports_credentials=True)
+    
 
 
     print("Starting server with Waitress...")
