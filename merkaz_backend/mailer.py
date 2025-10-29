@@ -2,19 +2,17 @@ from flask_mail import Mail, Message
 from flask import url_for, current_app
 import config
 from user import User
+import threading
 
 mail = Mail()
 
-def send_new_user_notification(app, user_email):
-    """Notifies all admins that a new user has registered."""
+def _send_new_user_notification_sync(app, user_email, pending_url):
+    """Internal function that actually sends the email (runs in background thread)."""
     with app.app_context():
         admin_emails = User.get_admin_emails()
         if not admin_emails:
             current_app.logger.warning("No admin users found to send new user notification.")
             return
-
-        # Generate the URL for the admin pending page
-        pending_url = url_for('admin.admin_pending', _external=True)
 
         msg = Message(
             'New User Registration',
@@ -33,12 +31,17 @@ def send_new_user_notification(app, user_email):
         except Exception as e:
             current_app.logger.error(f"Error sending admin notification: {e}")
 
-def send_approval_email(app, user_email):
-    """Sends an email to the user when their account is approved."""
-    with app.app_context():
-        # Generate the URL for the login page
-        login_url = url_for('auth.api_login', _external=True)
+def send_new_user_notification(app, user_email):
+    """Notifies all admins that a new user has registered (asynchronously)."""
+    # Generate URL in the request context before starting the thread
+    pending_url = url_for('admin.admin_pending', _external=True)
+    thread = threading.Thread(target=_send_new_user_notification_sync, args=(app, user_email, pending_url))
+    thread.daemon = True
+    thread.start()
 
+def _send_approval_email_sync(app, user_email, login_url):
+    """Internal function that actually sends the email (runs in background thread)."""
+    with app.app_context():
         msg = Message(
             'Your Account has been Approved!',
             sender=config.MAIL_DEFAULT_SENDER,
@@ -57,8 +60,16 @@ def send_approval_email(app, user_email):
         except Exception as e:
             current_app.logger.error(f"Error sending approval email: {e}")
 
-def send_denial_email(app, user_email):
-    """Sends an email to the user when their account is denied."""
+def send_approval_email(app, user_email):
+    """Sends an email to the user when their account is approved (asynchronously)."""
+    # Generate URL in the request context before starting the thread
+    login_url = url_for('auth.api_login', _external=True)
+    thread = threading.Thread(target=_send_approval_email_sync, args=(app, user_email, login_url))
+    thread.daemon = True
+    thread.start()
+
+def _send_denial_email_sync(app, user_email):
+    """Internal function that actually sends the email (runs in background thread)."""
     with app.app_context():
         msg = Message(
             'Your Registration Status',
@@ -77,10 +88,15 @@ def send_denial_email(app, user_email):
         except Exception as e:
             current_app.logger.error(f"Error sending denial email: {e}")
 
-def send_password_reset_email(app, user_email, token):
-    """Sends a password reset email to the user."""
+def send_denial_email(app, user_email):
+    """Sends an email to the user when their account is denied (asynchronously)."""
+    thread = threading.Thread(target=_send_denial_email_sync, args=(app, user_email))
+    thread.daemon = True
+    thread.start()
+
+def _send_password_reset_email_sync(app, user_email, token, reset_url):
+    """Internal function that actually sends the email (runs in background thread)."""
     with app.app_context():
-        reset_url = url_for('auth.reset_password', token=token, _external=True)
         msg = Message(
             'Password Reset Request',
             sender=config.MAIL_DEFAULT_SENDER,
@@ -97,3 +113,11 @@ def send_password_reset_email(app, user_email, token):
             current_app.logger.info(f"Password reset email sent to {user_email}")
         except Exception as e:
             current_app.logger.error(f"Error sending password reset email: {e}")
+
+def send_password_reset_email(app, user_email, token):
+    """Sends a password reset email to the user (asynchronously)."""
+    # Generate URL in the request context before starting the thread
+    reset_url = url_for('auth.reset_password', token=token, _external=True)
+    thread = threading.Thread(target=_send_password_reset_email_sync, args=(app, user_email, token, reset_url))
+    thread.daemon = True
+    thread.start()
