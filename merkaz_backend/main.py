@@ -52,9 +52,12 @@ def create_app():
 if __name__ == "__main__":
     #run_ngrok.main()
     # --- Directory and File Initialization ---
-    share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), config.SHARE_FOLDER)
-    trash_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), config.TRASH_FOLDER)
-    upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), config.UPLOAD_FOLDER)
+    # Get project root (one level up from merkaz_backend directory)
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
+    trash_dir = os.path.join(project_root, config.TRASH_FOLDER)
+    upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
 
     if not os.path.exists(share_dir): os.makedirs(share_dir)
     if not os.path.exists(trash_dir): os.makedirs(trash_dir)
