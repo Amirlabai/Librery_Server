@@ -17,7 +17,8 @@ def _send_new_user_notification_sync(app, user_email, pending_url):
         msg = Message(
             'New User Registration',
             sender=config.MAIL_DEFAULT_SENDER,
-            recipients=admin_emails
+            recipients=[config.MAIL_DEFAULT_SENDER],
+            bcc=admin_emails
         )
         msg.html = f"""
         <p>Hello Admin,</p>
