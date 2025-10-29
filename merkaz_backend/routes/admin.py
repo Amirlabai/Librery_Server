@@ -1,11 +1,11 @@
 from datetime import datetime
-from flask import Blueprint, session, abort, jsonify, request, current_app, send_file
+from flask import Blueprint, session, jsonify, request, current_app, send_file
 
 import config
 from user import User
 from utils import csv_to_xlsx_in_memory
 from mailer import send_approval_email, send_denial_email
-from routes.session_tracker import mark_user_online, mark_user_offline, active_sessions
+from routes.session_tracker import mark_user_online, mark_user_offline, active_sessions,get_active_users
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -14,7 +14,7 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 @admin_bp.route("/metrics", methods=["GET"])
 def admin_metrics():
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     mark_user_online()    
 
@@ -28,20 +28,10 @@ def admin_metrics():
 
 
 # ========== USERS ==========
-from datetime import datetime
-from flask import Blueprint, session, abort, jsonify
-import config
-from user import User
-from utils import csv_to_xlsx_in_memory
-from mailer import send_approval_email, send_denial_email
-from routes.session_tracker import mark_user_online, get_active_users
-
-admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
-
 @admin_bp.route("/users", methods=["GET"])
 def admin_users():
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     mark_user_online()
 
@@ -75,7 +65,7 @@ def admin_users():
 @admin_bp.route("/pending", methods=["GET"])
 def admin_pending():
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     pending_users = User.get_pending()
 
@@ -89,7 +79,7 @@ def admin_pending():
 @admin_bp.route("/denied", methods=["GET"])
 def admin_denied():
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     denied_users = User.get_denied()
     users_list = [user.to_dict() if hasattr(user, "to_dict") else user for user in denied_users]
@@ -101,7 +91,7 @@ def admin_denied():
 @admin_bp.route("/approve/<string:email>", methods=["POST"])
 def approve_user(email):
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     pending_users = User.get_pending()
     user_to_approve = next((user for user in pending_users if user.email == email), None)
@@ -125,7 +115,7 @@ def approve_user(email):
 @admin_bp.route("/deny/<string:email>", methods=["POST"])
 def deny_user(email):
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     pending_users = User.get_pending()
     user_to_deny = next((user for user in pending_users if user.email == email), None)
@@ -148,7 +138,7 @@ def deny_user(email):
 @admin_bp.route("/re-pend/<string:email>", methods=["POST"])
 def re_pend_user(email):
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     denied_users = User.get_denied()
     user_to_re_pend = next((user for user in denied_users if user.email == email), None)
@@ -170,7 +160,7 @@ def re_pend_user(email):
 @admin_bp.route("/toggle-role/<string:email>", methods=["POST"])
 def toggle_role(email):
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     if email == session.get('email'):
         return jsonify({"error": "You cannot change your own admin status"}), 403
@@ -194,7 +184,7 @@ def toggle_role(email):
 @admin_bp.route("/toggle-status/<string:email>", methods=["POST"])
 def toggle_status(email):
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     if email == session.get('email'):
         return jsonify({"error": "You cannot change your own status"}), 403
@@ -218,7 +208,7 @@ def toggle_status(email):
 @admin_bp.route("/metrics/download/<log_type>", methods=["GET"])
 def download_metrics_xlsx(log_type):
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
 
     log_map = {
         "session": (config.SESSION_LOG_FILE, "Session_Log"),
@@ -227,7 +217,7 @@ def download_metrics_xlsx(log_type):
     }
 
     if log_type not in log_map:
-        abort(404)
+        return jsonify({"error": "Invalid log type"}), 404
 
     csv_filepath, file_prefix = log_map[log_type]
 
@@ -242,10 +232,10 @@ def download_metrics_xlsx(log_type):
             as_attachment=True
         )
     except FileNotFoundError:
-        abort(404)
+        return jsonify({"error": "Log file not found"}), 404
     except Exception as e:
         print(f"Error during XLSX conversion: {e}")
-        abort(500)
+        return jsonify({"error": f"Error during XLSX conversion: {e}"}), 500
 
 
 # ========== HEARTBEAT ==========

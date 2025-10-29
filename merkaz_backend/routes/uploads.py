@@ -31,71 +31,77 @@ def is_file_malicious(file_stream):
     return False
 
 
-@uploads_bp.route("/upload", defaults={'subpath': ''}, methods=["GET", "POST"])
-@uploads_bp.route("/upload/<path:subpath>", methods=["GET", "POST"])
-def upload_file(subpath):
+@uploads_bp.route("/upload", methods=["POST"])
+def upload_file():
     if not session.get("logged_in"):
-        return redirect(url_for("auth.api_login"))
+        return jsonify({"error": "Not logged in"}), 401
         
     upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
+    
+    uploaded_files = request.files.getlist("file")
+    if not uploaded_files or (len(uploaded_files) == 1 and uploaded_files[0].filename == ''):
+        return jsonify({"error": "No files selected"}), 400
         
-    if request.method == "POST":
-        uploaded_files = request.files.getlist("file")
-        if not uploaded_files or (len(uploaded_files) == 1 and uploaded_files[0].filename == ''):
-            flash('No files selected.', 'error')
-            return redirect(request.url)
+    # Get subpath from form data (for file uploads, subpath comes in form, not JSON)
+    upload_subpath = request.form.get('subpath', '')
+    
+    successful_uploads = []
+    errors = []
+    
+    for file in uploaded_files:
+        if file:
+            if not allowed_file(file.filename):
+                errors.append(f"File type not allowed for {file.filename}")
+                continue
+
+            if is_file_malicious(file.stream):
+                errors.append(f"Malicious file detected: {file.filename}")
+                continue
+                
+            # filename from the browser can include the relative path for folder uploads
+            filename = file.filename
             
-        upload_subpath = request.form.get('subpath', '')
-        successful_uploads = []
-        
-        for file in uploaded_files:
-            if file:
-                if not allowed_file(file.filename):
-                    flash(f"File type not allowed for {file.filename}", "error")
-                    continue
+            # Security check to prevent path traversal attacks
+            if '..' in filename.split('/') or '..' in filename.split('\\') or os.path.isabs(filename):
+                errors.append(f"Invalid path in filename: '{filename}' was skipped.")
+                continue
+            
+            save_path = os.path.join(upload_dir, filename)
 
-                if is_file_malicious(file.stream):
-                    flash(f"Malicious file detected: {file.filename}", "error")
-                    continue
-                # filename from the browser can include the relative path for folder uploads
-                filename = file.filename
+            # Final security check to ensure the path doesn't escape the upload directory
+            if not os.path.abspath(save_path).startswith(os.path.abspath(upload_dir)):
+                errors.append(f"Invalid save path for file: '{filename}' was skipped.")
+                continue
+
+            try:
+                # Create parent directories if they don't exist
+                os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                file.save(save_path)
                 
-                # Security check to prevent path traversal attacks
-                if '..' in filename.split('/') or '..' in filename.split('\\') or os.path.isabs(filename):
-                    flash(f"Invalid path in filename: '{filename}' was skipped.", "error")
-                    continue
+                # The suggested path for the file after admin approval
+                final_path_suggestion = os.path.join(upload_subpath, filename).replace('\\', '/')
                 
-                save_path = os.path.join(upload_dir, filename)
+                log_event(config.UPLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email"), filename, final_path_suggestion])
+                successful_uploads.append(filename)
+            except Exception as e:
+                errors.append(f"Could not upload '{filename}'. Error: {e}")
 
-                # Final security check to ensure the path doesn't escape the upload directory
-                if not os.path.abspath(save_path).startswith(os.path.abspath(upload_dir)):
-                    flash(f"Invalid save path for file: '{filename}' was skipped.", "error")
-                    continue
-
-                try:
-                    # Create parent directories if they don't exist
-                    os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                    file.save(save_path)
-                    
-                    # The suggested path for the file after admin approval
-                    final_path_suggestion = os.path.join(upload_subpath, filename).replace('\\', '/')
-                    
-                    log_event(config.UPLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email"), filename, final_path_suggestion])
-                    successful_uploads.append(filename)
-                except Exception as e:
-                    flash(f"Could not upload '{filename}'. Error: {e}", "error")
-
-        if successful_uploads:
-            flash(f'Successfully uploaded {len(successful_uploads)} file(s). Files are pending review.', 'success')
-        
-        return redirect(url_for('files.downloads', subpath=upload_subpath))
-
-    return render_template('upload.html', subpath=subpath)
+    if successful_uploads:
+        response = {
+            "message": f"Successfully uploaded {len(successful_uploads)} file(s). Files are pending review.",
+            "successful_uploads": successful_uploads,
+            "count": len(successful_uploads)
+        }
+        if errors:
+            response["errors"] = errors
+        return jsonify(response), 200
+    else:
+        return jsonify({"error": "No files were uploaded", "errors": errors}), 400
 
 @uploads_bp.route('/my_uploads')
 def my_uploads():
     if not session.get('logged_in'):
-        return redirect(url_for('auth.login'))
+        return jsonify({"error": "Not logged in"}), 401
 
     upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
     user_email = session.get('email')
@@ -134,7 +140,7 @@ def my_uploads():
 @uploads_bp.route("/admin/uploads")
 def admin_uploads():
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
         
     upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes", ""), config.UPLOAD_FOLDER)
     grouped_uploads = {}
@@ -169,43 +175,45 @@ def admin_uploads():
 @uploads_bp.route("/admin/move_upload/<path:filename>", methods=["POST"])
 def move_upload(filename):
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
         
     upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
     share_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.SHARE_FOLDER)
     
-    target_path_str = request.form.get("target_path")
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON body"}), 400
+    
+    target_path_str = data.get("target_path")
     if not target_path_str:
-        flash("Target path cannot be empty.", "error")
-        return redirect(url_for("uploads.admin_uploads"))
+        return jsonify({"error": "Target path cannot be empty"}), 400
 
     source_item = os.path.join(upload_dir, filename)
     destination_path = os.path.join(share_dir, target_path_str)
     
     safe_destination = os.path.abspath(destination_path)
     if not safe_destination.startswith(os.path.abspath(share_dir)):
-        flash("Invalid target path.", "error")
-        return redirect(url_for("uploads.admin_uploads"))
+        return jsonify({"error": "Invalid target path"}), 400
 
     try:
         os.makedirs(os.path.dirname(safe_destination), exist_ok=True)
         shutil.move(source_item, safe_destination)
-        flash(f'Item "{filename}" has been successfully moved to "{target_path_str}".', "success")
+        return jsonify({"message": f'Item "{filename}" has been successfully moved to "{target_path_str}".'}), 200
     except FileNotFoundError:
-        flash(f'Error: Source item "{filename}" not found.', "error")
+        return jsonify({"error": f'Source item "{filename}" not found'}), 404
     except Exception as e:
-        flash(f"An error occurred while moving the item: {e}", "error")
-
-    return redirect(url_for("uploads.admin_uploads"))
+        return jsonify({"error": f"An error occurred while moving the item: {e}"}), 500
 
 @uploads_bp.route("/admin/decline_upload/<path:filename>", methods=["POST"])
 def decline_upload(filename):
     if not session.get("is_admin"):
-        abort(403)
+        return jsonify({"error": "Access denied"}), 403
         
     upload_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace("routes",""), config.UPLOAD_FOLDER)
     item_to_delete = os.path.join(upload_dir, filename)
-    user_email = request.form.get("email", "unknown")
+    
+    data = request.get_json() or {}
+    user_email = data.get("email", "unknown")
     
     log_event(config.DECLINED_UPLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, filename])
 
@@ -215,10 +223,8 @@ def decline_upload(filename):
                 shutil.rmtree(item_to_delete)
             else:
                 os.remove(item_to_delete)
-            flash(f'Item "{filename}" has been declined and removed.', "success")
+            return jsonify({"message": f'Item "{filename}" has been declined and removed.'}), 200
         else:
-            flash(f'Item "{filename}" was already removed.', "error")
+            return jsonify({"error": f'Item "{filename}" was already removed.'}), 404
     except Exception as e:
-        flash(f"An error occurred while declining the item: {e}", "error")
-
-    return redirect(url_for("uploads.admin_uploads"))
+        return jsonify({"error": f"An error occurred while declining the item: {e}"}), 500
