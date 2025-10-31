@@ -6,12 +6,44 @@
   height: 100%;
 }
 .container {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 900px;
+  height: calc(100vh - 30px);
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   padding: 20px 40px;
+  box-sizing: border-box;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  min-height: 0;
+  max-height: 50vh; 
+}
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }
 .header {
   display: flex;
