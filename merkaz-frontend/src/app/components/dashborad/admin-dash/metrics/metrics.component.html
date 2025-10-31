@@ -12,12 +12,13 @@
             <a routerLink="/uploads"  class="nav-tab">Uploads</a>
         </div>
        
+    <div class="content-wrapper">
         <div *ngFor="let log of logs" class="log-item">
             <div class="log-details">
                 <h2>{{ log.name }}</h2>
                 <p>{{ log.description }}</p>
+            </div>
+            <button (click)="downloadLog(log.type)" class="download-btn">Download as Excel</button>
         </div>
-    <button (click)="downloadLog(log.type)" class="download-btn">Download as Excel</button>
-  </div>
-  
+    </div>
 </div>
