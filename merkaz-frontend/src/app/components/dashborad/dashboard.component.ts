@@ -30,6 +30,10 @@ export class DashboardComponent {
   suggestionText = '';
   suggestionSuccess = '';
   suggestionError = '';
+  showCreateFolderModal = false;
+  newFolderName = '';
+  folderCreationError = '';
+  folderCreationSuccess = '';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -40,14 +44,29 @@ export class DashboardComponent {
   }
 
   loadFiles() {
-  this.http.get('http://localhost:8000/browse', { withCredentials: true }).subscribe({
-    next: (res: any) => this.items = res.items || [],
-    error: err => console.error(err)
-  });
-}
+    const url = this.currentPath 
+      ? `http://localhost:8000/browse/${this.currentPath}`
+      : 'http://localhost:8000/browse';
+    
+    this.http.get(url, { withCredentials: true }).subscribe({
+      next: (res: any) => {
+        this.items = res.items || [];
+        if (res.current_path !== undefined) {
+          this.currentPath = res.current_path;
+        }
+        if (res.is_admin !== undefined) {
+          this.isAdmin = res.is_admin;
+        }
+        if (res.cooldown_level !== undefined) {
+          this.cooldownLevel = res.cooldown_level;
+        }
+      },
+      error: err => console.error(err)
+    });
+  }
 
   navigate(item: any) {
-    if (item.isFolder) {
+    if (item.is_folder || item.isFolder) {
       this.currentPath = item.path;
       this.loadFiles();
     } else {
@@ -55,7 +74,13 @@ export class DashboardComponent {
     }
   }
   goUp() {
-    this.currentPath = ''; 
+    const pathParts = this.currentPath.split('/').filter(p => p);
+    if (pathParts.length > 0) {
+      pathParts.pop();
+      this.currentPath = pathParts.join('/');
+    } else {
+      this.currentPath = '';
+    }
     this.loadFiles();
   }
   navAdmin(){
@@ -103,6 +128,56 @@ export class DashboardComponent {
         this.suggestionText = '';
       },
       error: () => this.suggestionError = 'Failed to send suggestion.'
+    });
+  }
+
+  openCreateFolderModal() {
+    this.showCreateFolderModal = true;
+    this.newFolderName = '';
+    this.folderCreationError = '';
+    this.folderCreationSuccess = '';
+  }
+
+  closeCreateFolderModal() {
+    this.showCreateFolderModal = false;
+    this.newFolderName = '';
+    this.folderCreationError = '';
+    this.folderCreationSuccess = '';
+  }
+
+  createFolder() {
+    if (!this.newFolderName.trim()) {
+      this.folderCreationError = 'Folder name cannot be empty.';
+      return;
+    }
+
+    this.folderCreationError = '';
+    this.folderCreationSuccess = '';
+
+    this.http.post(
+      'http://localhost:8000/create_folder',
+      {
+        parent_path: this.currentPath,
+        folder_name: this.newFolderName.trim()
+      },
+      { withCredentials: true }
+    ).subscribe({
+      next: (res: any) => {
+        if (res.message) {
+          this.folderCreationSuccess = res.message;
+          setTimeout(() => {
+            this.closeCreateFolderModal();
+            this.loadFiles();
+          }, 1000);
+        }
+      },
+      error: (err: any) => {
+        if (err.error && err.error.error) {
+          this.folderCreationError = err.error.error;
+        } else {
+          this.folderCreationError = 'Failed to create folder.';
+        }
+      }
     });
   }
 

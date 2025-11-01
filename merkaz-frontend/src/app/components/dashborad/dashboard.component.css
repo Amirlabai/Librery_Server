@@ -90,9 +90,22 @@ h1 a {
 .admin-dashboard-btn:hover, .upload-btn:hover {
   background-color: #185abc;
 }
-.path-bar { color: #5f6368; font-size: 14px; margin-bottom: 20px; }
-.path-bar a { color: #1a73e8; text-decoration: none; }
+.path-bar { color: #5f6368; font-size: 14px; margin-bottom: 20px; display: flex; align-items: center; }
+.path-bar a { color: #1a73e8; text-decoration: none; cursor: pointer; }
 .path-bar a:hover { text-decoration: underline; }
+.create-folder-btn {
+  background-color: #34a853;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.create-folder-btn:hover {
+  background-color: #2d8f47;
+}
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; vertical-align: middle;}
 th { color: #5f6368; font-weight: 500; }
@@ -120,5 +133,124 @@ tr:hover { background-color: #f1f3f4; }
 .suggestion-box button:hover { background-color: #185abc; }
 .flash-messages { list-style: none; padding: 0; margin-bottom: 15px; }
 .flash-messages li { padding: 10px; border-radius: 4px; margin-bottom: 10px; }
-.flash-success { color: #1e8e3e; background-color: #e6f4ea; }
-.flash-error { color: #d93025; background-color: #fce8e6; }
+.flash-success { color: #1e8e3e; background-color: #e6f4ea; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+.flash-error { color: #d93025; background-color: #fce8e6; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #5f6368;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.modal-close:hover {
+  background-color: #f1f3f4;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-body label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #202124;
+}
+
+.modal-body input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+.modal-body input:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.create-btn {
+  background-color: #1a73e8;
+  color: white;
+}
+
+.create-btn:hover {
+  background-color: #185abc;
+}
+
+.cancel-btn {
+  background-color: #e8eaed;
+  color: #3c4043;
+}
+
+.cancel-btn:hover {
+  background-color: #d2d5d9;
+}

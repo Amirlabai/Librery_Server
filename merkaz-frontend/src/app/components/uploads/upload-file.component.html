@@ -5,7 +5,7 @@
 
 <p>
 Your upload will be submitted for admin review. If approved, it will be placed in:
-<strong>/{{ subpath || 'Home' }}</strong>
+<strong>{{ subpath ? ('/' + subpath) : '/Home' }}</strong>
 </p>
 
 

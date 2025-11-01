@@ -96,6 +96,47 @@ def delete_item(item_path):
     except Exception as e:
         return jsonify({"error": f"Error deleting item: {e}"}), 500
 
+@files_bp.route("/create_folder", methods=["POST"])
+def create_folder():
+    if not session.get("is_admin"):
+        return jsonify({"error": "Access denied"}), 403
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON body"}), 400
+    
+    parent_path = data.get("parent_path", "")
+    folder_name = data.get("folder_name", "").strip()
+    
+    if not folder_name:
+        return jsonify({"error": "Folder name cannot be empty."}), 400
+    
+    if '/' in folder_name or '\\' in folder_name or '..' in folder_name:
+        return jsonify({"error": "Invalid characters in folder name."}), 400
+    
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
+    
+    safe_parent_path = os.path.normpath(parent_path).replace('\\', '/')
+    if safe_parent_path == '.':
+        safe_parent_path = ''
+    
+    new_folder_path = os.path.join(share_dir, safe_parent_path, folder_name)
+    
+    if not os.path.abspath(new_folder_path).startswith(os.path.abspath(share_dir)):
+        return jsonify({"error": "Invalid path."}), 400
+    
+    if os.path.exists(new_folder_path):
+        return jsonify({"error": f"A folder or file named '{folder_name}' already exists."}), 409
+    
+    try:
+        os.makedirs(new_folder_path)
+        folder_path_url = os.path.join(safe_parent_path, folder_name).replace('\\', '/') if safe_parent_path else folder_name
+        log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "CREATE_FOLDER", folder_path_url])
+        return jsonify({"message": f"Folder '{folder_name}' created successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error creating folder: {e}"}), 500
+
 @files_bp.route("/download/file/<path:file_path>")
 def download_file(file_path):
     if not session.get("logged_in"):
