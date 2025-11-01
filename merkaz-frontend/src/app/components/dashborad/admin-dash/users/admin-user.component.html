@@ -23,93 +23,99 @@
     </ul>
   </div>
 
-  <!-- Users Table -->
-  <table>
-    <thead>
-      <tr>
-        <th>Email</th>
-        <th style="width: 15%; text-align: center;">Role</th>
-        <th style="width: 15%; text-align: center;">Status</th>
-        <th style="width: 15%; text-align: center;">Online Status</th>
-        <th style="width: 30%; text-align: center;">Actions</th>
-      </tr>
-    </thead>
+  <div class="content-wrapper">
+    <div class="scrollable-content">
+      <!-- Users Table -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th style="width: 15%; text-align: center;">Role</th>
+              <th style="width: 15%; text-align: center;">Status</th>
+              <th style="width: 15%; text-align: center;">Online Status</th>
+              <th style="width: 30%; text-align: center;">Actions</th>
+            </tr>
+          </thead>
 
-    <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.email }}</td>
+          <tbody>
+            <tr *ngFor="let user of users">
+              <td>{{ user.email }}</td>
 
-        <td style="text-align: center;">
-          <span
-            class="badge"
-            [ngClass]="user.is_admin ? 'role-admin' : 'role-user'"
-          >
-            {{ user.is_admin ? 'Admin' : 'User' }}
-          </span>
-        </td>
+              <td style="text-align: center;">
+                <span
+                  class="badge"
+                  [ngClass]="user.is_admin ? 'role-admin' : 'role-user'"
+                >
+                  {{ user.is_admin ? 'Admin' : 'User' }}
+                </span>
+              </td>
 
-        <td style="text-align: center;">
-          <span
-            class="badge"
-            [ngClass]="user.is_active ? 'status-active' : 'status-inactive'"
-          >
-            {{ user.is_active ? 'Active' : 'Inactive' }}
-          </span>
-        </td>
+              <td style="text-align: center;">
+                <span
+                  class="badge"
+                  [ngClass]="user.is_active ? 'status-active' : 'status-inactive'"
+                >
+                  {{ user.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
 
-        <td style="text-align: center;">
-          <span
-            class="online-status"
-            [ngClass]="user.online_status ? 'online' : 'offline'"
-          ></span>
-          {{ user.online_status ? 'Online' : 'Offline' }}
-        </td>
+              <td style="text-align: center;">
+                <span
+                  class="online-status"
+                  [ngClass]="user.online_status ? 'online' : 'offline'"
+                ></span>
+                {{ user.online_status ? 'Online' : 'Offline' }}
+              </td>
 
-        <td class="actions-cell">
-          <ng-container *ngIf="user.email !== currentUserEmail; else youRow">
-            <button
-              class="action-btn"
-              [ngClass]="user.is_admin ? 'remove-admin' : 'make-admin'"
-              (click)="toggleRole(user.email)"
-            >
-              {{ user.is_admin ? 'Remove Admin' : 'Make Admin' }}
-            </button>
+              <td class="actions-cell">
+                <ng-container *ngIf="user.email !== currentUserEmail; else youRow">
+                  <button
+                    class="action-btn"
+                    [ngClass]="user.is_admin ? 'remove-admin' : 'make-admin'"
+                    (click)="toggleRole(user.email)"
+                  >
+                    {{ user.is_admin ? 'Remove Admin' : 'Make Admin' }}
+                  </button>
 
-            <button
-              class="action-btn"
-              [ngClass]="user.is_active ? 'deactivate-user' : 'activate-user'"
-              (click)="toggleStatus(user.email)"
-            >
-              {{ user.is_active ? 'Deactivate' : 'Activate' }}
-            </button>
-          </ng-container>
+                  <button
+                    class="action-btn"
+                    [ngClass]="user.is_active ? 'deactivate-user' : 'activate-user'"
+                    (click)="toggleStatus(user.email)"
+                  >
+                    {{ user.is_active ? 'Deactivate' : 'Activate' }}
+                  </button>
+                </ng-container>
 
-          <ng-template #youRow>
-            <span>(You)</span>
-          </ng-template>
-        </td>
-      </tr>
+                <ng-template #youRow>
+                  <span>(You)</span>
+                </ng-template>
+              </td>
+            </tr>
 
-      <tr *ngIf="users.length === 0">
-        <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">
-          No users found.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            <tr *ngIf="users.length === 0">
+              <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">
+                No users found.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-  <!-- Pagination -->
-  <div class="pagination" *ngIf="totalPages > 1">
-    <a *ngIf="page > 1" (click)="loadPage(page - 1)">&laquo;</a>
+      <!-- Pagination -->
+      <div class="pagination" *ngIf="totalPages > 1">
+        <a *ngIf="page > 1" (click)="loadPage(page - 1)">&laquo;</a>
 
-    <a
-      *ngFor="let p of [].constructor(totalPages); let i = index"
-      (click)="loadPage(i + 1)"
-      [class.active]="page === i + 1"
-    >
-      {{ i + 1 }}
-    </a>
+        <a
+          *ngFor="let p of [].constructor(totalPages); let i = index"
+          (click)="loadPage(i + 1)"
+          [class.active]="page === i + 1"
+        >
+          {{ i + 1 }}
+        </a>
 
-    <a *ngIf="page < totalPages" (click)="loadPage(page + 1)">&raquo;</a>
+        <a *ngIf="page < totalPages" (click)="loadPage(page + 1)">&raquo;</a>
+      </div>
+    </div>
   </div>
 </div>

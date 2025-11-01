@@ -16,26 +16,30 @@
     <li *ngFor="let msg of flashMessages" [class]="'flash-' + msg.type">{{ msg.text }}</li>
   </ul>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Email</th>
-        <th style="width: 25%; text-align: center;">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users; let i = index">
-        <td>{{ user.email }}</td>
-        <td style="text-align: center;">
-          <button class="action-btn" (click)="moveToPending(user.email, i)">Move to Pending</button>
-        </td>
-      </tr>
+ <div class="content-wrapper">
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th style="width: 25%; text-align: center;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users; let i = index">
+            <td>{{ user.email }}</td>
+            <td style="text-align: center;">
+              <button class="action-btn" (click)="moveToPending(user.email, i)">Move to Pending</button>
+            </td>
+          </tr>
 
-      <tr *ngIf="users.length === 0">
-        <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
-          No users have been denied.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <tr *ngIf="users.length === 0">
+            <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
+              No users have been denied.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
