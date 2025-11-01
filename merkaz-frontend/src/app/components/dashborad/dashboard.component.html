@@ -3,7 +3,7 @@
     <h1><a routerLink="/dashboard">Public Files</a></h1>
     <div class="header-right">
       <a routerLink="my-uploads" class="my-uploads-btn">My Uploads</a>
-      <a routerLink="upload" class="upload-btn">Upload File</a>
+      <a [routerLink]="['upload']" [queryParams]="{ path: currentPath }" class="upload-btn">Upload File</a>
       <a *ngIf="isAdmin" (click)="navAdmin()" routerLink="/admin-dash" class="admin-dashboard-btn">Admin Dashboard</a>
       <a (click)="logout()" class="logout-btn">Logout</a>
     </div>
@@ -16,8 +16,9 @@
   </div>
 
   <div class="path-bar">
-    <span>{{ currentPath }}</span>
+    <span>{{ currentPath || '/' }}</span>
     <a *ngIf="currentPath" (click)="goUp()" style="margin-left: 15px;">⬆️ Go Up</a>
+    <button *ngIf="isAdmin" (click)="openCreateFolderModal()" class="create-folder-btn" style="margin-left: 15px;">📁 Create Folder</button>
   </div>
 
   <div class="table-wrapper">
@@ -32,7 +33,7 @@
         <tr *ngFor="let item of items">
           <td (click)="navigate(item)">
             <div class="item-name">
-              <ng-container *ngIf="item.isFolder; else fileIcon">
+              <ng-container *ngIf="item.is_folder || item.isFolder; else fileIcon">
                 <svg viewBox="0 0 24 24">
                   <path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"></path>
                 </svg>
@@ -73,6 +74,33 @@
       <br />
       <button type="submit">Submit Suggestion</button>
     </form>
+  </div>
+
+  <!-- Create Folder Modal -->
+  <div *ngIf="showCreateFolderModal" class="modal-overlay" (click)="closeCreateFolderModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Create New Folder</h2>
+        <button class="modal-close" (click)="closeCreateFolderModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p *ngIf="folderCreationSuccess" class="flash-success">{{ folderCreationSuccess }}</p>
+        <p *ngIf="folderCreationError" class="flash-error">{{ folderCreationError }}</p>
+        <label for="folderName">Folder Name:</label>
+        <input 
+          type="text" 
+          id="folderName" 
+          [(ngModel)]="newFolderName" 
+          placeholder="Enter folder name..."
+          (keyup.enter)="createFolder()"
+          autofocus
+        />
+        <div class="modal-actions">
+          <button type="button" (click)="createFolder()" class="create-btn">Create</button>
+          <button type="button" (click)="closeCreateFolderModal()" class="cancel-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <router-outlet></router-outlet>
