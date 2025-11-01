@@ -48,21 +48,40 @@ export class UploadFileComponent implements OnInit {
 
     this.http.post('http://localhost:8000/upload', formData, { withCredentials: true }).subscribe({
       next: (res: any) => {
+        let message = '';
         if (res.message) {
-          alert(res.message);
+          message = res.message;
+        }
+        
+        // Display errors if any (even when some files succeeded)
+        if (res.errors && res.errors.length > 0) {
+          const errorMsg = res.errors.join('\n');
+          if (message) {
+            alert(message + '\n\nErrors:\n' + errorMsg);
+          } else {
+            alert('Some files failed to upload:\n\n' + errorMsg);
+          }
+        } else if (message) {
+          alert(message);
         } else {
           alert('Files uploaded successfully');
         }
+        
         window.location.reload();
       },
       error: (err: any) => {
-        if (err.error && err.error.error) {
-          alert('Error: ' + err.error.error);
-        } else if (err.error && err.error.errors) {
-          alert('Errors: ' + err.error.errors.join(', '));
-        } else {
-          alert('Failed to upload files');
+        let errorMessage = 'Failed to upload files';
+        
+        if (err.error) {
+          if (err.error.errors && err.error.errors.length > 0) {
+            // Display all errors with file names
+            errorMessage = 'Upload failed:\n\n' + err.error.errors.join('\n');
+          } else if (err.error.error) {
+            errorMessage = 'Upload failed: ' + err.error.error;
+          }
         }
+        
+        alert(errorMessage);
         console.error(err);
       }
     });
@@ -75,19 +94,58 @@ export class UploadFileComponent implements OnInit {
 
     this.http.post('http://localhost:8000/upload', formData, { withCredentials: true }).subscribe({
       next: (res: any) => {
+        let message = '';
         if (res.message) {
-          alert(res.message);
+          message = res.message;
+        }
+        
+        // Display errors if any (even when some files succeeded)
+        if (res.errors && res.errors.length > 0) {
+          let errorMsg = '';
+          
+          // Check if we have a summary format (when error_count > 5)
+          if (res.error_count && res.error_count > 5) {
+            // Display summary with file extensions
+            errorMsg = res.errors.join('\n');
+            if (res.error_count) {
+              errorMsg = `Total: ${res.error_count} files failed\n\n${errorMsg}`;
+            }
+          } else {
+            // Display individual file names (≤5 errors)
+            errorMsg = res.errors.join('\n');
+          }
+          
+          if (message) {
+            alert(message + '\n\nFailed files:\n' + errorMsg);
+          } else {
+            alert('Some files failed to upload:\n\n' + errorMsg);
+          }
+        } else if (message) {
+          alert(message);
         } else {
           alert('Folder uploaded successfully');
         }
+        
         window.location.reload();
       },
       error: (err: any) => {
-        if (err.error && err.error.error) {
-          alert('Error: ' + err.error.error);
-        } else {
-          alert('Failed to upload folder');
+        let errorMessage = 'Failed to upload folder';
+        
+        if (err.error) {
+          if (err.error.errors && err.error.errors.length > 0) {
+            // Check if we have error_count (summary format)
+            if (err.error.error_count && err.error.error_count > 5) {
+              errorMessage = `Total: ${err.error.error_count} files failed\n\n` + err.error.errors.join('\n');
+            } else {
+              // Individual file names
+              errorMessage = 'Upload failed:\n\n' + err.error.errors.join('\n');
+            }
+          } else if (err.error.error) {
+            errorMessage = 'Upload failed: ' + err.error.error;
+          }
         }
+        
+        alert(errorMessage);
         console.error(err);
       }
     });

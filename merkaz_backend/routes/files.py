@@ -6,7 +6,7 @@ from datetime import datetime
 from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
 
 import config
-from utils import log_event
+from utils import log_event, get_project_root
 from flask_cors import cross_origin
 
 
@@ -19,7 +19,7 @@ def downloads(subpath=''):
         return jsonify({"error": "Not logged in"}), 401
     
     # Get project root (one level up from merkaz_backend directory)
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    project_root = get_project_root()
     share_dir = os.path.join(project_root, config.SHARE_FOLDER)
 
     safe_subpath = os.path.normpath(subpath).replace('\\', '/')
@@ -75,7 +75,7 @@ def delete_item(item_path):
     if not session.get("is_admin"):
         return jsonify({"error": "Access denied"}), 403
     
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    project_root = get_project_root()
     share_dir = os.path.join(project_root, config.SHARE_FOLDER)
     trash_dir = os.path.join(project_root, config.TRASH_FOLDER)
 
@@ -114,7 +114,7 @@ def create_folder():
     if '/' in folder_name or '\\' in folder_name or '..' in folder_name:
         return jsonify({"error": "Invalid characters in folder name."}), 400
     
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    project_root = get_project_root()
     share_dir = os.path.join(project_root, config.SHARE_FOLDER)
     
     safe_parent_path = os.path.normpath(parent_path).replace('\\', '/')
@@ -142,7 +142,7 @@ def download_file(file_path):
     if not session.get("logged_in"):
         return jsonify({"error": "Not logged in"}), 401
     log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "FILE", file_path])
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    project_root = get_project_root()
     share_dir = os.path.join(project_root, config.SHARE_FOLDER)
 
     directory, filename = os.path.split(file_path)
@@ -156,7 +156,7 @@ def download_folder(folder_path):
     if not session.get("logged_in"):
         return jsonify({"error": "Not logged in"}), 401
     log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "FOLDER", folder_path])
-    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    project_root = get_project_root()
     share_dir = os.path.join(project_root, config.SHARE_FOLDER)
 
     absolute_folder_path = os.path.join(share_dir, folder_path)
