@@ -2,6 +2,7 @@ import os
 import csv
 import shutil
 import magic
+import threading
 from datetime import datetime
 from flask import Blueprint, session, abort, jsonify, request, current_app, send_file
 
@@ -11,6 +12,9 @@ from utils import log_event, get_project_root
 from user import User
 
 uploads_bp = Blueprint('uploads', __name__)
+
+# File lock for thread-safe CSV logging
+_log_lock = threading.Lock()
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -30,6 +34,82 @@ def is_file_malicious(file_stream):
         return True
     
     return False
+
+def get_unique_filename(upload_dir, filename, share_dir=None, share_subpath=''):
+    """
+    Generates a unique filename by appending _1, _2, etc. if a file with the same name exists.
+    Checks in both the upload directory and the share directory (eventual destination).
+    
+    Args:
+        upload_dir: Base upload directory
+        filename: Original filename (may include relative path for folder uploads)
+        share_dir: Optional base share directory to check for conflicts
+        share_subpath: Optional subpath in share directory where file will eventually be placed
+    
+    Returns:
+        Tuple of (unique_filename, full_save_path)
+    """
+    # Split filename into directory and base name
+    if '/' in filename or '\\' in filename:
+        # Preserve directory structure for folder uploads
+        dir_part = os.path.dirname(filename)
+        base_name = os.path.basename(filename)
+        target_dir = os.path.join(upload_dir, dir_part)
+    else:
+        dir_part = ''
+        base_name = filename
+        target_dir = upload_dir
+    
+    # Ensure target directory exists
+    os.makedirs(target_dir, exist_ok=True)
+    
+    # Split base name into name and extension
+    if '.' in base_name:
+        name_part, ext = base_name.rsplit('.', 1)
+    else:
+        name_part = base_name
+        ext = ''
+    
+    # Try original filename first
+    counter = 0
+    while True:
+        if counter == 0:
+            unique_base = base_name
+        else:
+            if ext:
+                unique_base = f"{name_part}_{counter}.{ext}"
+            else:
+                unique_base = f"{name_part}_{counter}"
+        
+        if dir_part:
+            full_path_upload = os.path.join(upload_dir, dir_part, unique_base)
+        else:
+            full_path_upload = os.path.join(upload_dir, unique_base)
+        
+        # Check if file exists in upload directory
+        file_exists_in_upload = os.path.exists(full_path_upload)
+        
+        # Also check if file exists in share directory (eventual destination)
+        file_exists_in_share = False
+        if share_dir and share_subpath:
+            # Build the eventual destination path in share directory
+            share_dest_path = os.path.join(share_dir, share_subpath, unique_base)
+            file_exists_in_share = os.path.exists(share_dest_path)
+        elif share_dir:
+            # Check in root of share directory
+            share_dest_path = os.path.join(share_dir, unique_base)
+            file_exists_in_share = os.path.exists(share_dest_path)
+        
+        # If file doesn't exist in either location, we can use this name
+        if not file_exists_in_upload and not file_exists_in_share:
+            # Return the unique filename (preserving directory structure)
+            if dir_part:
+                unique_filename = os.path.join(dir_part, unique_base).replace('\\', '/')
+            else:
+                unique_filename = unique_base
+            return unique_filename, full_path_upload
+        
+        counter += 1
 
 
 @uploads_bp.route("/upload", methods=["POST"])
@@ -84,7 +164,21 @@ def upload_file():
                 errors.append(f"Invalid path in filename: '{filename}' was skipped.")
                 continue
             
-            save_path = os.path.join(upload_dir, filename)
+            # Get unique filename (handles indexing if file exists)
+            # Check both upload directory and share directory (eventual destination)
+            # Use lock to prevent race conditions when checking for existing files
+            try:
+                share_dir = os.path.join(project_root, config.SHARE_FOLDER)
+                with _log_lock:
+                    unique_filename, save_path = get_unique_filename(
+                        upload_dir, 
+                        filename, 
+                        share_dir=share_dir,
+                        share_subpath=upload_subpath
+                    )
+            except Exception as e:
+                errors.append(f"Could not generate unique filename for '{filename}'. Error: {e}")
+                continue
 
             # Final security check to ensure the path doesn't escape the upload directory
             if not os.path.abspath(save_path).startswith(os.path.abspath(upload_dir)):
@@ -92,11 +186,21 @@ def upload_file():
                 continue
 
             try:
-                # Create parent directories if they don't exist
-                os.makedirs(os.path.dirname(save_path), exist_ok=True)
+                # Save the file
+                # Double-check file doesn't exist (handles extremely rare race condition)
+                if os.path.exists(save_path):
+                    # File was created between check and save, get next available unique name
+                    with _log_lock:
+                        unique_filename, save_path = get_unique_filename(
+                            upload_dir, 
+                            filename,
+                            share_dir=share_dir,
+                            share_subpath=upload_subpath
+                        )
+                
                 file.save(save_path)
                 
-                # The suggested path for the file after admin approval
+                # The suggested path for the file after admin approval (use original filename in suggestion, not unique one)
                 final_path_suggestion = os.path.join(upload_subpath, filename).replace('\\', '/')
                 
                 # Get user_id from session, fallback to finding user by email if not in session
@@ -105,14 +209,17 @@ def upload_file():
                     user = User.find_by_email(session.get("email"))
                     user_id = user.user_id if user else None
                 
-                log_event(config.UPLOAD_LOG_FILE, [
-                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
-                    session.get("email"), 
-                    user_id,  # Store user_id in log
-                    filename, 
-                    final_path_suggestion
-                ])
-                successful_uploads.append(filename)
+                # Thread-safe logging
+                with _log_lock:
+                    log_event(config.UPLOAD_LOG_FILE, [
+                        datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
+                        session.get("email"), 
+                        user_id,  # Store user_id in log
+                        unique_filename,  # Store the actual saved filename (may have _1, _2, etc.)
+                        final_path_suggestion  # Suggested path uses original filename
+                    ])
+                
+                successful_uploads.append(filename)  # Return original filename to user
             except Exception as e:
                 ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'no extension'
                 error_type = 'upload_error'
@@ -309,7 +416,46 @@ def move_upload(filename):
         return jsonify({"error": "Target path cannot be empty"}), 400
 
     source_item = os.path.join(upload_dir, filename)
+    
+    # Check if source file exists (handle folder uploads where filename might be a directory)
+    if not os.path.exists(source_item):
+        return jsonify({"error": f'Source item "{filename}" not found'}), 404
+    
+    # Build destination path - use unique filename logic to avoid conflicts
     destination_path = os.path.join(share_dir, target_path_str)
+    
+    # If target_path is a directory, append the filename
+    if os.path.isdir(destination_path) if os.path.exists(destination_path) else False:
+        # Target is a directory, append source filename
+        dest_filename = os.path.basename(filename)
+        destination_path = os.path.join(destination_path, dest_filename)
+    elif os.path.dirname(target_path_str) and not os.path.exists(os.path.dirname(destination_path)):
+        # Target includes directory path, ensure directory exists
+        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+    
+    # Check for conflicts in destination and get unique filename if needed
+    if os.path.exists(destination_path):
+        # File exists in destination, get unique filename
+        # Ensure we don't check directories, only files
+        if os.path.isfile(destination_path):
+            dest_dir = os.path.dirname(destination_path)
+            dest_base = os.path.basename(destination_path)
+            # Calculate relative path from share_dir
+            if dest_dir:
+                rel_dir = os.path.relpath(dest_dir, share_dir)
+                if rel_dir == '.':
+                    rel_dir = ''
+                dest_filename_with_path = os.path.join(rel_dir, dest_base).replace('\\', '/') if rel_dir else dest_base
+            else:
+                dest_filename_with_path = dest_base
+            
+            # Use get_unique_filename with share_dir as base (it handles subdirectories)
+            unique_dest_filename, unique_dest_path = get_unique_filename(share_dir, dest_filename_with_path)
+            destination_path = unique_dest_path
+            # Update target_path_str to reflect the unique name for the response
+            # Extract the relative path from share_dir
+            rel_path = os.path.relpath(unique_dest_path, share_dir).replace('\\', '/')
+            target_path_str = rel_path
     
     safe_destination = os.path.abspath(destination_path)
     if not safe_destination.startswith(os.path.abspath(share_dir)):
@@ -317,7 +463,15 @@ def move_upload(filename):
 
     try:
         os.makedirs(os.path.dirname(safe_destination), exist_ok=True)
-        shutil.move(source_item, safe_destination)
+        
+        # Handle both files and directories
+        if os.path.isdir(source_item):
+            # Move directory recursively
+            shutil.move(source_item, safe_destination)
+        else:
+            # Move file
+            shutil.move(source_item, safe_destination)
+            
         return jsonify({"message": f'Item "{filename}" has been successfully moved to "{target_path_str}".'}), 200
     except FileNotFoundError:
         return jsonify({"error": f'Source item "{filename}" not found'}), 404

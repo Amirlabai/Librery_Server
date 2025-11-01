@@ -24,3 +24,5 @@
 .DS_Store
 /files_to_share
 merkaz_backend/ngrok.yml
+/uploads
+/trash
