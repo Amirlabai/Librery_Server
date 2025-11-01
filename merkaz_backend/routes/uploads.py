@@ -50,20 +50,35 @@ def upload_file():
     
     successful_uploads = []
     errors = []
+    failed_files_by_type = {}  # Track failed files by error type and extension
     
     for file in uploaded_files:
         if file:
-            if not allowed_file(file.filename):
-                errors.append(f"File type not allowed for {file.filename}")
-                continue
-
-            if is_file_malicious(file.stream):
-                errors.append(f"Malicious file detected: {file.filename}")
-                continue
-                
             # filename from the browser can include the relative path for folder uploads
             filename = file.filename
             
+            if not allowed_file(file.filename):
+                ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'no extension'
+                error_type = 'file_type_not_allowed'
+                if error_type not in failed_files_by_type:
+                    failed_files_by_type[error_type] = {}
+                if ext not in failed_files_by_type[error_type]:
+                    failed_files_by_type[error_type][ext] = []
+                failed_files_by_type[error_type][ext].append(filename)
+                errors.append(f"File type not allowed for: {filename}")
+                continue
+
+            if is_file_malicious(file.stream):
+                ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'no extension'
+                error_type = 'malicious_file'
+                if error_type not in failed_files_by_type:
+                    failed_files_by_type[error_type] = {}
+                if ext not in failed_files_by_type[error_type]:
+                    failed_files_by_type[error_type][ext] = []
+                failed_files_by_type[error_type][ext].append(filename)
+                errors.append(f"Malicious file detected: {filename}")
+                continue
+                
             # Security check to prevent path traversal attacks
             if '..' in filename.split('/') or '..' in filename.split('\\') or os.path.isabs(filename):
                 errors.append(f"Invalid path in filename: '{filename}' was skipped.")
@@ -99,8 +114,37 @@ def upload_file():
                 ])
                 successful_uploads.append(filename)
             except Exception as e:
+                ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'no extension'
+                error_type = 'upload_error'
+                if error_type not in failed_files_by_type:
+                    failed_files_by_type[error_type] = {}
+                if ext not in failed_files_by_type[error_type]:
+                    failed_files_by_type[error_type][ext] = []
+                failed_files_by_type[error_type][ext].append(filename)
                 errors.append(f"Could not upload '{filename}'. Error: {e}")
 
+    # Format errors based on count
+    error_summary = None
+    
+    if errors and len(errors) > 5:
+        # Group by file extension/suffix for errors > 5
+        summary_parts = []
+        for error_type, ext_dict in failed_files_by_type.items():
+            for ext, files in ext_dict.items():
+                count = len(files)
+                if error_type == 'file_type_not_allowed':
+                    summary_parts.append(f"{count} file(s) with .{ext} extension (file type not allowed)")
+                elif error_type == 'malicious_file':
+                    summary_parts.append(f"{count} file(s) with .{ext} extension (malicious file detected)")
+                elif error_type == 'upload_error':
+                    summary_parts.append(f"{count} file(s) with .{ext} extension (upload failed)")
+        
+        if summary_parts:
+            error_summary = "Failed file types:\n" + "\n".join(summary_parts)
+        else:
+            # Fallback if we don't have extension info
+            error_summary = f"{len(errors)} files failed to upload"
+    
     if successful_uploads:
         response = {
             "message": f"Successfully uploaded {len(successful_uploads)} file(s). Files are pending review.",
@@ -108,10 +152,20 @@ def upload_file():
             "count": len(successful_uploads)
         }
         if errors:
-            response["errors"] = errors
+            if len(errors) <= 5:
+                response["errors"] = errors
+            else:
+                response["errors"] = [error_summary]
+                response["error_count"] = len(errors)
         return jsonify(response), 200
     else:
-        return jsonify({"error": "No files were uploaded", "errors": errors}), 400
+        if errors:
+            if len(errors) <= 5:
+                return jsonify({"error": "No files were uploaded", "errors": errors}), 400
+            else:
+                return jsonify({"error": "No files were uploaded", "errors": [error_summary], "error_count": len(errors)}), 400
+        else:
+            return jsonify({"error": "No files were uploaded", "errors": errors}), 400
 
 @uploads_bp.route('/my_uploads')
 def my_uploads():
