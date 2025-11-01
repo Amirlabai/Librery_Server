@@ -12,7 +12,7 @@
             <a routerLink="/pending"  class="nav-tab active">Pending</a>
             <a routerLink="/denied"  class="nav-tab">Denied</a>
             <a routerLink="/uploads" class="nav-tab">Uploads</a>
-        </div>
+    </div>
 
   <!-- Flash Messages -->
   <ul *ngIf="flashMessages.length > 0" class="flash-messages">
@@ -22,37 +22,39 @@
   </ul>
 
   <!-- Users Table -->
-  <table>
-    <thead>
-      <tr>
-        <th>Email</th>
-        <th style="width: 25%; text-align: center;">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.email }}</td>
-        <td style="text-align: center;">
-          <button
-            class="action-btn approve-btn"
-            (click)="approveUser(user.email)"
-          >
-            Approve
-          </button>
-          <button
-            class="action-btn deny-btn"
-            (click)="denyUser(user.email)"
-          >
-            Deny
-          </button>
-        </td>
-      </tr>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th style="width: 25%; text-align: center;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.email }}</td>
+          <td style="text-align: center;">
+            <button
+              class="action-btn approve-btn"
+              (click)="approveUser(user.email)"
+            >
+              Approve
+            </button>
+            <button
+              class="action-btn deny-btn"
+              (click)="denyUser(user.email)"
+            >
+              Deny
+            </button>
+          </td>
+        </tr>
 
-      <tr *ngIf="users.length === 0">
-        <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
-          No users are pending approval.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        <tr *ngIf="users.length === 0">
+          <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
+            No users are pending approval.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

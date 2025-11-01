@@ -97,7 +97,7 @@ export class DashboardComponent {
   }
 
   submitSuggestion() {
-    this.http.post('http://localhost:8000/suggest', { suggestion: this.suggestionText }).subscribe({
+    this.http.post('http://localhost:8000/suggest', { suggestion: this.suggestionText },{ withCredentials: true }).subscribe({
       next: () => {
         this.suggestionSuccess = 'Suggestion submitted!';
         this.suggestionText = '';

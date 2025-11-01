@@ -21,7 +21,7 @@ export class MetricsComponent {
   constructor(private http: HttpClient) {}
 
   downloadLog(type: string) {
-    const url = `http://localhost:8000/metrics/download/${type}`;
+    const url = `http://localhost:8000/admin/metrics/download/${type}`;
     window.open(url, '_blank');
   }
 }
