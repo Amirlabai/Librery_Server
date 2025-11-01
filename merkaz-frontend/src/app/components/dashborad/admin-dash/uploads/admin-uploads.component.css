@@ -27,12 +27,23 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden; 
+  overflow: hidden;
+  min-height: 0;
+}
+
+.scrollable-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .table-wrapper {
   flex: 1;
   overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
   border: 1px solid #ddd;
   border-radius: 6px;
 }
@@ -48,6 +59,7 @@
 /* scroll bar*/
 .table-wrapper::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 .table-wrapper::-webkit-scrollbar-thumb {
   background: #ccc;
@@ -55,6 +67,10 @@
 }
 .table-wrapper::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 
 /* header title */

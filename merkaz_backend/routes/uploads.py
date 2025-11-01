@@ -35,30 +35,41 @@ def is_file_malicious(file_stream):
     
     return False
 
-def get_unique_filename(upload_dir, filename, share_dir=None, share_subpath=''):
+def get_unique_filename(upload_dir, filename, share_dir=None, share_subpath='', save_flat=True):
     """
     Generates a unique filename by appending _1, _2, etc. if a file with the same name exists.
     Checks in both the upload directory and the share directory (eventual destination).
+    
+    For folder uploads: saves files flat in uploads directory but preserves path in metadata.
     
     Args:
         upload_dir: Base upload directory
         filename: Original filename (may include relative path for folder uploads)
         share_dir: Optional base share directory to check for conflicts
         share_subpath: Optional subpath in share directory where file will eventually be placed
+        save_flat: If True, save files flat (no directory structure) in upload_dir
     
     Returns:
-        Tuple of (unique_filename, full_save_path)
+        Tuple of (flat_filename_for_storage, full_save_path, full_relative_path_for_log)
+        - flat_filename_for_storage: Filename to use for actual file storage (flat, no directories)
+        - full_save_path: Full path where file will be saved in upload_dir
+        - full_relative_path_for_log: Full relative path including folder structure (for logging/reconstruction)
     """
-    # Split filename into directory and base name
+    # Extract directory structure and base filename
     if '/' in filename or '\\' in filename:
-        # Preserve directory structure for folder uploads
         dir_part = os.path.dirname(filename)
         base_name = os.path.basename(filename)
-        target_dir = os.path.join(upload_dir, dir_part)
+        full_relative_path = filename.replace('\\', '/')  # Preserve full path for logging
     else:
         dir_part = ''
         base_name = filename
+        full_relative_path = filename
+    
+    # For flat storage, always save to root of upload_dir (no subdirectories)
+    if save_flat:
         target_dir = upload_dir
+    else:
+        target_dir = os.path.join(upload_dir, dir_part) if dir_part else upload_dir
     
     # Ensure target directory exists
     os.makedirs(target_dir, exist_ok=True)
@@ -81,33 +92,42 @@ def get_unique_filename(upload_dir, filename, share_dir=None, share_subpath=''):
             else:
                 unique_base = f"{name_part}_{counter}"
         
-        if dir_part:
-            full_path_upload = os.path.join(upload_dir, dir_part, unique_base)
-        else:
-            full_path_upload = os.path.join(upload_dir, unique_base)
+        # Full path in upload directory (always flat for save_flat=True)
+        full_path_upload = os.path.join(target_dir, unique_base)
         
         # Check if file exists in upload directory
         file_exists_in_upload = os.path.exists(full_path_upload)
         
         # Also check if file exists in share directory (eventual destination)
+        # Use the full relative path (with directory structure) for share directory check
         file_exists_in_share = False
         if share_dir and share_subpath:
-            # Build the eventual destination path in share directory
-            share_dest_path = os.path.join(share_dir, share_subpath, unique_base)
+            # Combine share_subpath with the directory structure from filename
+            if dir_part:
+                share_path_with_structure = os.path.join(share_subpath, dir_part, unique_base).replace('\\', '/')
+            else:
+                share_path_with_structure = os.path.join(share_subpath, unique_base).replace('\\', '/')
+            share_dest_path = os.path.join(share_dir, share_path_with_structure)
             file_exists_in_share = os.path.exists(share_dest_path)
         elif share_dir:
-            # Check in root of share directory
-            share_dest_path = os.path.join(share_dir, unique_base)
+            # Check with full directory structure in share_dir
+            if dir_part:
+                share_dest_path = os.path.join(share_dir, dir_part, unique_base)
+            else:
+                share_dest_path = os.path.join(share_dir, unique_base)
             file_exists_in_share = os.path.exists(share_dest_path)
         
         # If file doesn't exist in either location, we can use this name
         if not file_exists_in_upload and not file_exists_in_share:
-            # Return the unique filename (preserving directory structure)
-            if dir_part:
-                unique_filename = os.path.join(dir_part, unique_base).replace('\\', '/')
+            # Build the full relative path for logging (includes directory structure)
+            if dir_part and counter == 0:
+                full_relative_path_for_log = os.path.join(dir_part, unique_base).replace('\\', '/')
+            elif dir_part:
+                full_relative_path_for_log = os.path.join(dir_part, unique_base).replace('\\', '/')
             else:
-                unique_filename = unique_base
-            return unique_filename, full_path_upload
+                full_relative_path_for_log = unique_base
+            
+            return unique_base, full_path_upload, full_relative_path_for_log
         
         counter += 1
 
@@ -166,15 +186,17 @@ def upload_file():
             
             # Get unique filename (handles indexing if file exists)
             # Check both upload directory and share directory (eventual destination)
+            # Files are saved FLAT in uploads directory (no folder structure)
             # Use lock to prevent race conditions when checking for existing files
             try:
                 share_dir = os.path.join(project_root, config.SHARE_FOLDER)
                 with _log_lock:
-                    unique_filename, save_path = get_unique_filename(
+                    flat_filename, save_path, full_relative_path = get_unique_filename(
                         upload_dir, 
                         filename, 
                         share_dir=share_dir,
-                        share_subpath=upload_subpath
+                        share_subpath=upload_subpath,
+                        save_flat=True  # Save files flat in uploads directory
                     )
             except Exception as e:
                 errors.append(f"Could not generate unique filename for '{filename}'. Error: {e}")
@@ -191,17 +213,24 @@ def upload_file():
                 if os.path.exists(save_path):
                     # File was created between check and save, get next available unique name
                     with _log_lock:
-                        unique_filename, save_path = get_unique_filename(
+                        flat_filename, save_path, full_relative_path = get_unique_filename(
                             upload_dir, 
                             filename,
                             share_dir=share_dir,
-                            share_subpath=upload_subpath
+                            share_subpath=upload_subpath,
+                            save_flat=True
                         )
                 
                 file.save(save_path)
                 
-                # The suggested path for the file after admin approval (use original filename in suggestion, not unique one)
-                final_path_suggestion = os.path.join(upload_subpath, filename).replace('\\', '/')
+                # Build the suggested path for approval
+                # If filename has directory structure (folder upload), include it in the suggestion
+                if '/' in filename or '\\' in filename:
+                    # Full path including folder structure within the upload_subpath
+                    final_path_suggestion = os.path.join(upload_subpath, full_relative_path).replace('\\', '/')
+                else:
+                    # Single file upload
+                    final_path_suggestion = os.path.join(upload_subpath, filename).replace('\\', '/')
                 
                 # Get user_id from session, fallback to finding user by email if not in session
                 user_id = session.get("user_id")
@@ -210,13 +239,14 @@ def upload_file():
                     user_id = user.user_id if user else None
                 
                 # Thread-safe logging
+                # Store: flat_filename (for finding file in uploads), full_relative_path (for reconstruction on approval)
                 with _log_lock:
                     log_event(config.UPLOAD_LOG_FILE, [
                         datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
                         session.get("email"), 
                         user_id,  # Store user_id in log
-                        unique_filename,  # Store the actual saved filename (may have _1, _2, etc.)
-                        final_path_suggestion  # Suggested path uses original filename
+                        flat_filename,  # Store flat filename (for finding file: "my file.whatever" or "my file_1.whatever")
+                        final_path_suggestion  # Full suggested path including folder structure (for reconstruction)
                     ])
                 
                 successful_uploads.append(filename)  # Return original filename to user
@@ -300,6 +330,7 @@ def my_uploads():
                 # Check by email for backward compatibility, or by user_id if available
                 declined_user_id = row.get('user_id', '')
                 if (row['email'] == user_email) or (declined_user_id and str(user_id) == declined_user_id):
+                    # Store the declined filename (might be display path or flat filename)
                     declined_items.add(row['filename'])
     except FileNotFoundError:
         pass
@@ -320,15 +351,30 @@ def my_uploads():
                     matches_user = row['email'] == user_email
                 
                 if matches_user:
-                    full_relative_path = row['filename']
-                    top_level_item = full_relative_path.split('/')[0].split('\\')[0]
-
-                    if top_level_item in declined_items:
+                    # New format: filename is flat_filename, path is full path with structure
+                    # Old format: filename might be full path
+                    flat_filename = row.get('filename', '')
+                    full_path = row.get('path', '')
+                    
+                    # Check if file exists using flat filename
+                    file_exists = os.path.exists(os.path.join(upload_dir, flat_filename))
+                    
+                    # Use full_path for display if available, otherwise use flat_filename
+                    display_filename = full_path if full_path else flat_filename
+                    
+                    # Check status (check both flat_filename and display_filename in declined items)
+                    if flat_filename in declined_items or display_filename in declined_items:
                         row['status'] = 'Declined'
-                    elif os.path.exists(os.path.join(upload_dir, full_relative_path)):
+                    elif file_exists:
                         row['status'] = 'Pending Review'
                     else:
                         row['status'] = 'Approved & Moved'
+                    
+                    # Update row with display filename and path
+                    row['filename'] = display_filename
+                    if not row.get('path'):
+                        row['path'] = full_path if full_path else ''
+                    
                     user_uploads.append(row)
     except FileNotFoundError:
         pass
@@ -344,7 +390,8 @@ def admin_uploads():
     # Ensure files are read from project root
     project_root = get_project_root()
     upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
-    grouped_uploads = {}
+    all_uploads_list = []
+    seen_files = set()  # Track files we've already added to avoid duplicates
     
     try:
         with open(config.UPLOAD_LOG_FILE, mode='r', newline='', encoding='utf-8') as f:
@@ -355,19 +402,24 @@ def admin_uploads():
         for row in reversed(all_uploads_logged):
             # Handle both old format (4 cols) and new format (5 cols with user_id)
             if len(row) >= 5:
-                # New format: timestamp, email, user_id, filename, path
-                timestamp, email, user_id, relative_path, suggested_full_path = row[0], row[1], row[2], row[3], row[4]
+                # New format: timestamp, email, user_id, flat_filename, suggested_full_path
+                timestamp, email, user_id, flat_filename, suggested_full_path = row[0], row[1], row[2], row[3], row[4]
             else:
                 # Old format: timestamp, email, filename, path
-                timestamp, email, relative_path, suggested_full_path = row[0], row[1], row[2], row[3]
+                timestamp, email, flat_filename, suggested_full_path = row[0], row[1], row[2], row[3]
                 user_id = None
             
-            top_level_item = relative_path.split('/')[0].split('\\')[0]
-
-            if top_level_item not in grouped_uploads:
-                if os.path.exists(os.path.join(upload_dir, top_level_item)):
-                    is_part_of_dir_upload = '/' in relative_path or '\\' in relative_path
-                    final_approval_path = os.path.dirname(suggested_full_path) if is_part_of_dir_upload else suggested_full_path
+            # Check if file still exists in upload directory (pending review)
+            # Files are stored FLAT in uploads directory (no folder structure)
+            full_file_path = os.path.join(upload_dir, flat_filename)
+            
+            # Only show files that still exist (pending approval)
+            if os.path.exists(full_file_path):
+                # Create a unique key to avoid duplicates (same file uploaded multiple times)
+                file_key = (flat_filename, email, timestamp)
+                
+                if file_key not in seen_files:
+                    seen_files.add(file_key)
                     
                     # Get user information if user_id is available
                     user_info = None
@@ -383,18 +435,33 @@ def admin_uploads():
                         except:
                             pass
                     
-                    grouped_uploads[top_level_item] = {
+                    # Extract the folder structure from suggested_full_path for display
+                    # suggested_full_path contains: upload_subpath + folder_structure + filename
+                    # We want to show the folder structure part to admin
+                    # If suggested_full_path includes directories, extract them
+                    if '/' in suggested_full_path:
+                        # Extract just the folder structure + filename part (remove upload_subpath if present)
+                        # For now, use the suggested_full_path as-is for display
+                        display_filename = suggested_full_path
+                    else:
+                        # Single file, no folder structure
+                        display_filename = flat_filename
+                    
+                    all_uploads_list.append({
                         "timestamp": timestamp, 
                         "email": email,
                         "user_id": user_id if user_id else None,
                         "user": user_info,  # User info visible only to admins
-                        "filename": top_level_item,
-                        "path": final_approval_path
-                    }
+                        "filename": display_filename,  # Full path including folder structure for display
+                        "path": suggested_full_path,  # Where admin should approve it to (full path with structure)
+                        "flat_filename": flat_filename  # Actual filename in uploads directory (for file lookup)
+                    })
+                    
     except (FileNotFoundError, StopIteration):
         pass
         
-    final_uploads_list = sorted(list(grouped_uploads.values()), key=lambda x: x['timestamp'])
+    # Sort by timestamp (most recent first)
+    final_uploads_list = sorted(all_uploads_list, key=lambda x: x['timestamp'], reverse=True)
     return jsonify(final_uploads_list), 200
 
 @uploads_bp.route("/admin/move_upload/<path:filename>", methods=["POST"])
@@ -415,23 +482,43 @@ def move_upload(filename):
     if not target_path_str:
         return jsonify({"error": "Target path cannot be empty"}), 400
 
-    source_item = os.path.join(upload_dir, filename)
+    # filename parameter might be the display filename (full path) or flat filename
+    # Look up the flat filename from the log
+    flat_filename = None
+    try:
+        with open(config.UPLOAD_LOG_FILE, mode='r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            header = next(reader, None)
+            for row in reversed(list(reader)):
+                if len(row) >= 5:
+                    timestamp, email, user_id, stored_flat, stored_path = row[0], row[1], row[2], row[3], row[4]
+                else:
+                    timestamp, email, stored_flat, stored_path = row[0], row[1], row[2], row[3]
+                
+                # Match by either the display path or flat filename
+                if stored_path == filename or stored_flat == filename:
+                    flat_filename = stored_flat
+                    break
+    except (FileNotFoundError, StopIteration):
+        pass
     
-    # Check if source file exists (handle folder uploads where filename might be a directory)
+    # If lookup failed, assume filename is the flat filename
+    if flat_filename is None:
+        flat_filename = filename
+    
+    source_item = os.path.join(upload_dir, flat_filename)
+    
+    # Check if source file exists
     if not os.path.exists(source_item):
-        return jsonify({"error": f'Source item "{filename}" not found'}), 404
+        return jsonify({"error": f'Source item "{flat_filename}" not found'}), 404
     
-    # Build destination path - use unique filename logic to avoid conflicts
+    # Build destination path
+    # target_path_str already contains the full path with directory structure (e.g., "A/A/my file.whatever")
+    # So we just need to join it with share_dir
     destination_path = os.path.join(share_dir, target_path_str)
     
-    # If target_path is a directory, append the filename
-    if os.path.isdir(destination_path) if os.path.exists(destination_path) else False:
-        # Target is a directory, append source filename
-        dest_filename = os.path.basename(filename)
-        destination_path = os.path.join(destination_path, dest_filename)
-    elif os.path.dirname(target_path_str) and not os.path.exists(os.path.dirname(destination_path)):
-        # Target includes directory path, ensure directory exists
-        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+    # Ensure parent directories exist (recreate the folder structure in share_dir)
+    os.makedirs(os.path.dirname(destination_path), exist_ok=True)
     
     # Check for conflicts in destination and get unique filename if needed
     if os.path.exists(destination_path):
@@ -450,7 +537,8 @@ def move_upload(filename):
                 dest_filename_with_path = dest_base
             
             # Use get_unique_filename with share_dir as base (it handles subdirectories)
-            unique_dest_filename, unique_dest_path = get_unique_filename(share_dir, dest_filename_with_path)
+            # Note: save_flat=False to preserve directory structure in share_dir
+            _, unique_dest_path, _ = get_unique_filename(share_dir, dest_filename_with_path, save_flat=False)
             destination_path = unique_dest_path
             # Update target_path_str to reflect the unique name for the response
             # Extract the relative path from share_dir
@@ -462,19 +550,12 @@ def move_upload(filename):
         return jsonify({"error": "Invalid target path"}), 400
 
     try:
-        os.makedirs(os.path.dirname(safe_destination), exist_ok=True)
+        # Move the file (files are stored flat, so source_item is just the filename)
+        shutil.move(source_item, destination_path)
         
-        # Handle both files and directories
-        if os.path.isdir(source_item):
-            # Move directory recursively
-            shutil.move(source_item, safe_destination)
-        else:
-            # Move file
-            shutil.move(source_item, safe_destination)
-            
         return jsonify({"message": f'Item "{filename}" has been successfully moved to "{target_path_str}".'}), 200
     except FileNotFoundError:
-        return jsonify({"error": f'Source item "{filename}" not found'}), 404
+        return jsonify({"error": f'Source item "{flat_filename}" not found'}), 404
     except Exception as e:
         return jsonify({"error": f"An error occurred while moving the item: {e}"}), 500
 
@@ -486,7 +567,30 @@ def decline_upload(filename):
     # Ensure files are in project root
     project_root = get_project_root()
     upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
-    item_to_delete = os.path.join(upload_dir, filename)
+    
+    # Look up the flat filename from the log (same logic as move_upload)
+    flat_filename = None
+    try:
+        with open(config.UPLOAD_LOG_FILE, mode='r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            header = next(reader, None)
+            for row in reversed(list(reader)):
+                if len(row) >= 5:
+                    timestamp, email, user_id, stored_flat, stored_path = row[0], row[1], row[2], row[3], row[4]
+                else:
+                    timestamp, email, stored_flat, stored_path = row[0], row[1], row[2], row[3]
+                
+                if stored_path == filename or stored_flat == filename:
+                    flat_filename = stored_flat
+                    break
+    except (FileNotFoundError, StopIteration):
+        pass
+    
+    # If lookup failed, assume filename is the flat filename
+    if flat_filename is None:
+        flat_filename = filename
+    
+    item_to_delete = os.path.join(upload_dir, flat_filename)
     
     data = request.get_json() or {}
     user_email = data.get("email", "unknown")
@@ -501,7 +605,7 @@ def decline_upload(filename):
         datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
         user_email, 
         user_id if user_id else '',  # Store user_id in declined log
-        filename
+        flat_filename  # Store flat filename for consistency
     ])
 
     try:

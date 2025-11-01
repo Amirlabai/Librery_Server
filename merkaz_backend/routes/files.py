@@ -172,7 +172,7 @@ def download_folder(folder_path):
     memory_file.seek(0)
     return send_file(memory_file, download_name=f'{os.path.basename(folder_path)}.zip', as_attachment=True)
 
-COOLDOWN_LEVELS = [60, 300, 600, 1800, 3600]
+COOLDOWN_LEVELS = [0, 60, 300, 600, 1800, 3600]
 @files_bp.route("/suggest", methods=["POST"])
 def suggest():
     if not session.get("logged_in"):

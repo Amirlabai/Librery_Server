@@ -24,14 +24,26 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 60vh;
-  max-height: 60vh;
-  overflow-y: auto;
+  overflow: hidden;
+  min-height: 0;
 }
-.table-wrapper {
-  overflow-y: auto;
+
+.scrollable-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 20px;
 }
 
 .table-wrapper thead th {
@@ -41,20 +53,23 @@
   z-index: 2;
 }
 
-.content-wrapper::-webkit-scrollbar,
 .table-wrapper::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
-.content-wrapper::-webkit-scrollbar-thumb,
 .table-wrapper::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 4px;
 }
 
-.content-wrapper::-webkit-scrollbar-thumb:hover,
 .table-wrapper::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
 }
 .header {
     display: flex;
