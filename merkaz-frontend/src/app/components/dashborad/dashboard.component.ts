@@ -95,7 +95,12 @@ export class DashboardComponent {
 
 
   download(item: any) {
-    window.open(`http://localhost:8000/download/file/${item.path}`, '_blank');
+    
+    if(item.is_folder){
+      window.open(`http://localhost:8000/download/folder/${item.path}`, '_blank');
+    }else{
+      window.open(`http://localhost:8000/download/file/${item.path}`, '_blank');
+    }
   }
 
   deleteItem(item: any) {
@@ -193,8 +198,8 @@ export class DashboardComponent {
     });
   }
   goToRoot() {
-  this.currentPath = '';
-  this.loadFiles();
-}
+    this.currentPath = '';
+    this.loadFiles();
+  }
   
 }
