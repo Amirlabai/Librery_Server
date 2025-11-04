@@ -34,7 +34,7 @@ export class DashboardComponent {
   newFolderName = '';
   folderCreationError = '';
   folderCreationSuccess = '';
-
+  
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
@@ -121,15 +121,27 @@ export class DashboardComponent {
     });
   }
 
-  submitSuggestion() {
-    this.http.post('http://localhost:8000/suggest', { suggestion: this.suggestionText },{ withCredentials: true }).subscribe({
-      next: () => {
-        this.suggestionSuccess = 'Suggestion submitted!';
-        this.suggestionText = '';
-      },
-      error: () => this.suggestionError = 'Failed to send suggestion.'
-    });
-  }
+  async submitSuggestion() {
+  this.http.post('http://localhost:8000/suggest',
+    { suggestion: this.suggestionText },
+    { withCredentials: true }
+  ).subscribe({
+    next: () => {
+      this.suggestionSuccess = 'Suggestion submitted!';
+      this.suggestionText = '';
+
+      setTimeout(() => {
+        this.suggestionSuccess = '';
+        this.ngOnInit();  
+      }, 2000);
+    },
+    error: (err) => {
+      if (err.status === 429 && err.error?.error) {
+        this.suggestionError = err.error.error; 
+      } 
+    }
+  });
+}
 
   openCreateFolderModal() {
     this.showCreateFolderModal = true;
@@ -180,6 +192,6 @@ export class DashboardComponent {
       }
     });
   }
-
+  
   
 }
