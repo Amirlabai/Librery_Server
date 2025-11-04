@@ -8,13 +8,50 @@ from flask import Blueprint, session, abort, jsonify, request, current_app, send
 
 
 import config
-from utils import log_event, get_project_root
+from utils import log_event, get_project_root, get_next_upload_id
 from user import User
 
 uploads_bp = Blueprint('uploads', __name__)
 
 # File lock for thread-safe CSV logging
 _log_lock = threading.Lock()
+
+def remove_from_pending_log(upload_id):
+    """
+    Removes an entry from the pending log by upload_id.
+    Returns the removed row data if found, None otherwise.
+    """
+    project_root = get_project_root()
+    pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
+    
+    if not os.path.exists(pending_log_path):
+        return None
+    
+    rows = []
+    removed_row = None
+    
+    with _log_lock:
+        try:
+            # Read all rows
+            with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                header = next(reader, None)
+                rows = [header] if header else []
+                for row in reader:
+                    if len(row) >= 6 and row[0] == str(upload_id):  # upload_id is first column
+                        removed_row = row
+                    else:
+                        rows.append(row)
+            
+            # Write back all rows except the removed one
+            if removed_row:
+                with open(pending_log_path, mode='w', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    writer.writerows(rows)
+        except (FileNotFoundError, StopIteration):
+            return None
+    
+    return removed_row
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -238,13 +275,17 @@ def upload_file():
                     user = User.find_by_email(session.get("email"))
                     user_id = user.user_id if user else None
                 
-                # Thread-safe logging
-                # Store: flat_filename (for finding file in uploads), full_relative_path (for reconstruction on approval)
+                # Generate unique upload ID
+                upload_id = get_next_upload_id()
+                
+                # Thread-safe logging to pending log
+                # Format: upload_id, timestamp, email, user_id, flat_filename, suggested_full_path
                 with _log_lock:
-                    log_event(config.UPLOAD_LOG_FILE, [
+                    log_event(config.UPLOAD_PENDING_LOG_FILE, [
+                        upload_id,  # Unique upload identifier
                         datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
                         session.get("email"), 
-                        user_id,  # Store user_id in log
+                        user_id if user_id else '',  # Store user_id in log
                         flat_filename,  # Store flat filename (for finding file: "my file.whatever" or "my file_1.whatever")
                         final_path_suggestion  # Full suggested path including folder structure (for reconstruction)
                     ])
@@ -312,6 +353,8 @@ def my_uploads():
     # Ensure files are read from project root
     project_root = get_project_root()
     upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
+    pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
+    completed_log_path = os.path.join(project_root, config.UPLOAD_COMPLETED_LOG_FILE)
     user_email = session.get('email')
     user_id = session.get('user_id')
     
@@ -324,7 +367,8 @@ def my_uploads():
 
     declined_items = set()
     try:
-        with open(config.DECLINED_UPLOAD_LOG_FILE, 'r', newline='', encoding='utf-8') as f:
+        declined_log_path = os.path.join(project_root, config.DECLINED_UPLOAD_LOG_FILE)
+        with open(declined_log_path, 'r', newline='', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 # Check by email for backward compatibility, or by user_id if available
@@ -335,51 +379,81 @@ def my_uploads():
     except FileNotFoundError:
         pass
 
+    # Read from pending log
     try:
-        with open(config.UPLOAD_LOG_FILE, 'r', newline='', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
+        with open(pending_log_path, 'r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            header = next(reader, None)
             for row in reader:
-                # Filter by user_id if available, otherwise fallback to email
-                row_user_id = row.get('user_id', '')
-                matches_user = False
-                
-                if user_id and row_user_id:
-                    # New format: match by user_id
-                    matches_user = str(user_id) == row_user_id
-                else:
-                    # Old format or missing user_id: match by email
-                    matches_user = row['email'] == user_email
-                
-                if matches_user:
-                    # New format: filename is flat_filename, path is full path with structure
-                    # Old format: filename might be full path
-                    flat_filename = row.get('filename', '')
-                    full_path = row.get('path', '')
+                if len(row) >= 6:
+                    upload_id, timestamp, email, row_user_id, flat_filename, full_path = row[0], row[1], row[2], row[3], row[4], row[5]
                     
-                    # Check if file exists using flat filename
-                    file_exists = os.path.exists(os.path.join(upload_dir, flat_filename))
-                    
-                    # Use full_path for display if available, otherwise use flat_filename
-                    display_filename = full_path if full_path else flat_filename
-                    
-                    # Check status (check both flat_filename and display_filename in declined items)
-                    if flat_filename in declined_items or display_filename in declined_items:
-                        row['status'] = 'Declined'
-                    elif file_exists:
-                        row['status'] = 'Pending Review'
+                    # Filter by user_id if available, otherwise fallback to email
+                    matches_user = False
+                    if user_id and row_user_id:
+                        matches_user = str(user_id) == row_user_id
                     else:
-                        row['status'] = 'Approved & Moved'
+                        matches_user = email == user_email
                     
-                    # Update row with display filename and path
-                    row['filename'] = display_filename
-                    if not row.get('path'):
-                        row['path'] = full_path if full_path else ''
-                    
-                    user_uploads.append(row)
+                    if matches_user:
+                        # Check if file exists using flat filename
+                        file_exists = os.path.exists(os.path.join(upload_dir, flat_filename))
+                        
+                        # Use full_path for display if available, otherwise use flat_filename
+                        display_filename = full_path if full_path else flat_filename
+                        
+                        # Check status
+                        if flat_filename in declined_items or display_filename in declined_items:
+                            status = 'Declined'
+                        elif file_exists:
+                            status = 'Pending Review'
+                        else:
+                            status = 'Processing'  # File missing but still in pending log
+                        
+                        user_uploads.append({
+                            'upload_id': upload_id,
+                            'timestamp': timestamp,
+                            'email': email,
+                            'user_id': row_user_id if row_user_id else None,
+                            'filename': display_filename,
+                            'path': full_path if full_path else '',
+                            'status': status
+                        })
     except FileNotFoundError:
         pass
 
-    user_uploads.reverse()
+    # Read from completed log
+    try:
+        with open(completed_log_path, 'r', newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            header = next(reader, None)
+            for row in reader:
+                if len(row) >= 7:
+                    upload_id, original_timestamp, approval_timestamp, email, row_user_id, flat_filename, final_path = row[0], row[1], row[2], row[3], row[4], row[5], row[6]
+                    
+                    # Filter by user_id if available, otherwise fallback to email
+                    matches_user = False
+                    if user_id and row_user_id:
+                        matches_user = str(user_id) == row_user_id
+                    else:
+                        matches_user = email == user_email
+                    
+                    if matches_user:
+                        user_uploads.append({
+                            'upload_id': upload_id,
+                            'timestamp': original_timestamp,
+                            'email': email,
+                            'user_id': row_user_id if row_user_id else None,
+                            'filename': final_path,
+                            'path': final_path,
+                            'status': 'Approved & Moved',
+                            'approval_timestamp': approval_timestamp
+                        })
+    except FileNotFoundError:
+        pass
+
+    # Sort by timestamp (most recent first)
+    user_uploads.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
     return jsonify(user_uploads), 200
 
 @uploads_bp.route("/admin/uploads")
@@ -390,24 +464,22 @@ def admin_uploads():
     # Ensure files are read from project root
     project_root = get_project_root()
     upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
+    pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
     all_uploads_list = []
-    seen_files = set()  # Track files we've already added to avoid duplicates
     
     try:
-        with open(config.UPLOAD_LOG_FILE, mode='r', newline='', encoding='utf-8') as f:
+        with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = next(reader, None)
             all_uploads_logged = list(reader)
 
         for row in reversed(all_uploads_logged):
-            # Handle both old format (4 cols) and new format (5 cols with user_id)
-            if len(row) >= 5:
-                # New format: timestamp, email, user_id, flat_filename, suggested_full_path
-                timestamp, email, user_id, flat_filename, suggested_full_path = row[0], row[1], row[2], row[3], row[4]
+            # New format: upload_id, timestamp, email, user_id, flat_filename, suggested_full_path
+            if len(row) >= 6:
+                upload_id, timestamp, email, user_id, flat_filename, suggested_full_path = row[0], row[1], row[2], row[3], row[4], row[5]
             else:
-                # Old format: timestamp, email, filename, path
-                timestamp, email, flat_filename, suggested_full_path = row[0], row[1], row[2], row[3]
-                user_id = None
+                # Skip malformed rows
+                continue
             
             # Check if file still exists in upload directory (pending review)
             # Files are stored FLAT in uploads directory (no folder structure)
@@ -415,47 +487,38 @@ def admin_uploads():
             
             # Only show files that still exist (pending approval)
             if os.path.exists(full_file_path):
-                # Create a unique key to avoid duplicates (same file uploaded multiple times)
-                file_key = (flat_filename, email, timestamp)
+                # Get user information if user_id is available
+                user_info = None
+                if user_id:
+                    try:
+                        user = User.find_by_email(email)
+                        if user:
+                            user_info = {
+                                "id": user.user_id,
+                                "email": user.email,
+                                "role": user.role
+                            }
+                    except:
+                        pass
                 
-                if file_key not in seen_files:
-                    seen_files.add(file_key)
-                    
-                    # Get user information if user_id is available
-                    user_info = None
-                    if user_id:
-                        try:
-                            user = User.find_by_email(email)
-                            if user:
-                                user_info = {
-                                    "id": user.user_id,
-                                    "email": user.email,
-                                    "role": user.role
-                                }
-                        except:
-                            pass
-                    
-                    # Extract the folder structure from suggested_full_path for display
-                    # suggested_full_path contains: upload_subpath + folder_structure + filename
-                    # We want to show the folder structure part to admin
-                    # If suggested_full_path includes directories, extract them
-                    if '/' in suggested_full_path:
-                        # Extract just the folder structure + filename part (remove upload_subpath if present)
-                        # For now, use the suggested_full_path as-is for display
-                        display_filename = suggested_full_path
-                    else:
-                        # Single file, no folder structure
-                        display_filename = flat_filename
-                    
-                    all_uploads_list.append({
-                        "timestamp": timestamp, 
-                        "email": email,
-                        "user_id": user_id if user_id else None,
-                        "user": user_info,  # User info visible only to admins
-                        "filename": display_filename,  # Full path including folder structure for display
-                        "path": suggested_full_path,  # Where admin should approve it to (full path with structure)
-                        "flat_filename": flat_filename  # Actual filename in uploads directory (for file lookup)
-                    })
+                # Extract the folder structure from suggested_full_path for display
+                # suggested_full_path contains: upload_subpath + folder_structure + filename
+                if '/' in suggested_full_path:
+                    display_filename = suggested_full_path
+                else:
+                    # Single file, no folder structure
+                    display_filename = flat_filename
+                
+                all_uploads_list.append({
+                    "upload_id": upload_id,  # Unique upload identifier
+                    "timestamp": timestamp, 
+                    "email": email,
+                    "user_id": user_id if user_id else None,
+                    "user": user_info,  # User info visible only to admins
+                    "filename": display_filename,  # Full path including folder structure for display
+                    "path": suggested_full_path,  # Where admin should approve it to (full path with structure)
+                    "flat_filename": flat_filename  # Actual filename in uploads directory (for file lookup)
+                })
                     
     except (FileNotFoundError, StopIteration):
         pass
@@ -473,6 +536,7 @@ def move_upload(filename):
     project_root = get_project_root()
     upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
     share_dir = os.path.join(project_root, config.SHARE_FOLDER)
+    pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
     
     data = request.get_json()
     if not data:
@@ -482,23 +546,25 @@ def move_upload(filename):
     if not target_path_str:
         return jsonify({"error": "Target path cannot be empty"}), 400
 
-    # filename parameter might be the display filename (full path) or flat filename
-    # Look up the flat filename from the log
+    # Look up the entry from pending log by upload_id or filename
+    upload_id = data.get("upload_id")  # Try to get upload_id from request
     flat_filename = None
+    pending_entry = None
+    
     try:
-        with open(config.UPLOAD_LOG_FILE, mode='r', newline='', encoding='utf-8') as f:
+        with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = next(reader, None)
             for row in reversed(list(reader)):
-                if len(row) >= 5:
-                    timestamp, email, user_id, stored_flat, stored_path = row[0], row[1], row[2], row[3], row[4]
-                else:
-                    timestamp, email, stored_flat, stored_path = row[0], row[1], row[2], row[3]
-                
-                # Match by either the display path or flat filename
-                if stored_path == filename or stored_flat == filename:
-                    flat_filename = stored_flat
-                    break
+                if len(row) >= 6:
+                    row_upload_id, timestamp, email, user_id, stored_flat, stored_path = row[0], row[1], row[2], row[3], row[4], row[5]
+                    # Match by upload_id (preferred) or by filename/path
+                    if (upload_id and str(row_upload_id) == str(upload_id)) or \
+                       (stored_path == filename or stored_flat == filename):
+                        pending_entry = row
+                        flat_filename = stored_flat
+                        upload_id = row_upload_id  # Use the found upload_id
+                        break
     except (FileNotFoundError, StopIteration):
         pass
     
@@ -553,6 +619,27 @@ def move_upload(filename):
         # Move the file (files are stored flat, so source_item is just the filename)
         shutil.move(source_item, destination_path)
         
+        # Move entry from pending log to completed log
+        if pending_entry and upload_id:
+            # Extract data from pending entry before removing
+            # Format: upload_id, timestamp, email, user_id, flat_filename, suggested_full_path
+            entry_upload_id, original_timestamp, email, user_id, _, _ = pending_entry
+            
+            # Remove from pending log
+            remove_from_pending_log(upload_id)
+            
+            # Add to completed log with approval timestamp
+            # Format: upload_id, original_timestamp, approval_timestamp, email, user_id, flat_filename, final_path
+            log_event(config.UPLOAD_COMPLETED_LOG_FILE, [
+                entry_upload_id,
+                original_timestamp,
+                datetime.now().strftime("%Y-%m-%d %H:%M:%S"),  # Approval timestamp
+                email,
+                user_id if user_id else '',
+                flat_filename,
+                target_path_str  # Final approved path
+            ])
+        
         return jsonify({"message": f'Item "{filename}" has been successfully moved to "{target_path_str}".'}), 200
     except FileNotFoundError:
         return jsonify({"error": f'Source item "{flat_filename}" not found'}), 404
@@ -567,22 +654,30 @@ def decline_upload(filename):
     # Ensure files are in project root
     project_root = get_project_root()
     upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
+    pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
     
-    # Look up the flat filename from the log (same logic as move_upload)
+    # Look up the entry from pending log
+    upload_id = None
     flat_filename = None
+    pending_entry = None
+    
+    data = request.get_json() or {}
+    request_upload_id = data.get("upload_id")
+    
     try:
-        with open(config.UPLOAD_LOG_FILE, mode='r', newline='', encoding='utf-8') as f:
+        with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             header = next(reader, None)
             for row in reversed(list(reader)):
-                if len(row) >= 5:
-                    timestamp, email, user_id, stored_flat, stored_path = row[0], row[1], row[2], row[3], row[4]
-                else:
-                    timestamp, email, stored_flat, stored_path = row[0], row[1], row[2], row[3]
-                
-                if stored_path == filename or stored_flat == filename:
-                    flat_filename = stored_flat
-                    break
+                if len(row) >= 6:
+                    row_upload_id, timestamp, email, user_id, stored_flat, stored_path = row[0], row[1], row[2], row[3], row[4], row[5]
+                    # Match by upload_id (preferred) or by filename/path
+                    if (request_upload_id and str(row_upload_id) == str(request_upload_id)) or \
+                       (stored_path == filename or stored_flat == filename):
+                        pending_entry = row
+                        flat_filename = stored_flat
+                        upload_id = row_upload_id
+                        break
     except (FileNotFoundError, StopIteration):
         pass
     
@@ -592,15 +687,25 @@ def decline_upload(filename):
     
     item_to_delete = os.path.join(upload_dir, flat_filename)
     
-    data = request.get_json() or {}
     user_email = data.get("email", "unknown")
     user_id = data.get("user_id")
     
-    # Get user_id if not provided in request
+    # Get email and user_id from pending entry if available
+    if pending_entry:
+        _, _, email_from_entry, user_id_from_entry, _, _ = pending_entry
+        user_email = email_from_entry
+        user_id = user_id_from_entry if user_id_from_entry else user_id
+    
+    # Get user_id if not provided
     if not user_id:
         user = User.find_by_email(user_email)
         user_id = user.user_id if user else None
     
+    # Remove from pending log
+    if upload_id:
+        remove_from_pending_log(upload_id)
+    
+    # Log to declined log
     log_event(config.DECLINED_UPLOAD_LOG_FILE, [
         datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
         user_email, 

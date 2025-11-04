@@ -17,7 +17,9 @@ PASSWORD_RESET_DATABASE = "data/password_reset.csv"
 SESSION_LOG_FILE = "logs/session_log.csv"
 DOWNLOAD_LOG_FILE = "logs/download_log.csv"
 SUGGESTION_LOG_FILE = "logs/suggestion_log.csv"
-UPLOAD_LOG_FILE = "logs/upload_log.csv"
+UPLOAD_LOG_FILE = "logs/upload_log.csv"  # Deprecated - kept for backward compatibility
+UPLOAD_PENDING_LOG_FILE = "logs/upload_pending_log.csv"  # Active pending uploads
+UPLOAD_COMPLETED_LOG_FILE = "logs/upload_completed_log.csv"  # Approved/moved uploads
 DECLINED_UPLOAD_LOG_FILE = "logs/declined_log.csv"
 
 # --- File Upload Settings ---
