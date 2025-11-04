@@ -45,6 +45,7 @@ def create_file_with_header(filename, header):
 
 # ========== ID Sequence Management ==========
 ID_SEQUENCE_FILE = "data/user_id_sequence.txt"
+UPLOAD_ID_SEQUENCE_FILE = "data/upload_id_sequence.txt"
 
 def get_project_root():
     """
@@ -171,3 +172,43 @@ def get_max_user_id_from_files():
             continue
     
     return max_id
+
+def _get_upload_id_sequence_file_path():
+    """
+    Returns the absolute path to the upload_id_sequence.txt file.
+    """
+    project_root = _get_project_root()
+    return os.path.join(project_root, UPLOAD_ID_SEQUENCE_FILE)
+
+def get_next_upload_id():
+    """
+    Generates and returns the next unique upload ID.
+    Uses a sequence file to ensure uniqueness across restarts.
+    """
+    project_root = _get_project_root()
+    sequence_file_path = _get_upload_id_sequence_file_path()
+    
+    # Ensure data directory exists
+    os.makedirs(os.path.dirname(sequence_file_path), exist_ok=True)
+    
+    # Read current sequence or start at 1
+    next_id = 1
+    try:
+        if os.path.exists(sequence_file_path):
+            with open(sequence_file_path, mode='r', encoding='utf-8') as f:
+                stored_id = int(f.read().strip())
+                next_id = stored_id
+    except (FileNotFoundError, ValueError, IOError):
+        # If file doesn't exist or is invalid, start at 1
+        pass
+    
+    # Update sequence file with the next ID to assign
+    next_id_to_store = next_id + 1
+    try:
+        with open(sequence_file_path, mode='w', encoding='utf-8') as f:
+            f.write(str(next_id_to_store))
+    except IOError as e:
+        # Log warning but don't fail - we can still return the ID
+        print(f"Warning: Could not update upload sequence file: {e}")
+    
+    return next_id
