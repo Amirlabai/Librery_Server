@@ -225,7 +225,9 @@ def download_metrics_xlsx(log_type):
     log_map = {
         "session": (config.SESSION_LOG_FILE, "Session_Log"),
         "download": (config.DOWNLOAD_LOG_FILE, "Download_Log"),
-        "suggestion": (config.SUGGESTION_LOG_FILE, "Suggestion_Log")
+        "suggestion": (config.SUGGESTION_LOG_FILE, "Suggestion_Log"),
+        "upload": (config.UPLOAD_LOG_FILE, "Upload_Log"),
+        "declined": (config.DECLINED_UPLOAD_LOG_FILE, "Declined_Upload_Log"),
     }
 
     if log_type not in log_map:
