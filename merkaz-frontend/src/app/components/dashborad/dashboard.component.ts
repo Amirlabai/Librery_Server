@@ -138,7 +138,7 @@ export class DashboardComponent {
       setTimeout(() => {
         this.suggestionSuccess = '';
         this.ngOnInit();  
-      }, 2000);
+      }, 5000);
     },
     error: (err) => {
       if (err.status === 429 && err.error?.error) {
@@ -146,7 +146,7 @@ export class DashboardComponent {
 
         setTimeout(() => {
           this.suggestionError = '';
-        }, 5000);
+        }, 10000);
       } else {
         
         this.suggestionError = 'An unexpected error occurred.';
