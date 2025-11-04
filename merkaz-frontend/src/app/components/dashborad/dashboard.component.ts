@@ -142,8 +142,18 @@ export class DashboardComponent {
     },
     error: (err) => {
       if (err.status === 429 && err.error?.error) {
-        this.suggestionError = err.error.error; 
-      } 
+        this.suggestionError = err.error.error;
+
+        setTimeout(() => {
+          this.suggestionError = '';
+        }, 5000);
+      } else {
+        
+        this.suggestionError = 'An unexpected error occurred.';
+        setTimeout(() => {
+          this.suggestionError = '';
+        }, 5000);
+      }
     }
   });
 }
