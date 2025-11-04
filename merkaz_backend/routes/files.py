@@ -199,8 +199,12 @@ def suggest():
         current_cooldown = COOLDOWN_LEVELS[cooldown_index]
         if elapsed_time < current_cooldown:
             remaining = max(1, round((current_cooldown - elapsed_time) / 60))
+            if remaining == 1:
+                remaining_str = str(int(current_cooldown - elapsed_time)) + " seconds"
+            else:
+                remaining_str = str(remaining) + " minutes"
             return jsonify({
-                "error": f"You must wait another {remaining} minute(s) before submitting again.",
+                "error": f"You must wait another {remaining_str} before submitting again.",
                 "remaining_minutes": remaining
             }), 429
             
