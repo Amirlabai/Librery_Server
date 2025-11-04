@@ -1,6 +1,6 @@
 <div class="container">
   <div class="header">
-    <h1><a routerLink="/dashboard">Public Files</a></h1>
+    <h1><a (click)="goToRoot()">Public Files</a></h1>
     <div class="header-right">
       <a routerLink="my-uploads" class="my-uploads-btn">My Uploads</a>
       <a [routerLink]="['upload']" [queryParams]="{ path: currentPath }" class="upload-btn">Upload File</a>
