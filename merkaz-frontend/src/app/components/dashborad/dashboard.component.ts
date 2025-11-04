@@ -192,6 +192,9 @@ export class DashboardComponent {
       }
     });
   }
-  
+  goToRoot() {
+  this.currentPath = '';
+  this.loadFiles();
+}
   
 }
