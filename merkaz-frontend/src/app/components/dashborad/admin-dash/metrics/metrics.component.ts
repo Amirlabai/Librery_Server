@@ -15,7 +15,9 @@ export class MetricsComponent {
   logs = [
     { type: 'session', name: 'Session Log (Login/Logout)', description: 'Track user login and failure events.' },
     { type: 'download', name: 'Download Log (File/Folder/Delete)', description: 'Track all file, folder, and delete events.' },
-    { type: 'suggestion', name: 'Suggestion Log (User Feedback)', description: 'Records all user suggestions.' }
+    { type: 'suggestion', name: 'Suggestion Log (User Feedback)', description: 'Records all user suggestions.' },
+    { type: 'upload', name: 'Upload Log (Uploads traffic)', description: 'Records all uploads.' },
+    { type: 'declined', name: 'Declined Log (Declined Files)', description: 'Records all declined files.' }
   ];
 
   constructor(private http: HttpClient) {}
