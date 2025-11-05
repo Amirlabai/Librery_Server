@@ -5,7 +5,7 @@ from waitress import serve
 from datetime import datetime, timedelta
 
 import config
-from utils import create_file_with_header
+from utils import create_file_with_header, get_project_root
 from mailer import mail
 from flask_cors import CORS
 
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     #run_ngrok.main()
     # --- Directory and File Initialization ---
     # Get project root (one level up from merkaz_backend directory)
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    project_root = get_project_root()
     
     share_dir = os.path.join(project_root, config.SHARE_FOLDER)
     trash_dir = os.path.join(project_root, config.TRASH_FOLDER)
