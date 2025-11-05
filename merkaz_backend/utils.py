@@ -37,15 +37,13 @@ def csv_to_xlsx_in_memory(csv_filepath):
 
 def create_file_with_header(filename, header):
     """Creates a file with a header if it doesn't exist."""
+    project_root = get_project_root()
+    filename = os.path.join(project_root, filename)
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     if not os.path.exists(filename):
         with open(filename, mode='w', newline='', encoding='utf-8') as f:
             csv.writer(f).writerow(header)
         print(f"Created file: {filename}")
-
-# ========== ID Sequence Management ==========
-ID_SEQUENCE_FILE = "data/user_id_sequence.txt"
-UPLOAD_ID_SEQUENCE_FILE = "data/upload_id_sequence.txt"
 
 def get_project_root():
     """
@@ -69,7 +67,7 @@ def _get_id_sequence_file_path():
     Returns the absolute path to the user_id_sequence.txt file.
     """
     project_root = _get_project_root()
-    return os.path.join(project_root, ID_SEQUENCE_FILE)
+    return os.path.join(project_root, config.ID_SEQUENCE_FILE)
 
 def get_next_user_id():
     """
@@ -178,7 +176,7 @@ def _get_upload_id_sequence_file_path():
     Returns the absolute path to the upload_id_sequence.txt file.
     """
     project_root = _get_project_root()
-    return os.path.join(project_root, UPLOAD_ID_SEQUENCE_FILE)
+    return os.path.join(project_root, config.UPLOAD_ID_SEQUENCE_FILE)
 
 def get_next_upload_id():
     """
