@@ -1,13 +1,14 @@
 import os
+from utils import get_project_root
 # --- Core App Settings ---
 SUPER_SECRET_KEY = "123_default_secret_key_for_dev"
 TOKEN_SECRET_KEY = "123_default_token_key_for_dev"
 
-SERVER_ROOT_DIR = "merkaz_server"
+project_root = get_project_root()
+SERVER_ROOT_DIR = os.path.join(project_root, "merkaz_server")
 SERVER_DATA_DIR = os.path.join(SERVER_ROOT_DIR, "data")
 SERVER_LOGS_DIR = os.path.join(SERVER_ROOT_DIR, "logs")
 SERVER_FILES_DIR = os.path.join(SERVER_ROOT_DIR, "server_files")
-
 
 # --- File Paths ---
 SHARE_FOLDER = os.path.join(SERVER_FILES_DIR, "files_to_share")
@@ -20,7 +21,7 @@ NEW_USER_DATABASE = os.path.join(SERVER_DATA_DIR, "new_users.csv")
 DENIED_USER_DATABASE = os.path.join(SERVER_DATA_DIR, "denied_users.csv")
 PASSWORD_RESET_DATABASE = os.path.join(SERVER_DATA_DIR, "password_reset.csv")
 
-# ========== ID Sequence Management ==========
+# --- ID Sequence Management ---
 ID_SEQUENCE_FILE = os.path.join(SERVER_DATA_DIR, "user_id_sequence.txt")
 UPLOAD_ID_SEQUENCE_FILE = os.path.join(SERVER_LOGS_DIR, "upload_id_sequence.txt")
 
