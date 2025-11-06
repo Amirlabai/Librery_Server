@@ -726,7 +726,7 @@ def decline_upload(filename):
         return jsonify({"error": f"An error occurred while declining the item: {e}"}), 500
 
 @uploads_bp.route("/admin/edit_upload_path/", methods=["POST"])
-def edit_upload_path(upload_id, new_path):
+def edit_upload_path():
     if not session.get("is_admin"):
         return jsonify({"error": "Access denied"}), 403
     
@@ -736,8 +736,8 @@ def edit_upload_path(upload_id, new_path):
     
     # Get upload_id and new_path from request if not provided as parameters
     data = request.get_json() or {}
-    request_upload_id = data.get("upload_id") or upload_id
-    request_new_path = data.get("new_path") or new_path
+    request_upload_id = data.get("upload_id")
+    request_new_path = data.get("new_path")
     
     if not request_upload_id:
         return jsonify({"error": "upload_id is required"}), 400
@@ -758,7 +758,7 @@ def edit_upload_path(upload_id, new_path):
                 for row in reader:
                     if len(row) >= 6 and row[0] == str(request_upload_id):  # upload_id is first column
                         # Update the path column (index 5)
-                        row[6] = os.path.join(request_new_path, row[5])
+                        row[6] = request_new_path
                         found = True
                     rows.append(row)
             
