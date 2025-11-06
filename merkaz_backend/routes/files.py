@@ -53,8 +53,10 @@ def downloads(subpath=''):
                 for row in reader:
                     if len(row) >= 6 and row[6] == item_path_url:  # upload_id is first column
                         # Update the path column (index 5)
-                        item_id = row[6]
+                        item_id = row[0]
                         break
+                    else:
+                        item_id = 0
 
             item_data = {"upload_id":item_id,"name": item_name, "path": item_path_url}
             
