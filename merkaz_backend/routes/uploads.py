@@ -758,7 +758,7 @@ def edit_upload_path(upload_id, new_path):
                 for row in reader:
                     if len(row) >= 6 and row[0] == str(request_upload_id):  # upload_id is first column
                         # Update the path column (index 5)
-                        row[5] = request_new_path
+                        row[6] = os.path.join(request_new_path, row[5])
                         found = True
                     rows.append(row)
             
