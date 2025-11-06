@@ -9,7 +9,9 @@ export interface DeniedUser {
 @Injectable({
   providedIn: 'root'
 })
+
 export class AdminDashboardService {
+
   private baseUrl = 'http://localhost:8000/admin';
 
   constructor(private http: HttpClient) {}
@@ -19,6 +21,11 @@ export class AdminDashboardService {
   }
 
   moveToPending(email: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/admin/re-pend/${email}`, {}, { withCredentials: true });
+    return this.http.post(`${this.baseUrl}/re-pend/${email}`, {}, { withCredentials: true });
+  }
+
+  downloadLog(type: string): void {
+    const url = `${this.baseUrl}/admin/metrics/download/${type}`;
+    window.open(url, '_blank');
   }
 }
