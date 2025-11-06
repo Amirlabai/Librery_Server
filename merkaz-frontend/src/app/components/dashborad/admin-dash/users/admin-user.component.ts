@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core'; // Import OnInit
 import { HttpClient } from '@angular/common/http';
 import { CommonModule, NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { AdminDashboardService } from '../../../../services/admin-dashboard.service';
 
 interface User {
   email: string;
@@ -19,21 +20,18 @@ interface User {
   templateUrl: './admin-user.component.html',
   styleUrls: ['./admin-user.component.css']
 })
-export class AdminUsersComponent implements OnInit { // Implement OnInit
+export class AdminUsersComponent implements OnInit { 
   users: User[] = [];
   flashMessages: { type: 'success' | 'error'; text: string }[] = [];
   currentUserEmail = localStorage.getItem('email') || '';
 
-  // --- Added for Pagination ---
   page: number = 1;
   totalPages: number = 1;
-  // --------------------------
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private adminDashboardService: AdminDashboardService ) {}
 
   ngOnInit() {
-    console.log("✅ AdminUsersComponent loaded!");
-    this.loadUsers(this.page); // Load the initial page
+    this.loadUsers(this.page); 
     this.startHeartbeat();
   }
 

@@ -15,6 +15,7 @@ export interface UploadItem {
   filename: string;
   path: string;
 }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -81,4 +82,6 @@ export class AdminDashboardService {
       { withCredentials: true }
     );
   }
+
+  
 }

@@ -63,6 +63,7 @@ export class DashboardComponent {
     this.dashboardService.loadFiles(this.currentPath).subscribe({
       next: (res: any) => {
         this.items = res.items || [];
+        console.log('Loaded items:', this.items);
         this.folders = this.items.filter((i: any) => i.is_folder || i.isFolder);
         if (res.current_path) this.currentPath = res.current_path;
         if (res.is_admin !== undefined) this.isAdmin = res.is_admin;
@@ -230,12 +231,14 @@ export class DashboardComponent {
     this.editPathSuccess = '';
   }
   editFilePath() {
-    if (!this.selectedFile?.id) {
+    console.log('selectedFile:', this.selectedFile);
+    const uploadId = this.selectedFile?.id || this.selectedFile?.upload_id;
+
+    if (!uploadId) {
       this.editPathError = 'No file selected.';
       return;
     }
 
-    const uploadId = this.selectedFile.id;
     const newPath = this.editedFilePath.trim();
 
     if (!newPath) {
