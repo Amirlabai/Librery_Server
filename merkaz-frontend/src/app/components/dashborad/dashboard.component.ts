@@ -22,19 +22,34 @@ import { RouterModule } from '@angular/router';
 
 export class DashboardComponent {
   items: any[] = [];
+  folders: any[] = [];
+
   isAdmin = false;
   userRole = '';
   currentPath = '';
+  
   flashMessages: { type: string, text: string }[] = [];
   cooldownLevel = 0;
   suggestionText = '';
   suggestionSuccess = '';
   suggestionError = '';
+
   showCreateFolderModal = false;
   newFolderName = '';
   folderCreationError = '';
   folderCreationSuccess = '';
-  
+
+  showEditPathModal = false;
+  editedFilePath = '';
+  editPathError = '';
+  editPathSuccess = '';
+
+  selectedFile: any = null;
+
+  editModalPath = '';
+  modalFolders: any[] = [];   
+   
+
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit() {
@@ -51,6 +66,11 @@ export class DashboardComponent {
     this.http.get(url, { withCredentials: true }).subscribe({
       next: (res: any) => {
         this.items = res.items || [];
+
+         this.folders = this.items.filter(
+            (item: any) => item.is_folder || item.isFolder
+          );  
+
         if (res.current_path !== undefined) {
           this.currentPath = res.current_path;
         }
@@ -69,9 +89,9 @@ export class DashboardComponent {
     if (item.is_folder || item.isFolder) {
       this.currentPath = item.path;
       this.loadFiles();
-    } else {
-      this.download(item);
-    }
+    }else{
+      this.selectedFile = item;
+    } 
   }
   goUp() {
     const pathParts = this.currentPath.split('/').filter(p => p);
@@ -106,12 +126,18 @@ export class DashboardComponent {
   deleteItem(item: any) {
   if (!confirm(`Delete ${item.name}?`)) return;
 
+  const currentPathBeforeDelete = this.currentPath;
+
   this.http.post(
     `http://localhost:8000/delete/${item.path}`,
     {},
     { withCredentials: true }
   ).subscribe({
-    next: () => this.loadFiles(),
+    
+    next: () => {
+      this.currentPath = currentPathBeforeDelete;
+      this.loadFiles()
+    },
     error: err => console.error(err)
   });
 }
@@ -211,5 +237,68 @@ export class DashboardComponent {
     this.currentPath = '';
     this.loadFiles();
   }
+  openEditPathModal() {
+  if (!this.selectedFile) return;               
+    this.showEditPathModal = true;
+    this.editedFilePath = this.selectedFile.path; 
+    this.editPathError = '';
+    this.editPathSuccess = '';
+
+    this.editModalPath = '';            
+    this.loadFoldersForModal('');       
+  }
+  closeEditPathModal() {
+    this.showEditPathModal = false;
+    this.editedFilePath = this.currentPath;
+    this.editPathError = '';
+    this.editPathSuccess = '';
+  }
+  editFilePath() {
+
+    this.editedFilePath = this.editedFilePath.trim();
+
+  }
   
+  setEditedFilePath(folderPath: string) {
+  if (!this.selectedFile?.name) return;
+
+    const cleanFolder = (folderPath || '').replace(/^\/+|\/+$/g, '');
+    const fileName = this.selectedFile.name;
+    this.editedFilePath = cleanFolder ? `/${cleanFolder}/${fileName}` : `/${fileName}`;
+  }
+  openFolderInModal(folder: any) {
+    const next = (folder.path || '').replace(/^\/+|\/+$/g, '');
+    this.loadFoldersForModal(next);
+
+    if (this.selectedFile?.name) {
+      this.editedFilePath = `/${next}/${this.selectedFile.name}`;
+    }
+  }
+  goBackInModal() {
+    const parts = this.editModalPath.split('/').filter(Boolean);
+    parts.pop();
+    const up = parts.join('/');
+    this.loadFoldersForModal(up);
+
+    if (this.selectedFile?.name) {
+      this.editedFilePath = up ? `/${up}/${this.selectedFile.name}` : `/${this.selectedFile.name}`;
+    }
+
+  }
+  private loadFoldersForModal(path: string = '') {
+  const clean = path.replace(/^\/+|\/+$/g, '');
+  const url = clean
+    ? `http://localhost:8000/browse/${clean}`
+    : 'http://localhost:8000/browse';
+
+  this.http.get(url, { withCredentials: true }).subscribe({
+    next: (res: any) => {
+      const items = res.items || [];
+      this.modalFolders = items.filter((i: any) => i.is_folder || i.isFolder);
+      
+      this.editModalPath = (res.current_path ?? clean) || '';
+    },
+    error: err => console.error(err)
+  });
+}
 }
