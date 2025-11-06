@@ -56,7 +56,7 @@ def downloads(subpath=''):
                         item_id = row[6]
                         break
 
-            item_data = {"id":item_id,"name": item_name, "path": item_path_url}
+            item_data = {"upload_id":item_id,"name": item_name, "path": item_path_url}
             
             if os.path.isdir(item_path_os):
                 item_data["is_folder"] = True
