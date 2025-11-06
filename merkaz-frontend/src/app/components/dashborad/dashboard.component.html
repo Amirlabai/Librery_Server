@@ -16,9 +16,10 @@
   </div>
 
   <div class="path-bar">
-    <span>{{ currentPath || '/' }}</span>
+    <button *ngIf="isAdmin" (click)="openCreateFolderModal()" class="create-folder-btn" >📁 Create Folder</button>
     <a *ngIf="currentPath" (click)="goUp()" style="margin-left: 15px;">⬆️ Go Up</a>
-    <button *ngIf="isAdmin" (click)="openCreateFolderModal()" class="create-folder-btn" style="margin-left: 15px;">📁 Create Folder</button>
+    <span>{{ currentPath || '/' }}</span>
+    
   </div>
 
   <div class="table-wrapper">
@@ -30,8 +31,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of items">
-          <td (click)="navigate(item)">
+        <tr *ngFor="let item of items"
+        [ngClass]="{ 'selected-row': selectedFile?.path === item.path }"
+        (click)="navigate(item)"
+        >
+          <td >
             <div class="item-name">
               <ng-container *ngIf="item.is_folder || item.isFolder; else fileIcon">
                 <svg viewBox="0 0 24 24">
@@ -51,6 +55,7 @@
             <div class="action-cell">
               <button (click)="download(item)" class="action-btn download-btn">Download</button>
               <button *ngIf="isAdmin" (click)="deleteItem(item)" class="action-btn delete-btn">Delete</button>
+              <span *ngIf="isAdmin" (click) = "openEditPathModal()" class="edit-btn">✏️</span>
             </div>
           </td>
         </tr>
@@ -100,6 +105,57 @@
           <button type="button" (click)="closeCreateFolderModal()" class="cancel-btn">Cancel</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!--Edit file path Modal-->
+  <div *ngIf="showEditPathModal" class="edit-modal-overlay" (click)="closeEditPathModal()">
+    <div class="edit-modal-content" (click) = "$event.stopPropagation()">
+      <div class="edit-modal-header">
+        <h2>Edit file path</h2>
+        <button class="edit-modal-close" (click)="closeEditPathModal()">×</button>
+      </div>
+      <div class="edit-modal-body">
+        <p *ngIf = "editPathSuccess" class="flash-success">{{ editPathSuccess }}</p>
+        <p *ngIf = "editPathError" class="flash-error">{{ editPathError }}</p>
+        <label for="newFilePath">New File Path:</label>
+        <input
+        type="text"
+        id="newFilePath"
+        [(ngModel)]="editedFilePath"
+        placeholder="Enter new file path..."
+        readonly
+        (keyup.enter)="editFilePath()"
+        autofocus/>
+        <div class="edit-modal-actions">
+          <button type="button" (click)="editFilePath()" class="edit-update-btn">Update</button>
+          <button type="button" (click)="closeEditPathModal()" class="edit-cancel-btn">Cancel</button>
+        </div>
+
+        
+          <div class="edit-left-side">
+              <h3>Your folders</h3>
+
+              <p class="path-display">📂 {{ editModalPath || '/' }}</p>
+
+              <div class="folders-content">
+                <ul>
+                  <li *ngFor="let folder of modalFolders" class="folder-item">
+                    <span class="openFolderInModalBtn" (click)="openFolderInModal(folder)" >📁 {{ folder.name }}</span>
+                  
+                  </li>
+
+                  <li *ngIf="modalFolders.length === 0" class="no-folders">
+                    This folder is empty.
+                  </li>
+                </ul>
+              </div>
+
+              <button class="edit-back-btn" (click)="goBackInModal()">Back</button>
+          </div>
+        
+          
+        
     </div>
   </div>
 

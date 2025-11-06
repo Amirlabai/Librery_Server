@@ -91,9 +91,22 @@ h1 a {
 .admin-dashboard-btn:hover, .upload-btn:hover {
   background-color: #185abc;
 }
-.path-bar { color: #5f6368; font-size: 14px; margin-bottom: 20px; display: flex; align-items: center; }
-.path-bar a { color: #1a73e8; text-decoration: none; cursor: pointer; }
-.path-bar a:hover { text-decoration: underline; }
+.path-bar { 
+  color: #5f6368; 
+  font-size: 14px; 
+  margin-bottom: 20px; 
+  display: flex; 
+  align-items: center; 
+  gap: 12px;
+}
+.path-bar a { 
+  color: #1a73e8; 
+  text-decoration: none; 
+  cursor: pointer; 
+}
+.path-bar a:hover { 
+  text-decoration: underline; 
+}
 .create-folder-btn {
   background-color: #34a853;
   color: white;
@@ -111,7 +124,7 @@ table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th, td { padding: 12px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; vertical-align: middle;}
 th { color: #5f6368; font-weight: 500; }
 tr:hover { background-color: #f1f3f4; }
-.item-name { display: flex; align-items: center; cursor: pointer; }
+.item-name { display: flex; align-items: center;  }
 .item-name svg { margin-right: 12px; width: 20px; height: 20px; fill: #5f6368; }
 .action-cell { display: flex; gap: 8px; }
 .action-btn {
@@ -123,7 +136,7 @@ tr:hover { background-color: #f1f3f4; }
   display: inline-block;
   border: 1px solid #ccc;
 }
-.download-btn { background-color: #e8f0fe; color: #1967d2; }
+.download-btn { background-color: #e8f0fe; color: #1967d2; cursor: pointer; }
 .download-btn:hover { background-color: #d2e3fc; }
 .delete-btn { background-color: #fce8e6; color: #c5221f; cursor: pointer; }
 .delete-btn:hover { background-color: #f9d8d6; }
@@ -136,9 +149,23 @@ tr:hover { background-color: #f1f3f4; }
 .flash-messages li { padding: 10px; border-radius: 4px; margin-bottom: 10px; }
 .flash-success { color: #1e8e3e; background-color: #e6f4ea; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
 .flash-error { color: #d93025; background-color: #fce8e6; padding: 10px; border-radius: 4px; margin-bottom: 10px; }
-
+.edit-btn{
+  cursor: pointer;
+}
 /* Modal Styles */
 .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.edit-modal-overlay{
   position: fixed;
   top: 0;
   left: 0;
@@ -155,9 +182,16 @@ tr:hover { background-color: #f1f3f4; }
   background: white;
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
+  width: 800px;
+  height: 300px;
+  overflow-y: auto;
+}
+.edit-modal-content{
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  width: 800px;
+  height: 600px;
   overflow-y: auto;
 }
 
@@ -168,8 +202,20 @@ tr:hover { background-color: #f1f3f4; }
   padding: 20px;
   border-bottom: 1px solid #e0e0e0;
 }
-
+.edit-modal-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
 .modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #202124;
+}
+.edit-modal-header h2 {
   margin: 0;
   font-size: 20px;
   font-weight: 500;
@@ -190,16 +236,42 @@ tr:hover { background-color: #f1f3f4; }
   justify-content: center;
   border-radius: 50%;
 }
-
+.edit-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #5f6368;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
 .modal-close:hover {
+  background-color: #f1f3f4;
+}
+.edit-modal-close:hover {
   background-color: #f1f3f4;
 }
 
 .modal-body {
   padding: 20px;
 }
+.edit-modal-body {
+  padding: 20px;
+}
 
 .modal-body label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #202124;
+}
+.edit-modal-body label {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
@@ -216,8 +288,21 @@ tr:hover { background-color: #f1f3f4; }
   box-sizing: border-box;
   margin-bottom: 20px;
 }
-
+.edit-modal-body input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
 .modal-body input:focus {
+  outline: none;
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
+}
+.edit-modal-body input:focus {
   outline: none;
   border-color: #1a73e8;
   box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.1);
@@ -228,7 +313,11 @@ tr:hover { background-color: #f1f3f4; }
   gap: 10px;
   justify-content: flex-end;
 }
-
+.edit-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
 .modal-actions button {
   padding: 10px 20px;
   border: none;
@@ -237,7 +326,14 @@ tr:hover { background-color: #f1f3f4; }
   font-weight: 500;
   cursor: pointer;
 }
-
+.edit-modal-actions button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
 .create-btn {
   background-color: #1a73e8;
   color: white;
@@ -254,4 +350,74 @@ tr:hover { background-color: #f1f3f4; }
 
 .cancel-btn:hover {
   background-color: #d2d5d9;
+}
+.edit-update-btn{
+  background-color: #1a73e8;
+  color: white;
+}
+.edit-update-btn:hover {
+  background-color: #185abc;
+}
+.edit-cancel-btn {
+  background-color: #e8eaed;
+  color: #3c4043;
+}
+.edit-cancel-btn:hover {
+  background-color: #d2d5d9;
+}
+.selected-row {
+  background-color: #e8f0fe;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.selected-row:hover {
+  background-color: #d2e3fc;
+}
+
+.edit-left-side{
+  border-radius: 12px;
+  background: #dad5d5;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  width: 92%;
+  height: 300px;
+  align-items: start;
+  padding: 20px;
+}
+.folders-content{
+  border-radius: 12px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 300px;
+  min-height: 150px;
+  max-height: 220px; 
+  overflow-y: auto;
+  flex: 1; 
+}
+.folders-content::-webkit-scrollbar {
+  width: 8px;
+}
+.folders-content::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.folders-content::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+.openFolderInModalBtn{
+  cursor: pointer;
+}
+.edit-back-btn{
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: #1a73e8;
+  color: white;
+  margin-top: 10px; 
 }
