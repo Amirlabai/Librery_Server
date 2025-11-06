@@ -5,7 +5,10 @@ import { Observable } from "rxjs";
 export interface DeniedUser {
   email: string;
 }
-
+export interface PendingUser {
+  email: string;
+  status: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -27,5 +30,24 @@ export class AdminDashboardService {
   downloadLog(type: string): void {
     const url = `${this.baseUrl}/admin/metrics/download/${type}`;
     window.open(url, '_blank');
+  }
+  
+  loadPendingUsers(): Observable<PendingUser[]> {
+    return this.http.get<PendingUser[]>(
+      `${this.baseUrl}/admin/pending`,
+      { withCredentials: true }
+    );
+  }
+
+  approveUser(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/approve/${email}`, {}, { withCredentials: true });
+  }
+
+  denyUser(email: string): Observable<any> {
+    return this.http.post(
+      `${this.baseUrl}/admin/deny/${email}`,
+      {},
+      { withCredentials: true }
+    );
   }
 }
