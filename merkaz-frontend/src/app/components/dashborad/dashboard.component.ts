@@ -64,6 +64,10 @@ export class DashboardComponent {
       next: (res: any) => {
         this.items = res.items || [];
         this.folders = this.items.filter((i: any) => i.is_folder || i.isFolder);
+
+        console.log('Loaded items:', this.items);
+        console.log('loadFolders :', this.folders);
+
         if (res.current_path) this.currentPath = res.current_path;
         if (res.is_admin !== undefined) this.isAdmin = res.is_admin;
         if (res.cooldown_level !== undefined) this.cooldownLevel = res.cooldown_level;
@@ -230,13 +234,15 @@ export class DashboardComponent {
     this.editPathSuccess = '';
   }
   editFilePath() {
-    if (!this.selectedFile?.id) {
+    if (!this.selectedFile?.upload_id) {
       this.editPathError = 'No file selected.';
       return;
     }
 
-    const uploadId = this.selectedFile.id;
+    const uploadId = this.selectedFile.upload_id;
     const newPath = this.editedFilePath.trim();
+
+    console.log('Editing file path:', { uploadId, newPath });
 
     if (!newPath) {
       this.editPathError = 'New path cannot be empty.';
