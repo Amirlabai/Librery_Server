@@ -40,33 +40,97 @@ An open library for file-sharing among students. A full-stack web application bu
   - Trash folder for deleted files
   - Responsive Angular frontend
 
-## Project Structure
+## Backend structure
 
 ```
-NagoAmir_Server/
-├── merkaz_backend/          # Flask backend application
-│   ├── routes/              # API route handlers
-│   │   ├── auth.py         # Authentication endpoints
-│   │   ├── files.py        # File browsing/download endpoints
-│   │   ├── uploads.py      # File upload endpoints
-│   │   └── admin.py        # Admin dashboard endpoints
-│   ├── config.py           # Configuration settings
-│   ├── main.py             # Application entry point
-│   ├── utils.py            # Utility functions
-│   ├── user.py             # User model
-│   └── mailer.py           # Email functionality
-├── merkaz-frontend/        # Angular frontend application
-│   └── src/app/components/ # Angular components
-├── data/                   # CSV databases (users, sequences)
-├── logs/                   # Activity logs (CSV format)
-│   ├── upload_pending_log.csv      # Pending uploads
-│   ├── upload_completed_log.csv    # Approved uploads
-│   ├── session_log.csv             # Session events
-│   ├── download_log.csv            # Download history
-│   └── suggestion_log.csv          # User suggestions
-├── files_to_share/         # Public shared files directory
-├── uploads/                 # Temporary upload directory (pending approval)
-└── trash/                   # Deleted files directory
+merkaz_backend/
+├── app.py                        # Main application entry point
+├── config/
+│   └── config.py                 # Application configuration and environment settings
+│
+├── controllers/                  # Controller layer (Flask routes / API endpoints)
+│   ├── auth_controller.py        # User authentication and session routes
+│   ├── files_controller.py       # File browsing and download endpoints
+│   ├── uploads_controller.py     # File upload endpoints
+│   └── admin_controller.py       # Admin dashboard endpoints
+│
+├── services/                     # Business logic layer
+│   ├── auth_service.py           # Authentication and session handling
+│   ├── file_service.py           # File management and validation
+│   ├── upload_service.py         # File upload logic and workflow
+│   ├── admin_service.py          # Admin operations, approvals, and reports
+│   └── mail_service.py           # Email sending and notifications
+│
+├── repositories/                 # Data access layer
+│   ├── user_repository.py        # Read/write user data (CSV or DB)
+│   ├── upload_repository.py      # Manage upload logs and data
+│   ├── download_repository.py    # Manage download history
+│   ├── session_repository.py     # Handle session logs
+│   └── suggestion_repository.py  # Manage user suggestions
+│
+├── models/                       # Entity and data models
+│   ├── user_entity.py            # User entity definition
+│   ├── upload_entity.py          # Upload entity definition
+│   ├── log_entity.py             # Base log record structure
+│   └── __init__.py
+│
+├── utils/                        # Utility and helper functions
+│   ├── file_utils.py             # File operations and MIME validation
+│   ├── csv_utils.py              # CSV read/write utilities
+│   ├── log_utils.py              # Logging helper functions
+│   └── path_utils.py             # Path and directory management
+│
+└── __init__.py
+```
+## Frontend structure
+```
+merkaz-frontend/
+├── src/
+│   ├── app/
+│   │   ├── components/                   # Main feature components
+│   │   │   ├── dashboard/
+│   │   │   │   ├── admin-dash/           # Admin dashboard page
+│   │   │   │   ├── dashboard.component.css
+│   │   │   │   ├── dashboard.component.html
+│   │   │   │   └── dashboard.component.ts
+│   │   │   │
+│   │   │   ├── forgotpass/               # Forgot password page
+│   │   │   │   ├── forgotpass.component.css
+│   │   │   │   ├── forgotpass.component.html
+│   │   │   │   └── forgotpass.component.ts
+│   │   │   │
+│   │   │   ├── login/                    # Login page
+│   │   │   │   ├── login.component.css
+│   │   │   │   ├── login.component.html
+│   │   │   │   └── login.component.ts
+│   │   │   │
+│   │   │   ├── register/                 # User registration page
+│   │   │   │   ├── register.component.css
+│   │   │   │   ├── register.component.html
+│   │   │   │   └── register.component.ts
+│   │   │   │
+│   │   │   └── uploads/                  # Uploads and user files
+│   │   │       ├── my-uploads.component.css
+│   │   │       ├── my-uploads.component.html
+│   │   │       ├── my-uploads.component.ts
+│   │   │       ├── upload-file.component.css
+│   │   │       ├── upload-file.component.html
+│   │   │       └── upload-file.component.ts
+│   │   │
+│   │   ├── interceptors/
+│   │   │   └── auth.interceptor.ts       # HTTP interceptor for auth headers
+│   │   │
+│   │   ├── models/
+│   │   │   └── pending-user.model.ts     # Pending user data model
+│   │   │
+│   │   ├── services/
+│   │   │   ├── auth.guard.ts             # Route guard for authentication
+│   │   │   └── auth.service.ts           # Authentication and user session service
+│   │   │
+│   │   ├── app.config.ts                 # Global app configuration
+│   │   ├── app.css                       # Global styling
+│   │   ├── app.html                      # Root template
+│   │   └── app.ts                        # Root component / bootstrap
 ```
 
 ## Installation
