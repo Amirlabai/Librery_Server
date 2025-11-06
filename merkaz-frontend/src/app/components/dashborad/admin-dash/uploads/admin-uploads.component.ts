@@ -3,13 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { AdminDashboardService, UploadItem } from '../../../../services/admin-dashboard.service';
 
-interface UploadItem {
-  timestamp: string;
-  email: string;
-  filename: string;
-  path: string;
-}
 
 @Component({
   selector: 'app-admin-uploads',
@@ -22,48 +17,46 @@ export class AdminUploadsComponent {
   uploads: UploadItem[] = [];
   flashMessages: { type: 'success' | 'error'; text: string }[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private adminDashboardService: AdminDashboardService) {}
 
   ngOnInit() {
     this.loadUploads();
   }
 
   loadUploads() {
-    this.http.get<UploadItem[]>('http://localhost:8000/admin/uploads', { withCredentials: true }).subscribe({
-      next: data => this.uploads = data,
-      error: () => this.flashMessages = [{ type: 'error', text: 'Failed to load uploads.' }]
+    this.adminDashboardService.loadUploads().subscribe({
+      next: (data) => {
+        this.uploads = data;
+      },
+      error: () => {
+        this.flashMessages = [{ type: 'error', text: 'Failed to load uploads.' }];
+      }
     });
   }
 
   approve(upload: UploadItem, index: number) {
-    const payload = { target_path: upload.path };
-
-    this.http.post(`http://localhost:8000/admin/move_upload/${upload.filename}`, payload, {
-      withCredentials: true
-    }).subscribe({
-    next: () => {
-      this.flashMessages = [{ type: 'success', text: `Approved ${upload.filename}` }];
-      this.uploads.splice(index, 1);
-    },
-    error: () => this.flashMessages = [{ type: 'error', text: `Failed to approve ${upload.filename}` }]
-  });
-}
+    this.adminDashboardService.approveUpload(upload.filename, upload.path).subscribe({
+      next: () => {
+        this.flashMessages = [{ type: 'success', text: `Approved ${upload.filename}` }];
+        this.uploads.splice(index, 1); 
+      },
+      error: () => {
+        this.flashMessages = [{ type: 'error', text: `Failed to approve ${upload.filename}` }];
+      }
+    });
+  }
 
   decline(upload: UploadItem, index: number) {
-    
     if (!confirm('Are you sure you want to decline and delete this item?')) return;
 
-    const payload = { target_path: upload.path };
-    
-
-    this.http.post(`http://localhost:8000/admin/decline_upload/${upload.filename}`, payload, {
-      withCredentials: true
-    }).subscribe({
+    this.adminDashboardService.declineUpload(upload.filename, upload.path).subscribe({
       next: () => {
         this.flashMessages = [{ type: 'success', text: `Declined ${upload.filename}` }];
         this.uploads.splice(index, 1);
       },
-      error: () => this.flashMessages = [{ type: 'error', text: `Failed to decline ${upload.filename}` }]
+      error: () => {
+        this.flashMessages = [{ type: 'error', text: `Failed to decline ${upload.filename}` }];
+      }
     });
   }
 }
