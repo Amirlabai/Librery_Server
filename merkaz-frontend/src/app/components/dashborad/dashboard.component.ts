@@ -256,6 +256,22 @@ export class DashboardComponent {
   editFilePath() {
 
     this.editedFilePath = this.editedFilePath.trim();
+    const uploadId = this.selectedFile.id;
+
+    console.log('Editing path to:', this.editedFilePath, 'for upload ID:', uploadId);
+
+    this.http.post(
+      'http://localhost:8000/edit_upload_path',
+      { upload_id: uploadId, new_path: this.editedFilePath },
+      { withCredentials: true }
+    ).subscribe({
+      next: (res: any) => {
+        this.editPathSuccess = res.message;
+      },
+      error: (err: any) => {
+        this.editPathError = err.error?.error || 'Failed to update path.';
+      }
+    });
 
   }
   
