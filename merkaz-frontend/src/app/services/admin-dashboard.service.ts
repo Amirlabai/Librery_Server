@@ -9,6 +9,12 @@ export interface PendingUser {
   email: string;
   status: string;
 }
+export interface UploadItem {
+  timestamp: string;
+  email: string;
+  filename: string;
+  path: string;
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -34,7 +40,7 @@ export class AdminDashboardService {
   
   loadPendingUsers(): Observable<PendingUser[]> {
     return this.http.get<PendingUser[]>(
-      `${this.baseUrl}/admin/pending`,
+      `${this.baseUrl}/pending`,
       { withCredentials: true }
     );
   }
@@ -45,8 +51,33 @@ export class AdminDashboardService {
 
   denyUser(email: string): Observable<any> {
     return this.http.post(
-      `${this.baseUrl}/admin/deny/${email}`,
+      `${this.baseUrl}/deny/${email}`,
       {},
+      { withCredentials: true }
+    );
+  }
+
+  loadUploads(): Observable<UploadItem[]> {
+    return this.http.get<UploadItem[]>(
+      `${this.baseUrl}/uploads`,
+      { withCredentials: true }
+    );
+  }
+
+  approveUpload(filename: string, targetPath: string): Observable<any> {
+    const payload = { target_path: targetPath };
+    return this.http.post(
+      `${this.baseUrl}/move_upload/${filename}`,
+      payload,
+      { withCredentials: true }
+    );
+  }
+
+  declineUpload(filename: string, targetPath: string): Observable<any> {
+    const payload = { target_path: targetPath };
+    return this.http.post(
+      `${this.baseUrl}//decline_upload/${filename}`,
+      payload,
       { withCredentials: true }
     );
   }
