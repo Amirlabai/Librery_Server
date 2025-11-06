@@ -4,7 +4,7 @@ python -m venv .venv
 ## activate venv
 .venv\Scripts\Activate.ps1
     ##if not working in terminal(powershell):
-    cd merkaz-frontend; Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process; ng serve
+    cd merkaz-frontend; Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process; ng serve; npm run dev
 
 ## deactivate venv
 .venv\Scripts\deactivate.ps1

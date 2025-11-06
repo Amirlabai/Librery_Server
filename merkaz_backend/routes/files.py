@@ -51,6 +51,8 @@ def downloads(subpath=''):
                 header = next(reader, None)
                 rows = [header] if header else []
                 for row in reader:
+                    a = row[6]
+                    b = item_path_url
                     if len(row) >= 6 and row[6] == item_path_url:  # upload_id is first column
                         # Update the path column (index 5)
                         item_id = row[0]
