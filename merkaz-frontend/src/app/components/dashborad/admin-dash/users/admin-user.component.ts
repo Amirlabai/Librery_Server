@@ -62,12 +62,22 @@ export class AdminUsersComponent implements OnInit {
     this.adminDashboardService.toggleStatus(email)
       .subscribe({
         next: () => {
+
           this.flashMessages = [{ type: 'success', text: 'Status updated successfully.' }];
           this.loadUsers(); 
+
+          setTimeout(() => {
+            this.flashMessages = [];
+          }, 3000);
         },
         error: () => {
           this.flashMessages = [{ type: 'error', text: 'Failed to update status.' }];
+
+          setTimeout(() => {
+            this.flashMessages = [];
+          }, 3000);
         }
+        
       });
   }
   
