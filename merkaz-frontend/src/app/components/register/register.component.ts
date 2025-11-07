@@ -2,8 +2,8 @@ import {Component} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
-import {HttpClient} from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 
 @Component({
@@ -36,8 +36,7 @@ export class RegisterComponent{
   private emailPattern =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  constructor(private http:HttpClient,private router:Router) {
-  }
+  constructor(private router: Router, private authService: AuthService) {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -56,13 +55,11 @@ export class RegisterComponent{
 
     this.isLoading = true;
 
-    this.http.post('http://localhost:8000/register', payload).subscribe({
-      next: (res: any) => {
+    this.authService.register(this.email, this.password).subscribe({
+      next: (res) => {
         this.isLoading = false;
-
         if (res?.message) {
           this.success = res.message;
-
           setTimeout(() => this.router.navigate(['/login']), 2000);
         }
       },
@@ -76,6 +73,7 @@ export class RegisterComponent{
     });
   }
   private validateForm(): boolean {
+    
     if (!this.email.trim() || !this.password.trim()) {
       this.error = 'Please fill in all fields.';
       return false;

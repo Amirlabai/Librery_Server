@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -17,7 +16,7 @@ export class AdminUploadsComponent {
   uploads: UploadItem[] = [];
   flashMessages: { type: 'success' | 'error'; text: string }[] = [];
 
-  constructor(private http: HttpClient,private adminDashboardService: AdminDashboardService) {}
+  constructor(private adminDashboardService: AdminDashboardService) {}
 
   ngOnInit() {
     this.loadUploads();
