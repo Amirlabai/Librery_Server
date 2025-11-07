@@ -92,7 +92,7 @@ export class AdminDashboardService {
   }
 
   toggleStatus(email: string) : Observable<any> {
-    return this.http.post('${this.baseUrl}/toggle-status/${email}', {}, { withCredentials: true });
+    return this.http.post(`${this.baseUrl}/toggle-status/${email}`, {}, { withCredentials: true });
   }
   
   startHeartbeat(): void {
