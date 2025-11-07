@@ -725,14 +725,14 @@ def decline_upload(filename):
     except Exception as e:
         return jsonify({"error": f"An error occurred while declining the item: {e}"}), 500
 
+@uploads_bp.route("/admin/edit_upload_path/", methods=["POST"])
 def edit_upload_path(upload_id, new_path):
     if not session.get("is_admin"):
         return jsonify({"error": "Access denied"}), 403
     
     # Ensure files are in project root
     project_root = get_project_root()
-    upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
-    pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
+    file_log_path = os.path.join(project_root, config.UPLOAD_COMPLETED_LOG_FILE)
     
     # Get upload_id and new_path from request if not provided as parameters
     data = request.get_json() or {}
@@ -751,7 +751,7 @@ def edit_upload_path(upload_id, new_path):
     with _log_lock:
         try:
             # Read all rows
-            with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
+            with open(file_log_path, mode='r', newline='', encoding='utf-8') as f:
                 reader = csv.reader(f)
                 header = next(reader, None)
                 rows = [header] if header else []
@@ -764,7 +764,7 @@ def edit_upload_path(upload_id, new_path):
             
             # Write back all rows with updated path
             if found:
-                with open(pending_log_path, mode='w', newline='', encoding='utf-8') as f:
+                with open(file_log_path, mode='w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerows(rows)
                 return jsonify({"success": True,"message": f"Path updated for upload_id {request_upload_id}"}), 200

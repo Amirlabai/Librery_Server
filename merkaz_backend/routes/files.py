@@ -4,6 +4,7 @@ import zipfile
 from io import BytesIO
 from datetime import datetime
 from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
+import csv
 
 import config
 from utils import log_event, get_project_root
@@ -21,6 +22,7 @@ def downloads(subpath=''):
     # Get project root (one level up from merkaz_backend directory)
     project_root = get_project_root()
     share_dir = os.path.join(project_root, config.SHARE_FOLDER)
+    upload_completed_log = os.path.join(share_dir,config.UPLOAD_COMPLETED_LOG_FILE)
 
     safe_subpath = os.path.normpath(subpath).replace('\\', '/')
     if safe_subpath == '.':
@@ -44,7 +46,19 @@ def downloads(subpath=''):
             item_path_os = os.path.join(current_path, item_name)
             item_path_url = os.path.join(safe_subpath, item_name).replace('\\', '/')
             
-            item_data = {"name": item_name, "path": item_path_url}
+            with open(upload_completed_log, mode='r', newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                header = next(reader, None)
+                rows = [header] if header else []
+                for row in reader:
+                    if len(row) >= 6 and row[6] == item_path_url:  # upload_id is first column
+                        # Update the path column (index 5)
+                        item_id = row[0]
+                        break
+                    else:
+                        item_id = 0
+
+            item_data = {"upload_id":item_id,"name": item_name, "path": item_path_url}
             
             if os.path.isdir(item_path_os):
                 item_data["is_folder"] = True

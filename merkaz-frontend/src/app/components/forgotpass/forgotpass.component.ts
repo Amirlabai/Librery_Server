@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { ForgotPassService } from '../../services/forgotPass.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -17,17 +17,15 @@ export class ForgotPasswordComponent {
   message = '';
   error = '';
 
-  constructor(private http: HttpClient) {}
+  constructor(private forgotPassService: ForgotPassService) {}
 
   onSubmit() {
     this.error = '';
     this.message = '';
     this.isLoading = true;
 
-    const payload = { email: this.email.trim() };
-
-    this.http.post('http://localhost:8000/forgot-password', payload).subscribe({
-      next: (res: any) => {
+    this.forgotPassService.sendResetLink(this.email).subscribe({
+      next: (res) => {
         this.isLoading = false;
         this.message = res.message || 'Password reset link sent to your email.';
       },

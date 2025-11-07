@@ -8,7 +8,6 @@
  */
 import { Component } from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../../services/auth.service';
@@ -25,21 +24,15 @@ import {AuthService} from '../../services/auth.service';
   ]
 })
 export class LoginComponent {
-  /** User input fields */
+
   email = '';
   password = '';
-
-  /** UI state */
   showPassword = false;
   isLoading = false;
-
-   /** Response messages */
   message = '';
   error = '';
 
-
-
-  constructor(private http: HttpClient, private router: Router, private authService: AuthService ) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -51,6 +44,7 @@ export class LoginComponent {
    * Backend should respond with a JSON object (see API Contract above).
    */
   onSubmit() {
+      
     this.error = '';
     this.message = '';
     this.isLoading = true;
@@ -60,29 +54,30 @@ export class LoginComponent {
       password: this.password.trim()
     };
 
-    this.http.post('http://localhost:8000/login', payload, { withCredentials: true }).subscribe({
-    next: (res: any) => {
-    this.isLoading = false;
+    this.authService.login(this.email, this.password).subscribe({
 
-    if (res.token) {
-      this.authService.saveToken(res.token);
-    }
-    if (res.role) {
-      localStorage.setItem('role', res.role);
-    }
+      next: (res: any) => {
 
-    this.message = res.message || 'Login successful';
-    if(res.role === 'admin'){
-      this.router.navigate(['/dashboard']);
-    } else {  
-    this.router.navigate(['/dashboard']);
-    }
-  },
-  error: (err) => {
-    this.isLoading = false;
-    this.error = err.error?.error || err.error?.message || 'Invalid credentials or server error';
-  }
-});
+        this.isLoading = false;
 
+        if (res.token) {
+          this.authService.saveToken(res.token);
+        }
+        if (res.role) {
+          localStorage.setItem('role', res.role);
+        }
+
+        this.message = res.message || 'Login successful';
+          if(res.role === 'admin'){
+            this.router.navigate(['/dashboard']);
+          } else {  
+          this.router.navigate(['/dashboard']);
+          }
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.error = err.error?.error || err.error?.message || 'Invalid credentials or server error';
+        }
+    });
   }
 }
