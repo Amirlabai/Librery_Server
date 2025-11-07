@@ -214,13 +214,14 @@ export class DashboardComponent {
   }
 
   openEditPathModal() {
+  
+    console.log('edited file:' , this.selectedFile)
 
     if (!this.selectedFile) return;               
       this.showEditPathModal = true;
       this.editedFilePath = this.selectedFile.path; 
       this.editPathError = '';
       this.editPathSuccess = '';
-
       this.editModalPath = '';            
       this.loadFoldersForModal('');       
   }
