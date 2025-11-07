@@ -1,8 +1,37 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
+
+export interface LoginResponse {
+  token?: string;
+  role?: string;
+  message?: string;
+  error?: string;
+}
+
+export interface RegisterResponse {
+  message?: string;
+  error?: string;
+}
 
 @Injectable({ providedIn: 'root' })
+
 export class AuthService {
   private readonly tokenKey = 'token';
+  private baseUrl = 'http://localhost:8000';
+
+  constructor(private http: HttpClient) {}
+
+  login(email: string, password: string): Observable<LoginResponse> {
+    const payload = { email: email.trim(), password: password.trim() };
+    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, payload, { withCredentials: true });
+  }
+
+  register(email: string, password: string): Observable<RegisterResponse> {
+    const payload = { email: email.trim(), password: password.trim() };
+    return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, payload);
+  }
 
   saveToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);

@@ -83,5 +83,26 @@ export class AdminDashboardService {
     );
   }
 
+  loadUsers(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/users`, { withCredentials: true });
+  }
   
+  toggleRole(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/toggle-role/${email}`, {}, { withCredentials: true });
+  }
+
+  toggleStatus(email: string) : Observable<any> {
+    return this.http.post('${this.baseUrl}/toggle-status/${email}', {}, { withCredentials: true });
+  }
+  
+  startHeartbeat(): void {
+
+    setInterval(() => {
+      this.http.post(`${this.baseUrl}/heartbeat`, {}, { withCredentials: true })
+        .subscribe({
+          next: res => console.log('✅ Heartbeat OK', res),
+          error: err => console.error('❌ Heartbeat failed', err)
+        });
+    }, 900000); 
+  }
 }

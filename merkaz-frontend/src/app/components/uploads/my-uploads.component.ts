@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 interface UploadHistory {
   timestamp: string;
@@ -18,19 +18,24 @@ interface UploadHistory {
   styleUrls: ['./my-uploads.component.css']
 })
 export class MyUploadsComponent {
-  uploads: UploadHistory[] = [];
 
-  constructor(private http: HttpClient) {}
+  uploads: UploadHistory[] = [];
+  errorMessage = '';
+
+  constructor(private userService: UserService) {}
 
   ngOnInit() {
     this.loadUploads();
   }
 
   loadUploads() {
-    this.http.get<UploadHistory[]>('http://localhost:8000/my_uploads', { withCredentials: true }).subscribe({
-      next: data => this.uploads = data,
-      error: err => {
-        console.error('Failed to load uploads', err);
+    this.userService.loadUploads().subscribe({
+      next: (data) => {
+        this.uploads = data;
+      },
+      error: () => {
+        
+        this.errorMessage = 'Failed to load uploads. Please try again later.';
         this.uploads = [];
       }
     });

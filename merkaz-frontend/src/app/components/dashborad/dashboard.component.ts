@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -51,7 +50,7 @@ export class DashboardComponent {
   modalFolders: any[] = [];   
    
 
-  constructor(private http: HttpClient,private dashboardService: DashboardService,private router: Router) {}
+  constructor(private dashboardService: DashboardService,private router: Router) {}
 
   ngOnInit() {
     this.userRole = localStorage.getItem('role') || '';
@@ -63,8 +62,9 @@ export class DashboardComponent {
     this.dashboardService.loadFiles(this.currentPath).subscribe({
       next: (res: any) => {
         this.items = res.items || [];
-        console.log('Loaded items:', this.items);
         this.folders = this.items.filter((i: any) => i.is_folder || i.isFolder);
+
+
         if (res.current_path) this.currentPath = res.current_path;
         if (res.is_admin !== undefined) this.isAdmin = res.is_admin;
         if (res.cooldown_level !== undefined) this.cooldownLevel = res.cooldown_level;
@@ -231,15 +231,15 @@ export class DashboardComponent {
     this.editPathSuccess = '';
   }
   editFilePath() {
-    console.log('selectedFile:', this.selectedFile);
-    const uploadId = this.selectedFile?.id || this.selectedFile?.upload_id;
-
-    if (!uploadId) {
+    if (!this.selectedFile?.upload_id) {
       this.editPathError = 'No file selected.';
       return;
     }
 
+    const uploadId = this.selectedFile.upload_id;
     const newPath = this.editedFilePath.trim();
+
+    console.log('Editing file path:', { uploadId, newPath });
 
     if (!newPath) {
       this.editPathError = 'New path cannot be empty.';

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common'; 
 import { AdminDashboardService, PendingUser } from '../../../../services/admin-dashboard.service';
@@ -16,7 +15,7 @@ export class AdminPendingComponent {
   users: PendingUser[] = [];
   flashMessages: { type: string; text: string }[] = [];
 
-  constructor(private http: HttpClient,private adminDashboardService: AdminDashboardService) {}
+  constructor(private adminDashboardService: AdminDashboardService) {}
 
   ngOnInit() {
     this.loadPendingUsers();
