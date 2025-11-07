@@ -35,7 +35,7 @@ export class AdminDashboardService {
   }
 
   downloadLog(type: string): void {
-    const url = `${this.baseUrl}/admin/metrics/download/${type}`;
+    const url = `${this.baseUrl}/metrics/download/${type}`;
     window.open(url, '_blank');
   }
   
