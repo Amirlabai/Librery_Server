@@ -1,7 +1,10 @@
+"""
+Mail service - Email sending and notifications.
+"""
 from flask_mail import Mail, Message
 from flask import url_for, current_app
-import config
-from user import User
+import config.config as config
+from models.user_entity import User
 import threading
 
 mail = Mail()
@@ -123,3 +126,4 @@ def send_password_reset_email(app, user_email, token):
     thread = threading.Thread(target=_send_password_reset_email_sync, args=(app, user_email, token, reset_url))
     thread.daemon = True
     thread.start()
+
