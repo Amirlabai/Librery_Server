@@ -35,7 +35,7 @@ export class AdminDashboardService {
   }
 
   downloadLog(type: string): void {
-    const url = `${this.baseUrl}/admin/metrics/download/${type}`;
+    const url = `${this.baseUrl}/metrics/download/${type}`;
     window.open(url, '_blank');
   }
   
@@ -77,7 +77,7 @@ export class AdminDashboardService {
   declineUpload(filename: string, targetPath: string): Observable<any> {
     const payload = { target_path: targetPath };
     return this.http.post(
-      `${this.baseUrl}//decline_upload/${filename}`,
+      `${this.baseUrl}/decline_upload/${filename}`,
       payload,
       { withCredentials: true }
     );
