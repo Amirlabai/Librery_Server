@@ -7,21 +7,25 @@
 
   <!-- Navigation Tabs -->
   <div class="admin-nav">
-            <a routerLink="/metrics"  class="nav-tab">Metrics</a>
-            <a routerLink="/users"  class="nav-tab active">Users</a>
-            <a routerLink="/pending"  class="nav-tab">Pending</a>
-            <a routerLink="/denied"  class="nav-tab">Denied</a>
-            <a routerLink="/uploads"  class="nav-tab">Uploads</a>
-        </div>
+    <a routerLink="/metrics" class="nav-tab">Metrics</a>
+    <a routerLink="/users" class="nav-tab active">Users</a>
+    <a routerLink="/pending" class="nav-tab">Pending</a>
+    <a routerLink="/denied" class="nav-tab">Denied</a>
+    <a routerLink="/uploads" class="nav-tab">Uploads</a>
+  </div>
 
   <!-- Flash Messages -->
-  <div *ngIf="flashMessages.length > 0" class="flash-messages">
-    <ul>
-      <li *ngFor="let msg of flashMessages" [class]="'flash-' + msg.type">
-        {{ msg.text }}
-      </li>
-    </ul>
-  </div>
+  @if (flashMessages.length > 0) {
+    <div class="flash-messages">
+      <ul>
+        @for (msg of flashMessages; track $index) {
+          <li [class]="'flash-' + msg.type">
+            {{ msg.text }}
+          </li>
+        }
+      </ul>
+    </div>
+  }
 
   <div class="content-wrapper">
     <div class="scrollable-content">
@@ -39,70 +43,70 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let user of users">
-              <td>{{ user.email }}</td>
+            @for (user of users; track user.email) {
+              <tr>
+                <td>{{ user.email }}</td>
 
-              <td style="text-align: center;">
-                <span
-                  class="badge"
-                  [ngClass]="user.is_admin ? 'role-admin' : 'role-user'"
-                >
-                  {{ user.is_admin ? 'Admin' : 'User' }}
-                </span>
-              </td>
-
-              <td style="text-align: center;">
-                <span
-                  class="badge"
-                  [ngClass]="user.is_active ? 'status-active' : 'status-inactive'"
-                >
-                  {{ user.is_active ? 'Active' : 'Inactive' }}
-                </span>
-              </td>
-
-              <td style="text-align: center;">
-                <span
-                  class="online-status"
-                  [ngClass]="user.online_status ? 'online' : 'offline'"
-                ></span>
-                {{ user.online_status ? 'Online' : 'Offline' }}
-              </td>
-
-              <td class="actions-cell">
-                <ng-container *ngIf="user.email !== currentUserEmail; else youRow">
-                  <button
-                    class="action-btn"
-                    [ngClass]="user.is_admin ? 'remove-admin' : 'make-admin'"
-                    (click)="toggleRole(user.email)"
+                <td style="text-align: center;">
+                  <span
+                    class="badge"
+                    [ngClass]="user.is_admin ? 'role-admin' : 'role-user'"
                   >
-                    {{ user.is_admin ? 'Remove Admin' : 'Make Admin' }}
-                  </button>
+                    {{ user.is_admin ? 'Admin' : 'User' }}
+                  </span>
+                </td>
 
-                  <button
-                    class="action-btn"
-                    [ngClass]="user.is_active ? 'deactivate-user' : 'activate-user'"
-                    (click)="toggleStatus(user.email)"
+                <td style="text-align: center;">
+                  <span
+                    class="badge"
+                    [ngClass]="user.is_active ? 'status-active' : 'status-inactive'"
                   >
-                    {{ user.is_active ? 'Deactivate' : 'Activate' }}
-                  </button>
-                </ng-container>
+                    {{ user.is_active ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
 
-                <ng-template #youRow>
-                  <span>(You)</span>
-                </ng-template>
-              </td>
-            </tr>
+                <td style="text-align: center;">
+                  <span
+                    class="online-status"
+                    [ngClass]="user.online_status ? 'online' : 'offline'"
+                  ></span>
+                  {{ user.online_status ? 'Online' : 'Offline' }}
+                </td>
 
-            <tr *ngIf="users.length === 0">
-              <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">
-                No users found.
-              </td>
-            </tr>
+                <td class="actions-cell">
+                  @if (user.email !== currentUserEmail) {
+                    <button
+                      class="action-btn"
+                      [ngClass]="user.is_admin ? 'remove-admin' : 'make-admin'"
+                      (click)="toggleRole(user.email)"
+                    >
+                      {{ user.is_admin ? 'Remove Admin' : 'Make Admin' }}
+                    </button>
+
+                    <button
+                      class="action-btn"
+                      [ngClass]="user.is_active ? 'deactivate-user' : 'activate-user'"
+                      (click)="toggleStatus(user.email)"
+                    >
+                      {{ user.is_active ? 'Deactivate' : 'Activate' }}
+                    </button>
+                  } @else {
+                    <span>(You)</span>
+                  }
+                </td>
+              </tr>
+            }
+
+            @if (users.length === 0) {
+              <tr>
+                <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">
+                  No users found.
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
-
-      
     </div>
   </div>
 </div>

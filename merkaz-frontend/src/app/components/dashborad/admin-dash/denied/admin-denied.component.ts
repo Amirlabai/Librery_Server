@@ -42,9 +42,17 @@ export class AdminDeniedComponent {
     next: () => {
       this.flashMessages = [{ type: 'success', text: `Moved ${email} back to pending.` }];
       this.users.splice(index, 1); 
+      
+      setTimeout(() => {
+          this.flashMessages = [];
+      }, 3000);
     },
     error: () => {
       this.flashMessages = [{ type: 'error', text: `Failed to move ${email} to pending.` }];
+      
+      setTimeout(() => {
+          this.flashMessages = [];
+      }, 3000);
     }
   });
 }

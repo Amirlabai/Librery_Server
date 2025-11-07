@@ -1,8 +1,13 @@
 <div class="container">
   <h1>Forgot Password</h1>
 
-  <div *ngIf="message" class="flash-success">{{ message }}</div>
-  <div *ngIf="error" class="flash-error">{{ error }}</div>
+  @if (message) {
+    <div class="flash-success">{{ message }}</div>
+  }
+
+  @if (error) {
+    <div class="flash-error">{{ error }}</div>
+  }
 
   <form (ngSubmit)="onSubmit()" #forgotForm="ngForm">
     <input
