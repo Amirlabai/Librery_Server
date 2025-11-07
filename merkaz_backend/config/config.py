@@ -1,5 +1,5 @@
 import os
-from utils import get_project_root
+from utils.path_utils import get_project_root
 # --- Core App Settings ---
 SUPER_SECRET_KEY = "123_default_secret_key_for_dev"
 TOKEN_SECRET_KEY = "123_default_token_key_for_dev"

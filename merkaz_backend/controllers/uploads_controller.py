@@ -7,9 +7,9 @@ from datetime import datetime
 from flask import Blueprint, session, abort, jsonify, request, current_app, send_file
 
 
-import config
+import config.config as config
 from utils import log_event, get_project_root, get_next_upload_id
-from user import User
+from models.user_entity import User
 
 uploads_bp = Blueprint('uploads', __name__)
 

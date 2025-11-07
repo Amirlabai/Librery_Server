@@ -77,7 +77,7 @@ export class AdminDashboardService {
   declineUpload(filename: string, targetPath: string): Observable<any> {
     const payload = { target_path: targetPath };
     return this.http.post(
-      `${this.baseUrl}//decline_upload/${filename}`,
+      `${this.baseUrl}/decline_upload/${filename}`,
       payload,
       { withCredentials: true }
     );

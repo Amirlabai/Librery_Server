@@ -6,7 +6,7 @@ from datetime import datetime
 from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
 import csv
 
-import config
+import config.config as config
 from utils import log_event, get_project_root
 from flask_cors import cross_origin
 
