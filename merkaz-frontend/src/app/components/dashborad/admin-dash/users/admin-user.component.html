@@ -102,20 +102,7 @@
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div class="pagination" *ngIf="totalPages > 1">
-        <a *ngIf="page > 1" (click)="loadPage(page - 1)">&laquo;</a>
-
-        <a
-          *ngFor="let p of [].constructor(totalPages); let i = index"
-          (click)="loadPage(i + 1)"
-          [class.active]="page === i + 1"
-        >
-          {{ i + 1 }}
-        </a>
-
-        <a *ngIf="page < totalPages" (click)="loadPage(page + 1)">&raquo;</a>
-      </div>
+      
     </div>
   </div>
 </div>
