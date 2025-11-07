@@ -38,11 +38,21 @@ export class AdminPendingComponent {
     this.adminDashboardService.approveUser(email).subscribe({
       next: () => {
         this.flashMessages = [{ type: 'success', text: `Approved ${email}` }];
+        
         this.loadPendingUsers();
-        setTimeout(() => this.flashMessages = [], 3000);
+
+        setTimeout(() => {
+          this.flashMessages = [];
+        }, 3000);
       },
       error: () => {
+        
         this.flashMessages = [{ type: 'error', text: `Failed to approve ${email}` }];
+        
+        setTimeout(() => {
+
+          this.flashMessages = [];
+        }, 3000);
       }
     });
   }

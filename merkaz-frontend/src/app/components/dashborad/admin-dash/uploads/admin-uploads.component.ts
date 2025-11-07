@@ -38,9 +38,16 @@ export class AdminUploadsComponent {
       next: () => {
         this.flashMessages = [{ type: 'success', text: `Approved ${upload.filename}` }];
         this.uploads.splice(index, 1); 
+        setTimeout(() => {
+          this.flashMessages = [];
+        }, 3000);
       },
       error: () => {
         this.flashMessages = [{ type: 'error', text: `Failed to approve ${upload.filename}` }];
+
+        setTimeout(() => {
+          this.flashMessages = [];
+        }, 3000);
       }
     });
   }
@@ -52,9 +59,19 @@ export class AdminUploadsComponent {
       next: () => {
         this.flashMessages = [{ type: 'success', text: `Declined ${upload.filename}` }];
         this.uploads.splice(index, 1);
+
+        setTimeout(() => {
+          this.flashMessages = [];
+          
+        }, 3000);
       },
       error: () => {
         this.flashMessages = [{ type: 'error', text: `Failed to decline ${upload.filename}` }];
+        
+        setTimeout(() => {
+          this.flashMessages = [];
+          
+        }, 3000);
       }
     });
   }

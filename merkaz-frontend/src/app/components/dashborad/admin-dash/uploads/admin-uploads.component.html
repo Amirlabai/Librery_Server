@@ -15,9 +15,13 @@
   </div>
 
   <!-- Flash Messages -->
-  <ul *ngIf="flashMessages.length" class="flash-messages">
-    <li *ngFor="let msg of flashMessages" [ngClass]="'flash-' + msg.type">{{ msg.text }}</li>
-  </ul>
+  @if (flashMessages.length) {
+    <ul class="flash-messages">
+      @for (msg of flashMessages; track $index) {
+        <li [ngClass]="'flash-' + msg.type">{{ msg.text }}</li>
+      }
+    </ul>
+  }
 
   <!-- Uploads Table -->
   <div class="content-wrapper">
@@ -34,41 +38,45 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let upload of uploads; let i = index">
-              <td>{{ upload.timestamp }}</td>
-              <td>{{ upload.email }}</td>
-              <td>{{ upload.filename }}</td>
-              <td>
-                <input
-                  type="text"
-                  [(ngModel)]="upload.path"
-                  placeholder="Enter destination path"
-                  class="path-input"
-                />
-              </td>
-              <td style="text-align: center;">
-                <div class="actions-cell">
-                  <button
-                    class="action-btn approve-btn"
-                    (click)="approve(upload, i)"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    class="action-btn decline-btn"
-                    (click)="decline(upload, i)"
-                  >
-                    Decline
-                  </button>
-                </div>
-              </td>
-            </tr>
+            @for (upload of uploads; let i = $index; track upload.timestamp) {
+              <tr>
+                <td>{{ upload.timestamp }}</td>
+                <td>{{ upload.email }}</td>
+                <td>{{ upload.filename }}</td>
+                <td>
+                  <input
+                    type="text"
+                    [(ngModel)]="upload.path"
+                    placeholder="Enter destination path"
+                    class="path-input"
+                  />
+                </td>
+                <td style="text-align: center;">
+                  <div class="actions-cell">
+                    <button
+                      class="action-btn approve-btn"
+                      (click)="approve(upload, i)"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      class="action-btn decline-btn"
+                      (click)="decline(upload, i)"
+                    >
+                      Decline
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
 
-            <tr *ngIf="uploads.length === 0">
-              <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">
-                No files are pending review.
-              </td>
-            </tr>
+            @if (uploads.length === 0) {
+              <tr>
+                <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">
+                  No files are pending review.
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
