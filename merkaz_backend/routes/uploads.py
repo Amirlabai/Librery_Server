@@ -726,18 +726,17 @@ def decline_upload(filename):
         return jsonify({"error": f"An error occurred while declining the item: {e}"}), 500
 
 @uploads_bp.route("/admin/edit_upload_path/", methods=["POST"])
-def edit_upload_path(upload_id, new_path):
+def edit_upload_path():
     if not session.get("is_admin"):
         return jsonify({"error": "Access denied"}), 403
     
     # Ensure files are in project root
-    project_root = get_project_root()
-    file_log_path = os.path.join(project_root, config.UPLOAD_COMPLETED_LOG_FILE)
+    file_log_path = config.UPLOAD_COMPLETED_LOG_FILE
     
     # Get upload_id and new_path from request if not provided as parameters
     data = request.get_json() or {}
-    request_upload_id = data.get("upload_id") or upload_id
-    request_new_path = data.get("new_path") or new_path
+    request_upload_id = data.get("upload_id")
+    request_new_path = data.get("new_path")[1:]
     
     if not request_upload_id:
         return jsonify({"error": "upload_id is required"}), 400
@@ -758,7 +757,9 @@ def edit_upload_path(upload_id, new_path):
                 for row in reader:
                     if len(row) >= 6 and row[0] == str(request_upload_id):  # upload_id is first column
                         # Update the path column (index 5)
-                        row[5] = request_new_path
+                        old_path = row[6]
+                        move_file(request_upload_id, old_path, request_new_path)
+                        row[6] = request_new_path
                         found = True
                     rows.append(row)
             
@@ -769,8 +770,74 @@ def edit_upload_path(upload_id, new_path):
                     writer.writerows(rows)
                 return jsonify({"success": True,"message": f"Path updated for upload_id {request_upload_id}"}), 200
             else:
-                return jsonify({"success": False,"message": f"Upload ID {request_upload_id}, Failed to update file path"}), 400
+                return jsonify({"error": f"Upload ID {request_upload_id} not found in log"}), 404
         except FileNotFoundError:
             return jsonify({"success": False,"message": "Pending log file not found"}), 404
         except Exception as e:
-            return jsonify({"success": False,"message": f"An error occurred while updating the path: {e}"}), 500
+            return jsonify({"error": f"An error occurred while updating the path: {e}"}), 500
+        
+def move_file(upload_id, old_path, new_path):
+    if not session.get("is_admin"):
+        return jsonify({"error": "Access denied"}), 403
+        
+    # Ensure files are in project root
+    '''project_root = get_project_root()'''
+    share_dir = config.SHARE_FOLDER
+    source_item = os.path.join(share_dir, old_path).replace('\\', '/')
+    destination_path = os.path.join(share_dir, new_path).replace('\\', '/')
+    
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Missing JSON body"}), 400
+
+    # Look up the entry from pending log by upload_id or filename
+    upload_id = ""  # keep for csv update
+    
+    
+    # Check if source file exists
+    if not os.path.exists(source_item):
+        return jsonify({"error": f'Source item "{os.path.basename(old_path)}" not found'}), 404
+    
+    # Ensure parent directories exist (recreate the folder structure in share_dir)
+    os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+    
+    # Check for conflicts in destination and get unique filename if needed
+    if os.path.exists(destination_path):
+        # File exists in destination, get unique filename
+        # Ensure we don't check directories, only files
+        if os.path.isfile(destination_path):
+            dest_dir = os.path.dirname(destination_path)
+            dest_base = os.path.basename(destination_path)
+            # Calculate relative path from share_dir
+            if dest_dir:
+                rel_dir = os.path.relpath(dest_dir, share_dir)
+                if rel_dir == '.':
+                    rel_dir = ''
+                dest_filename_with_path = os.path.join(rel_dir, dest_base).replace('\\', '/') if rel_dir else dest_base
+            else:
+                dest_filename_with_path = dest_base
+            
+            # Use get_unique_filename with share_dir as base (it handles subdirectories)
+            # Note: save_flat=False to preserve directory structure in share_dir
+            _, unique_dest_path, _ = get_unique_filename(share_dir, dest_filename_with_path, save_flat=False)
+            destination_path = unique_dest_path
+            # Update target_path_str to reflect the unique name for the response
+            # Extract the relative path from share_dir
+            rel_path = os.path.relpath(unique_dest_path, share_dir).replace('\\', '/')
+            target_path_str = rel_path
+    
+    safe_destination = os.path.abspath(destination_path)
+    if not safe_destination.startswith(os.path.abspath(share_dir)):
+        return jsonify({"error": "Invalid target path"}), 400
+
+    try:
+        # Move the file (files are stored flat, so source_item is just the filename)
+        shutil.move(source_item, destination_path)
+        
+        #place holder for loging move
+        
+        return jsonify({"message": f'Item "{new_path}" has been successfully moved to "{new_path}".'}), 200
+    except FileNotFoundError:
+        return jsonify({"error": f'Source item "{os.path.basename(old_path)}" not found'}), 404
+    except Exception as e:
+        return jsonify({"error": f"An error occurred while moving the item: {e}"}), 500
