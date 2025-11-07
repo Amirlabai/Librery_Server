@@ -18,7 +18,7 @@ import csv
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import config
-from user import User
+from models.user_entity import User
 from utils import get_next_user_id, get_max_user_id_from_files
 
 def migrate_user_ids():

@@ -1,8 +1,8 @@
 import csv
-import config
+import config.config as config
 from werkzeug.security import check_password_hash
 
-# --- User Class ---
+# --- User Entity Class ---
 class User:
     def __init__(self, email, password, role='user', status='active', user_id=None):
         self.user_id = user_id  # Unique user ID
@@ -142,3 +142,4 @@ class User:
             "is_admin": self.is_admin,
             "is_active": self.is_active
         }
+

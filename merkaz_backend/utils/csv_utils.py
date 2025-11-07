@@ -1,8 +1,8 @@
 import os
 import csv
 from io import BytesIO
-from werkzeug.security import generate_password_hash, check_password_hash
-import config
+import config.config as config
+from .path_utils import get_project_root, _get_project_root
 
 try:
     from openpyxl.workbook import Workbook
@@ -10,11 +10,15 @@ except ImportError:
     print("Warning: openpyxl not found. Excel export will not work. Run 'pip install openpyxl'.")
     class Workbook: pass
 
-def log_event(filename, data):
-    """Appends a new row to a specified CSV log file."""
-    with open(filename, mode='a', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow(data)
+def create_file_with_header(filename, header):
+    """Creates a file with a header if it doesn't exist."""
+    project_root = get_project_root()
+    filename = os.path.join(project_root, filename)
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    if not os.path.exists(filename):
+        with open(filename, mode='w', newline='', encoding='utf-8') as f:
+            csv.writer(f).writerow(header)
+        print(f"Created file: {filename}")
 
 def csv_to_xlsx_in_memory(csv_filepath):
     """Converts a CSV file to an XLSX file in memory (BytesIO)."""
@@ -34,33 +38,6 @@ def csv_to_xlsx_in_memory(csv_filepath):
     wb.save(memory_file)
     memory_file.seek(0)
     return memory_file
-
-def create_file_with_header(filename, header):
-    """Creates a file with a header if it doesn't exist."""
-    project_root = get_project_root()
-    filename = os.path.join(project_root, filename)
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    if not os.path.exists(filename):
-        with open(filename, mode='w', newline='', encoding='utf-8') as f:
-            csv.writer(f).writerow(header)
-        print(f"Created file: {filename}")
-
-def get_project_root():
-    """
-    Determines the project root directory.
-    If utils.py is in merkaz_backend/, go up one level to get project root.
-    """
-    # Get the directory where utils.py is located (merkaz_backend/)
-    utils_dir = os.path.dirname(os.path.abspath(__file__))
-    # Go up one level to get project root
-    project_root = os.path.dirname(utils_dir)
-    return project_root
-
-def _get_project_root():
-    """
-    Private alias for backward compatibility.
-    """
-    return get_project_root()
 
 def _get_id_sequence_file_path():
     """
@@ -210,3 +187,4 @@ def get_next_upload_id():
         print(f"Warning: Could not update upload sequence file: {e}")
     
     return next_id
+

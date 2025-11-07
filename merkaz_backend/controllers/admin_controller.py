@@ -1,11 +1,11 @@
 from datetime import datetime
 from flask import Blueprint, session, jsonify, request, current_app, send_file
 
-import config
-from user import User
+import config.config as config
+from models.user_entity import User
 from utils import csv_to_xlsx_in_memory, get_next_user_id
-from mailer import send_approval_email, send_denial_email
-from routes.session_tracker import mark_user_online, mark_user_offline, active_sessions,get_active_users
+from services.mail_service import send_approval_email, send_denial_email
+from services.auth_service import mark_user_online, mark_user_offline, get_active_users
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 

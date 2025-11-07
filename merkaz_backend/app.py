@@ -4,16 +4,16 @@ from flask import Flask
 from waitress import serve
 from datetime import datetime, timedelta
 
-import config
+import config.config as config
 from utils import create_file_with_header, get_project_root
-from mailer import mail
+from services.mail_service import mail
 from flask_cors import CORS
 
 # Import and register blueprints
-from routes.auth import auth_bp
-from routes.files import files_bp
-from routes.uploads import uploads_bp
-from routes.admin import admin_bp
+from controllers.auth_controller import auth_bp
+from controllers.files_controller import files_bp
+from controllers.uploads_controller import uploads_bp
+from controllers.admin_controller import admin_bp
 import run_ngrok
 
 def create_app():
@@ -83,3 +83,4 @@ if __name__ == "__main__":
 
     print("Starting server with Waitress...")
     serve(app, host="0.0.0.0", port=8000)
+

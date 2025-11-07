@@ -4,12 +4,12 @@ from datetime import datetime
 from flask import Blueprint, request, session, current_app, jsonify
 from flask_cors import cross_origin
 from werkzeug.security import generate_password_hash
-import config
-from user import User
+import config.config as config
+from models.user_entity import User
 from utils import log_event, get_next_user_id
-from mailer import send_new_user_notification, send_password_reset_email
+from services.mail_service import send_new_user_notification, send_password_reset_email
+from services.auth_service import mark_user_online, mark_user_offline
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
-from routes.session_tracker import mark_user_online, mark_user_offline, active_sessions
 
 auth_bp = Blueprint('auth', __name__)
 
