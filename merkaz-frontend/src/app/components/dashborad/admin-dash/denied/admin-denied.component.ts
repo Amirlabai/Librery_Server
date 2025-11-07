@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminDashboardService } from '../../../../services/admin-dashboard.service';
@@ -21,7 +20,7 @@ export class AdminDeniedComponent {
   users: DeniedUser[] = [];
   flashMessages: { type: 'success' | 'error'; text: string }[] = [];
 
-  constructor(private http: HttpClient,private adminDashboardService: AdminDashboardService) {}
+  constructor(private adminDashboardService: AdminDashboardService) {}
 
   ngOnInit() {
     this.loadDeniedUsers();

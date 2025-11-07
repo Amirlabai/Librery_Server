@@ -768,11 +768,11 @@ def edit_upload_path():
                 with open(file_log_path, mode='w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerows(rows)
-                return jsonify({"message": f"Path updated for upload_id {request_upload_id}"}), 200
+                return jsonify({"success": True,"message": f"Path updated for upload_id {request_upload_id}"}), 200
             else:
                 return jsonify({"error": f"Upload ID {request_upload_id} not found in log"}), 404
         except FileNotFoundError:
-            return jsonify({"error": "Pending log file not found"}), 404
+            return jsonify({"success": False,"message": "Pending log file not found"}), 404
         except Exception as e:
             return jsonify({"error": f"An error occurred while updating the path: {e}"}), 500
         

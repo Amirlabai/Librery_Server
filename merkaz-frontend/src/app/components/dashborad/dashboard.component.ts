@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -51,7 +50,7 @@ export class DashboardComponent {
   modalFolders: any[] = [];   
    
 
-  constructor(private http: HttpClient,private dashboardService: DashboardService,private router: Router) {}
+  constructor(private dashboardService: DashboardService,private router: Router) {}
 
   ngOnInit() {
     this.userRole = localStorage.getItem('role') || '';
@@ -65,8 +64,6 @@ export class DashboardComponent {
         this.items = res.items || [];
         this.folders = this.items.filter((i: any) => i.is_folder || i.isFolder);
 
-        console.log('Loaded items:', this.items);
-        console.log('loadFolders :', this.folders);
 
         if (res.current_path) this.currentPath = res.current_path;
         if (res.is_admin !== undefined) this.isAdmin = res.is_admin;

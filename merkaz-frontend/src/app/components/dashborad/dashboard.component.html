@@ -21,7 +21,8 @@
     <span>{{ currentPath || '/' }}</span>
     
   </div>
-
+ 
+  @defer (on idle) {
   <div class="table-wrapper">
     <table>
       <thead>
@@ -68,6 +69,14 @@
       </tbody>
     </table>
   </div>
+  } @placeholder {
+    <p style="text-align:center;color:#777;">Loading items...</p>
+  } @loading {
+    <img src="spinner.gif" alt="Loading..." style="display:block;margin:auto;" />
+  } @error {
+    <p style="color:red;text-align:center;">Failed to load items.</p>
+  }
+  
 
   <div class="suggestion-box">
     <h2>Have a Suggestion? (Cooldown: Level {{ cooldownLevel }})</h2>
@@ -153,9 +162,6 @@
 
               <button class="edit-back-btn" (click)="goBackInModal()">Back</button>
           </div>
-        
-          
-        
     </div>
   </div>
 

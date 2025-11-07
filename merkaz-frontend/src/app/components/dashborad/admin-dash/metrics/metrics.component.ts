@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router'; 
 import { AdminDashboardService } from '../../../../services/admin-dashboard.service';
 
@@ -21,7 +20,7 @@ export class MetricsComponent {
     { type: 'declined', name: 'Declined Log (Declined Files)', description: 'Records all declined files.' }
   ];
 
-  constructor(private http: HttpClient,private adminDashboardService: AdminDashboardService) {}
+  constructor(private adminDashboardService: AdminDashboardService) {}
 
   downloadLog(type: string) {
     this.adminDashboardService.downloadLog(type);
