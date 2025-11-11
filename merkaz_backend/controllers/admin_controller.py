@@ -177,19 +177,11 @@ def toggle_role(email):
     if email == session.get('email'):
         return jsonify({"error": "You cannot change your own admin status"}), 403
 
-    users = User.get_all()
-    user_found = False
-    for user in users:
-        if user.email == email:
-            user.role = 'user' if user.is_admin else 'admin'
-            user_found = True
-            break
-
-    if not user_found:
-        return jsonify({"error": f"User {email} not found"}), 404
-
-    User.save_all(users)
-    return jsonify({"message": f"Successfully updated role for {email}"}), 200
+    try:
+        User.toggle_role(email)
+        return jsonify({"message": f"Successfully updated role for {email}"}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
 
 
 # ========== TOGGLE STATUS ==========
@@ -201,19 +193,11 @@ def toggle_status(email):
     if email == session.get('email'):
         return jsonify({"error": "You cannot change your own status"}), 403
 
-    users = User.get_all()
-    user_found = False
-    for user in users:
-        if user.email == email:
-            user.status = 'inactive' if user.is_active else 'active'
-            user_found = True
-            break
-
-    if not user_found:
-        return jsonify({"error": f"User {email} not found"}), 404
-
-    User.save_all(users)
-    return jsonify({"message": f"Successfully updated status for {email}"}), 200
+    try:
+        User.toggle_status(email)
+        return jsonify({"message": f"Successfully updated status for {email}"}), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
 
 
 # ========== DOWNLOAD METRICS XLSX ==========

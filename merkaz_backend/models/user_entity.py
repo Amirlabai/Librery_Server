@@ -76,6 +76,29 @@ class User:
         """Rewrites the entire denied user database."""
         User._save_users_to_file(config.DENIED_USER_DATABASE, users)
 
+    # --- Methods for User Management ---
+    @staticmethod
+    def toggle_role(email):
+        """Toggles the role of a user between 'admin' and 'user'."""
+        users = User.get_all()
+        for user in users:
+            if user.email == email:
+                user.role = 'user' if user.is_admin else 'admin'
+                User.save_all(users)
+                return user
+        raise ValueError(f"User {email} not found")
+
+    @staticmethod
+    def toggle_status(email):
+        """Toggles the status of a user between 'active' and 'inactive'."""
+        users = User.get_all()
+        for user in users:
+            if user.email == email:
+                user.status = 'inactive' if user.is_active else 'active'
+                User.save_all(users)
+                return user
+        raise ValueError(f"User {email} not found")
+
     # --- Private Helper Methods ---
     @staticmethod
     def _read_users_from_file(filepath):
