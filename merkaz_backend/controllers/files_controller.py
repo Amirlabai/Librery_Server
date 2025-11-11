@@ -60,7 +60,10 @@ def downloads(subpath=''):
                     else:
                         item_id = "0"
 
-            item_data = {"upload_id":item_id,"name": item_name, "path": item_path_url}
+            item_data = {"upload_id":item_id,
+                        "name": item_name, 
+                        "path": item_path_url
+                        }
             
             if os.path.isdir(item_path_os):
                 item_data["is_folder"] = True
@@ -71,14 +74,13 @@ def downloads(subpath=''):
         
         folders.sort(key=lambda x: x['name'].lower())
         files.sort(key=lambda x: x['name'].lower())
-        
-        items = folders + files
-    
+
     back_path = os.path.dirname(safe_subpath).replace('\\', '/') if safe_subpath else None
     cooldown_level = session.get("cooldown_index", 0) + 1
 
     return jsonify({
-        "items": items,
+        "files": files,
+        "folders": folders,
         "current_path": safe_subpath,
         "back_path": back_path,
         "is_admin": session.get('is_admin', False),
