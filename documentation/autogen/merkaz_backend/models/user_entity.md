@@ -76,6 +76,16 @@ No description provided.
   - Arguments:
     - `users`
 
+- `toggle_role(email)`
+  - Toggles the role of a user between 'admin' and 'user'.
+  - Arguments:
+    - `email`
+
+- `toggle_status(email)`
+  - Toggles the status of a user between 'active' and 'inactive'.
+  - Arguments:
+    - `email`
+
 - `_read_users_from_file(filepath)`
   - Helper to read users from a given CSV file.
   - Arguments:
