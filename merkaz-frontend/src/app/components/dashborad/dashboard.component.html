@@ -17,7 +17,11 @@
   @if (flashMessages.length > 0) {
     <div  class="flash-messages">
       <ul>
-        <li *ngFor="let msg of flashMessages" [ngClass]="'flash-' + msg.type">{{ msg.text }}</li>
+        @for (msg of flashMessages; track $index) {
+          <li [ngClass]="'flash-' + msg.type">
+            {{ msg.text }}
+          </li>
+        }
       </ul>
     </div>
   }
@@ -26,6 +30,7 @@
 
     @if (isAdmin) {
       <button (click)="openCreateFolderModal()" class="create-folder-btn" >📁 Create Folder</button>
+      <input [(ngModel)]="searchFiles" (input)="onSearchChange()" placeholder="search" class="search-items"> 
     }
     @if (currentPath) {
       <a (click)="goUp()" style="margin-left: 15px;">⬆️ Go Up</a>
@@ -98,7 +103,7 @@
   } @placeholder {
     <p style="text-align:center;color:#777;">Loading items...</p>
   } @loading {
-    <img src="spinner.gif" alt="Loading..." style="display:block;margin:auto;" />
+    <p>Loading...</p>
   } @error {
     <p style="color:red;text-align:center;">Failed to load items.</p>
   }
