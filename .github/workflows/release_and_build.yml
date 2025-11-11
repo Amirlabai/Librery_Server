@@ -41,6 +41,11 @@ jobs:
         # Installs the required npm packages for semantic-release plugins.
         run: |
           npm install
+
+      - name: 📦 Install Frontend Dependencies
+        working-directory: merkaz-frontend
+        run: |
+          npm install
           
       - name: 🏷️ Semantic Release (Version Control)
         # This action automatically versions the software.

@@ -4,6 +4,7 @@
   "private": true,
   "description": "Python application with semantic-release versioning",
   "devDependencies": {
+    "@compodoc/compodoc": "^1.1.26",
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^10.3.5",
