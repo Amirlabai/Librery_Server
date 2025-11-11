@@ -1,0 +1,504 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>bundle-script documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+	   <link rel="stylesheet" href="./styles/style.css">
+        <link rel="stylesheet" href="./styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="./" class="navbar-brand">bundle-script documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content readme">
+                   <div class="content-data">
+
+
+<h1>Merkaz_lib</h1>
+<p>An open library for file-sharing among students. A full-stack web application built with Flask (Python) backend and Angular frontend.</p>
+<h2>Features</h2>
+<ul>
+<li><p><strong>User Authentication &amp; Authorization</strong></p>
+<ul>
+<li>User registration with admin approval system</li>
+<li>Login/logout functionality</li>
+<li>Password reset via email</li>
+<li>Role-based access control (Admin/User)</li>
+<li>Session management with 15-minute timeout</li>
+</ul>
+</li>
+<li><p><strong>File Management</strong></p>
+<ul>
+<li>Browse and navigate folder structure</li>
+<li>Upload files (with admin approval workflow)</li>
+<li>Download files and folders (folders as ZIP)</li>
+<li>Create folders</li>
+<li>Delete files/folders (admin only)</li>
+<li>File type validation and security checks</li>
+</ul>
+</li>
+<li><p><strong>Upload System</strong></p>
+<ul>
+<li>Unique upload IDs for each file upload</li>
+<li>Separate pending and completed upload logs</li>
+<li>Admin approval workflow for uploaded files</li>
+<li>File upload with folder structure preservation</li>
+<li>User upload history tracking</li>
+</ul>
+</li>
+<li><p><strong>Admin Dashboard</strong></p>
+<ul>
+<li>View and manage user registrations</li>
+<li>Approve/deny pending uploads</li>
+<li>View system metrics and logs</li>
+<li>Manage user accounts</li>
+<li>Track active sessions</li>
+</ul>
+</li>
+<li><p><strong>Additional Features</strong></p>
+<ul>
+<li>Suggestion submission system with cooldown levels</li>
+<li>Activity logging (downloads, sessions, suggestions)</li>
+<li>Email notifications for user approvals/denials</li>
+<li>Trash folder for deleted files</li>
+<li>Responsive Angular frontend</li>
+</ul>
+</li>
+</ul>
+<h2>Backend structure</h2>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">merkaz_backend/
+├── app.py                        # Main application entry point
+├── config/
+│   └── config.py                 # Application configuration and environment settings
+│
+├── controllers/                  # Controller layer (Flask routes / API endpoints)
+│   ├── auth_controller.py        # User authentication and session routes
+│   ├── files_controller.py       # File browsing and download endpoints
+│   ├── uploads_controller.py     # File upload endpoints
+│   └── admin_controller.py       # Admin dashboard endpoints
+│
+├── services/                     # Business logic layer
+│   ├── auth_service.py           # Authentication and session handling
+│   ├── file_service.py           # File management and validation
+│   ├── upload_service.py         # File upload logic and workflow
+│   ├── admin_service.py          # Admin operations, approvals, and reports
+│   └── mail_service.py           # Email sending and notifications
+│
+├── repositories/                 # Data access layer
+│   ├── user_repository.py        # Read/write user data (CSV or DB)
+│   ├── upload_repository.py      # Manage upload logs and data
+│   ├── download_repository.py    # Manage download history
+│   ├── session_repository.py     # Handle session logs
+│   └── suggestion_repository.py  # Manage user suggestions
+│
+├── models/                       # Entity and data models
+│   ├── user_entity.py            # User entity definition
+│   ├── upload_entity.py          # Upload entity definition
+│   ├── log_entity.py             # Base log record structure
+│   └── __init__.py
+│
+├── utils/                        # Utility and helper functions
+│   ├── file_utils.py             # File operations and MIME validation
+│   ├── csv_utils.py              # CSV read/write utilities
+│   ├── log_utils.py              # Logging helper functions
+│   └── path_utils.py             # Path and directory management
+│
+└── __init__.py</code></pre></div><h2>Frontend structure</h2>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">merkaz-frontend/
+├── src/
+│   ├── app/
+│   │   ├── components/                   # Main feature components
+│   │   │   ├── dashboard/
+│   │   │   │   ├── admin-dash/           # Admin dashboard page
+│   │   │   │   ├── dashboard.component.css
+│   │   │   │   ├── dashboard.component.html
+│   │   │   │   └── dashboard.component.ts
+│   │   │   │
+│   │   │   ├── forgotpass/               # Forgot password page
+│   │   │   │   ├── forgotpass.component.css
+│   │   │   │   ├── forgotpass.component.html
+│   │   │   │   └── forgotpass.component.ts
+│   │   │   │
+│   │   │   ├── login/                    # Login page
+│   │   │   │   ├── login.component.css
+│   │   │   │   ├── login.component.html
+│   │   │   │   └── login.component.ts
+│   │   │   │
+│   │   │   ├── register/                 # User registration page
+│   │   │   │   ├── register.component.css
+│   │   │   │   ├── register.component.html
+│   │   │   │   └── register.component.ts
+│   │   │   │
+│   │   │   └── uploads/                  # Uploads and user files
+│   │   │       ├── my-uploads.component.css
+│   │   │       ├── my-uploads.component.html
+│   │   │       ├── my-uploads.component.ts
+│   │   │       ├── upload-file.component.css
+│   │   │       ├── upload-file.component.html
+│   │   │       └── upload-file.component.ts
+│   │   │
+│   │   ├── interceptors/
+│   │   │   └── auth.interceptor.ts       # HTTP interceptor for auth headers
+│   │   │
+│   │   ├── models/
+│   │   │   └── pending-user.model.ts     # Pending user data model
+│   │   │
+│   │   ├── services/
+│   │   │   ├── auth.guard.ts             # Route guard for authentication
+│   │   │   └── auth.service.ts           # Authentication and user session service
+│   │   │
+│   │   ├── app.config.ts                 # Global app configuration
+│   │   ├── app.css                       # Global styling
+│   │   ├── app.html                      # Root template
+│   │   └── app.ts                        # Root component / bootstrap</code></pre></div><h2>Installation</h2>
+<h3>Prerequisites</h3>
+<ul>
+<li>Python 3.7+ </li>
+<li>Node.js 14+ and npm</li>
+<li>Angular CLI (for frontend development)</li>
+</ul>
+<h3>Backend Setup</h3>
+<ol>
+<li><p><strong>Clone the repository</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">git clone &lt;repository-url&gt;
+cd NagoAmir_Server</code></pre></div></li>
+<li><p><strong>Create and activate virtual environment</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">python -m venv .venv</code></pre></div><p>On Windows (PowerShell):</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">.venv\Scripts\Activate.ps1</code></pre></div><p>If you encounter an execution policy error:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process</code></pre></div><p>On Linux/Mac:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">source .venv/bin/activate</code></pre></div></li>
+<li><p><strong>Install Python dependencies</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">pip install -r requirements.txt</code></pre></div><p>Note: If you encounter encoding issues, you may need to install dependencies manually from <code>venv_prerequsites.txt</code></p>
+</li>
+<li><p><strong>Configure the application</strong></p>
+<p>Edit <code>merkaz_backend/config.py</code> to set:</p>
+<ul>
+<li>Secret keys for sessions and tokens</li>
+<li>Mail server configuration (Gmail SMTP settings)</li>
+<li>File paths and folder names</li>
+<li>Allowed file extensions</li>
+</ul>
+</li>
+<li><p><strong>Run the backend server</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">cd merkaz_backend
+python main.py</code></pre></div><p>The server will start on <code>http://localhost:8000</code> using Waitress.</p>
+</li>
+</ol>
+<h3>Frontend Setup</h3>
+<ol>
+<li><p><strong>Install Node.js</strong></p>
+<p>Download and install from: <a href="https://nodejs.org">https://nodejs.org</a></p>
+<p>Verify installation:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">node -v
+npm -v</code></pre></div></li>
+<li><p><strong>Install Angular CLI globally</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">npm install -g &#64;angular/cli</code></pre></div></li>
+<li><p><strong>Navigate to frontend directory</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">cd merkaz-frontend</code></pre></div></li>
+<li><p><strong>Install frontend dependencies</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">npm install</code></pre></div></li>
+<li><p><strong>Run the development server</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">ng serve</code></pre></div><p>The frontend will be available at <code>http://localhost:4200</code></p>
+</li>
+</ol>
+<h2>Configuration</h2>
+<h3>Backend Configuration (<code>merkaz_backend/config.py</code>)</h3>
+<p>Key configuration options:</p>
+<ul>
+<li><strong>Secret Keys</strong>: Change <code>SUPER_SECRET_KEY</code> and <code>TOKEN_SECRET_KEY</code> for production</li>
+<li><strong>Mail Settings</strong>: Configure Gmail SMTP settings for email notifications</li>
+<li><strong>File Paths</strong>: Customize folder names for shared files, uploads, and trash</li>
+<li><strong>Allowed Extensions</strong>: Modify <code>ALLOWED_EXTENSIONS</code> and <code>VIDEO_EXTENSIONS</code> as needed</li>
+<li><strong>File Size Limits</strong>: Adjust <code>MAX_CONTENT_LENGTH</code> and <code>MAX_VIDEO_CONTENT_LENGTH</code></li>
+</ul>
+<h3>Frontend Configuration</h3>
+<p>The frontend is configured to connect to <code>http://localhost:8000</code> by default. Update API endpoints in components if using a different backend URL.</p>
+<h2>Running the Application</h2>
+<h3>Development Mode</h3>
+<ol>
+<li><p><strong>Start the backend server</strong> (from <code>merkaz_backend/</code>):</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">python main.py</code></pre></div></li>
+<li><p><strong>Start the frontend</strong> (from <code>merkaz-frontend/</code>):</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">ng serve</code></pre></div></li>
+<li><p><strong>Access the application</strong>:</p>
+<ul>
+<li>Frontend: <a href="http://localhost:4200">http://localhost:4200</a></li>
+<li>Backend API: <a href="http://localhost:8000">http://localhost:8000</a></li>
+</ul>
+</li>
+</ol>
+<h3>Production Deployment</h3>
+<p>For production, consider:</p>
+<ul>
+<li>Using a production WSGI server (Waitress is already configured)</li>
+<li>Building the Angular app: <code>ng build --configuration production</code></li>
+<li>Setting up proper HTTPS</li>
+<li>Configuring environment variables for sensitive data</li>
+<li>Using a reverse proxy (nginx, Apache)</li>
+</ul>
+<h2>API Endpoints Overview</h2>
+<h3>Authentication</h3>
+<ul>
+<li><code>POST /login</code> - User login</li>
+<li><code>POST /register</code> - User registration</li>
+<li><code>POST /logout</code> - User logout</li>
+<li><code>POST /forgot_password</code> - Request password reset</li>
+<li><code>POST /reset_password</code> - Reset password with token</li>
+</ul>
+<h3>File Management</h3>
+<ul>
+<li><code>GET /browse</code> - Browse root directory</li>
+<li><code>GET /browse/&lt;path&gt;</code> - Browse specific directory</li>
+<li><code>GET /download/file/&lt;path&gt;</code> - Download file</li>
+<li><code>GET /download/folder/&lt;path&gt;</code> - Download folder as ZIP</li>
+<li><code>POST /create_folder</code> - Create new folder</li>
+<li><code>POST /delete/&lt;path&gt;</code> - Delete file/folder (admin only)</li>
+</ul>
+<h3>Uploads</h3>
+<ul>
+<li><code>POST /upload</code> - Upload file(s)</li>
+<li><code>GET /my_uploads</code> - Get user&#39;s upload history</li>
+<li><code>GET /admin/uploads</code> - Get pending uploads (admin only)</li>
+<li><code>POST /admin/move_upload/&lt;filename&gt;</code> - Approve and move upload (admin only)</li>
+<li><code>POST /admin/decline_upload/&lt;filename&gt;</code> - Decline upload (admin only)</li>
+</ul>
+<h3>Admin</h3>
+<ul>
+<li><code>GET /admin/metrics</code> - System metrics</li>
+<li><code>GET /admin/users</code> - User management</li>
+<li><code>GET /admin/pending</code> - Pending user registrations</li>
+<li><code>GET /admin/denied</code> - Denied user registrations</li>
+<li><code>POST /admin/approve_user/&lt;email&gt;</code> - Approve user registration</li>
+<li><code>POST /admin/deny_user/&lt;email&gt;</code> - Deny user registration</li>
+</ul>
+<h3>Suggestions</h3>
+<ul>
+<li><code>POST /suggest</code> - Submit suggestion (with cooldown system)</li>
+</ul>
+<h2>Upload System Improvements</h2>
+<p>The upload system has been enhanced with:</p>
+<ul>
+<li><strong>Unique Upload IDs</strong>: Each upload receives a unique identifier for tracking</li>
+<li><strong>Separate Log Files</strong>: <ul>
+<li><code>upload_pending_log.csv</code> - Files awaiting admin approval</li>
+<li><code>upload_completed_log.csv</code> - Files that have been approved and moved</li>
+<li>Prevents duplicate entries and ensures accurate status tracking</li>
+</ul>
+</li>
+<li><strong>Improved Tracking</strong>: Admin can see exactly which files are pending approval</li>
+<li><strong>Better History</strong>: Users can view their complete upload history with accurate status</li>
+</ul>
+<h2>Ngrok Setup (Optional)</h2>
+<p>To expose the local server to the internet for testing:</p>
+<ol>
+<li>Visit: <a href="https://dashboard.ngrok.com/get-started/setup">https://dashboard.ngrok.com/get-started/setup</a></li>
+<li>Follow the setup instructions for your OS</li>
+<li>Run ngrok:<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">ngrok http 8000</code></pre></div></li>
+</ol>
+<p>This creates a public URL that tunnels to your local server.</p>
+<h2>Development Notes</h2>
+<h3>Generating Requirements File</h3>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">pip freeze &gt; requirements.txt</code></pre></div><h3>Database Files</h3>
+<p>User data and activity logs are stored in CSV format:</p>
+<ul>
+<li><code>data/auth_users.csv</code> - Authenticated users</li>
+<li><code>data/new_users.csv</code> - Pending user registrations</li>
+<li><code>data/denied_users.csv</code> - Denied registrations</li>
+<li><code>logs/</code> - Various activity logs</li>
+</ul>
+<h3>File Upload Flow</h3>
+<ol>
+<li>User uploads file → Saved in <code>uploads/</code> directory (flat structure)</li>
+<li>Entry created in <code>upload_pending_log.csv</code> with unique upload ID</li>
+<li>Admin reviews pending uploads</li>
+<li>Admin approves → File moved to <code>files_to_share/</code>, entry moved to <code>upload_completed_log.csv</code></li>
+<li>Admin declines → File deleted, entry removed from pending log</li>
+</ol>
+<h2>Security Considerations</h2>
+<ul>
+<li>Change default secret keys in production</li>
+<li>Use HTTPS in production</li>
+<li>Implement proper input validation</li>
+<li>Regular security audits</li>
+<li>Keep dependencies updated</li>
+<li>Review file upload restrictions</li>
+</ul>
+<h2>License</h2>
+<p>[Add your license information here]</p>
+<h2>Contributing</h2>
+<p>[Add contribution guidelines if applicable]</p>
+<h2>Support</h2>
+<p>For issues or questions, please [create an issue or contact information].</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 0;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'readme';
+            var COMPODOC_CURRENT_PAGE_URL = 'index.html';
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="./js/libs/custom-elements.min.js"></script>
+       <script src="./js/libs/lit-html.js"></script>
+
+       <script src="./js/menu-wc.js" defer></script>
+       <script nomodule src="./js/menu-wc_es5.js" defer></script>
+
+       <script src="./js/libs/bootstrap-native.js"></script>
+
+       <script src="./js/libs/es6-shim.min.js"></script>
+       <script src="./js/libs/EventDispatcher.js"></script>
+       <script src="./js/libs/promise.min.js"></script>
+
+       <script src="./js/compodoc.js"></script>
+
+       <script src="./js/tabs.js"></script>
+       <script src="./js/menu.js"></script>
+       <script src="./js/libs/clipboard.min.js"></script>
+       <script src="./js/libs/prism.js"></script>
+       <script src="./js/sourceCode.js"></script>
+       <script src="./js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

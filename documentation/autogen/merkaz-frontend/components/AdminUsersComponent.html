@@ -1,0 +1,1210 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>bundle-script documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">bundle-script documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  AdminUsersComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-admin-users</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>CommonModule</code>
+                            <code>RouterLink</code>
+                            <code>NgClass</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./admin-user.component.css</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./admin-user.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#currentUserEmail" >currentUserEmail</a>
+                            </li>
+                            <li>
+                                <a href="#flashMessages" >flashMessages</a>
+                            </li>
+                            <li>
+                                <a href="#users" >users</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#loadUsers" >loadUsers</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                            <li>
+                                <a href="#toggleRole" >toggleRole</a>
+                            </li>
+                            <li>
+                                <a href="#toggleStatus" >toggleStatus</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(adminDashboardService: <a href="../injectables/AdminDashboardService.html" target="_self">AdminDashboardService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts:25</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>adminDashboardService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AdminDashboardService.html" target="_self" >AdminDashboardService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadUsers"></a>
+                    <span class="name">
+                        <span ><b>loadUsers</b></span>
+                        <a href="#loadUsers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadUsers()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts:35</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="30"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts:30</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleRole"></a>
+                    <span class="name">
+                        <span ><b>toggleRole</b></span>
+                        <a href="#toggleRole"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toggleRole(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="48"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts:48</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="toggleStatus"></a>
+                    <span class="name">
+                        <span ><b>toggleStatus</b></span>
+                        <a href="#toggleStatus"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>toggleStatus(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts:60</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="currentUserEmail"></a>
+                    <span class="name">
+                        <span ><b>currentUserEmail</b></span>
+                        <a href="#currentUserEmail"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>unknown</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>localStorage.getItem(&#x27;email&#x27;) || &#x27;&#x27;</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="25" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts:25</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="flashMessages"></a>
+                    <span class="name">
+                        <span ><b>flashMessages</b></span>
+                        <a href="#flashMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="users"></a>
+                    <span class="name">
+                        <span ><b>users</b></span>
+                        <a href="#users"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/User.html" target="_self" >User[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/users/admin-user.component.ts:23</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component, OnInit } from &#x27;@angular/core&#x27;; // Import OnInit
+import { CommonModule, NgClass } from &#x27;@angular/common&#x27;;
+import { RouterLink } from &#x27;@angular/router&#x27;;
+import { AdminDashboardService } from &#x27;../../../../services/admin-dashboard.service&#x27;;
+
+interface User {
+  email: string;
+  role: string;
+  status: string;
+  is_admin: boolean;
+  is_active: boolean;
+  online_status?: boolean; 
+}
+
+@Component({
+  selector: &#x27;app-admin-users&#x27;,
+  standalone: true,
+  imports: [CommonModule, RouterLink, NgClass],
+  templateUrl: &#x27;./admin-user.component.html&#x27;,
+  styleUrls: [&#x27;./admin-user.component.css&#x27;]
+})
+export class AdminUsersComponent implements OnInit { 
+  users: User[] &#x3D; [];
+  flashMessages: { type: &#x27;success&#x27; | &#x27;error&#x27;; text: string }[] &#x3D; [];
+  currentUserEmail &#x3D; localStorage.getItem(&#x27;email&#x27;) || &#x27;&#x27;;
+
+
+  constructor(private adminDashboardService: AdminDashboardService ) {}
+
+  ngOnInit() {
+    this.loadUsers(); 
+    this.adminDashboardService.startHeartbeat();
+  }
+
+  loadUsers() {
+    this.adminDashboardService.loadUsers().subscribe({
+      next: (res) &#x3D;&gt; {
+        this.currentUserEmail &#x3D; res.current_admin || localStorage.getItem(&#x27;email&#x27;) || &#x27;&#x27;;
+        this.users &#x3D; res.users || [];
+      },
+      error: (err) &#x3D;&gt; {
+        console.error(err);
+        this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x27;Failed to load users.&#x27; }];
+      }
+    });
+  }
+
+  toggleRole(email: string) {
+    this.adminDashboardService.toggleRole(email).subscribe({
+      next: () &#x3D;&gt; {
+        this.flashMessages &#x3D; [{ type: &#x27;success&#x27;, text: &#x27;Role updated successfully.&#x27; }];
+        this.loadUsers();
+      },
+      error: () &#x3D;&gt; {
+        this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x27;Failed to update role.&#x27; }];
+      }
+    });
+  }
+
+  toggleStatus(email: string) {
+
+    this.adminDashboardService.toggleStatus(email)
+      .subscribe({
+        next: () &#x3D;&gt; {
+
+          this.flashMessages &#x3D; [{ type: &#x27;success&#x27;, text: &#x27;Status updated successfully.&#x27; }];
+          this.loadUsers(); 
+
+          setTimeout(() &#x3D;&gt; {
+            this.flashMessages &#x3D; [];
+          }, 3000);
+        },
+        error: () &#x3D;&gt; {
+          this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x27;Failed to update status.&#x27; }];
+
+          setTimeout(() &#x3D;&gt; {
+            this.flashMessages &#x3D; [];
+          }, 3000);
+        }
+        
+      });
+  }
+  
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;container&quot;&gt;
+  &lt;!-- Header --&gt;
+  &lt;div class&#x3D;&quot;header&quot;&gt;
+    &lt;h1&gt;Admin Dashboard&lt;/h1&gt;
+    &lt;a routerLink&#x3D;&quot;/dashboard&quot; class&#x3D;&quot;back-link&quot;&gt;Back to Files&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Navigation Tabs --&gt;
+  &lt;div class&#x3D;&quot;admin-nav&quot;&gt;
+    &lt;a routerLink&#x3D;&quot;/metrics&quot; class&#x3D;&quot;nav-tab&quot;&gt;Metrics&lt;/a&gt;
+    &lt;a routerLink&#x3D;&quot;/users&quot; class&#x3D;&quot;nav-tab active&quot;&gt;Users&lt;/a&gt;
+    &lt;a routerLink&#x3D;&quot;/pending&quot; class&#x3D;&quot;nav-tab&quot;&gt;Pending&lt;/a&gt;
+    &lt;a routerLink&#x3D;&quot;/denied&quot; class&#x3D;&quot;nav-tab&quot;&gt;Denied&lt;/a&gt;
+    &lt;a routerLink&#x3D;&quot;/uploads&quot; class&#x3D;&quot;nav-tab&quot;&gt;Uploads&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Flash Messages --&gt;
+  @if (flashMessages.length &gt; 0) {
+    &lt;div class&#x3D;&quot;flash-messages&quot;&gt;
+      &lt;ul&gt;
+        @for (msg of flashMessages; track $index) {
+          &lt;li [class]&#x3D;&quot;&#x27;flash-&#x27; + msg.type&quot;&gt;
+            {{ msg.text }}
+          &lt;/li&gt;
+        }
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  }
+
+  &lt;div class&#x3D;&quot;content-wrapper&quot;&gt;
+    &lt;div class&#x3D;&quot;scrollable-content&quot;&gt;
+      &lt;!-- Users Table --&gt;
+      &lt;div class&#x3D;&quot;table-wrapper&quot;&gt;
+        &lt;table&gt;
+          &lt;thead&gt;
+            &lt;tr&gt;
+              &lt;th&gt;Email&lt;/th&gt;
+              &lt;th style&#x3D;&quot;width: 15%; text-align: center;&quot;&gt;Role&lt;/th&gt;
+              &lt;th style&#x3D;&quot;width: 15%; text-align: center;&quot;&gt;Status&lt;/th&gt;
+              &lt;th style&#x3D;&quot;width: 15%; text-align: center;&quot;&gt;Online Status&lt;/th&gt;
+              &lt;th style&#x3D;&quot;width: 30%; text-align: center;&quot;&gt;Actions&lt;/th&gt;
+            &lt;/tr&gt;
+          &lt;/thead&gt;
+
+          &lt;tbody&gt;
+            @for (user of users; track user.email) {
+              &lt;tr&gt;
+                &lt;td&gt;{{ user.email }}&lt;/td&gt;
+
+                &lt;td style&#x3D;&quot;text-align: center;&quot;&gt;
+                  &lt;span
+                    class&#x3D;&quot;badge&quot;
+                    [ngClass]&#x3D;&quot;user.is_admin ? &#x27;role-admin&#x27; : &#x27;role-user&#x27;&quot;
+                  &gt;
+                    {{ user.is_admin ? &#x27;Admin&#x27; : &#x27;User&#x27; }}
+                  &lt;/span&gt;
+                &lt;/td&gt;
+
+                &lt;td style&#x3D;&quot;text-align: center;&quot;&gt;
+                  &lt;span
+                    class&#x3D;&quot;badge&quot;
+                    [ngClass]&#x3D;&quot;user.is_active ? &#x27;status-active&#x27; : &#x27;status-inactive&#x27;&quot;
+                  &gt;
+                    {{ user.is_active ? &#x27;Active&#x27; : &#x27;Inactive&#x27; }}
+                  &lt;/span&gt;
+                &lt;/td&gt;
+
+                &lt;td style&#x3D;&quot;text-align: center;&quot;&gt;
+                  &lt;span
+                    class&#x3D;&quot;online-status&quot;
+                    [ngClass]&#x3D;&quot;user.online_status ? &#x27;online&#x27; : &#x27;offline&#x27;&quot;
+                  &gt;&lt;/span&gt;
+                  {{ user.online_status ? &#x27;Online&#x27; : &#x27;Offline&#x27; }}
+                &lt;/td&gt;
+
+                &lt;td class&#x3D;&quot;actions-cell&quot;&gt;
+                  @if (user.email !&#x3D;&#x3D; currentUserEmail) {
+                    &lt;button
+                      class&#x3D;&quot;action-btn&quot;
+                      [ngClass]&#x3D;&quot;user.is_admin ? &#x27;remove-admin&#x27; : &#x27;make-admin&#x27;&quot;
+                      (click)&#x3D;&quot;toggleRole(user.email)&quot;
+                    &gt;
+                      {{ user.is_admin ? &#x27;Remove Admin&#x27; : &#x27;Make Admin&#x27; }}
+                    &lt;/button&gt;
+
+                    &lt;button
+                      class&#x3D;&quot;action-btn&quot;
+                      [ngClass]&#x3D;&quot;user.is_active ? &#x27;deactivate-user&#x27; : &#x27;activate-user&#x27;&quot;
+                      (click)&#x3D;&quot;toggleStatus(user.email)&quot;
+                    &gt;
+                      {{ user.is_active ? &#x27;Deactivate&#x27; : &#x27;Activate&#x27; }}
+                    &lt;/button&gt;
+                  } @else {
+                    &lt;span&gt;(You)&lt;/span&gt;
+                  }
+                &lt;/td&gt;
+              &lt;/tr&gt;
+            }
+
+            @if (users.length &#x3D;&#x3D;&#x3D; 0) {
+              &lt;tr&gt;
+                &lt;td colspan&#x3D;&quot;5&quot; style&#x3D;&quot;text-align: center; color: #5f6368; padding: 30px;&quot;&gt;
+                  No users found.
+                &lt;/td&gt;
+              &lt;/tr&gt;
+            }
+          &lt;/tbody&gt;
+        &lt;/table&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./admin-user.component.css</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">:host {
+    font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+    margin: 0;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+  height: calc(100vh - 80px);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
+
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.scrollable-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #202124;
+    margin: 0;
+}
+.header a {
+    background-color: #e8eaed;
+    color: #3c4043;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+.header a:hover {
+    background-color: #d2d5d9;
+}
+.admin-nav {
+    display: flex;
+    gap: 5px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 25px;
+}
+.nav-tab {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #5f6368;
+    border-radius: 6px 6px 0 0;
+    font-weight: 500;
+}
+.nav-tab.active {
+    color: #1a73e8;
+    border-bottom: 3px solid #1a73e8;
+}
+.nav-tab:not(.active):hover {
+    background-color: #f1f3f4;
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 14px; 
+}
+th, td { 
+    padding: 12px 8px; 
+    text-align: left; 
+    border-bottom: 1px solid #e0e0e0; 
+    vertical-align: middle;
+}
+th { 
+    color: #5f6368; 
+    font-weight: 500;
+}
+.action-btn {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+}
+.make-admin { 
+    background-color: #e8f0fe; 
+    color: #1967d2; 
+}
+.make-admin:hover { 
+    background-color: #d2e3fc; 
+}
+.remove-admin { 
+    background-color: #fce8e6; 
+    color: #c5221f; 
+}
+.remove-admin:hover { 
+    background-color: #f9d8d6; 
+}
+.activate-user { 
+    background-color: #e6f4ea; 
+    color: #1e8e3e; 
+}
+.activate-user:hover { 
+    background-color: #c6e6d4; 
+}
+.deactivate-user { 
+    background-color: #fce8e6; 
+    color: #c5221f; 
+}
+.deactivate-user:hover { 
+    background-color: #f9d8d6; 
+}
+.badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+.role-admin { 
+    background-color: #e8f0fe; 
+    color: #1967d2; 
+}
+.role-user { 
+    background-color: #e8eaed; 
+    color: #3c4043; 
+}
+.status-active { 
+    background-color: #e6f4ea; 
+    color: #1e8e3e; 
+}
+.status-inactive { 
+    background-color: #fce8e6; 
+    color: #c5221f; 
+}
+.online-status {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.online { 
+    background-color: #1e8e3e; 
+}
+.offline { 
+    background-color: #ccc; 
+}
+.flash-messages { 
+    list-style: none; 
+    padding: 0; 
+    margin-bottom: 15px;
+}
+.flash-messages li { 
+    padding: 10px; 
+    border-radius: 4px; 
+    margin-bottom: 10px; 
+}
+.flash-success { 
+    color: #1e8e3e; 
+    background-color: #e6f4ea; 
+}
+.flash-error { 
+    color: #d93025; 
+    background-color: #fce8e6; 
+}
+.actions-cell { 
+    display: flex; 
+    gap: 5px; 
+    justify-content: center; 
+}
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+.pagination a {
+    color: #1a73e8;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+    margin: 0 4px;
+}
+.pagination a.active {
+    background-color: #1a73e8;
+    color: white;
+    border: 1px solid #1a73e8;
+}</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab active">Users</a>    <a routerLink="/pending" class="nav-tab">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab">Uploads</a>  </div>  <!-- Flash Messages -->  @if (flashMessages.length > 0) {    <div class="flash-messages">      <ul>        @for (msg of flashMessages; track $index) {          <li [class]="\'flash-\' + msg.type">            {{ msg.text }}          </li>        }      </ul>    </div>  }  <div class="content-wrapper">    <div class="scrollable-content">      <!-- Users Table -->      <div class="table-wrapper">        <table>          <thead>            <tr>              <th>Email</th>              <th style="width: 15%; text-align: center;">Role</th>              <th style="width: 15%; text-align: center;">Status</th>              <th style="width: 15%; text-align: center;">Online Status</th>              <th style="width: 30%; text-align: center;">Actions</th>            </tr>          </thead>          <tbody>            @for (user of users; track user.email) {              <tr>                <td>{{ user.email }}</td>                <td style="text-align: center;">                  <span                    class="badge"                    [ngClass]="user.is_admin ? \'role-admin\' : \'role-user\'"                  >                    {{ user.is_admin ? \'Admin\' : \'User\' }}                  </span>                </td>                <td style="text-align: center;">                  <span                    class="badge"                    [ngClass]="user.is_active ? \'status-active\' : \'status-inactive\'"                  >                    {{ user.is_active ? \'Active\' : \'Inactive\' }}                  </span>                </td>                <td style="text-align: center;">                  <span                    class="online-status"                    [ngClass]="user.online_status ? \'online\' : \'offline\'"                  ></span>                  {{ user.online_status ? \'Online\' : \'Offline\' }}                </td>                <td class="actions-cell">                  @if (user.email !== currentUserEmail) {                    <button                      class="action-btn"                      [ngClass]="user.is_admin ? \'remove-admin\' : \'make-admin\'"                      (click)="toggleRole(user.email)"                    >                      {{ user.is_admin ? \'Remove Admin\' : \'Make Admin\' }}                    </button>                    <button                      class="action-btn"                      [ngClass]="user.is_active ? \'deactivate-user\' : \'activate-user\'"                      (click)="toggleStatus(user.email)"                    >                      {{ user.is_active ? \'Deactivate\' : \'Activate\' }}                    </button>                  } @else {                    <span>(You)</span>                  }                </td>              </tr>            }            @if (users.length === 0) {              <tr>                <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">                  No users found.                </td>              </tr>            }          </tbody>        </table>      </div>    </div>  </div></div></div>'
+    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'AdminUsersComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'AdminUsersComponent.html';
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>

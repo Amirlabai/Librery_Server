@@ -1,0 +1,1081 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>bundle-script documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+          <script>
+              // --- Iframe navigation tracking for Template Playground ---
+              function sendCurrentUrlToParent() {
+                  if (window.parent && window.parent !== window) {
+                      window.parent.postMessage({
+                          type: 'compodoc-iframe-navigate',
+                          url: window.location.pathname + window.location.hash
+                      }, '*');
+                  }
+              }
+              window.addEventListener('hashchange', sendCurrentUrlToParent, false);
+              window.addEventListener('popstate', sendCurrentUrlToParent, false);
+              window.addEventListener('DOMContentLoaded', sendCurrentUrlToParent, false);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">bundle-script documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  AdminPendingComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts</code>
+</p>
+
+
+
+
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-admin-pending</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>RouterLink</code>
+                            <code>CommonModule</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./admin-pending.component.css</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./admin-pending.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#flashMessages" >flashMessages</a>
+                            </li>
+                            <li>
+                                <a href="#users" >users</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#approveUser" >approveUser</a>
+                            </li>
+                            <li>
+                                <a href="#denyUser" >denyUser</a>
+                            </li>
+                            <li>
+                                <a href="#loadPendingUsers" >loadPendingUsers</a>
+                            </li>
+                            <li>
+                                <a href="#ngOnInit" >ngOnInit</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(adminDashboardService: <a href="../injectables/AdminDashboardService.html" target="_self">AdminDashboardService</a>)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:16</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>adminDashboardService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/AdminDashboardService.html" target="_self" >AdminDashboardService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="approveUser"></a>
+                    <span class="name">
+                        <span ><b>approveUser</b></span>
+                        <a href="#approveUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>approveUser(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="denyUser"></a>
+                    <span class="name">
+                        <span ><b>denyUser</b></span>
+                        <a href="#denyUser"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>denyUser(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="60"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:60</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>email</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="loadPendingUsers"></a>
+                    <span class="name">
+                        <span ><b>loadPendingUsers</b></span>
+                        <a href="#loadPendingUsers"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>loadPendingUsers()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:24</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="ngOnInit"></a>
+                    <span class="name">
+                        <span ><b>ngOnInit</b></span>
+                        <a href="#ngOnInit"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>ngOnInit()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="20"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:20</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="flashMessages"></a>
+                    <span class="name">
+                        <span ><b>flashMessages</b></span>
+                        <a href="#flashMessages"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>literal type[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:16</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="users"></a>
+                    <span class="name">
+                        <span ><b>users</b></span>
+                        <a href="#users"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>PendingUser[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="15" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:15</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Component } from &#x27;@angular/core&#x27;;
+import { RouterLink } from &#x27;@angular/router&#x27;;
+import { CommonModule } from &#x27;@angular/common&#x27;; 
+import { AdminDashboardService, PendingUser } from &#x27;../../../../services/admin-dashboard.service&#x27;;
+
+
+@Component({
+  selector: &#x27;app-admin-pending&#x27;,
+  standalone: true,
+  imports: [RouterLink ,CommonModule],
+  templateUrl: &#x27;./admin-pending.component.html&#x27;,
+  styleUrls: [&#x27;./admin-pending.component.css&#x27;]
+})
+export class AdminPendingComponent {
+  users: PendingUser[] &#x3D; [];
+  flashMessages: { type: string; text: string }[] &#x3D; [];
+
+  constructor(private adminDashboardService: AdminDashboardService) {}
+
+  ngOnInit() {
+    this.loadPendingUsers();
+  }
+
+  loadPendingUsers() {
+
+    this.adminDashboardService.loadPendingUsers().subscribe({
+      next: (res) &#x3D;&gt; {
+      this.users &#x3D; res;
+      },
+      error: (err) &#x3D;&gt; {
+        this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x27;Failed to load pending users.&#x27; }];
+      }
+    });
+  }
+
+  approveUser(email: string) {
+
+    this.adminDashboardService.approveUser(email).subscribe({
+      next: () &#x3D;&gt; {
+        this.flashMessages &#x3D; [{ type: &#x27;success&#x27;, text: &#x60;Approved ${email}&#x60; }];
+        
+        this.loadPendingUsers();
+
+        setTimeout(() &#x3D;&gt; {
+          this.flashMessages &#x3D; [];
+        }, 3000);
+      },
+      error: () &#x3D;&gt; {
+        
+        this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x60;Failed to approve ${email}&#x60; }];
+        
+        setTimeout(() &#x3D;&gt; {
+
+          this.flashMessages &#x3D; [];
+        }, 3000);
+      }
+    });
+  }
+
+  denyUser(email: string) {
+    
+    this.adminDashboardService.denyUser(email).subscribe({
+      next: () &#x3D;&gt; {
+        this.flashMessages &#x3D; [{ type: &#x27;success&#x27;, text: &#x60;Denied ${email}&#x60; }];
+        this.loadPendingUsers(); 
+      },
+      error: () &#x3D;&gt; {
+        this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x60;Failed to deny ${email}&#x60; }];
+      }
+    });
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;container&quot;&gt;
+  &lt;!-- Header --&gt;
+  &lt;div class&#x3D;&quot;header&quot;&gt;
+    &lt;h1&gt;Admin Dashboard&lt;/h1&gt;
+    &lt;a routerLink&#x3D;&quot;/dashboard&quot; class&#x3D;&quot;back-link&quot;&gt;Back to Files&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Navigation Tabs --&gt;
+  &lt;div class&#x3D;&quot;admin-nav&quot;&gt;
+    &lt;a routerLink&#x3D;&quot;/metrics&quot; class&#x3D;&quot;nav-tab&quot;&gt;Metrics&lt;/a&gt;
+    &lt;a routerLink&#x3D;&quot;/users&quot; class&#x3D;&quot;nav-tab&quot;&gt;Users&lt;/a&gt;
+    &lt;a routerLink&#x3D;&quot;/pending&quot; class&#x3D;&quot;nav-tab active&quot;&gt;Pending&lt;/a&gt;
+    &lt;a routerLink&#x3D;&quot;/denied&quot; class&#x3D;&quot;nav-tab&quot;&gt;Denied&lt;/a&gt;
+    &lt;a routerLink&#x3D;&quot;/uploads&quot; class&#x3D;&quot;nav-tab&quot;&gt;Uploads&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Flash Messages --&gt;
+  @if (flashMessages.length &gt; 0) {
+    &lt;ul class&#x3D;&quot;flash-messages&quot;&gt;
+      @for (msg of flashMessages; track $index) {
+        &lt;li [class]&#x3D;&quot;&#x27;flash-&#x27; + msg.type&quot;&gt;
+          {{ msg.text }}
+        &lt;/li&gt;
+      }
+    &lt;/ul&gt;
+  }
+
+  &lt;!-- Users Table --&gt;
+  &lt;div class&#x3D;&quot;table-wrapper&quot;&gt;
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Email&lt;/th&gt;
+          &lt;th style&#x3D;&quot;width: 25%; text-align: center;&quot;&gt;Action&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        @for (user of users; track user.email) {
+          &lt;tr&gt;
+            &lt;td&gt;{{ user.email }}&lt;/td&gt;
+            &lt;td style&#x3D;&quot;text-align: center;&quot;&gt;
+              &lt;button
+                class&#x3D;&quot;action-btn approve-btn&quot;
+                (click)&#x3D;&quot;approveUser(user.email)&quot;
+              &gt;
+                Approve
+              &lt;/button&gt;
+              &lt;button
+                class&#x3D;&quot;action-btn deny-btn&quot;
+                (click)&#x3D;&quot;denyUser(user.email)&quot;
+              &gt;
+                Deny
+              &lt;/button&gt;
+            &lt;/td&gt;
+          &lt;/tr&gt;
+        }
+
+        @if (users.length &#x3D;&#x3D;&#x3D; 0) {
+          &lt;tr&gt;
+            &lt;td colspan&#x3D;&quot;2&quot; style&#x3D;&quot;text-align: center; color: #5f6368; padding: 30px;&quot;&gt;
+              No users are pending approval.
+            &lt;/td&gt;
+          &lt;/tr&gt;
+        }
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./admin-pending.component.css</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">:host {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+  margin: 0;
+  background-color: #f0f2f5;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+  height: calc(100vh - 80px);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 60vh;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.table-wrapper {
+  overflow-y: auto;
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.content-wrapper::-webkit-scrollbar,
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb,
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb:hover,
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #202124;
+  margin: 0;
+}
+
+.back-link {
+  background-color: #e8eaed;
+  color: #3c4043;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.back-link:hover {
+  background-color: #d2d5d9;
+}
+
+/* Nav Tabs */
+.admin-nav {
+  display: flex;
+  gap: 5px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 25px;
+}
+
+.nav-tab {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: #5f6368;
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+}
+
+.nav-tab.active {
+  color: #1a73e8;
+  border-bottom: 3px solid #1a73e8;
+}
+
+.nav-tab:not(.active):hover {
+  background-color: #f1f3f4;
+}
+
+.table-wrapper {
+  max-height: 400px; /* ניתן לשנות לפי הצורך */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+th {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+/* Buttons */
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.approve-btn {
+  background-color: #e6f4ea;
+  color: #1e8e3e;
+}
+
+.approve-btn:hover {
+  background-color: #c6e6d4;
+}
+
+.deny-btn {
+  background-color: #fce8e6;
+  color: #c5221f;
+  margin-left: 5px;
+}
+
+.deny-btn:hover {
+  background-color: #f9d8d6;
+}
+
+/* Flash messages */
+.flash-messages {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+.flash-messages li {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.flash-success {
+  color: #1e8e3e;
+  background-color: #e6f4ea;
+}
+
+.flash-error {
+  color: #d93025;
+  background-color: #fce8e6;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis-network.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab">Users</a>    <a routerLink="/pending" class="nav-tab active">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab">Uploads</a>  </div>  <!-- Flash Messages -->  @if (flashMessages.length > 0) {    <ul class="flash-messages">      @for (msg of flashMessages; track $index) {        <li [class]="\'flash-\' + msg.type">          {{ msg.text }}        </li>      }    </ul>  }  <!-- Users Table -->  <div class="table-wrapper">    <table>      <thead>        <tr>          <th>Email</th>          <th style="width: 25%; text-align: center;">Action</th>        </tr>      </thead>      <tbody>        @for (user of users; track user.email) {          <tr>            <td>{{ user.email }}</td>            <td style="text-align: center;">              <button                class="action-btn approve-btn"                (click)="approveUser(user.email)"              >                Approve              </button>              <button                class="action-btn deny-btn"                (click)="denyUser(user.email)"              >                Deny              </button>            </td>          </tr>        }        @if (users.length === 0) {          <tr>            <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">              No users are pending approval.            </td>          </tr>        }      </tbody>    </table>  </div></div></div>'
+    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
+    var DIRECTIVES = [];
+    var ACTUAL_COMPONENT = {'name': 'AdminPendingComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'AdminPendingComponent.html';
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
