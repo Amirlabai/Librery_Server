@@ -14,6 +14,8 @@
 /merkaz_backend/logs/
 /merkaz_backend/data/
 
+/node_modules/
+
 /merkaz-frontend/.angular/
 /merkaz-frontend/node_modules/
 /merkaz-frontend/dist/
