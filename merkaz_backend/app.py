@@ -16,6 +16,8 @@ from controllers.uploads_controller import uploads_bp
 from controllers.admin_controller import admin_bp
 import run_ngrok
 
+#lessgoo
+
 def create_app():
     """Create and configure the Flask application."""
     app = Flask(__name__)
