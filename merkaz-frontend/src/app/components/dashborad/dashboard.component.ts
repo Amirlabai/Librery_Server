@@ -24,7 +24,7 @@ export class DashboardComponent {
   items: any[] = [];
   folders: any[] = [];
   private originalItems: any[] = [];
-  private originalFolders: any[] = [];
+  allItems: any[] = [];
 
   isAdmin = false;
   userRole = '';
@@ -65,13 +65,10 @@ export class DashboardComponent {
   loadFiles() {
     this.dashboardService.loadFiles(this.currentPath).subscribe({
       next: (res: any) => {
-        this.items = res.items || [];
-        this.folders = this.items.filter((i: any) => i.is_folder || i.isFolder);
+        const files = res.files || [];
+        const folders = res.folders || [];
 
-        console.log("Items : " ,this.items);
-        console.log("Folders : ",this.folders);
-        this.originalItems = [...this.items];
-        this.originalFolders = [...this.folders];
+        this.items = [...folders, ...files];
 
         if (res.current_path) this.currentPath = res.current_path;
         if (res.is_admin !== undefined) this.isAdmin = res.is_admin;
@@ -289,47 +286,66 @@ export class DashboardComponent {
 
   goBackInModal() {
 
-    const parts = this.editModalPath.split('/').filter(Boolean);
-    parts.pop();
-    const up = parts.join('/');
-    this.loadFoldersForModal(up);
+      const parts = this.editModalPath.split('/').filter(Boolean);
+      parts.pop();
+      const up = parts.join('/');
+      this.loadFoldersForModal(up);
 
-    if (this.selectedFile?.name) {
-      this.editedFilePath = up ? `/${up}/${this.selectedFile.name}` : `/${this.selectedFile.name}`;
+      if (this.selectedFile?.name) {
+        this.editedFilePath = up ? `/${up}/${this.selectedFile.name}` : `/${this.selectedFile.name}`;
+      }
     }
-  }
 
-  private loadFoldersForModal(path: string = '') {
+    private loadFoldersForModal(path: string = '') {
     this.dashboardService.browse(path).subscribe({
       next: (res: any) => {
-        const items = res.items || [];
-        this.modalFolders = items.filter((i: any) => i.is_folder || i.isFolder);
+        const folders = res.folders || [];
+        this.modalFolders = folders;
         this.editModalPath = (res.current_path ?? path.replace(/^\/+|\/+$/g, '')) || '';
       },
       error: (err) => console.error('Failed to load folders for modal:', err)
     });
   }
-  public onSearchChange() {
-  const input = this.searchFiles.trim().toLowerCase();
+  public async onSearchChange() {
+    const input = this.searchFiles.trim().toLowerCase();
 
-  if (!this.originalItems.length) {
-    this.originalItems = [...this.items];
-    this.originalFolders = [...this.folders];
+    if (!input) {
+      this.items = [...this.originalItems];
+      return;
+    }
+
+    if (this.allItems.length === 0) {
+      await this.loadAllRecursively('');
+    }
+
+    this.items = this.allItems.filter(item => {
+      const nameMatch = item.name?.toLowerCase().includes(input);
+      const pathMatch = item.path?.toLowerCase().includes(input);
+      return nameMatch || pathMatch;
+    });
+
+    this.items.sort((a, b) => {
+      if (a.is_folder && !b.is_folder) return -1;
+      if (!a.is_folder && b.is_folder) return 1;
+      return a.name.localeCompare(b.name);
+    });
   }
+  private async loadAllRecursively(path: string) {
+  
+    try {
+      const res: any = await this.dashboardService.loadFiles(path).toPromise();
+      const folders = res.folders || [];
+      const files = res.files || [];
 
-  if (!input) {
-    this.items = [...this.originalItems];
-    this.folders = [...this.originalFolders];
-    return;
+      this.allItems.push(...folders, ...files);
+
+      
+      for (const folder of folders) {
+        await this.loadAllRecursively(folder.path);
+      }
+    } catch (err) {
+      console.error('Recursive load error:', err);
+    }
   }
-
-  this.items = this.originalItems.filter(item => {
-    const nameMatch = item.name?.toLowerCase().includes(input);
-    const pathMatch = item.path?.toLowerCase().includes(input);
-    return nameMatch || pathMatch;
-  });
-
-  this.folders = this.items.filter(i => (i.is_folder || i.isFolder));
-}
   
 }
