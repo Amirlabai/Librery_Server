@@ -23,6 +23,8 @@ import { DashboardService } from '../../services/dashboard.service';
 export class DashboardComponent {
   items: any[] = [];
   folders: any[] = [];
+  private originalItems: any[] = [];
+  private originalFolders: any[] = [];
 
   isAdmin = false;
   userRole = '';
@@ -48,6 +50,8 @@ export class DashboardComponent {
 
   editModalPath = '';
   modalFolders: any[] = [];   
+
+  searchFiles: string = '';
    
 
   constructor(private dashboardService: DashboardService,private router: Router) {}
@@ -64,6 +68,10 @@ export class DashboardComponent {
         this.items = res.items || [];
         this.folders = this.items.filter((i: any) => i.is_folder || i.isFolder);
 
+        console.log("Items : " ,this.items);
+        console.log("Folders : ",this.folders);
+        this.originalItems = [...this.items];
+        this.originalFolders = [...this.folders];
 
         if (res.current_path) this.currentPath = res.current_path;
         if (res.is_admin !== undefined) this.isAdmin = res.is_admin;
@@ -301,4 +309,27 @@ export class DashboardComponent {
       error: (err) => console.error('Failed to load folders for modal:', err)
     });
   }
+  public onSearchChange() {
+  const input = this.searchFiles.trim().toLowerCase();
+
+  if (!this.originalItems.length) {
+    this.originalItems = [...this.items];
+    this.originalFolders = [...this.folders];
+  }
+
+  if (!input) {
+    this.items = [...this.originalItems];
+    this.folders = [...this.originalFolders];
+    return;
+  }
+
+  this.items = this.originalItems.filter(item => {
+    const nameMatch = item.name?.toLowerCase().includes(input);
+    const pathMatch = item.path?.toLowerCase().includes(input);
+    return nameMatch || pathMatch;
+  });
+
+  this.folders = this.items.filter(i => (i.is_folder || i.isFolder));
+}
+  
 }
