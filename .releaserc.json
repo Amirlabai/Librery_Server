@@ -1,0 +1,32 @@
+{
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz_backend/version.py && python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz-frontend/src/app/version.ts && python3 scripts/generate_docs.py merkaz_backend --output-dir documentation/autogen"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "merkaz_backend/version.py",
+          "merkaz-frontend/src/app/version.ts",
+          "documentation/**/*.md"
+        ],
+        "message": "chore(release): ${nextRelease.version}"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "successComment": false,
+        "labels": false,
+        "releasedLabels": false
+      }
+    ]
+  ]
+}
+

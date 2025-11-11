@@ -1,0 +1,12 @@
+{
+  "name": "bundle-script",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Python application with semantic-release versioning",
+  "devDependencies": {
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.3.5",
+    "semantic-release": "^24.0.0"
+  }
+}

@@ -1,0 +1,74 @@
+# Name of the GitHub Actions workflow.
+name: Semantic Release
+
+on:
+  push:
+    branches:
+      # This workflow triggers on every push to the 'main' branch.
+      - main 
+
+jobs:
+  release:
+    # Runs on Ubuntu for semantic-release (no build required).
+    runs-on: ubuntu-latest 
+    
+    # Grant permissions for semantic-release to write to the repo
+    permissions:
+      contents: write   # Required to push tags and create releases
+      issues: write     # Required to comment on issues/PRs
+    
+    steps:
+      - name: ⬇️ Checkout Repository
+        # Checks out the repository's source code to the runner.
+        uses: actions/checkout@v4
+        with:
+          # 'fetch-depth: 0' retrieves all git history, which is necessary
+          # for semantic-release to analyze all commits.
+          fetch-depth: 0 
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: ⚙️ Setup Python
+        # Sets up Python for running the version file script.
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: 📦 Install Semantic-Release Dependencies
+        # Installs the required npm packages for semantic-release plugins.
+        run: |
+          npm install
+          
+      - name: 🏷️ Semantic Release (Version Control)
+        # This action automatically versions the software.
+        # Configured via .releaserc.json to skip npm (Python project, not Node.js).
+        uses: cycjimmy/semantic-release-action@v4
+        id: semantic
+        env:
+          # GITHUB_TOKEN is required to grant semantic-release permissions
+          # to create GitHub Releases and repository tags.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Analyzes commit messages (e.g., 'fix:', 'feat:') to determine
+          # the next semantic version. It then creates a new GitHub tag
+          # and a draft GitHub Release, outputting the new version info.
+          # Configuration file (.releaserc.json) disables npm plugin.
+          branches: main # Must be a string, not a list
+          
+      - name: ✅ Report Release Status
+        # Logs a success message to the workflow console.
+        # Only runs if a new release was published.
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: |
+          echo "✅ Successfully released version: ${{ steps.semantic.outputs.new_release_version }}"
+          echo "Release is now available on the GitHub Releases page."
+      
+      - name: 📝 Report Status (No Release)
+        # Logs a message when no new release was created.
+        if: steps.semantic.outputs.new_release_published != 'true'
+        run: |
+          echo "ℹ️  No new release was created."
+          echo "This is normal if no semantic version changes were detected in commits."
