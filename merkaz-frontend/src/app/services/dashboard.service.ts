@@ -74,4 +74,11 @@ export class DashboardService {
         const url = clean ? `${this.baseUrl}/browse/${clean}` : `${this.baseUrl}/browse`;
         return this.http.get(url, { withCredentials: true });
     }
+    searchFiles(query: string): Observable<any> {
+        return this.http.get(`${this.baseUrl}/browse`, {
+            params: { q: query },
+            withCredentials: true
+        });
+    }
+
 }
