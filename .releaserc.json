@@ -5,7 +5,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz_backend/version.py && python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz-frontend/src/app/version.ts && python3 scripts/generate_docs.py merkaz_backend --output-dir documentation/autogen"
+        "prepareCmd": "python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz_backend/version.py && python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz-frontend/src/app/version.ts && python3 scripts/generate_docs.py merkaz_backend --output-dir documentation/autogen && python3 scripts/generate_frontend_docs.py"
       }
     ],
     [
@@ -14,7 +14,8 @@
         "assets": [
           "merkaz_backend/version.py",
           "merkaz-frontend/src/app/version.ts",
-          "documentation/**/*.md"
+          "documentation/**/*.md",
+          "documentation/autogen/merkaz-frontend/**/*"
         ],
         "message": "chore(release): ${nextRelease.version}"
       }
