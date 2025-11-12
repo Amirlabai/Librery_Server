@@ -4,7 +4,7 @@
 
 ### `User`
 
-No description provided.
+Base class for all user types. Implements common functionality.
 
 #### Methods
 
@@ -19,12 +19,12 @@ No description provided.
     - `user_id` (default: `None`)
 
 - `is_admin(self)`
-  - No description provided.
+  - Returns True if user is an admin. Overridden in Admin class.
   - Arguments:
     - `self`
 
 - `is_active(self)`
-  - No description provided.
+  - Returns True if user status is active.
   - Arguments:
     - `self`
 
@@ -33,6 +33,30 @@ No description provided.
   - Arguments:
     - `self`
     - `password_to_check`
+
+- `get_permissions(self)`
+  - Returns a list of permissions for this user type. Polymorphic method.
+  - Arguments:
+    - `self`
+
+- `can_manage_users(self)`
+  - Returns True if user can manage other users. Polymorphic method.
+  - Arguments:
+    - `self`
+
+- `to_dict(self)`
+  - Returns a dictionary representation of the user, safe for JSON serialization.
+  - Arguments:
+    - `self`
+
+- `create_user(email, password, role='user', status='active', user_id=None)`
+  - Factory method to create the appropriate user type based on role. Polymorphic factory.
+  - Arguments:
+    - `email`
+    - `password`
+    - `role` (default: `'user'`)
+    - `status` (default: `'active'`)
+    - `user_id` (default: `None`)
 
 - `find_by_email(email)`
   - Finds a user by email in the authentication database.
@@ -77,7 +101,7 @@ No description provided.
     - `users`
 
 - `toggle_role(email)`
-  - Toggles the role of a user between 'admin' and 'user'.
+  - Toggles the role of a user between 'admin' and 'user'. Uses polymorphism to change instance type.
   - Arguments:
     - `email`
 
@@ -97,7 +121,62 @@ No description provided.
     - `filepath`
     - `users`
 
-- `to_dict(self)`
-  - Returns a dictionary representation of the user, safe for JSON serialization.
+### `RegularUser`
+
+Regular user class. Inherits from User base class.
+
+#### Methods
+
+- `__init__(self, email, password, status='active', user_id=None)`
+  - No description provided.
+  - Arguments:
+    - `self`
+    - `email`
+    - `password`
+    - `status` (default: `'active'`)
+    - `user_id` (default: `None`)
+
+- `is_admin(self)`
+  - Regular users are not admins.
+  - Arguments:
+    - `self`
+
+- `get_permissions(self)`
+  - Returns permissions for regular users.
+  - Arguments:
+    - `self`
+
+- `can_manage_users(self)`
+  - Regular users cannot manage other users.
+  - Arguments:
+    - `self`
+
+### `Admin`
+
+Admin user class. Inherits from User base class with admin privileges.
+
+#### Methods
+
+- `__init__(self, email, password, status='active', user_id=None)`
+  - No description provided.
+  - Arguments:
+    - `self`
+    - `email`
+    - `password`
+    - `status` (default: `'active'`)
+    - `user_id` (default: `None`)
+
+- `is_admin(self)`
+  - Admin users are always admins.
+  - Arguments:
+    - `self`
+
+- `get_permissions(self)`
+  - Returns permissions for admin users. Overrides parent method.
+  - Arguments:
+    - `self`
+
+- `can_manage_users(self)`
+  - Admin users can manage other users. Overrides parent method.
   - Arguments:
     - `self`
