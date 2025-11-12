@@ -119,7 +119,7 @@ export class DashboardComponent {
         this.notificationService.show('Deleted successfully',true);
         this.loadFiles();  
       },
-      error: (err) => {
+      error: () => {
         this.notificationService.show('Failed to delete item',false);
       }
     });
