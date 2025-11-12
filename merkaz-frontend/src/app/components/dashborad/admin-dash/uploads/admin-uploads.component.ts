@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AdminDashboardService, UploadItem } from '../../../../services/admin-dashboard.service';
+import { NotificationService } from '../../../../services/notifications/Notifications.service';
 
 
 @Component({
@@ -13,10 +14,10 @@ import { AdminDashboardService, UploadItem } from '../../../../services/admin-da
   styleUrls: ['./admin-uploads.component.css']
 })
 export class AdminUploadsComponent {
+  
   uploads: UploadItem[] = [];
-  flashMessages: { type: 'success' | 'error'; text: string }[] = [];
 
-  constructor(private adminDashboardService: AdminDashboardService) {}
+  constructor(private adminDashboardService: AdminDashboardService,private notificationService:NotificationService) {}
 
   ngOnInit() {
     this.loadUploads();
@@ -28,26 +29,21 @@ export class AdminUploadsComponent {
         this.uploads = data;
       },
       error: () => {
-        this.flashMessages = [{ type: 'error', text: 'Failed to load uploads.' }];
+        this.notificationService.show('Failed to load uploads.',false);
       }
     });
   }
 
   approve(upload: UploadItem, index: number) {
+
     this.adminDashboardService.approveUpload(upload.filename, upload.path).subscribe({
+
       next: () => {
-        this.flashMessages = [{ type: 'success', text: `Approved ${upload.filename}` }];
+        this.notificationService.show(`Approved ${upload.filename}`,true);
         this.uploads.splice(index, 1); 
-        setTimeout(() => {
-          this.flashMessages = [];
-        }, 3000);
       },
       error: () => {
-        this.flashMessages = [{ type: 'error', text: `Failed to approve ${upload.filename}` }];
-
-        setTimeout(() => {
-          this.flashMessages = [];
-        }, 3000);
+        this.notificationService.show(`Failed to approve ${upload.filename}`,false);
       }
     });
   }
@@ -57,21 +53,13 @@ export class AdminUploadsComponent {
 
     this.adminDashboardService.declineUpload(upload.filename, upload.path).subscribe({
       next: () => {
-        this.flashMessages = [{ type: 'success', text: `Declined ${upload.filename}` }];
+
+        this.notificationService.show(`Declined ${upload.filename}`,false);
         this.uploads.splice(index, 1);
 
-        setTimeout(() => {
-          this.flashMessages = [];
-          
-        }, 3000);
       },
       error: () => {
-        this.flashMessages = [{ type: 'error', text: `Failed to decline ${upload.filename}` }];
-        
-        setTimeout(() => {
-          this.flashMessages = [];
-          
-        }, 3000);
+        this.notificationService.show(`Failed to decline ${upload.filename}`,false);
       }
     });
   }

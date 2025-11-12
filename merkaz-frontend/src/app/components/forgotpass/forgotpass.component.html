@@ -1,14 +1,7 @@
 <div class="container">
   <h1>Forgot Password</h1>
 
-  @if (message) {
-    <div class="flash-success">{{ message }}</div>
-  }
-
-  @if (error) {
-    <div class="flash-error">{{ error }}</div>
-  }
-
+  
   <form (ngSubmit)="onSubmit()" #forgotForm="ngForm">
     <input
       type="email"
@@ -18,8 +11,8 @@
       required
       email
     />
-    <button type="submit" [disabled]="isLoading || forgotForm.invalid">
-      {{ isLoading ? 'Sending...' : 'Send Reset Link' }}
+    <button type="submit">
+      Submit
     </button>
   </form>
 

@@ -14,18 +14,7 @@
     </div>
   </div>
 
-  @if (flashMessages.length > 0) {
-    <div  class="flash-messages">
-      <ul>
-        @for (msg of flashMessages; track $index) {
-          <li [ngClass]="'flash-' + msg.type">
-            {{ msg.text }}
-          </li>
-        }
-      </ul>
-    </div>
-  }
-
+  
   <div class="path-bar">
 
     @if (isAdmin) {
@@ -113,14 +102,6 @@
     
     <h2>Have a Suggestion? (Cooldown: Level {{ cooldownLevel }})</h2>
 
-    @if (suggestionSuccess) {
-      <p class="flash-success">{{ suggestionSuccess }}</p>
-      
-    }@else if (suggestionError) {
-      <p class="flash-error">{{ suggestionError }}</p>
-    }
-    
-
     <form (ngSubmit)="submitSuggestion()">
       <textarea [(ngModel)]="suggestionText" name="suggestion" rows="4" placeholder="Type your suggestion here..." required></textarea>
       <br />
@@ -138,13 +119,7 @@
         </div>
 
         <div class="modal-body">
-          @if (folderCreationSuccess) {
-            <p class="flash-success">{{ folderCreationSuccess }}</p>
-          }
-          @if (folderCreationError) {
-            <p class="flash-error">{{ folderCreationError }}</p>
-          }
-
+          
           <label for="folderName">Folder Name:</label>
           <input
             type="text"
@@ -178,13 +153,7 @@
         </div>
 
         <div class="edit-modal-body">
-          @if (editPathSuccess) {
-            <p class="flash-success">{{ editPathSuccess }}</p>
-          }
-          @if (editPathError) {
-            <p class="flash-error">{{ editPathError }}</p>
-          }
-
+          
           <label for="newFilePath">New File Path:</label>
           <input
             type="text"

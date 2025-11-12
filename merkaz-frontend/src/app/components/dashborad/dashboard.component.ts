@@ -5,6 +5,7 @@ import {FormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
+import { NotificationService } from '../../services/notifications/Notifications.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,22 +31,15 @@ export class DashboardComponent {
   userRole = '';
   currentPath = '';
   
-  flashMessages: { type: string, text: string }[] = [];
   cooldownLevel = 0;
   suggestionText = '';
-  suggestionSuccess = '';
-  suggestionError = '';
-
+  
   showCreateFolderModal = false;
   newFolderName = '';
-  folderCreationError = '';
-  folderCreationSuccess = '';
-
+  
   showEditPathModal = false;
   editedFilePath = '';
-  editPathError = '';
-  editPathSuccess = '';
-
+  
   selectedFile: any = null;
 
   editModalPath = '';
@@ -54,7 +48,7 @@ export class DashboardComponent {
   searchFiles: string = '';
    
 
-  constructor(private dashboardService: DashboardService,private router: Router) {}
+  constructor(private dashboardService: DashboardService,private router: Router,private notificationService:NotificationService) {}
 
   ngOnInit() {
     this.userRole = localStorage.getItem('role') || '';
@@ -69,6 +63,7 @@ export class DashboardComponent {
         const folders = res.folders || [];
 
         this.items = [...folders, ...files];
+        this.originalItems = [...this.items];
 
         if (res.current_path) this.currentPath = res.current_path;
         if (res.is_admin !== undefined) this.isAdmin = res.is_admin;
@@ -121,10 +116,11 @@ export class DashboardComponent {
     this.dashboardService.deleteItem(item.path).subscribe({
       next: () => {
         this.currentPath = currentPathBeforeDelete;
+        this.notificationService.show('Deleted successfully',true);
         this.loadFiles();  
       },
       error: (err) => {
-        console.error('Failed to delete item:', err);
+        this.notificationService.show('Failed to delete item',false);
       }
     });
   }
@@ -135,37 +131,33 @@ export class DashboardComponent {
       next: () => {
         localStorage.clear();
         this.router.navigate(['/login']);
+        this.notificationService.show('Logout successfuly',true);
       },
       error: (err) => {
-        console.error('Logout failed:', err);
+        this.notificationService.show('Logout failed',false);
       }
     });
   }
 
   async submitSuggestion() {
     if (!this.suggestionText.trim()) {
-      this.suggestionError = 'Suggestion cannot be empty.';
-      setTimeout(() => (this.suggestionError = ''), 3000);
+      this.notificationService.show('Suggestion cannot be empty',false)
       return;
     }
 
     this.dashboardService.submitSuggestion(this.suggestionText).subscribe({
       next: () => {
-        this.suggestionSuccess = 'Suggestion submitted!';
+        this.notificationService.show('Suggestion submited!',true)
         this.suggestionText = '';
-
-        setTimeout(() => {
-          this.suggestionSuccess = '';
-          this.ngOnInit();
-        }, 5000);
       },
       error: (err) => {
         if (err.status === 429 && err.error?.error) {
-          this.suggestionError = err.error.error;
-          setTimeout(() => (this.suggestionError = ''), 10000);
+
+          this.notificationService.show(err.error.error,false)
+          
         } else {
-          this.suggestionError = 'An unexpected error occurred.';
-          setTimeout(() => (this.suggestionError = ''), 5000);
+
+          this.notificationService.show('An unexpected error occurred.',false);
         }
       }
     });
@@ -174,15 +166,11 @@ export class DashboardComponent {
   openCreateFolderModal() {
     this.showCreateFolderModal = true;
     this.newFolderName = '';
-    this.folderCreationError = '';
-    this.folderCreationSuccess = '';
   }
 
   closeCreateFolderModal() {
     this.showCreateFolderModal = false;
     this.newFolderName = '';
-    this.folderCreationError = '';
-    this.folderCreationSuccess = '';
   }
 
   createFolder() {
@@ -190,25 +178,20 @@ export class DashboardComponent {
     const folderName = this.newFolderName.trim();
 
     if (!folderName) {
-      this.folderCreationError = 'Folder name cannot be empty.';
+      this.notificationService.show('Folder name cannot be empty.',false)
       return;
     }
 
-    this.folderCreationError = '';
-    this.folderCreationSuccess = '';
-
     this.dashboardService.createFolder(this.currentPath, folderName).subscribe({
       next: (res: any) => {
+
         if (res.message) {
-          this.folderCreationSuccess = res.message;
-          setTimeout(() => {
-            this.closeCreateFolderModal();
-            this.loadFiles();
-          }, 1000);
+          this.notificationService.show(res.message,true)
+          this.closeCreateFolderModal();
         }
       },
-      error: (err: any) => {
-        this.folderCreationError = err.error?.error || 'Failed to create folder.';
+      error: () => {
+        this.notificationService.show('Failed to create folder.',false)
       }
     });
   }
@@ -220,48 +203,38 @@ export class DashboardComponent {
 
   openEditPathModal() {
   
-    console.log('edited file:' , this.selectedFile)
-
     if (!this.selectedFile) return;               
       this.showEditPathModal = true;
       this.editedFilePath = this.selectedFile.path; 
-      this.editPathError = '';
-      this.editPathSuccess = '';
       this.editModalPath = '';            
       this.loadFoldersForModal('');       
   }
   closeEditPathModal() {
     this.showEditPathModal = false;
     this.editedFilePath = this.currentPath;
-    this.editPathError = '';
-    this.editPathSuccess = '';
   }
   editFilePath() {
     if (!this.selectedFile?.upload_id) {
-      this.editPathError = 'No file selected.';
+      this.notificationService.show('No file selected.',false)
       return;
     }
 
     const uploadId = this.selectedFile.upload_id;
     const newPath = this.editedFilePath.trim();
 
-    console.log('Editing file path:', { uploadId, newPath });
-
     if (!newPath) {
-      this.editPathError = 'New path cannot be empty.';
+      this.notificationService.show('New path cannot be empty.',false)
       return;
     }
 
     this.dashboardService.editFilePath(uploadId, newPath).subscribe({
-      next: (res: any) => {
-        this.editPathSuccess = res.message || 'Path updated successfully.';
-        setTimeout(() => {
-          this.showEditPathModal = false;
-          this.loadFiles();
-        }, 1000);
+      next: () => {
+        this.notificationService.show('Path updated successfully.',true)
+        this.closeEditPathModal();
+        this.loadFiles();
       },
-      error: (err: any) => {
-        this.editPathError = err.error?.error || 'Failed to update path.';
+      error: () => {
+        this.notificationService.show('Failed to update path.',false)
       }
     });
   }
@@ -296,14 +269,16 @@ export class DashboardComponent {
       }
     }
 
-    private loadFoldersForModal(path: string = '') {
+  private loadFoldersForModal(path: string = '') {
     this.dashboardService.browse(path).subscribe({
       next: (res: any) => {
         const folders = res.folders || [];
         this.modalFolders = folders;
         this.editModalPath = (res.current_path ?? path.replace(/^\/+|\/+$/g, '')) || '';
       },
-      error: (err) => console.error('Failed to load folders for modal:', err)
+      error: (err) => {
+        this.notificationService.show(`Failed to load folders for modal: ${err.message || err}`, false);
+      }
     });
   }
   public async onSearchChange() {
@@ -344,7 +319,7 @@ export class DashboardComponent {
         await this.loadAllRecursively(folder.path);
       }
     } catch (err) {
-      console.error('Recursive load error:', err);
+      this.notificationService.show(`load error ${err}`,false)
     }
   }
   

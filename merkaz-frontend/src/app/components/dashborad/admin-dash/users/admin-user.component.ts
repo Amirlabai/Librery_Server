@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core'; // Import OnInit
 import { CommonModule, NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminDashboardService } from '../../../../services/admin-dashboard.service';
+import { NotificationService } from '../../../../services/notifications/Notifications.service';
 
 interface User {
   email: string;
@@ -25,7 +26,7 @@ export class AdminUsersComponent implements OnInit {
   currentUserEmail = localStorage.getItem('email') || '';
 
 
-  constructor(private adminDashboardService: AdminDashboardService ) {}
+  constructor(private adminDashboardService: AdminDashboardService,private notificationService:NotificationService ) {}
 
   ngOnInit() {
     this.loadUsers(); 
@@ -38,9 +39,8 @@ export class AdminUsersComponent implements OnInit {
         this.currentUserEmail = res.current_admin || localStorage.getItem('email') || '';
         this.users = res.users || [];
       },
-      error: (err) => {
-        console.error(err);
-        this.flashMessages = [{ type: 'error', text: 'Failed to load users.' }];
+      error: () => {
+        this.notificationService.show('Failed to load users.',false);
       }
     });
   }
@@ -48,11 +48,11 @@ export class AdminUsersComponent implements OnInit {
   toggleRole(email: string) {
     this.adminDashboardService.toggleRole(email).subscribe({
       next: () => {
-        this.flashMessages = [{ type: 'success', text: 'Role updated successfully.' }];
+        this.notificationService.show('Role updated successfully.',true);
         this.loadUsers();
       },
       error: () => {
-        this.flashMessages = [{ type: 'error', text: 'Failed to update role.' }];
+        this.notificationService.show('Failed to update role.',false);
       }
     });
   }
@@ -61,23 +61,16 @@ export class AdminUsersComponent implements OnInit {
 
     this.adminDashboardService.toggleStatus(email)
       .subscribe({
-        next: () => {
 
-          this.flashMessages = [{ type: 'success', text: 'Status updated successfully.' }];
+        next: () => {
+          this.notificationService.show('Status updated successfully.',true);
           this.loadUsers(); 
 
-          setTimeout(() => {
-            this.flashMessages = [];
-          }, 3000);
         },
         error: () => {
-          this.flashMessages = [{ type: 'error', text: 'Failed to update status.' }];
-
-          setTimeout(() => {
-            this.flashMessages = [];
-          }, 3000);
+          this.notificationService.show('Failed to update status.',false);
         }
-        
+      
       });
   }
   

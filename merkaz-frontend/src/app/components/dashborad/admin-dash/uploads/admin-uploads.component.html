@@ -14,15 +14,6 @@
     <a routerLink="/uploads" class="nav-tab active">Uploads</a>
   </div>
 
-  <!-- Flash Messages -->
-  @if (flashMessages.length) {
-    <ul class="flash-messages">
-      @for (msg of flashMessages; track $index) {
-        <li [ngClass]="'flash-' + msg.type">{{ msg.text }}</li>
-      }
-    </ul>
-  }
-
   <!-- Uploads Table -->
   <div class="content-wrapper">
     <div class="scrollable-content">

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminDashboardService } from '../../../../services/admin-dashboard.service';
+import { NotificationService } from '../../../../services/notifications/Notifications.service';
 
 interface DeniedUser {
   email: string;
@@ -18,9 +19,8 @@ interface DeniedUser {
 export class AdminDeniedComponent {
 
   users: DeniedUser[] = [];
-  flashMessages: { type: 'success' | 'error'; text: string }[] = [];
 
-  constructor(private adminDashboardService: AdminDashboardService) {}
+  constructor(private adminDashboardService: AdminDashboardService,private notificationsService:NotificationService) {}
 
   ngOnInit() {
     this.loadDeniedUsers();
@@ -32,28 +32,22 @@ export class AdminDeniedComponent {
         this.users = data;
       },
       error: () => {
-        this.flashMessages = [{ type: 'error', text: 'Failed to load denied users.' }];
+        this.notificationsService.show('Failed to load denied users.',false)
       }
     });
   }
 
   moveToPending(email: string, index: number) {
-  this.adminDashboardService.moveToPending(email).subscribe({
-    next: () => {
-      this.flashMessages = [{ type: 'success', text: `Moved ${email} back to pending.` }];
-      this.users.splice(index, 1); 
+    this.adminDashboardService.moveToPending(email).subscribe({
+      next: () => {
+
+        this.notificationsService.show(`Moved ${email} back to pending.`,true)
+        this.users.splice(index, 1); 
       
-      setTimeout(() => {
-          this.flashMessages = [];
-      }, 3000);
-    },
-    error: () => {
-      this.flashMessages = [{ type: 'error', text: `Failed to move ${email} to pending.` }];
-      
-      setTimeout(() => {
-          this.flashMessages = [];
-      }, 3000);
-    }
-  });
-}
+      },
+      error: () => {
+        this.notificationsService.show(`Failed to move ${email} to pending.`,false)
+      }
+    });
+  }
 }

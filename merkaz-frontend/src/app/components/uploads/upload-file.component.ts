@@ -2,7 +2,8 @@ import { Component, OnInit} from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { UploadResponse, UserService } from '../../services/user.service';
+import { UserService } from '../../services/user.service';
+import { NotificationService } from '../../services/notifications/Notifications.service';
 
 @Component({
   selector: 'app-upload-content',
@@ -22,7 +23,8 @@ export class UploadFileComponent implements OnInit {
   selectedFiles: File[] = [];
   selectedFolderFiles: File[] = [];
 
-  constructor(private userService:UserService, private route: ActivatedRoute) {}
+
+  constructor(private userService:UserService, private route: ActivatedRoute,private notificationService:NotificationService) {}
 
   ngOnInit() {
     
@@ -42,50 +44,34 @@ export class UploadFileComponent implements OnInit {
   }
 
   onSubmitFiles() {
+    
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
-      next: (res: UploadResponse) => {
-        this.handleResponse(res, 'Files');
-      },
-      error: (err) => this.handleError(err, 'files')
+      next: () => {
+        this.notificationService.show('Files uploaded successfully',true);
+        setTimeout(() => {
+            window.location.reload();
+          }, 4000);
+        },
+      error: () => {
+        this.notificationService.show('Failed to upload files',false);
+      } 
     });
   }
 
   onSubmitFolder() {
     this.userService.uploadFolder(this.selectedFolderFiles, this.subpath).subscribe({
-      next: (res: UploadResponse) => {
-        this.handleResponse(res, 'Folder');
+      next: () => {
+
+        this.notificationService.show('Folders uploaded successfully',true);
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 4000);
       },
-      error: (err) => this.handleError(err, 'folder')
+      error: () => {
+        this.notificationService.show('Failed to upload folder',false);
+      }
     });
   }
 
-  private handleResponse(res: UploadResponse, type: 'Files' | 'Folder') {
-    let message = res.message || `${type} uploaded successfully`;
-
-    if (res.errors && res.errors.length > 0) {
-      const errorMsg = res.errors.join('\n');
-      if (res.error_count && res.error_count > 5) {
-        alert(`${message}\n\nTotal: ${res.error_count} files failed\n\n${errorMsg}`);
-      } else {
-        alert(`${message}\n\nFailed items:\n${errorMsg}`);
-      }
-    } else {
-      alert(message);
-    }
-
-    window.location.reload();
-  }
-
-  private handleError(err: any, type: string) {
-    let errorMessage = `Failed to upload ${type}`;
-    if (err.error) {
-      if (err.error.errors?.length) {
-        errorMessage = `Upload failed:\n\n${err.error.errors.join('\n')}`;
-      } else if (err.error.error) {
-        errorMessage = `Upload failed: ${err.error.error}`;
-      }
-    }
-    alert(errorMessage);
-    console.error(err);
-  }
 }

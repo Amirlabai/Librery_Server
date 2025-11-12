@@ -12,14 +12,6 @@
     <a routerLink="/uploads" class="nav-tab">Uploads</a>
   </div>
 
-  @if (flashMessages.length > 0) {
-    <ul class="flash-messages">
-      @for (msg of flashMessages; track $index) {
-        <li [class]="'flash-' + msg.type">{{ msg.text }}</li>
-      }
-    </ul>
-  }
-
   <div class="content-wrapper">
     <div class="table-wrapper">
       <table>
