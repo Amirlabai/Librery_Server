@@ -77,8 +77,8 @@ def api_register():
     hashed_password = generate_password_hash(password)
     user_id = get_next_user_id()
     
-    # Create new user with ID
-    new_user = User(email=email, password=hashed_password, role='user', status='pending', user_id=user_id)
+    # Create new user with ID using factory method (polymorphic instantiation)
+    new_user = User.create_user(email=email, password=hashed_password, role='user', status='pending', user_id=user_id)
     
     # Get existing pending users and append new user
     pending_users = User.get_pending()

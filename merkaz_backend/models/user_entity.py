@@ -1,9 +1,12 @@
 import csv
 import config.config as config
 from werkzeug.security import check_password_hash
+from abc import ABC
 
-# --- User Entity Class ---
-class User:
+# --- Base User Entity Class (Parent) ---
+class User(ABC):
+    """Base class for all user types. Implements common functionality."""
+    
     def __init__(self, email, password, role='user', status='active', user_id=None):
         self.user_id = user_id  # Unique user ID
         self.email = email
@@ -13,15 +16,44 @@ class User:
 
     @property
     def is_admin(self):
+        """Returns True if user is an admin. Overridden in Admin class."""
         return self.role == 'admin'
 
     @property
     def is_active(self):
+        """Returns True if user status is active."""
         return self.status == 'active'
 
     def check_password(self, password_to_check):
         """Checks the provided password against the stored hash."""
         return check_password_hash(self.password, password_to_check)
+
+    def get_permissions(self):
+        """Returns a list of permissions for this user type. Polymorphic method."""
+        return []
+
+    def can_manage_users(self):
+        """Returns True if user can manage other users. Polymorphic method."""
+        return False
+
+    def to_dict(self):
+        """Returns a dictionary representation of the user, safe for JSON serialization."""
+        return {
+            "id": self.user_id,
+            "email": self.email,
+            "role": self.role,
+            "status": self.status,
+            "is_admin": self.is_admin,
+            "is_active": self.is_active
+        }
+
+    @staticmethod
+    def create_user(email, password, role='user', status='active', user_id=None):
+        """Factory method to create the appropriate user type based on role. Polymorphic factory."""
+        if role == 'admin':
+            return Admin(email=email, password=password, status=status, user_id=user_id)
+        else:
+            return RegularUser(email=email, password=password, status=status, user_id=user_id)
 
     # --- Methods for Authenticated Users (auth_users.csv) ---
     @staticmethod
@@ -79,13 +111,21 @@ class User:
     # --- Methods for User Management ---
     @staticmethod
     def toggle_role(email):
-        """Toggles the role of a user between 'admin' and 'user'."""
+        """Toggles the role of a user between 'admin' and 'user'. Uses polymorphism to change instance type."""
         users = User.get_all()
-        for user in users:
+        for i, user in enumerate(users):
             if user.email == email:
-                user.role = 'user' if user.is_admin else 'admin'
+                # Create new instance with toggled role (polymorphic behavior)
+                new_role = 'user' if user.is_admin else 'admin'
+                users[i] = User.create_user(
+                    email=user.email,
+                    password=user.password,
+                    role=new_role,
+                    status=user.status,
+                    user_id=user.user_id
+                )
                 User.save_all(users)
-                return user
+                return users[i]
         raise ValueError(f"User {email} not found")
 
     @staticmethod
@@ -125,7 +165,8 @@ class User:
                                 password = row[2]
                                 role = row[3]
                                 status = row[4] if len(row) > 4 else 'active'
-                                users.append(User(email=email, password=password, role=role, status=status, user_id=user_id))
+                                # Use factory method for polymorphic instantiation
+                                users.append(User.create_user(email=email, password=password, role=role, status=status, user_id=user_id))
                             except (ValueError, IndexError):
                                 continue
                     else:
@@ -135,7 +176,8 @@ class User:
                             password = row[1]
                             role = row[2]
                             status = row[3] if len(row) > 3 else 'active'
-                            users.append(User(email=email, password=password, role=role, status=status, user_id=None))
+                            # Use factory method for polymorphic instantiation
+                            users.append(User.create_user(email=email, password=password, role=role, status=status, user_id=None))
         except FileNotFoundError:
             return []
         return users
@@ -155,14 +197,56 @@ class User:
                     user.status
                 ])
 
-    def to_dict(self):
-        """Returns a dictionary representation of the user, safe for JSON serialization."""
-        return {
-            "id": self.user_id,
-            "email": self.email,
-            "role": self.role,
-            "status": self.status,
-            "is_admin": self.is_admin,
-            "is_active": self.is_active
-        }
+
+# --- Regular User Class (Child) ---
+class RegularUser(User):
+    """Regular user class. Inherits from User base class."""
+    
+    def __init__(self, email, password, status='active', user_id=None):
+        super().__init__(email, password, role='user', status=status, user_id=user_id)
+
+    @property
+    def is_admin(self):
+        """Regular users are not admins."""
+        return False
+
+    def get_permissions(self):
+        """Returns permissions for regular users."""
+        return ['view_files', 'download_files', 'upload_files']
+
+    def can_manage_users(self):
+        """Regular users cannot manage other users."""
+        return False
+
+
+# --- Admin User Class (Child) ---
+class Admin(User):
+    """Admin user class. Inherits from User base class with admin privileges."""
+    
+    def __init__(self, email, password, status='active', user_id=None):
+        super().__init__(email, password, role='admin', status=status, user_id=user_id)
+
+    @property
+    def is_admin(self):
+        """Admin users are always admins."""
+        return True
+
+    def get_permissions(self):
+        """Returns permissions for admin users. Overrides parent method."""
+        return [
+            'view_files', 
+            'download_files', 
+            'upload_files',
+            'manage_users',
+            'approve_users',
+            'deny_users',
+            'view_metrics',
+            'view_logs',
+            'toggle_user_roles',
+            'toggle_user_status'
+        ]
+
+    def can_manage_users(self):
+        """Admin users can manage other users. Overrides parent method."""
+        return True
 
