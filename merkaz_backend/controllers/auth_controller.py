@@ -148,3 +148,32 @@ def reset_password(token):
     else:
         return jsonify({"error": "An error occurred. Please try again."}), 500
 
+@auth_bp.route("/refresh-session", methods=["GET"])
+@cross_origin(supports_credentials=True)
+def refresh_session():
+    """Refreshes the current user's session with latest data from database."""
+    if not session.get("logged_in"):
+        return jsonify({"error": "Not logged in"}), 401
+    
+    email = session.get("email")
+    if not email:
+        return jsonify({"error": "Session invalid"}), 401
+    
+    # Get latest user data from database
+    user = User.find_by_email(email)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    
+    # Update session with latest data
+    session["is_admin"] = user.is_admin
+    session["user_id"] = user.user_id
+    session["email"] = user.email
+    
+    return jsonify({
+        "message": "Session refreshed",
+        "email": user.email,
+        "role": "admin" if user.is_admin else "user",
+        "is_admin": user.is_admin,
+        "is_active": user.is_active
+    }), 200
+
