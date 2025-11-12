@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ForgotPassService } from '../../services/forgotPass.service';
+import { NotificationService } from '../../services/notifications/Notifications.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -12,29 +13,19 @@ import { ForgotPassService } from '../../services/forgotPass.service';
   styleUrls: ['./forgotpass.component.css']
 })
 export class ForgotPasswordComponent {
+  
   email = '';
-  isLoading = false;
-  message = '';
-  error = '';
-
-  constructor(private forgotPassService: ForgotPassService) {}
+  
+  constructor(private forgotPassService: ForgotPassService,private notificationsService:NotificationService) {}
 
   onSubmit() {
-    this.error = '';
-    this.message = '';
-    this.isLoading = true;
-
+    
     this.forgotPassService.sendResetLink(this.email).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        this.message = res.message || 'Password reset link sent to your email.';
+      next: () => {
+        this.notificationsService.show('Password reset link sent to your email.',true);
       },
-      error: (err) => {
-        this.isLoading = false;
-        this.error =
-          err.error?.error ||
-          err.error?.message ||
-          'Failed to send reset link. Please try again later.';
+      error: () => {
+        this.notificationsService.show('Failed to send reset link. Please try again later.',false);
       }
     });
   }

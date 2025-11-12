@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { NotificationService } from '../../services/notifications/Notifications.service';
 
 interface UploadHistory {
   timestamp: string;
@@ -22,7 +23,7 @@ export class MyUploadsComponent {
   uploads: UploadHistory[] = [];
   errorMessage = '';
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService,private notificationService:NotificationService) {}
 
   ngOnInit() {
     this.loadUploads();
@@ -34,8 +35,8 @@ export class MyUploadsComponent {
         this.uploads = data;
       },
       error: () => {
-        
-        this.errorMessage = 'Failed to load uploads. Please try again later.';
+
+        this.notificationService.show('Failed to load uploads. Please try again later.',false)
         this.uploads = [];
       }
     });

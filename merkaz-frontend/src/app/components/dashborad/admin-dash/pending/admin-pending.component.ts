@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common'; 
 import { AdminDashboardService, PendingUser } from '../../../../services/admin-dashboard.service';
+import { NotificationService } from '../../../../services/notifications/Notifications.service';
 
 
 @Component({
@@ -13,9 +14,8 @@ import { AdminDashboardService, PendingUser } from '../../../../services/admin-d
 })
 export class AdminPendingComponent {
   users: PendingUser[] = [];
-  flashMessages: { type: string; text: string }[] = [];
-
-  constructor(private adminDashboardService: AdminDashboardService) {}
+  
+  constructor(private adminDashboardService: AdminDashboardService,private notificationService:NotificationService) {}
 
   ngOnInit() {
     this.loadPendingUsers();
@@ -27,8 +27,8 @@ export class AdminPendingComponent {
       next: (res) => {
       this.users = res;
       },
-      error: (err) => {
-        this.flashMessages = [{ type: 'error', text: 'Failed to load pending users.' }];
+      error: () => {
+        this.notificationService.show('Failed to load pending users.',false);
       }
     });
   }
@@ -37,22 +37,13 @@ export class AdminPendingComponent {
 
     this.adminDashboardService.approveUser(email).subscribe({
       next: () => {
-        this.flashMessages = [{ type: 'success', text: `Approved ${email}` }];
         
+        this.notificationService.show(`Approved ${email}`,true);
         this.loadPendingUsers();
 
-        setTimeout(() => {
-          this.flashMessages = [];
-        }, 3000);
       },
       error: () => {
-        
-        this.flashMessages = [{ type: 'error', text: `Failed to approve ${email}` }];
-        
-        setTimeout(() => {
-
-          this.flashMessages = [];
-        }, 3000);
+        this.notificationService.show(`Failed to approve ${email}`,false);
       }
     });
   }
@@ -61,11 +52,11 @@ export class AdminPendingComponent {
     
     this.adminDashboardService.denyUser(email).subscribe({
       next: () => {
-        this.flashMessages = [{ type: 'success', text: `Denied ${email}` }];
+        this.notificationService.show(`Denied ${email}`,true);
         this.loadPendingUsers(); 
       },
       error: () => {
-        this.flashMessages = [{ type: 'error', text: `Failed to deny ${email}` }];
+        this.notificationService.show(`Failed to deny ${email}`,false);
       }
     });
   }

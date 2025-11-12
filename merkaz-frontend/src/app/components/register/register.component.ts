@@ -4,6 +4,7 @@ import {CommonModule} from '@angular/common';
 import {Router, RouterLink} from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notifications/Notifications.service';
 
 
 @Component({
@@ -23,12 +24,10 @@ import { AuthService } from '../../services/auth.service';
 
 export class RegisterComponent{
 
-  error = '';
   email = '';
   password = '';
   showPassword = false
-  isLoading = false;
-  success = '';
+  
 
   private passwordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[{\]};:'",.<>/?]).{8,}$/;
@@ -36,57 +35,46 @@ export class RegisterComponent{
   private emailPattern =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService,private notificationsService:NotificationService) {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
   onsubmit() {
-    this.error = '';
-    this.success = '';
 
     if (!this.validateForm()) return;
 
-    const payload = {
-      email: this.email.trim(),
-      password: this.password.trim(),
-    };
-
-    this.isLoading = true;
-
     this.authService.register(this.email, this.password).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        if (res?.message) {
-          this.success = res.message;
-          setTimeout(() => this.router.navigate(['/login']), 2000);
-        }
+
+      next: () => {
+        
+        this.notificationsService.show('Registered Succssefully',true)  
+        setTimeout(() => this.router.navigate(['/login']), 2000);
+        
       },
-      error: (err) => {
-        this.isLoading = false;
-        this.error =
-          err.error?.error ||
-          err.error?.message ||
-          'Registration failed. Please try again.';
+      error: () => {
+        this.notificationsService.show('Registration failed. Please try again.',false);
       },
     });
   }
   private validateForm(): boolean {
     
     if (!this.email.trim() || !this.password.trim()) {
-      this.error = 'Please fill in all fields.';
+
+      this.notificationsService.show('Please fill in all fields.',false)
       return false;
     }
 
     if (!this.emailPattern.test(this.email)) {
-      this.error = 'Please enter a valid email address.';
+
+      this.notificationsService.show('Please enter a valid email address.',false)
       return false;
     }
 
     if (!this.passwordPattern.test(this.password)) {
-      this.error =
-        'Password must contain at least 8 characters, including uppercase, lowercase, a number, and a special character.';
+
+      this.notificationsService.show('Password must contain at least 8 characters, including uppercase, lowercase, a number, and a special character.',false);
       return false;
     }
 
