@@ -9,9 +9,11 @@ from flask import Blueprint, session, abort, jsonify, request, current_app, send
 
 import config.config as config
 from utils import log_event, get_project_root, get_next_upload_id
+from utils.logger_config import get_logger
 from models.user_entity import User
 
 uploads_bp = Blueprint('uploads', __name__)
+logger = get_logger(__name__)
 
 # File lock for thread-safe CSV logging
 _log_lock = threading.Lock()
