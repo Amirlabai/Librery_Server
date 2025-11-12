@@ -4,14 +4,6 @@
     to access your files
   </p>
 
-  @if (message) {
-    <p class="message">{{ message }}</p>
-  }
-
-  @if (error) {
-    <p class="error">{{ error }}</p>
-  }
-
   <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
     <input
       type="email"

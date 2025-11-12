@@ -11,6 +11,7 @@ import {Router, RouterLink} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../../services/auth.service';
+import { NotificationService } from '../../services/notifications/Notifications.service';
 
 @Component({
   selector: 'app-login',
@@ -28,11 +29,8 @@ export class LoginComponent {
   email = '';
   password = '';
   showPassword = false;
-  isLoading = false;
-  message = '';
-  error = '';
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService,private notificationService:NotificationService) {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
@@ -44,21 +42,11 @@ export class LoginComponent {
    * Backend should respond with a JSON object (see API Contract above).
    */
   onSubmit() {
-      
-    this.error = '';
-    this.message = '';
-    this.isLoading = true;
 
-    const payload = {
-      email: this.email.trim(),
-      password: this.password.trim()
-    };
-
+    
     this.authService.login(this.email, this.password).subscribe({
 
       next: (res: any) => {
-
-        this.isLoading = false;
 
         if (res.token) {
           this.authService.saveToken(res.token);
@@ -67,16 +55,16 @@ export class LoginComponent {
           localStorage.setItem('role', res.role);
         }
 
-        this.message = res.message || 'Login successful';
-          if(res.role === 'admin'){
+        this.notificationService.show('Login succsseful',true);
+
+        if(res.role === 'admin'){
             this.router.navigate(['/dashboard']);
           } else {  
           this.router.navigate(['/dashboard']);
           }
         },
-        error: (err) => {
-          this.isLoading = false;
-          this.error = err.error?.error || err.error?.message || 'Invalid credentials or server error';
+        error: () => {
+          this.notificationService.show('Invalid credentials or server error',false);
         }
     });
   }

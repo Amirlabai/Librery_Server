@@ -1,10 +1,6 @@
 <div class="register-container">
   <h1>Create your Account</h1>
 
-  @if (error) {
-    <p class="error">{{ error }}</p>
-  }
-
   <form (ngSubmit)="onsubmit()">
     <input
       type="email"
