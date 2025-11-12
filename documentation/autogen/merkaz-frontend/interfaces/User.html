@@ -418,6 +418,7 @@
 import { CommonModule, NgClass } from &#x27;@angular/common&#x27;;
 import { RouterLink } from &#x27;@angular/router&#x27;;
 import { AdminDashboardService } from &#x27;../../../../services/admin-dashboard.service&#x27;;
+import { NotificationService } from &#x27;../../../../services/notifications/Notifications.service&#x27;;
 
 interface User {
   email: string;
@@ -441,7 +442,7 @@ export class AdminUsersComponent implements OnInit {
   currentUserEmail &#x3D; localStorage.getItem(&#x27;email&#x27;) || &#x27;&#x27;;
 
 
-  constructor(private adminDashboardService: AdminDashboardService ) {}
+  constructor(private adminDashboardService: AdminDashboardService,private notificationService:NotificationService ) {}
 
   ngOnInit() {
     this.loadUsers(); 
@@ -454,9 +455,8 @@ export class AdminUsersComponent implements OnInit {
         this.currentUserEmail &#x3D; res.current_admin || localStorage.getItem(&#x27;email&#x27;) || &#x27;&#x27;;
         this.users &#x3D; res.users || [];
       },
-      error: (err) &#x3D;&gt; {
-        console.error(err);
-        this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x27;Failed to load users.&#x27; }];
+      error: () &#x3D;&gt; {
+        this.notificationService.show(&#x27;Failed to load users.&#x27;,false);
       }
     });
   }
@@ -464,11 +464,11 @@ export class AdminUsersComponent implements OnInit {
   toggleRole(email: string) {
     this.adminDashboardService.toggleRole(email).subscribe({
       next: () &#x3D;&gt; {
-        this.flashMessages &#x3D; [{ type: &#x27;success&#x27;, text: &#x27;Role updated successfully.&#x27; }];
+        this.notificationService.show(&#x27;Role updated successfully.&#x27;,true);
         this.loadUsers();
       },
       error: () &#x3D;&gt; {
-        this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x27;Failed to update role.&#x27; }];
+        this.notificationService.show(&#x27;Failed to update role.&#x27;,false);
       }
     });
   }
@@ -477,23 +477,16 @@ export class AdminUsersComponent implements OnInit {
 
     this.adminDashboardService.toggleStatus(email)
       .subscribe({
-        next: () &#x3D;&gt; {
 
-          this.flashMessages &#x3D; [{ type: &#x27;success&#x27;, text: &#x27;Status updated successfully.&#x27; }];
+        next: () &#x3D;&gt; {
+          this.notificationService.show(&#x27;Status updated successfully.&#x27;,true);
           this.loadUsers(); 
 
-          setTimeout(() &#x3D;&gt; {
-            this.flashMessages &#x3D; [];
-          }, 3000);
         },
         error: () &#x3D;&gt; {
-          this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x27;Failed to update status.&#x27; }];
-
-          setTimeout(() &#x3D;&gt; {
-            this.flashMessages &#x3D; [];
-          }, 3000);
+          this.notificationService.show(&#x27;Failed to update status.&#x27;,false);
         }
-        
+      
       });
   }
   

@@ -190,9 +190,6 @@
                                 <a href="#logout" >logout</a>
                             </li>
                             <li>
-                                <a href="#searchFiles" >searchFiles</a>
-                            </li>
-                            <li>
                                 <a href="#submitSuggestion" >submitSuggestion</a>
                             </li>
                         </ul>
@@ -736,73 +733,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="searchFiles"></a>
-                    <span class="name">
-                        <span ><b>searchFiles</b></span>
-                        <a href="#searchFiles"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>searchFiles(query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="77"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:77</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>query</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>    <code>Observable&lt;any&gt;</code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="submitSuggestion"></a>
                     <span class="name">
                         <span ><b>submitSuggestion</b></span>
@@ -986,12 +916,7 @@ export class DashboardService {
         const url &#x3D; clean ? &#x60;${this.baseUrl}/browse/${clean}&#x60; : &#x60;${this.baseUrl}/browse&#x60;;
         return this.http.get(url, { withCredentials: true });
     }
-    searchFiles(query: string): Observable&lt;any&gt; {
-        return this.http.get(&#x60;${this.baseUrl}/browse&#x60;, {
-            params: { q: query },
-            withCredentials: true
-        });
-    }
+    
 
 }</code></pre>
     </div>

@@ -257,12 +257,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(userService: <a href="../injectables/UserService.html" target="_self">UserService</a>)</code>
+<code>constructor(userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, notificationService: <a href="../injectables/NotificationService.html" target="_self">NotificationService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:23</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:24</a></div>
                             </td>
                         </tr>
 
@@ -284,6 +284,18 @@
                                                   
                                                         <td>
                                                                         <code><a href="../injectables/UserService.html" target="_self" >UserService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>notificationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/NotificationService.html" target="_self" >NotificationService</a></code>
                                                         </td>
                                                   
                                                     <td>
@@ -329,8 +341,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="31"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:31</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="32"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -366,8 +378,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="27"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:27</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="28"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:28</a></div>
                         </td>
                     </tr>
 
@@ -413,7 +425,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:23</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:24</a></div>
                         </td>
                     </tr>
 
@@ -444,7 +456,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">merkaz-frontend/src/app/components/uploads/my-uploads.component.ts:23</a></div>
                         </td>
                     </tr>
 
@@ -461,6 +473,7 @@
 import { CommonModule } from &#x27;@angular/common&#x27;;
 import { RouterLink } from &#x27;@angular/router&#x27;;
 import { UserService } from &#x27;../../services/user.service&#x27;;
+import { NotificationService } from &#x27;../../services/notifications/Notifications.service&#x27;;
 
 interface UploadHistory {
   timestamp: string;
@@ -481,7 +494,7 @@ export class MyUploadsComponent {
   uploads: UploadHistory[] &#x3D; [];
   errorMessage &#x3D; &#x27;&#x27;;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService,private notificationService:NotificationService) {}
 
   ngOnInit() {
     this.loadUploads();
@@ -493,8 +506,8 @@ export class MyUploadsComponent {
         this.uploads &#x3D; data;
       },
       error: () &#x3D;&gt; {
-        
-        this.errorMessage &#x3D; &#x27;Failed to load uploads. Please try again later.&#x27;;
+
+        this.notificationService.show(&#x27;Failed to load uploads. Please try again later.&#x27;,false)
         this.uploads &#x3D; [];
       }
     });

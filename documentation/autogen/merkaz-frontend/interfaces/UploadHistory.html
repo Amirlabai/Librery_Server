@@ -341,11 +341,6 @@ export interface UploadHistory {
   status: &#x27;Pending Review&#x27; | &#x27;Declined&#x27; | &#x27;Approved&#x27;;
 }
 
-export interface UploadResponse {
-  message?: string;
-  errors?: string[];
-  error_count?: number;
-}
 
 @Injectable({
   providedIn: &#x27;root&#x27;
@@ -360,20 +355,20 @@ export class UserService {
     return this.http.get&lt;UploadHistory[]&gt;(&#x60;${this.baseUrl}/my_uploads&#x60;, { withCredentials: true });
   }
 
-  uploadFiles(files: File[], subpath: string): Observable&lt;UploadResponse&gt; {
+  uploadFiles(files: File[], subpath: string): Observable&lt;any&gt; {
     const formData &#x3D; new FormData();
     files.forEach(file &#x3D;&gt; formData.append(&#x27;file&#x27;, file));
     formData.append(&#x27;subpath&#x27;, subpath);
 
-    return this.http.post&lt;UploadResponse&gt;(&#x60;${this.baseUrl}/upload&#x60;, formData, { withCredentials: true });
+    return this.http.post&lt;any&gt;(&#x60;${this.baseUrl}/upload&#x60;, formData, { withCredentials: true });
   }
 
-  uploadFolder(files: File[], subpath: string): Observable&lt;UploadResponse&gt; {
+  uploadFolder(files: File[], subpath: string): Observable&lt;any&gt; {
     const formData &#x3D; new FormData();
     files.forEach(file &#x3D;&gt; formData.append(&#x27;file&#x27;, file));
     formData.append(&#x27;subpath&#x27;, subpath);
 
-    return this.http.post&lt;UploadResponse&gt;(&#x60;${this.baseUrl}/upload&#x60;, formData, { withCredentials: true });
+    return this.http.post&lt;any&gt;(&#x60;${this.baseUrl}/upload&#x60;, formData, { withCredentials: true });
   }
 
 }  </code></pre>

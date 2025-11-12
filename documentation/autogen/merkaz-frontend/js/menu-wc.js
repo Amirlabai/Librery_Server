@@ -110,6 +110,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/ForgotPassService.html" data-type="entity-link" >ForgotPassService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/NotificationService.html" data-type="entity-link" >NotificationService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/UserService.html" data-type="entity-link" >UserService</a>
                                 </li>
                             </ul>
@@ -158,9 +161,6 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/UploadItem.html" data-type="entity-link" >UploadItem</a>
-                            </li>
-                            <li class="link">
-                                <a href="interfaces/UploadResponse.html" data-type="entity-link" >UploadResponse</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/User.html" data-type="entity-link" >User</a>

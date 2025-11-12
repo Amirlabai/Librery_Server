@@ -334,6 +334,7 @@
 import { CommonModule } from &#x27;@angular/common&#x27;;
 import { RouterLink } from &#x27;@angular/router&#x27;;
 import { UserService } from &#x27;../../services/user.service&#x27;;
+import { NotificationService } from &#x27;../../services/notifications/Notifications.service&#x27;;
 
 interface UploadHistory {
   timestamp: string;
@@ -354,7 +355,7 @@ export class MyUploadsComponent {
   uploads: UploadHistory[] &#x3D; [];
   errorMessage &#x3D; &#x27;&#x27;;
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService,private notificationService:NotificationService) {}
 
   ngOnInit() {
     this.loadUploads();
@@ -366,8 +367,8 @@ export class MyUploadsComponent {
         this.uploads &#x3D; data;
       },
       error: () &#x3D;&gt; {
-        
-        this.errorMessage &#x3D; &#x27;Failed to load uploads. Please try again later.&#x27;;
+
+        this.notificationService.show(&#x27;Failed to load uploads. Please try again later.&#x27;,false)
         this.uploads &#x3D; [];
       }
     });

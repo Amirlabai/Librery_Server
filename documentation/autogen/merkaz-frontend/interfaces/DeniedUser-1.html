@@ -217,6 +217,7 @@
 import { CommonModule } from &#x27;@angular/common&#x27;;
 import { RouterLink } from &#x27;@angular/router&#x27;;
 import { AdminDashboardService } from &#x27;../../../../services/admin-dashboard.service&#x27;;
+import { NotificationService } from &#x27;../../../../services/notifications/Notifications.service&#x27;;
 
 interface DeniedUser {
   email: string;
@@ -233,9 +234,8 @@ interface DeniedUser {
 export class AdminDeniedComponent {
 
   users: DeniedUser[] &#x3D; [];
-  flashMessages: { type: &#x27;success&#x27; | &#x27;error&#x27;; text: string }[] &#x3D; [];
 
-  constructor(private adminDashboardService: AdminDashboardService) {}
+  constructor(private adminDashboardService: AdminDashboardService,private notificationsService:NotificationService) {}
 
   ngOnInit() {
     this.loadDeniedUsers();
@@ -247,30 +247,24 @@ export class AdminDeniedComponent {
         this.users &#x3D; data;
       },
       error: () &#x3D;&gt; {
-        this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x27;Failed to load denied users.&#x27; }];
+        this.notificationsService.show(&#x27;Failed to load denied users.&#x27;,false)
       }
     });
   }
 
   moveToPending(email: string, index: number) {
-  this.adminDashboardService.moveToPending(email).subscribe({
-    next: () &#x3D;&gt; {
-      this.flashMessages &#x3D; [{ type: &#x27;success&#x27;, text: &#x60;Moved ${email} back to pending.&#x60; }];
-      this.users.splice(index, 1); 
+    this.adminDashboardService.moveToPending(email).subscribe({
+      next: () &#x3D;&gt; {
+
+        this.notificationsService.show(&#x60;Moved ${email} back to pending.&#x60;,true)
+        this.users.splice(index, 1); 
       
-      setTimeout(() &#x3D;&gt; {
-          this.flashMessages &#x3D; [];
-      }, 3000);
-    },
-    error: () &#x3D;&gt; {
-      this.flashMessages &#x3D; [{ type: &#x27;error&#x27;, text: &#x60;Failed to move ${email} to pending.&#x60; }];
-      
-      setTimeout(() &#x3D;&gt; {
-          this.flashMessages &#x3D; [];
-      }, 3000);
-    }
-  });
-}
+      },
+      error: () &#x3D;&gt; {
+        this.notificationsService.show(&#x60;Failed to move ${email} to pending.&#x60;,false)
+      }
+    });
+  }
 }
 </code></pre>
     </div>

@@ -35,3 +35,7 @@ No description provided.
 
 **Arguments:**
 - `token`
+
+### `refresh_session()`
+
+Refreshes the current user's session with latest data from database.

@@ -244,14 +244,6 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                    <span class="modifier">Private</span>
-                                <a href="#handleError" >handleError</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Private</span>
-                                <a href="#handleResponse" >handleResponse</a>
-                            </li>
-                            <li>
                                 <a href="#ngOnInit" >ngOnInit</a>
                             </li>
                             <li>
@@ -284,12 +276,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, route: ActivatedRoute)</code>
+<code>constructor(userService: <a href="../injectables/UserService.html" target="_self">UserService</a>, route: ActivatedRoute, notificationService: <a href="../injectables/NotificationService.html" target="_self">NotificationService</a>)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:23</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:24</a></div>
                             </td>
                         </tr>
 
@@ -330,6 +322,18 @@
                                                     </td>
                                                     
                                                 </tr>
+                                                <tr>
+                                                        <td>notificationService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/NotificationService.html" target="_self" >NotificationService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -352,168 +356,6 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="handleError"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                        <span ><b>handleError</b></span>
-                        <a href="#handleError"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>handleError(err: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>, type: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="79"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:79</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>err</td>
-                                            <td>
-                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>type</td>
-                                            <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="handleResponse"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                        <span ><b>handleResponse</b></span>
-                        <a href="#handleResponse"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-                        <span class="modifier-icon icon ion-ios-reset"></span>
-                    <code>handleResponse(res: <a href="../interfaces/UploadResponse.html" target="_self">UploadResponse</a>, type: "Files" | "Folder")</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="62"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:62</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                            <div class="io-description">
-                                <b>Parameters :</b>
-                                
-                                <table class="params">
-                                    <thead>
-                                        <tr>
-                                            <td>Name</td>
-                                                <td>Type</td>
-                                            <td>Optional</td>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                                <td>res</td>
-                                            <td>
-                                                            <code><a href="../interfaces/UploadResponse.html" target="_self" >UploadResponse</a></code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                        <tr>
-                                                <td>type</td>
-                                            <td>
-                                                        <code>&quot;Files&quot; | &quot;Folder&quot;</code>
-                                            </td>
-
-                                            <td>
-                                                    No
-                                            </td>
-
-
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                            <div class="io-description">
-                                
-                            </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
                     <a name="ngOnInit"></a>
                     <span class="name">
                         <span ><b>ngOnInit</b></span>
@@ -530,8 +372,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="27"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:27</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="29"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:29</a></div>
                         </td>
                     </tr>
 
@@ -567,8 +409,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="36"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:36</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="38"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -634,8 +476,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="40"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:40</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="42"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:42</a></div>
                         </td>
                     </tr>
 
@@ -701,8 +543,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="44"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:44</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="46"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:46</a></div>
                         </td>
                     </tr>
 
@@ -738,8 +580,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="53"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:53</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="61"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:61</a></div>
                         </td>
                     </tr>
 
@@ -785,7 +627,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:22</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:23</a></div>
                         </td>
                     </tr>
 
@@ -816,7 +658,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="23" class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:23</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="24" class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:24</a></div>
                         </td>
                     </tr>
 
@@ -847,7 +689,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="21" class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:21</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="22" class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:22</a></div>
                         </td>
                     </tr>
 
@@ -864,7 +706,8 @@
 import { RouterModule, ActivatedRoute } from &#x27;@angular/router&#x27;;
 import { CommonModule } from &#x27;@angular/common&#x27;;
 import { FormsModule } from &#x27;@angular/forms&#x27;;
-import { UploadResponse, UserService } from &#x27;../../services/user.service&#x27;;
+import { UserService } from &#x27;../../services/user.service&#x27;;
+import { NotificationService } from &#x27;../../services/notifications/Notifications.service&#x27;;
 
 @Component({
   selector: &#x27;app-upload-content&#x27;,
@@ -884,7 +727,8 @@ export class UploadFileComponent implements OnInit {
   selectedFiles: File[] &#x3D; [];
   selectedFolderFiles: File[] &#x3D; [];
 
-  constructor(private userService:UserService, private route: ActivatedRoute) {}
+
+  constructor(private userService:UserService, private route: ActivatedRoute,private notificationService:NotificationService) {}
 
   ngOnInit() {
     
@@ -904,52 +748,36 @@ export class UploadFileComponent implements OnInit {
   }
 
   onSubmitFiles() {
+    
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
-      next: (res: UploadResponse) &#x3D;&gt; {
-        this.handleResponse(res, &#x27;Files&#x27;);
-      },
-      error: (err) &#x3D;&gt; this.handleError(err, &#x27;files&#x27;)
+      next: () &#x3D;&gt; {
+        this.notificationService.show(&#x27;Files uploaded successfully&#x27;,true);
+        setTimeout(() &#x3D;&gt; {
+            window.location.reload();
+          }, 4000);
+        },
+      error: () &#x3D;&gt; {
+        this.notificationService.show(&#x27;Failed to upload files&#x27;,false);
+      } 
     });
   }
 
   onSubmitFolder() {
     this.userService.uploadFolder(this.selectedFolderFiles, this.subpath).subscribe({
-      next: (res: UploadResponse) &#x3D;&gt; {
-        this.handleResponse(res, &#x27;Folder&#x27;);
+      next: () &#x3D;&gt; {
+
+        this.notificationService.show(&#x27;Folders uploaded successfully&#x27;,true);
+
+        setTimeout(() &#x3D;&gt; {
+          window.location.reload();
+        }, 4000);
       },
-      error: (err) &#x3D;&gt; this.handleError(err, &#x27;folder&#x27;)
+      error: () &#x3D;&gt; {
+        this.notificationService.show(&#x27;Failed to upload folder&#x27;,false);
+      }
     });
   }
 
-  private handleResponse(res: UploadResponse, type: &#x27;Files&#x27; | &#x27;Folder&#x27;) {
-    let message &#x3D; res.message || &#x60;${type} uploaded successfully&#x60;;
-
-    if (res.errors &amp;&amp; res.errors.length &gt; 0) {
-      const errorMsg &#x3D; res.errors.join(&#x27;\n&#x27;);
-      if (res.error_count &amp;&amp; res.error_count &gt; 5) {
-        alert(&#x60;${message}\n\nTotal: ${res.error_count} files failed\n\n${errorMsg}&#x60;);
-      } else {
-        alert(&#x60;${message}\n\nFailed items:\n${errorMsg}&#x60;);
-      }
-    } else {
-      alert(message);
-    }
-
-    window.location.reload();
-  }
-
-  private handleError(err: any, type: string) {
-    let errorMessage &#x3D; &#x60;Failed to upload ${type}&#x60;;
-    if (err.error) {
-      if (err.error.errors?.length) {
-        errorMessage &#x3D; &#x60;Upload failed:\n\n${err.error.errors.join(&#x27;\n&#x27;)}&#x60;;
-      } else if (err.error.error) {
-        errorMessage &#x3D; &#x60;Upload failed: ${err.error.error}&#x60;;
-      }
-    }
-    alert(errorMessage);
-    console.error(err);
-  }
 }
 </code></pre>
     </div>
