@@ -178,8 +178,16 @@ def toggle_role(email):
         return jsonify({"error": "You cannot change your own admin status"}), 403
 
     try:
-        User.toggle_role(email)
-        return jsonify({"message": f"Successfully updated role for {email}"}), 200
+        updated_user = User.toggle_role(email)
+        # Return updated user info so frontend can refresh if it's the current user
+        return jsonify({
+            "message": f"Successfully updated role for {email}",
+            "updated_user": {
+                "email": updated_user.email,
+                "role": updated_user.role,
+                "is_admin": updated_user.is_admin
+            }
+        }), 200
     except ValueError as e:
         return jsonify({"error": str(e)}), 404
 
