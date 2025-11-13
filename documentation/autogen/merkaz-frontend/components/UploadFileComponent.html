@@ -586,8 +586,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="76"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:76</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/uploads/upload-file.component.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -823,19 +823,9 @@ export class UploadFileComponent implements OnInit {
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
 
       next: () &#x3D;&gt; {
-
-        
         this.isUploadingFile &#x3D; false;
-
-        setTimeout(() &#x3D;&gt; {
-
-          this.notificationService.show(&#x27;Files uploaded successfully&#x27;, true);
-
-          setTimeout(() &#x3D;&gt; {
-            window.location.reload();
-          }, 2000);
-
-        }); 
+        window.location.reload();
+        this.notificationService.show(&#x27;Files uploaded successfully&#x27;, true);
       },
 
       error: () &#x3D;&gt; {
@@ -850,21 +840,11 @@ export class UploadFileComponent implements OnInit {
     this.isUploadingFolder &#x3D; true;
 
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
-
+    
       next: () &#x3D;&gt; {
-
-        
         this.isUploadingFolder &#x3D; false;
-
-        setTimeout(() &#x3D;&gt; {
-
-          this.notificationService.show(&#x27;Folders uploaded successfully&#x27;,true);
-
-          setTimeout(() &#x3D;&gt; {
-            window.location.reload();
-          }, 2000);
-
-        }); 
+        window.location.reload();
+        this.notificationService.show(&#x27;Folders uploaded successfully&#x27;,true);
       },
 
       error: () &#x3D;&gt; {
