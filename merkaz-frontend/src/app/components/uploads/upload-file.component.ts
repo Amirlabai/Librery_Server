@@ -51,19 +51,9 @@ export class UploadFileComponent implements OnInit {
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
 
       next: () => {
-
-        
         this.isUploadingFile = false;
-
-        setTimeout(() => {
-
-          this.notificationService.show('Files uploaded successfully', true);
-
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-
-        }); 
+        window.location.reload();
+        this.notificationService.show('Files uploaded successfully', true);
       },
 
       error: () => {
@@ -78,21 +68,11 @@ export class UploadFileComponent implements OnInit {
     this.isUploadingFolder = true;
 
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
-
+    
       next: () => {
-
-        
         this.isUploadingFolder = false;
-
-        setTimeout(() => {
-
-          this.notificationService.show('Folders uploaded successfully',true);
-
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-
-        }); 
+        window.location.reload();
+        this.notificationService.show('Folders uploaded successfully',true);
       },
 
       error: () => {

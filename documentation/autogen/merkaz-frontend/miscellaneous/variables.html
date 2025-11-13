@@ -211,16 +211,30 @@
                     <td class="col-md-4">
                         <i>Default value : </i><code>(req, next) &#x3D;&gt; {
   const auth &#x3D; inject(AuthService);
+  const router &#x3D; inject(Router);
   const token &#x3D; auth.getToken();
 
+  let cloned &#x3D; req.clone({
+    withCredentials: true
+  });
+
   if (token) {
-    const cloned &#x3D; req.clone({
+    cloned &#x3D; cloned.clone({
       setHeaders: { Authorization: &#x60;Bearer ${token}&#x60; }
     });
-    return next(cloned);
   }
 
-  return next(req);
+  return next(cloned).pipe(
+    catchError(err &#x3D;&gt; {
+      if (err.status &#x3D;&#x3D;&#x3D; 0 || err.status &#x3D;&#x3D;&#x3D; undefined) {
+        
+        auth.clearToken();
+        sessionStorage.clear();
+        router.navigate([&#x27;/login&#x27;]);
+      }
+      return throwError(() &#x3D;&gt; err);
+    })
+  );
 }</code>
                     </td>
                 </tr>
@@ -304,8 +318,8 @@
                 <tr>
                     <td class="col-md-4">
                         <i>Default value : </i><code>{
-  version: &#x27;2.2.2&#x27;,
-  releaseDate: &#x27;2025-11-13T06:17:53Z&#x27;,
+  version: &#x27;2.2.3&#x27;,
+  releaseDate: &#x27;2025-11-13T13:37:27Z&#x27;,
 }</code>
                     </td>
                 </tr>

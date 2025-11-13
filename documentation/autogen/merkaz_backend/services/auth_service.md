@@ -31,3 +31,50 @@ Get the email of the current user.
 ### `get_current_user_id()`
 
 Get the user ID of the current user.
+
+## Classes
+
+### `AuthService`
+
+Service for authentication operations.
+
+#### Methods
+
+- `login(email, password)`
+  - Authenticate a user and create session.
+  - Arguments:
+    - `email`
+    - `password`
+
+- `register(email, password)`
+  - Register a new user.
+  - Arguments:
+    - `email`
+    - `password`
+
+- `reset_password(email, new_password)`
+  - Reset a user's password.
+  - Arguments:
+    - `email`
+    - `new_password`
+
+- `refresh_session()`
+  - Refresh the current user's session with latest data from database.
+
+- `create_session(user)`
+  - Create a session for the given user.
+  - Arguments:
+    - `user`
+
+- `clear_session()`
+  - Clear the current session.
+
+- `find_user_by_email(email)`
+  - Find a user by email in authenticated users.
+  - Arguments:
+    - `email`
+
+- `email_exists(email)`
+  - Check if an email exists in auth, pending, or denied users.
+  - Arguments:
+    - `email`
