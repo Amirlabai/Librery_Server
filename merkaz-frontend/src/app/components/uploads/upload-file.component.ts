@@ -22,6 +22,8 @@ export class UploadFileComponent implements OnInit {
   subpath: string = '';
   selectedFiles: File[] = [];
   selectedFolderFiles: File[] = [];
+  isUploadingFile: boolean = false;
+  isUploadingFolder: boolean = false;
 
 
   constructor(private userService:UserService, private route: ActivatedRoute,private notificationService:NotificationService) {}
@@ -44,34 +46,59 @@ export class UploadFileComponent implements OnInit {
   }
 
   onSubmitFiles() {
-    
+    this.isUploadingFile = true;
+
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
+
       next: () => {
-        this.notificationService.show('Files uploaded successfully',true);
+
+        
+        this.isUploadingFile = false;
+
         setTimeout(() => {
+
+          this.notificationService.show('Files uploaded successfully', true);
+
+          setTimeout(() => {
             window.location.reload();
-          }, 4000);
-        },
-      error: () => {
-        this.notificationService.show('Failed to upload files',false);
-      } 
-    });
-  }
+          }, 2000);
 
-  onSubmitFolder() {
-    this.userService.uploadFolder(this.selectedFolderFiles, this.subpath).subscribe({
-      next: () => {
-
-        this.notificationService.show('Folders uploaded successfully',true);
-
-        setTimeout(() => {
-          window.location.reload();
-        }, 4000);
+        }); 
       },
+
       error: () => {
-        this.notificationService.show('Failed to upload folder',false);
+        this.isUploadingFile = false;
+        this.notificationService.show('Failed to upload files', false);
       }
     });
   }
 
+  onSubmitFolder() {
+
+    this.isUploadingFolder = true;
+
+    this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
+
+      next: () => {
+
+        
+        this.isUploadingFolder = false;
+
+        setTimeout(() => {
+
+          this.notificationService.show('Folders uploaded successfully',true);
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+
+        }); 
+      },
+
+      error: () => {
+        this.isUploadingFolder = false;
+        this.notificationService.show('Failed to upload folder',false);
+      }
+    });
+  }
 }

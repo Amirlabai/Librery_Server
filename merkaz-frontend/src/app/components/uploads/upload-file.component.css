@@ -78,3 +78,18 @@
             padding-top: 20px;
             width: 100%;
         }
+        .spinner {
+        border: 3px solid #ccc;
+        border-top: 3px solid #333;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        animation: spin 0.7s linear infinite;
+        display: inline-block;
+        margin-left: 6px;
+        vertical-align: middle;
+        }
+
+        @keyframes spin {
+        100% { transform: rotate(360deg); }
+        }

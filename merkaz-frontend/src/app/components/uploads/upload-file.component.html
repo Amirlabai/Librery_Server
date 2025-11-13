@@ -19,9 +19,15 @@
       You can select multiple files at once. Hold down the Ctrl (or Cmd on Mac) key while clicking to select more than one.
     </div>
     <form (ngSubmit)="onSubmitFiles()" #filesForm="ngForm">
-      <input type="file" (change)="onFileChange($event)" multiple required />
+      <input type="file" (change)="onFileChange($event)" multiple required [disabled]="isUploadingFile"/>
       <br />
-      <button type="submit">Upload Files for Review</button>
+      <button type="submit" [disabled]="isUploadingFile">
+      Upload Files for Review
+
+      @if (isUploadingFile) {
+        <span class="spinner"></span>
+      }
+      </button>
     </form>
   </div>
 
@@ -31,9 +37,15 @@
       Select a folder to upload all of its contents, including sub-folders.
     </div>
     <form (ngSubmit)="onSubmitFolder()" #folderForm="ngForm">
-      <input type="file" (change)="onFolderChange($event)" webkitdirectory required />
+      <input type="file" (change)="onFolderChange($event)" webkitdirectory required [disabled]="isUploadingFolder" />
       <br />
-      <button type="submit">Upload Folder for Review</button>
+      <button type="submit" [disabled]="isUploadingFolder">
+      Upload Folders for Review
+
+      @if (isUploadingFolder) {
+        <span class="spinner"></span>
+      }
+      </button>
     </form>
   </div>
 
