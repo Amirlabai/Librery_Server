@@ -22,7 +22,7 @@
       <input [(ngModel)]="searchFiles" (input)="onSearchChange()" placeholder="search" class="search-items"> 
     }
     @if (currentPath) {
-      <a (click)="goUp()" style="margin-left: 15px;">⬆️ Go Up</a>
+      <a (click)="goUp()" style="margin-left: 15px;">⬅️ Back</a>
     }
     
     <span>{{ currentPath || '/' }}</span>
@@ -70,7 +70,7 @@
               <button (click)="download(item)" class="action-btn download-btn">Download</button>
               
               @if(isAdmin){
-                <button (click)="deleteItem(item)" class="action-btn delete-btn">Delete</button>
+                <button (click)="deleteItem(item, $event)" class="action-btn delete-btn">Delete</button>
                 <button (click) = "openEditPathModal()" class="edit-btn">Edit</button>
               }
 
