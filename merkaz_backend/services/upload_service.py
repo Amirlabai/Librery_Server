@@ -2,7 +2,6 @@
 Upload service - File upload logic and workflow.
 """
 import os
-import csv
 import shutil
 import threading
 from datetime import datetime
@@ -11,7 +10,8 @@ from utils.csv_utils import get_next_upload_id
 from utils.log_utils import log_event
 from utils.file_utils import allowed_file, is_file_malicious
 from utils.logger_config import get_logger
-from models.user_entity import User
+from repositories.user_repository import UserRepository
+from repositories.upload_repository import UploadRepository
 import config.config as config
 
 logger = get_logger(__name__)
@@ -183,34 +183,8 @@ class UploadService:
     @staticmethod
     def remove_from_pending_log(upload_id):
         """Remove an entry from the pending log by upload_id."""
-        project_root = get_project_root()
-        pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
-        
-        if not os.path.exists(pending_log_path):
-            return None
-        
-        rows = []
-        removed_row = None
-        
-        with _log_lock:
-            try:
-                with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
-                    reader = csv.reader(f)
-                    header = next(reader, None)
-                    rows = [header] if header else []
-                    for row in reader:
-                        if len(row) >= 6 and row[0] == str(upload_id):
-                            removed_row = row
-                        else:
-                            rows.append(row)
-                
-                if removed_row:
-                    with open(pending_log_path, mode='w', newline='', encoding='utf-8') as f:
-                        writer = csv.writer(f)
-                        writer.writerows(rows)
-            except (FileNotFoundError, StopIteration):
-                return None
-        
+        logger.debug(f"Removing pending upload by ID: {upload_id}")
+        removed_row = UploadRepository.remove_from_pending(upload_id)
         return removed_row
     
     @staticmethod
@@ -331,90 +305,75 @@ class UploadService:
         logger.debug(f"Getting user uploads - Email: {email}, User ID: {user_id}")
         project_root = get_project_root()
         upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
-        pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
-        completed_log_path = os.path.join(project_root, config.UPLOAD_COMPLETED_LOG_FILE)
         
         user_uploads = []
         declined_items = set()
         
         # Read declined items
-        try:
-            declined_log_path = os.path.join(project_root, config.DECLINED_UPLOAD_LOG_FILE)
-            with open(declined_log_path, 'r', newline='', encoding='utf-8') as f:
-                reader = csv.DictReader(f)
-                for row in reader:
-                    declined_user_id = row.get('user_id', '')
-                    if (row['email'] == email) or (declined_user_id and str(user_id) == declined_user_id):
-                        declined_items.add(row['filename'])
-        except FileNotFoundError:
-            pass
+        declined_uploads = UploadRepository.read_declined_uploads()
+        for row in declined_uploads:
+            declined_user_id = row.get('user_id', '')
+            if (row.get('email') == email) or (declined_user_id and str(user_id) == declined_user_id):
+                declined_items.add(row.get('filename', ''))
         
         # Read pending log
-        try:
-            with open(pending_log_path, 'r', newline='', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                header = next(reader, None)
-                for row in reader:
-                    if len(row) >= 6:
-                        upload_id, timestamp, row_email, row_user_id, flat_filename, full_path = row[0], row[1], row[2], row[3], row[4], row[5]
-                        
-                        matches_user = False
-                        if user_id and row_user_id:
-                            matches_user = str(user_id) == row_user_id
-                        else:
-                            matches_user = row_email == email
-                        
-                        if matches_user:
-                            file_exists = os.path.exists(os.path.join(upload_dir, flat_filename))
-                            display_filename = full_path if full_path else flat_filename
-                            
-                            if flat_filename in declined_items or display_filename in declined_items:
-                                status = 'Declined'
-                            elif file_exists:
-                                status = 'Pending Review'
-                            else:
-                                status = 'Processing'
-                            
-                            user_uploads.append({
-                                'upload_id': upload_id,
-                                'timestamp': timestamp,
-                                'email': row_email,
-                                'user_id': row_user_id if row_user_id else None,
-                                'filename': display_filename,
-                                'path': full_path if full_path else '',
-                                'status': status
-                            })
-        except FileNotFoundError:
-            pass
+        pending_uploads = UploadRepository.read_pending_uploads()
+        for upload in pending_uploads:
+            row_email = upload.get('email')
+            row_user_id = upload.get('user_id')
+            
+            matches_user = False
+            if user_id and row_user_id:
+                matches_user = str(user_id) == str(row_user_id)
+            else:
+                matches_user = row_email == email
+            
+            if matches_user:
+                flat_filename = upload.get('filename')
+                full_path = upload.get('path', '')
+                file_exists = os.path.exists(os.path.join(upload_dir, flat_filename))
+                display_filename = full_path if full_path else flat_filename
+                
+                if flat_filename in declined_items or display_filename in declined_items:
+                    status = 'Declined'
+                elif file_exists:
+                    status = 'Pending Review'
+                else:
+                    status = 'Processing'
+                
+                user_uploads.append({
+                    'upload_id': upload.get('upload_id'),
+                    'timestamp': upload.get('timestamp'),
+                    'email': row_email,
+                    'user_id': row_user_id if row_user_id else None,
+                    'filename': display_filename,
+                    'path': full_path if full_path else '',
+                    'status': status
+                })
         
         # Read completed log
-        try:
-            with open(completed_log_path, 'r', newline='', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                header = next(reader, None)
-                for row in reader:
-                    if len(row) >= 7:
-                        upload_id, original_timestamp, approval_timestamp, row_email, row_user_id, flat_filename, final_path = row[0], row[1], row[2], row[3], row[4], row[5], row[6]
-                        
-                        matches_user = False
-                        if user_id and row_user_id:
-                            matches_user = str(user_id) == row_user_id
-                        else:
-                            matches_user = row_email == email
-                        
-                        if matches_user:
-                            user_uploads.append({
-                                'upload_id': upload_id,
-                                'timestamp': original_timestamp,
-                                'email': row_email,
-                                'user_id': row_user_id if row_user_id else None,
-                                'filename': final_path,
-                                'path': final_path,
-                                'status': 'Approved & Moved',
-                                'approval_timestamp': approval_timestamp
-                            })
-        except FileNotFoundError:
-            pass
+        completed_uploads = UploadRepository.read_completed_uploads()
+        for upload in completed_uploads:
+            row_email = upload.get('email')
+            row_user_id = upload.get('user_id')
+            
+            matches_user = False
+            if user_id and row_user_id:
+                matches_user = str(user_id) == str(row_user_id)
+            else:
+                matches_user = row_email == email
+            
+            if matches_user:
+                user_uploads.append({
+                    'upload_id': upload.get('upload_id'),
+                    'timestamp': upload.get('original_timestamp'),
+                    'email': row_email,
+                    'user_id': row_user_id if row_user_id else None,
+                    'filename': upload.get('final_path'),
+                    'path': upload.get('final_path'),
+                    'status': 'Approved & Moved',
+                    'approval_timestamp': upload.get('approval_timestamp')
+                })
         
         user_uploads.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
         logger.info(f"Retrieved {len(user_uploads)} uploads for user: {email}")
@@ -426,54 +385,49 @@ class UploadService:
         logger.debug("Getting admin uploads")
         project_root = get_project_root()
         upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
-        pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
         all_uploads_list = []
         
-        try:
-            with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                header = next(reader, None)
-                all_uploads_logged = list(reader)
+        pending_uploads = UploadRepository.read_pending_uploads()
+        
+        for upload in reversed(pending_uploads):
+            upload_id = upload.get('upload_id')
+            timestamp = upload.get('timestamp')
+            email = upload.get('email')
+            user_id = upload.get('user_id')
+            flat_filename = upload.get('filename')
+            suggested_full_path = upload.get('path', '')
             
-            for row in reversed(all_uploads_logged):
-                if len(row) >= 6:
-                    upload_id, timestamp, email, user_id, flat_filename, suggested_full_path = row[0], row[1], row[2], row[3], row[4], row[5]
+            full_file_path = os.path.join(upload_dir, flat_filename)
+            
+            if os.path.exists(full_file_path):
+                user_info = None
+                if user_id:
+                    try:
+                        user = UserRepository.find_by_email(email)
+                        if user:
+                            user_info = {
+                                "id": user.user_id,
+                                "email": user.email,
+                                "role": user.role
+                            }
+                    except:
+                        pass
+                
+                if '/' in suggested_full_path:
+                    display_filename = suggested_full_path
                 else:
-                    continue
+                    display_filename = flat_filename
                 
-                full_file_path = os.path.join(upload_dir, flat_filename)
-                
-                if os.path.exists(full_file_path):
-                    user_info = None
-                    if user_id:
-                        try:
-                            user = User.find_by_email(email)
-                            if user:
-                                user_info = {
-                                    "id": user.user_id,
-                                    "email": user.email,
-                                    "role": user.role
-                                }
-                        except:
-                            pass
-                    
-                    if '/' in suggested_full_path:
-                        display_filename = suggested_full_path
-                    else:
-                        display_filename = flat_filename
-                    
-                    all_uploads_list.append({
-                        "upload_id": upload_id,
-                        "timestamp": timestamp,
-                        "email": email,
-                        "user_id": user_id if user_id else None,
-                        "user": user_info,
-                        "filename": display_filename,
-                        "path": suggested_full_path,
-                        "flat_filename": flat_filename
-                    })
-        except (FileNotFoundError, StopIteration):
-            pass
+                all_uploads_list.append({
+                    "upload_id": upload_id,
+                    "timestamp": timestamp,
+                    "email": email,
+                    "user_id": user_id if user_id else None,
+                    "user": user_info,
+                    "filename": display_filename,
+                    "path": suggested_full_path,
+                    "flat_filename": flat_filename
+                })
         
         final_uploads_list = sorted(all_uploads_list, key=lambda x: x['timestamp'], reverse=True)
         logger.info(f"Retrieved {len(final_uploads_list)} pending uploads for admin review")
@@ -486,27 +440,40 @@ class UploadService:
         project_root = get_project_root()
         upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
         share_dir = os.path.join(project_root, config.SHARE_FOLDER)
-        pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
         
         flat_filename = None
         pending_entry = None
         
         # Look up entry from pending log
-        try:
-            with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                header = next(reader, None)
-                for row in reversed(list(reader)):
-                    if len(row) >= 6:
-                        row_upload_id, timestamp, row_email, user_id, stored_flat, stored_path = row[0], row[1], row[2], row[3], row[4], row[5]
-                        if (upload_id and str(row_upload_id) == str(upload_id)) or \
-                           (stored_path == filename or stored_flat == filename):
-                            pending_entry = row
-                            flat_filename = stored_flat
-                            upload_id = row_upload_id
-                            break
-        except (FileNotFoundError, StopIteration):
-            pass
+        if upload_id:
+            pending_data = UploadRepository.find_pending_by_id(upload_id)
+            if pending_data:
+                pending_entry = [
+                    pending_data['upload_id'],
+                    pending_data['timestamp'],
+                    pending_data['email'],
+                    pending_data['user_id'],
+                    pending_data['filename'],
+                    pending_data['path']
+                ]
+                flat_filename = pending_data['filename']
+                upload_id = pending_data['upload_id']
+        
+        if not pending_entry:
+            # Try finding by filename
+            matches = UploadRepository.find_pending_by_filename(filename)
+            if matches:
+                match = matches[0]
+                pending_entry = [
+                    match['upload_id'],
+                    match['timestamp'],
+                    match['email'],
+                    match['user_id'],
+                    match['filename'],
+                    match['path']
+                ]
+                flat_filename = match['filename']
+                upload_id = match['upload_id']
         
         if flat_filename is None:
             flat_filename = filename
@@ -547,7 +514,7 @@ class UploadService:
             
             if pending_entry and upload_id:
                 entry_upload_id, original_timestamp, row_email, user_id, _, _ = pending_entry
-                UploadService.remove_from_pending_log(upload_id)
+                UploadRepository.remove_from_pending(upload_id)
                 UploadService.log_completed_upload(
                     entry_upload_id,
                     original_timestamp,
@@ -572,27 +539,40 @@ class UploadService:
         logger.info(f"Declining upload - ID: {upload_id}, File: {filename}, Admin: {email}")
         project_root = get_project_root()
         upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
-        pending_log_path = os.path.join(project_root, config.UPLOAD_PENDING_LOG_FILE)
         
         flat_filename = None
         pending_entry = None
         
         # Look up entry
-        try:
-            with open(pending_log_path, mode='r', newline='', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                header = next(reader, None)
-                for row in reversed(list(reader)):
-                    if len(row) >= 6:
-                        row_upload_id, timestamp, row_email, row_user_id, stored_flat, stored_path = row[0], row[1], row[2], row[3], row[4], row[5]
-                        if (upload_id and str(row_upload_id) == str(upload_id)) or \
-                           (stored_path == filename or stored_flat == filename):
-                            pending_entry = row
-                            flat_filename = stored_flat
-                            upload_id = row_upload_id
-                            break
-        except (FileNotFoundError, StopIteration):
-            pass
+        if upload_id:
+            pending_data = UploadRepository.find_pending_by_id(upload_id)
+            if pending_data:
+                pending_entry = [
+                    pending_data['upload_id'],
+                    pending_data['timestamp'],
+                    pending_data['email'],
+                    pending_data['user_id'],
+                    pending_data['filename'],
+                    pending_data['path']
+                ]
+                flat_filename = pending_data['filename']
+                upload_id = pending_data['upload_id']
+        
+        if not pending_entry:
+            # Try finding by filename
+            matches = UploadRepository.find_pending_by_filename(filename)
+            if matches:
+                match = matches[0]
+                pending_entry = [
+                    match['upload_id'],
+                    match['timestamp'],
+                    match['email'],
+                    match['user_id'],
+                    match['filename'],
+                    match['path']
+                ]
+                flat_filename = match['filename']
+                upload_id = match['upload_id']
         
         if flat_filename is None:
             flat_filename = filename
@@ -607,12 +587,12 @@ class UploadService:
         
         # Get user_id if not provided
         if not user_id:
-            user = User.find_by_email(email)
+            user = UserRepository.find_by_email(email)
             user_id = user.user_id if user else None
         
         # Remove from pending log
         if upload_id:
-            UploadService.remove_from_pending_log(upload_id)
+            UploadRepository.remove_from_pending(upload_id)
         
         # Log to declined log
         UploadService.log_declined_upload(email, user_id, flat_filename)
@@ -636,39 +616,12 @@ class UploadService:
     def edit_upload_path(upload_id, new_path):
         """Edit the path of a completed upload."""
         logger.info(f"Editing upload path - ID: {upload_id}, New path: {new_path}")
-        project_root = get_project_root()
-        file_log_path = os.path.join(project_root, config.UPLOAD_COMPLETED_LOG_FILE)
+        success = UploadRepository.update_completed_path(upload_id, new_path)
         
-        rows = []
-        found = False
-        old_path = None
-        
-        with _log_lock:
-            try:
-                with open(file_log_path, mode='r', newline='', encoding='utf-8') as f:
-                    reader = csv.reader(f)
-                    header = next(reader, None)
-                    rows = [header] if header else []
-                    for row in reader:
-                        if len(row) >= 7 and row[0] == str(upload_id):
-                            old_path = row[6]
-                            row[6] = new_path
-                            found = True
-                        rows.append(row)
-                
-                if found:
-                    with open(file_log_path, mode='w', newline='', encoding='utf-8') as f:
-                        writer = csv.writer(f)
-                        writer.writerows(rows)
-                    logger.info(f"Upload path updated - ID: {upload_id}, Old: {old_path}, New: {new_path}")
-                    return True, None
-                else:
-                    logger.warning(f"Edit path failed - Upload ID not found: {upload_id}")
-                    return False, f"Upload ID {upload_id} not found in log"
-            except FileNotFoundError:
-                logger.error("Edit path failed - Completed log file not found")
-                return False, "Completed log file not found"
-            except Exception as e:
-                logger.error(f"Edit path failed - Error: {str(e)}")
-                return False, f"An error occurred while updating the path: {e}"
+        if success:
+            logger.info(f"Upload path updated - ID: {upload_id}, New path: {new_path}")
+            return True, None
+        else:
+            logger.warning(f"Edit path failed - Upload ID not found: {upload_id}")
+            return False, f"Upload ID {upload_id} not found in log"
 

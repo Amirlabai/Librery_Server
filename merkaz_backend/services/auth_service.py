@@ -4,7 +4,7 @@ Auth service - Authentication and session handling.
 from flask import session
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash
-from models.user_entity import User
+from repositories.user_repository import UserRepository
 from utils.logger_config import get_logger
 from utils import get_next_user_id
 import config.config as config
@@ -21,7 +21,7 @@ class AuthService:
     def login(email, password):
         """Authenticate a user and create session."""
         logger.info(f"Login attempt for email: {email}")
-        user = User.find_by_email(email)
+        user = UserRepository.find_by_email(email)
         
         if not user or not user.check_password(password):
             logger.warning(f"Login failed - Invalid credentials for email: {email}")
@@ -60,12 +60,12 @@ class AuthService:
         user_id = get_next_user_id()
         logger.debug(f"Generated user_id: {user_id} for new user: {email}")
         
-        new_user = User.create_user(email=email, password=hashed_password, role='user', status='pending', user_id=user_id)
+        new_user = UserRepository.create_user(email=email, password=hashed_password, role='user', status='pending', user_id=user_id)
         
         # Save to pending
-        pending_users = User.get_pending()
+        pending_users = UserRepository.get_pending()
         pending_users.append(new_user)
-        User.save_pending(pending_users)
+        UserRepository.save_pending(pending_users)
         logger.info(f"User registered successfully - Email: {email}, user_id: {user_id}, status: pending")
         
         return new_user, None
@@ -79,7 +79,7 @@ class AuthService:
             logger.warning(f"Password reset failed - Password too short for email: {email}")
             return False, "Password must be at least 8 characters long"
         
-        users = User.get_all()
+        users = UserRepository.get_all()
         user_found = False
         for user in users:
             if user.email == email:
@@ -92,7 +92,7 @@ class AuthService:
             logger.error(f"Password reset failed - User not found: {email}")
             return False, "User not found"
         
-        User.save_all(users)
+        UserRepository.save_all(users)
         logger.info(f"Password reset successful for user: {email}")
         return True, None
     
@@ -106,7 +106,7 @@ class AuthService:
             logger.warning("Session refresh failed - No email in session")
             return None, "Session invalid"
         
-        user = User.find_by_email(email)
+        user = UserRepository.find_by_email(email)
         if not user:
             logger.error(f"Session refresh failed - User not found: {email}")
             return None, "User not found"
@@ -146,14 +146,14 @@ class AuthService:
     @staticmethod
     def find_user_by_email(email):
         """Find a user by email in authenticated users."""
-        user = User.find_by_email(email)
+        user = UserRepository.find_by_email(email)
         logger.debug(f"User lookup - Email: {email}, Found: {user is not None}")
         return user
     
     @staticmethod
     def email_exists(email):
         """Check if an email exists in auth, pending, or denied users."""
-        exists = User.find_by_email(email) or User.find_pending_by_email(email) or User.find_denied_by_email(email)
+        exists = UserRepository.find_by_email(email) or UserRepository.find_pending_by_email(email) or UserRepository.find_denied_by_email(email)
         logger.debug(f"Email existence check - Email: {email}, Exists: {exists}")
         return exists
 

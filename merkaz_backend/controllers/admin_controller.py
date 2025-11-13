@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Blueprint, session, jsonify, request, current_app, send_file
 
 import config.config as config
-from models.user_entity import User
+from repositories.user_repository import UserRepository
 from utils import csv_to_xlsx_in_memory
 from utils.logger_config import get_logger
 from services.mail_service import send_approval_email, send_denial_email
@@ -44,7 +44,7 @@ def admin_users():
 
     mark_user_online()
 
-    all_users = User.get_all()
+    all_users = UserRepository.get_all()
     users_list = []
 
     active_now = get_active_users()
@@ -79,7 +79,7 @@ def admin_pending():
         logger.warning(f"Access denied to pending users - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
 
-    pending_users = User.get_pending()
+    pending_users = UserRepository.get_pending()
     users_list = [user.to_dict() if hasattr(user, "to_dict") else user for user in pending_users]
     logger.info(f"Pending users retrieved by admin: {session.get('email')}, count: {len(users_list)}")
 
@@ -94,7 +94,7 @@ def admin_denied():
         logger.warning(f"Access denied to denied users - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
 
-    denied_users = User.get_denied()
+    denied_users = UserRepository.get_denied()
     users_list = [user.to_dict() if hasattr(user, "to_dict") else user for user in denied_users]
     logger.info(f"Denied users retrieved by admin: {session.get('email')}, count: {len(users_list)}")
 
@@ -225,12 +225,17 @@ def download_metrics_xlsx(log_type):
         logger.warning(f"Access denied to download metrics - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
 
+    from repositories.session_repository import SessionRepository
+    from repositories.download_repository import DownloadRepository
+    from repositories.suggestion_repository import SuggestionRepository
+    from repositories.upload_repository import UploadRepository
+    
     log_map = {
-        "session": (config.SESSION_LOG_FILE, "Session_Log"),
-        "download": (config.DOWNLOAD_LOG_FILE, "Download_Log"),
-        "suggestion": (config.SUGGESTION_LOG_FILE, "Suggestion_Log"),
-        "upload": (config.UPLOAD_LOG_FILE, "Upload_Log"),
-        "declined": (config.DECLINED_UPLOAD_LOG_FILE, "Declined_Upload_Log"),
+        "session": (SessionRepository.get_session_log_path(), "Session_Log"),
+        "download": (DownloadRepository.get_download_log_path(), "Download_Log"),
+        "suggestion": (SuggestionRepository.get_suggestion_log_path(), "Suggestion_Log"),
+        "upload": (UploadRepository.get_pending_log_path(), "Upload_Log"),
+        "declined": (UploadRepository.get_declined_log_path(), "Declined_Upload_Log"),
     }
 
     if log_type not in log_map:

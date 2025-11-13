@@ -1,7 +1,7 @@
 from flask import Blueprint, session, jsonify, request
 from utils.logger_config import get_logger
 from services.upload_service import UploadService
-from models.user_entity import User
+from repositories.user_repository import UserRepository
 
 uploads_bp = Blueprint('uploads', __name__)
 logger = get_logger(__name__)
@@ -24,7 +24,7 @@ def upload_file():
     user_id = session.get("user_id")
     
     if user_id is None:
-        user = User.find_by_email(email)
+        user = UserRepository.find_by_email(email)
         user_id = user.user_id if user else None
     
     successful_uploads, errors, failed_files_by_type, error_summary = UploadService.upload_files(
@@ -68,7 +68,7 @@ def my_uploads():
     user_id = session.get('user_id')
     
     if user_id is None:
-        user = User.find_by_email(user_email)
+        user = UserRepository.find_by_email(user_email)
         user_id = user.user_id if user else None
     
     user_uploads = UploadService.get_my_uploads(user_email, user_id)

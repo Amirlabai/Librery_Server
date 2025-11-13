@@ -8,6 +8,7 @@ from utils import log_event
 from utils.logger_config import get_logger
 from services.mail_service import send_new_user_notification, send_password_reset_email
 from services.auth_service import AuthService, mark_user_online, mark_user_offline
+from repositories.session_repository import SessionRepository
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 
 auth_bp = Blueprint('auth', __name__)
@@ -35,10 +36,10 @@ def api_login():
     
     if error:
         logger.warning(f"Login failed - {error} for email: {email}")
-        log_event(config.SESSION_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGIN_FAIL"])
+        log_event(SessionRepository.get_session_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGIN_FAIL"])
         return jsonify({"error": error}), 401 if error == "Invalid credentials" else 403
 
-    log_event(config.SESSION_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGIN_SUCCESS"])
+    log_event(SessionRepository.get_session_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGIN_SUCCESS"])
     logger.info(f"Login successful for user: {email}, role: {'admin' if user.is_admin else 'user'}")
 
     return jsonify({
@@ -77,7 +78,7 @@ def logout():
     email = session.get("email", "unknown")
     logger.info(f"Logout request for user: {email}")
     log_event(
-        config.SESSION_LOG_FILE,
+        SessionRepository.get_session_log_path(),
         [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGOUT"]
     )
     mark_user_offline()

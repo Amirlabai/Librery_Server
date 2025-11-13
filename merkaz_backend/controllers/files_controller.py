@@ -1,6 +1,9 @@
 from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
 from utils.logger_config import get_logger
 from services.file_service import FileService
+from repositories.download_repository import DownloadRepository
+from utils.log_utils import log_event
+from datetime import datetime
 from flask_cors import cross_origin
 
 files_bp = Blueprint('files', __name__)
@@ -9,7 +12,7 @@ logger = get_logger(__name__)
 @files_bp.route('/browse', defaults={'subpath': ''}, methods=["GET"])
 @files_bp.route('/browse/<path:subpath>', methods=["GET"])
 def downloads(subpath=''):
-    logger.debug(f"Browse request received - Path: {subpath}, User: {session.get('email', 'unknown')}")
+    logger.debug(f"Browse request received, User: {session.get('email', 'unknown')}")
     if not session.get("logged_in"):
         logger.warning("Browse request failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
@@ -86,11 +89,7 @@ def download_file(file_path):
         logger.warning("File download failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
     
-    from datetime import datetime
-    import config.config as config
-    from utils.log_utils import log_event
-    
-    log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FILE", file_path])
+    log_event(DownloadRepository.get_download_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FILE", file_path])
     
     safe_dir, filename, error = FileService.get_download_file_path(file_path)
     
@@ -109,12 +108,8 @@ def download_folder(folder_path):
         logger.warning("Folder download failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
     
-    from datetime import datetime
     import os
-    import config.config as config
-    from utils.log_utils import log_event
-    
-    log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FOLDER", folder_path])
+    log_event(DownloadRepository.get_download_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FOLDER", folder_path])
     
     absolute_folder_path, error = FileService.get_download_folder_path(folder_path)
     

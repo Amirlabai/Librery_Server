@@ -4,7 +4,7 @@ Mail service - Email sending and notifications.
 from flask_mail import Mail, Message
 from flask import url_for, current_app
 import config.config as config
-from models.user_entity import User
+from repositories.user_repository import UserRepository
 import threading
 
 mail = Mail()
@@ -12,7 +12,7 @@ mail = Mail()
 def _send_new_user_notification_sync(app, user_email, pending_url):
     """Internal function that actually sends the email (runs in background thread)."""
     with app.app_context():
-        admin_emails = User.get_admin_emails()
+        admin_emails = UserRepository.get_admin_emails()
         if not admin_emails:
             current_app.logger.warning("No admin users found to send new user notification.")
             return

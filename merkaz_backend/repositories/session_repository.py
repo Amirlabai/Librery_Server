@@ -4,6 +4,9 @@ Session repository - Handle session logs.
 import os
 import config.config as config
 from utils.path_utils import get_project_root
+from utils.logger_config import get_logger
+
+logger = get_logger(__name__)
 
 class SessionRepository:
     """Repository for session log operations."""
@@ -12,5 +15,7 @@ class SessionRepository:
     def get_session_log_path():
         """Get the path to the session log file."""
         project_root = get_project_root()
-        return os.path.join(project_root, config.SESSION_LOG_FILE)
+        path = os.path.join(project_root, config.SESSION_LOG_FILE)
+        logger.debug(f"Retrieved session log path: {path}")
+        return path
 

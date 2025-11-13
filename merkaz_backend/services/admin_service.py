@@ -1,7 +1,7 @@
 """
 Admin service - Admin operations, approvals, and reports.
 """
-from models.user_entity import User
+from repositories.user_repository import UserRepository
 from utils.csv_utils import get_next_user_id
 from utils.logger_config import get_logger
 
@@ -14,7 +14,7 @@ class AdminService:
     def approve_user(email):
         """Approve a pending user registration."""
         logger.info(f"Approving user: {email}")
-        pending_users = User.get_pending()
+        pending_users = UserRepository.get_pending()
         user_to_approve = next((user for user in pending_users if user.email == email), None)
         
         if not user_to_approve:
@@ -26,14 +26,14 @@ class AdminService:
             user_to_approve.user_id = get_next_user_id()
             logger.debug(f"Assigned user_id {user_to_approve.user_id} to user {email}")
         
-        auth_users = User.get_all()
+        auth_users = UserRepository.get_all()
         user_to_approve.status = 'active'
         auth_users.append(user_to_approve)
-        User.save_all(auth_users)
+        UserRepository.save_all(auth_users)
         logger.debug(f"User {email} added to authenticated users")
         
         remaining_pending = [user for user in pending_users if user.email != email]
-        User.save_pending(remaining_pending)
+        UserRepository.save_pending(remaining_pending)
         logger.debug(f"User {email} removed from pending list")
         logger.info(f"User {email} approved successfully")
         
@@ -43,7 +43,7 @@ class AdminService:
     def deny_user(email):
         """Deny a pending user registration."""
         logger.info(f"Denying user: {email}")
-        pending_users = User.get_pending()
+        pending_users = UserRepository.get_pending()
         user_to_deny = next((user for user in pending_users if user.email == email), None)
         
         if not user_to_deny:
@@ -55,13 +55,13 @@ class AdminService:
             user_to_deny.user_id = get_next_user_id()
             logger.debug(f"Assigned user_id {user_to_deny.user_id} to user {email}")
         
-        denied_users = User.get_denied()
+        denied_users = UserRepository.get_denied()
         denied_users.append(user_to_deny)
-        User.save_denied(denied_users)
+        UserRepository.save_denied(denied_users)
         logger.debug(f"User {email} added to denied users")
         
         remaining_pending = [user for user in pending_users if user.email != email]
-        User.save_pending(remaining_pending)
+        UserRepository.save_pending(remaining_pending)
         logger.debug(f"User {email} removed from pending list")
         logger.info(f"User {email} denied successfully")
         
@@ -72,7 +72,7 @@ class AdminService:
         """Toggle a user's role between admin and user. Uses polymorphic User.toggle_role()."""
         logger.info(f"Toggling role for user: {email}")
         try:
-            updated_user = User.toggle_role(email)
+            updated_user = UserRepository.toggle_role(email)
             logger.info(f"Role toggled successfully - User: {email}, New role: {updated_user.role}")
             return updated_user, None
         except ValueError as e:
@@ -84,7 +84,7 @@ class AdminService:
         """Toggle a user's status between active and inactive. Uses User.toggle_status()."""
         logger.info(f"Toggling status for user: {email}")
         try:
-            updated_user = User.toggle_status(email)
+            updated_user = UserRepository.toggle_status(email)
             logger.info(f"Status toggled successfully - User: {email}, New status: {updated_user.status}")
             return updated_user, None
         except ValueError as e:
@@ -95,7 +95,7 @@ class AdminService:
     def re_pend_user(email):
         """Move a denied user back to pending."""
         logger.info(f"Re-pending user: {email}")
-        denied_users = User.get_denied()
+        denied_users = UserRepository.get_denied()
         user_to_re_pend = next((user for user in denied_users if user.email == email), None)
         
         if not user_to_re_pend:
@@ -107,13 +107,13 @@ class AdminService:
             user_to_re_pend.user_id = get_next_user_id()
             logger.debug(f"Assigned user_id {user_to_re_pend.user_id} to user {email}")
         
-        pending_users = User.get_pending()
+        pending_users = UserRepository.get_pending()
         pending_users.append(user_to_re_pend)
-        User.save_pending(pending_users)
+        UserRepository.save_pending(pending_users)
         logger.debug(f"User {email} moved to pending list")
         
         remaining_denied = [user for user in denied_users if user.email != email]
-        User.save_denied(remaining_denied)
+        UserRepository.save_denied(remaining_denied)
         logger.debug(f"User {email} removed from denied list")
         logger.info(f"User {email} moved back to pending successfully")
         
