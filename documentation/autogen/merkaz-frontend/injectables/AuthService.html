@@ -186,6 +186,9 @@
                                 <a href="#login" >login</a>
                             </li>
                             <li>
+                                <a href="#refreshSession" >refreshSession</a>
+                            </li>
+                            <li>
                                 <a href="#register" >register</a>
                             </li>
                             <li>
@@ -443,6 +446,43 @@
                             <div class="io-description">
                                 
                             </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="refreshSession"></a>
+                    <span class="name">
+                        <span ><b>refreshSession</b></span>
+                        <a href="#refreshSession"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>refreshSession()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="52"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/auth.service.ts:52</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;any&gt;</code>
+
+                        </div>
                 </td>
             </tr>
         </tbody>
@@ -720,6 +760,9 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+  refreshSession(): Observable&lt;any&gt; {
+    return this.http.get(&#x60;${this.baseUrl}/refresh-session&#x60;, { withCredentials: true });
   }
 }
 </code></pre>
