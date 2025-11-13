@@ -1,6 +1,7 @@
 from flask import Blueprint, session, jsonify, request
 from utils.logger_config import get_logger
 from services.upload_service import UploadService
+from services.auth_service import AuthService
 from repositories.user_repository import UserRepository
 
 uploads_bp = Blueprint('uploads', __name__)
@@ -10,6 +11,10 @@ logger = get_logger(__name__)
 @uploads_bp.route("/upload", methods=["POST"])
 def upload_file():
     logger.info("Upload request received")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if not session.get("logged_in"):
         logger.warning("Upload failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
@@ -60,6 +65,10 @@ def upload_file():
 @uploads_bp.route('/my_uploads')
 def my_uploads():
     logger.debug("My uploads request received")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if not session.get('logged_in'):
         logger.warning("My uploads failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
@@ -78,6 +87,10 @@ def my_uploads():
 @uploads_bp.route("/admin/uploads")
 def admin_uploads():
     logger.debug("Admin uploads request received")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if not session.get("is_admin"):
         logger.warning("Admin uploads failed - Access denied")
         return jsonify({"error": "Access denied"}), 403
@@ -88,6 +101,10 @@ def admin_uploads():
 
 @uploads_bp.route("/admin/move_upload/<path:filename>", methods=["POST"])
 def move_upload(filename):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get("email", "unknown")
     logger.info(f"Move upload request - File: {filename}, Admin: {admin_email}")
     if not session.get("is_admin"):
@@ -118,6 +135,10 @@ def move_upload(filename):
 
 @uploads_bp.route("/admin/decline_upload/<path:filename>", methods=["POST"])
 def decline_upload(filename):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get("email", "unknown")
     logger.info(f"Decline upload request - File: {filename}, Admin: {admin_email}")
     if not session.get("is_admin"):
@@ -141,6 +162,10 @@ def decline_upload(filename):
 
 @uploads_bp.route("/admin/edit_upload_path/", methods=["POST"])
 def edit_upload_path():
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get("email", "unknown")
     logger.info(f"Edit upload path request - Admin: {admin_email}")
     if not session.get("is_admin"):

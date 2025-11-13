@@ -150,7 +150,8 @@ def refresh_session():
     user_data, error = AuthService.refresh_session()
     
     if error:
-        status_code = 401 if "Session invalid" in error else 404
+        # Return 401 for invalid/terminated sessions, 404 for user not found
+        status_code = 401 if ("Session invalid" in error or "Session has been terminated" in error) else 404
         logger.warning(f"Session refresh failed - {error}")
         return jsonify({"error": error}), status_code
     

@@ -1,6 +1,7 @@
 from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
 from utils.logger_config import get_logger
 from services.file_service import FileService
+from services.auth_service import AuthService
 from repositories.download_repository import DownloadRepository
 from utils.log_utils import log_event
 from datetime import datetime
@@ -13,6 +14,10 @@ logger = get_logger(__name__)
 @files_bp.route('/browse/<path:subpath>', methods=["GET"])
 def downloads(subpath=''):
     logger.debug(f"Browse request received, User: {session.get('email', 'unknown')}")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if not session.get("logged_in"):
         logger.warning("Browse request failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
@@ -36,6 +41,10 @@ def downloads(subpath=''):
 
 @files_bp.route("/delete/<path:item_path>", methods=["POST"])
 def delete_item(item_path):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Delete request received - Path: {item_path}, Admin: {admin_email}")
     if not session.get("is_admin"):
@@ -56,6 +65,10 @@ def delete_item(item_path):
 
 @files_bp.route("/create_folder", methods=["POST"])
 def create_folder():
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Create folder request received - Admin: {admin_email}")
     if not session.get("is_admin"):
@@ -83,6 +96,10 @@ def create_folder():
 
 @files_bp.route("/download/file/<path:file_path>")
 def download_file(file_path):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     user_email = session.get("email", "unknown")
     logger.info(f"File download request - Path: {file_path}, User: {user_email}")
     if not session.get("logged_in"):
@@ -102,6 +119,10 @@ def download_file(file_path):
 
 @files_bp.route("/download/folder/<path:folder_path>")
 def download_folder(folder_path):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     user_email = session.get("email", "unknown")
     logger.info(f"Folder download request - Path: {folder_path}, User: {user_email}")
     if not session.get("logged_in"):
@@ -123,6 +144,10 @@ def download_folder(folder_path):
 
 @files_bp.route("/suggest", methods=["POST"])
 def suggest():
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     user_email = session.get("email", "unknown")
     logger.debug(f"Suggestion submission request - User: {user_email}")
     if not session.get("logged_in"):

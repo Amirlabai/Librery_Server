@@ -6,7 +6,7 @@ from repositories.user_repository import UserRepository
 from utils import csv_to_xlsx_in_memory
 from utils.logger_config import get_logger
 from services.mail_service import send_approval_email, send_denial_email
-from services.auth_service import mark_user_online, mark_user_offline, get_active_users
+from services.auth_service import AuthService, mark_user_online, mark_user_offline, get_active_users
 from services.admin_service import AdminService
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -17,6 +17,10 @@ logger = get_logger(__name__)
 @admin_bp.route("/metrics", methods=["GET"])
 def admin_metrics():
     logger.debug("Admin metrics request received")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if not session.get("is_admin"):
         logger.warning(f"Access denied to metrics - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
@@ -38,6 +42,10 @@ def admin_metrics():
 @admin_bp.route("/users", methods=["GET"])
 def admin_users():
     logger.debug("Admin users list request received")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if not session.get("is_admin"):
         logger.warning(f"Access denied to users list - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
@@ -75,6 +83,10 @@ def admin_users():
 @admin_bp.route("/pending", methods=["GET"])
 def admin_pending():
     logger.debug("Admin pending users request received")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if not session.get("is_admin"):
         logger.warning(f"Access denied to pending users - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
@@ -90,6 +102,10 @@ def admin_pending():
 @admin_bp.route("/denied", methods=["GET"])
 def admin_denied():
     logger.debug("Admin denied users request received")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if not session.get("is_admin"):
         logger.warning(f"Access denied to denied users - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
@@ -104,6 +120,10 @@ def admin_denied():
 # ========== APPROVE USER ==========
 @admin_bp.route("/approve/<string:email>", methods=["POST"])
 def approve_user(email):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"User approval request received - Admin: {admin_email}, User to approve: {email}")
     if not session.get("is_admin"):
@@ -125,6 +145,10 @@ def approve_user(email):
 # ========== DENY USER ==========
 @admin_bp.route("/deny/<string:email>", methods=["POST"])
 def deny_user(email):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"User denial request received - Admin: {admin_email}, User to deny: {email}")
     if not session.get("is_admin"):
@@ -146,6 +170,10 @@ def deny_user(email):
 # ========== RE-PEND USER ==========
 @admin_bp.route("/re-pend/<string:email>", methods=["POST"])
 def re_pend_user(email):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Re-pend user request received - Admin: {admin_email}, User: {email}")
     if not session.get("is_admin"):
@@ -165,6 +193,10 @@ def re_pend_user(email):
 # ========== TOGGLE ROLE ==========
 @admin_bp.route("/toggle-role/<string:email>", methods=["POST"])
 def toggle_role(email):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Toggle role request received - Admin: {admin_email}, User: {email}")
     if not session.get("is_admin"):
@@ -196,6 +228,10 @@ def toggle_role(email):
 # ========== TOGGLE STATUS ==========
 @admin_bp.route("/toggle-status/<string:email>", methods=["POST"])
 def toggle_status(email):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Toggle status request received - Admin: {admin_email}, User: {email}")
     if not session.get("is_admin"):
@@ -219,6 +255,10 @@ def toggle_status(email):
 # ========== DOWNLOAD METRICS XLSX ==========
 @admin_bp.route("/metrics/download/<log_type>", methods=["GET"])
 def download_metrics_xlsx(log_type):
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Metrics download request received - Admin: {admin_email}, Log type: {log_type}")
     if not session.get("is_admin"):
@@ -268,6 +308,10 @@ def download_metrics_xlsx(log_type):
 @admin_bp.route("/heartbeat", methods=["POST"])
 def heartbeat():
     logger.debug("Heartbeat request received")
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
     if "email" not in session:
         logger.warning("Heartbeat failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401

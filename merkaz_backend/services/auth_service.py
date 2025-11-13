@@ -14,6 +14,9 @@ logger = get_logger(__name__)
 # Active sessions tracking
 active_sessions = {}
 
+# Invalidated sessions - emails whose sessions should be terminated
+invalidated_sessions = set()
+
 class AuthService:
     """Service for authentication operations."""
     
@@ -30,6 +33,11 @@ class AuthService:
         if not user.is_active:
             logger.warning(f"Login failed - Account inactive for email: {email}")
             return None, "Account inactive"
+        
+        # Clear any previous invalidated session status for this user
+        if email in invalidated_sessions:
+            invalidated_sessions.discard(email)
+            logger.debug(f"Cleared invalidated session status for user: {email}")
         
         # Create session
         AuthService.create_session(user)
@@ -106,6 +114,12 @@ class AuthService:
             logger.warning("Session refresh failed - No email in session")
             return None, "Session invalid"
         
+        # Check if session has been invalidated
+        if not AuthService.is_session_valid():
+            logger.warning(f"Session refresh failed - Session invalidated for user: {email}")
+            AuthService.clear_session()
+            return None, "Session has been terminated. Please log in again."
+        
         user = UserRepository.find_by_email(email)
         if not user:
             logger.error(f"Session refresh failed - User not found: {email}")
@@ -141,7 +155,49 @@ class AuthService:
         """Clear the current session."""
         email = session.get("email", "unknown")
         session.clear()
+        # Remove from active sessions and invalidated sessions
+        if email in active_sessions:
+            del active_sessions[email]
+        if email in invalidated_sessions:
+            invalidated_sessions.discard(email)
         logger.debug(f"Session cleared for user: {email}")
+    
+    @staticmethod
+    def invalidate_user_session(email):
+        """Invalidate all sessions for a specific user by email."""
+        logger.info(f"Invalidating sessions for user: {email}")
+        invalidated_sessions.add(email)
+        # Remove from active sessions
+        if email in active_sessions:
+            del active_sessions[email]
+            logger.debug(f"Removed user {email} from active sessions")
+        logger.info(f"Sessions invalidated for user: {email}")
+    
+    @staticmethod
+    def is_session_valid():
+        """Check if the current session is valid (not invalidated)."""
+        email = session.get("email")
+        if not email:
+            return False
+        is_invalidated = email in invalidated_sessions
+        if is_invalidated:
+            logger.debug(f"Session invalidated for user: {email}")
+        return not is_invalidated
+    
+    @staticmethod
+    def validate_and_clear_if_invalidated():
+        """Validate the current session and clear it if it has been invalidated.
+        Returns (is_valid, error_message) tuple."""
+        if not session.get("logged_in"):
+            return True, None  # Not logged in, let the route handle it
+        
+        if not AuthService.is_session_valid():
+            email = session.get("email", "unknown")
+            logger.warning(f"Session terminated for user: {email} - clearing session")
+            AuthService.clear_session()
+            return False, "Session has been terminated. Please log in again."
+        
+        return True, None
     
     @staticmethod
     def find_user_by_email(email):
