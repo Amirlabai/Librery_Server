@@ -4,6 +4,7 @@ Admin service - Admin operations, approvals, and reports.
 from repositories.user_repository import UserRepository
 from utils.csv_utils import get_next_user_id
 from utils.logger_config import get_logger
+from services.auth_service import AuthService
 
 logger = get_logger(__name__)
 
@@ -74,6 +75,11 @@ class AdminService:
         try:
             updated_user = UserRepository.toggle_role(email)
             logger.info(f"Role toggled successfully - User: {email}, New role: {updated_user.role}")
+            
+            # Invalidate user's session when role changes
+            AuthService.invalidate_user_session(email)
+            logger.info(f"Session invalidated for user: {email} due to role change")
+            
             return updated_user, None
         except ValueError as e:
             logger.error(f"Toggle role failed - User {email} not found: {str(e)}")
