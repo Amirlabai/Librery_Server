@@ -9,13 +9,12 @@ import threading
 
 #!/usr/bin/env python3
 # File: run_ngrok.py
-# Usage: python run_ngrok.py [BACKEND_PORT] [FRONTEND_PORT]
-# Launches ngrok tunnels for both backend and frontend; on Windows opens new console windows.
+# Usage: python run_ngrok.py [PORT]
+# Launches ngrok tunnel for Flask server (serves both frontend and backend on single port).
 
 
 def main():
-    backend_port = sys.argv[1] if len(sys.argv) > 1 else "8000"
-    frontend_port = sys.argv[2] if len(sys.argv) > 2 else "4200"
+    port = sys.argv[1] if len(sys.argv) > 1 else "8000"
     
     ngrok_path = shutil.which("ngrok")
     if not ngrok_path:
@@ -56,11 +55,10 @@ def main():
                 tunnels = data.get("tunnels", [])
                 
                 print("\n" + "=" * 70)
-                print("NGROK TUNNEL URLs:")
+                print("NGROK TUNNEL URL:")
                 print("=" * 70)
                 
-                backend_url = None
-                frontend_url = None
+                app_url = None
                 
                 for tunnel in tunnels:
                     name = tunnel.get("name", "")
@@ -68,40 +66,32 @@ def main():
                     config = tunnel.get("config", {})
                     addr = config.get("addr", "")
                     
-                    if "backend" in name.lower() or "8000" in addr:
-                        backend_url = public_url
-                        print(f"Backend  (port {backend_port}): {public_url}")
-                    elif "frontend" in name.lower() or "4200" in addr:
-                        frontend_url = public_url
-                        print(f"Frontend (port {frontend_port}): {public_url}")
+                    if "app" in name.lower() or port in addr or "8000" in addr:
+                        app_url = public_url
+                        print(f"Application (port {port}): {public_url}")
                     else:
                         print(f"{name}: {public_url}")
                 
-                if backend_url and frontend_url:
+                if app_url:
                     print("\n" + "=" * 70)
                     print("SETUP INSTRUCTIONS:")
                     print("=" * 70)
-                    print("1. Access your frontend at:", frontend_url)
-                    print("2. Open browser console (F12) and run:")
-                    print(f"   localStorage.setItem('api_backend_url', '{backend_url}')")
-                    print("3. Refresh the page")
+                    print("1. Access your application at:", app_url)
+                    print("2. Flask serves both frontend and backend on the same port")
+                    print("3. API calls use relative URLs (same origin) - no configuration needed!")
                     print("=" * 70)
-                elif backend_url or frontend_url:
-                    print("\n⚠️  Warning: Only one tunnel URL found. Check ngrok console.")
                 else:
-                    print("\n⚠️  Warning: Could not fetch tunnel URLs. Check ngrok console.")
+                    print("\n⚠️  Warning: Could not fetch tunnel URL. Check ngrok console.")
                     
         except Exception as e:
             print(f"\n⚠️  Could not fetch tunnel URLs automatically: {e}")
             print("\nYou can also check the ngrok web interface at: http://127.0.0.1:4040")
-            print("Or check the ngrok console window for the URLs.")
-            print("\nEach tunnel should have a DIFFERENT URL.")
-            print("If both URLs are the same, there may be a configuration issue.")
+            print("Or check the ngrok console window for the URL.")
     
-    cmd = [ngrok_path, "start", "--config", config_path, "backend", "frontend"]
+    cmd = [ngrok_path, "start", "--config", config_path, "app"]
     print("Running:", " ".join(cmd))
-    print(f"Backend tunnel: http://localhost:{backend_port} -> https://*.ngrok-free.app")
-    print(f"Frontend tunnel: http://localhost:{frontend_port} -> https://*.ngrok-free.app")
+    print(f"Application tunnel: http://localhost:{port} -> https://*.ngrok-free.app")
+    print(f"Note: Flask serves both frontend (Angular build) and backend (API) on port {port}")
     
     # Start a thread to fetch URLs after ngrok starts
     url_thread = threading.Thread(target=fetch_tunnel_urls, daemon=True)

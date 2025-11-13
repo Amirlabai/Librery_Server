@@ -1,7 +1,7 @@
 import sys, os
 import logging
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory, send_file
 from waitress import serve
 from datetime import datetime, timedelta
 
@@ -45,10 +45,13 @@ def create_app():
     logger.info("Mail service initialized")
 
     logger.debug("Configuring CORS")
-    # Allow localhost and ngrok domains using regex patterns
+    # When serving Angular from Flask, CORS is less restrictive (same origin)
+    # Still allow ngrok and dev origins for flexibility
     allowed_origins = [
         "http://localhost:4200",
+        "http://localhost:8000",  # Same port when serving Angular from Flask
         "http://127.0.0.1:4200",
+        "http://127.0.0.1:8000",
         r"https://.*\.ngrok-free\.dev",
         r"https://.*\.ngrok-free\.app",
         r"https://.*\.ngrok\.dev",
@@ -64,8 +67,8 @@ def create_app():
         supports_credentials=True
     )
     logger.info("CORS configured")
-
-    # Register blueprints
+    
+    # Register blueprints (API routes) FIRST - before static file routes
     logger.debug("Registering blueprints")
     app.register_blueprint(auth_bp)
     app.register_blueprint(files_bp)
@@ -73,20 +76,70 @@ def create_app():
     app.register_blueprint(admin_bp)
     logger.info("All blueprints registered successfully")
     
-    # Root route
-    @app.route("/", methods=["GET"])
-    def root():
-        """Root endpoint to verify server is running."""
-        return jsonify({
-            "message": "Merkaz Server API",
-            "status": "running",
-            "endpoints": {
-                "auth": "/login, /register, /logout, /forgot-password, /reset-password",
-                "files": "/browse, /download/file, /download/folder, /delete, /create_folder",
-                "uploads": "/upload, /my_uploads",
-                "admin": "/admin/metrics, /admin/users, /admin/pending"
-            }
-        }), 200
+    # Configure static file serving for Angular build (AFTER API routes)
+    project_root = get_project_root()
+    frontend_dist_path = os.path.join(project_root, "merkaz-frontend", "dist", "angular", "browser")
+    
+    if os.path.exists(frontend_dist_path):
+        logger.info(f"Angular build found at: {frontend_dist_path}")
+        
+        # Serve static files from Angular build directory
+        @app.route('/assets/<path:filename>')
+        def serve_assets(filename):
+            """Serve Angular assets."""
+            return send_from_directory(os.path.join(frontend_dist_path, 'assets'), filename)
+        
+        # Serve other static files (JS, CSS, etc.) - catch-all for Angular SPA routes
+        # This route is registered AFTER blueprints, so API routes take precedence
+        @app.route('/<path:filename>')
+        def serve_static(filename):
+            """Serve static files from Angular build or fallback to index.html for SPA routes."""
+            # List of API route prefixes to avoid serving as static files
+            api_prefixes = ['login', 'register', 'browse', 'upload', 'admin', 'download', 
+                           'delete', 'create_folder', 'suggest', 'my_uploads', 
+                           'forgot-password', 'reset-password', 'logout', 'refresh-session']
+            
+            # If it matches an API route prefix, it should have been handled by blueprints
+            # If we reach here, it's likely an Angular route or static file
+            if any(filename.startswith(prefix) for prefix in api_prefixes):
+                # This shouldn't happen if API routes are working, but serve index.html as fallback
+                return send_file(os.path.join(frontend_dist_path, 'index.html'))
+            
+            # Check if it's a static file (has extension)
+            if '.' in filename:
+                try:
+                    return send_from_directory(frontend_dist_path, filename)
+                except:
+                    # File not found, serve index.html for Angular routes
+                    pass
+            
+            # For Angular routes (SPA), serve index.html
+            return send_file(os.path.join(frontend_dist_path, 'index.html'))
+        
+        # Root route - serve Angular index.html
+        @app.route("/", methods=["GET"])
+        def serve_index():
+            """Serve Angular application."""
+            return send_file(os.path.join(frontend_dist_path, 'index.html'))
+    else:
+        logger.warning(f"Angular build not found at: {frontend_dist_path}")
+        logger.warning("Run 'ng build' in merkaz-frontend directory first")
+        
+        # Fallback root route if build doesn't exist
+        @app.route("/", methods=["GET"])
+        def root():
+            """Root endpoint to verify server is running."""
+            return jsonify({
+                "message": "Merkaz Server API",
+                "status": "running",
+                "note": "Angular build not found. Run 'ng build' in merkaz-frontend directory.",
+                "endpoints": {
+                    "auth": "/login, /register, /logout, /forgot-password, /reset-password",
+                    "files": "/browse, /download/file, /download/folder, /delete, /create_folder",
+                    "uploads": "/upload, /my_uploads",
+                    "admin": "/admin/metrics, /admin/users, /admin/pending"
+                }
+            }), 200
 
     return app
 

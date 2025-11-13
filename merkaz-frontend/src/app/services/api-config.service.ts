@@ -6,7 +6,7 @@ export class ApiConfigService {
   
   /**
    * Get the backend API URL.
-   * Checks localStorage first, then detects if running through ngrok,
+   * Checks localStorage first, then detects if running through ngrok or served from Flask,
    * otherwise defaults to localhost.
    */
   getBackendUrl(): string {
@@ -16,26 +16,26 @@ export class ApiConfigService {
       return storedUrl;
     }
     
-    // Detect if frontend is accessed through ngrok
+    // Detect environment
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
-      const protocol = window.location.protocol;
+      const port = window.location.port;
       
-      // If accessed via ngrok, we need to use the backend ngrok URL
-      // Since ngrok creates different URLs for frontend and backend,
-      // we'll need to prompt or use a pattern
+      // If accessed via ngrok, use relative URLs (Vite proxy handles it)
       if (hostname.includes('ngrok-free.dev') || 
           hostname.includes('ngrok-free.app') ||
           hostname.includes('ngrok.dev') ||
           hostname.includes('ngrok.app')) {
-        // For ngrok, you'll need to set the backend URL manually
-        // This is a placeholder - user should set it via setBackendUrl()
-        // For now, return localhost (won't work externally)
-        return 'http://localhost:8000';
+        return '';
+      }
+      
+      // If served from Flask on port 8000, use relative URLs (same origin)
+      if (port === '8000' || hostname === 'localhost' && port === '') {
+        return '';
       }
     }
     
-    // Default to localhost for local development
+    // Default to localhost for local development (separate frontend/backend)
     return 'http://localhost:8000';
   }
   

@@ -71,6 +71,9 @@ class AdminService:
     @staticmethod
     def toggle_user_role(email):
         """Toggle a user's role between admin and user. Uses polymorphic User.toggle_role()."""
+        if AuthService.is_user_boss_admin(email):
+            logger.warning(f"cant toggle role for user: {email} because they are a boss admin")
+            return None, "cant toggle role for user: {email} because they are a boss admin"
         logger.info(f"Toggling role for user: {email}")
         try:
             updated_user = UserRepository.toggle_role(email)
@@ -88,10 +91,15 @@ class AdminService:
     @staticmethod
     def toggle_user_status(email):
         """Toggle a user's status between active and inactive. Uses User.toggle_status()."""
+        if AuthService.is_user_boss_admin(email):
+            logger.warning(f"cant toggle role for user: {email} because they are a boss admin")
+            return None, "cant toggle role for user: {email} because they are a boss admin"
         logger.info(f"Toggling status for user: {email}")
         try:
             updated_user = UserRepository.toggle_status(email)
             logger.info(f"Status toggled successfully - User: {email}, New status: {updated_user.status}")
+            AuthService.invalidate_user_session(email)
+            logger.info(f"Session invalidated for user: {email} due to status change")
             return updated_user, None
         except ValueError as e:
             logger.error(f"Toggle status failed - User {email} not found: {str(e)}")

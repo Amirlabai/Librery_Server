@@ -74,11 +74,11 @@ class UserRepository:
         return User.get_admin_emails()
     
     @staticmethod
-    def create_user(email, password, role, status, user_id):
+    def create_user(email, password, role, status, user_id, is_boss_admin=False):
         """Create a new user using the factory method."""
-        logger.debug(f"Creating user - Email: {email}, Role: {role}, Status: {status}, ID: {user_id}")
-        user = User.create_user(email=email, password=password, role=role, status=status, user_id=user_id)
-        logger.info(f"User created - Email: {email}, ID: {user_id}")
+        logger.debug(f"Creating user - Email: {email}, Role: {role}, Status: {status}, ID: {user_id}, Boss Admin: {is_boss_admin}")
+        user = User.create_user(email=email, password=password, role=role, status=status, user_id=user_id, is_boss_admin=is_boss_admin)
+        logger.info(f"User created - Email: {email}, ID: {user_id}, Boss Admin: {is_boss_admin}")
         return user
     
     @staticmethod
@@ -97,3 +97,8 @@ class UserRepository:
         logger.info(f"Status toggled - Email: {email}, New status: {user.status}")
         return user
 
+    @staticmethod
+    def is_user_boss_admin(email):
+        """Check if a user is a boss admin."""
+        user = User.find_by_email(email)
+        return user.is_boss_admin

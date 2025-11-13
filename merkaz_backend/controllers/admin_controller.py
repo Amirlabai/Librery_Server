@@ -64,7 +64,8 @@ def admin_users():
             "role": user.role,
             "status": user.status,
             "is_admin": getattr(user, "is_admin", False),
-            "is_active": getattr(user, "is_active", False)
+            "is_active": getattr(user, "is_active", False),
+            "is_boss_admin": getattr(user, "is_boss_admin", False)
         }
 
         user_dict["online_status"] = user.email in active_now
