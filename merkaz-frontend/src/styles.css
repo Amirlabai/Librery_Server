@@ -3,7 +3,6 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
   background-color: #f0f2f5;
   font-family: 'Roboto', 'Arial', sans-serif;
 }
@@ -46,4 +45,18 @@ html, body {
   10% { opacity: 1; transform: translateY(0); }
   90% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(20px); }
+}
+@media (max-width: 768px) {
+  .app-notification {
+    position: fixed;
+    left: 50%;
+    top: 20px;
+    bottom: auto;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    width: max-content;
+    max-width: 95vw;
+    z-index: 9999;
+  }
 }

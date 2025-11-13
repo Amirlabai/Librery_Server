@@ -5,6 +5,14 @@
   width: 100%;
   height: 100%;
 }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;   
+  overflow-y: auto;     
+  
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -517,4 +525,61 @@ tr:hover {
   background-color: #1a73e8;
   color: white;
   margin-top: 10px; 
+}
+@media (max-width: 768px) {
+  :host {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .container {
+    padding: 10px 15px;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header-right a,
+  .logout-btn,
+  .my-uploads-btn,
+  .upload-btn,
+  .admin-dashboard-btn {
+    width: auto;
+    display: inline-block;
+  }
+
+  .path-bar {
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .create-folder-wrapper {
+    margin-right: auto;   
+    display: flex;
+    align-items: center;
+  }
+  .search-items {
+    width: 100%;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    max-height: none;
+  }
+
+  table {
+    min-width: 600px; 
+  }
+
+
+  .modal-content,
+  .edit-modal-content {
+    width: 95%;
+    height: auto;
+    max-height: 90vh;
+  }
 }

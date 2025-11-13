@@ -122,21 +122,4 @@ th, td {
 .action-btn:hover {
   background-color: #d2d5d9;
 }
-.flash-messages {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 15px;
-}
-.flash-messages li {
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-.flash-success {
-  color: #1e8e3e;
-  background-color: #e6f4ea;
-}
-.flash-error {
-  color: #d93025;
-  background-color: #fce8e6;
-}
+

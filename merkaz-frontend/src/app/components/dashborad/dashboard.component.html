@@ -18,7 +18,9 @@
   <div class="path-bar">
 
     @if (isAdmin) {
-      <button (click)="openCreateFolderModal()" class="create-folder-btn" >📁 Create Folder</button>
+       <div class="create-folder-wrapper">
+          <button (click)="openCreateFolderModal()" class="create-folder-btn">📁 Create Folder</button>
+       </div>
       <input [(ngModel)]="searchFiles" (input)="onSearchChange()" placeholder="search" class="search-items"> 
     }
     @if (currentPath) {
