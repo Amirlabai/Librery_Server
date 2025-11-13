@@ -2,6 +2,7 @@
 Upload service - File upload logic and workflow.
 """
 import os
+import csv
 import shutil
 import threading
 from datetime import datetime
@@ -613,15 +614,121 @@ class UploadService:
             return False, f"An error occurred while declining the item: {e}"
     
     @staticmethod
-    def edit_upload_path(upload_id, new_path):
-        """Edit the path of a completed upload."""
-        logger.info(f"Editing upload path - ID: {upload_id}, New path: {new_path}")
-        success = UploadRepository.update_completed_path(upload_id, new_path)
+    def move_file_for_edit(upload_id, old_path, new_path):
+        """Move a file from old_path to new_path in the share directory."""
+        logger.info(f"Moving file for edit - ID: {upload_id}, Old: {old_path}, New: {new_path}")
+        project_root = get_project_root()
+        share_dir = os.path.join(project_root, config.SHARE_FOLDER)
+        source_item = os.path.join(share_dir, old_path).replace('\\', '/')
+        destination_path = os.path.join(share_dir, new_path).replace('\\', '/')
         
-        if success:
-            logger.info(f"Upload path updated - ID: {upload_id}, New path: {new_path}")
-            return True, None
-        else:
-            logger.warning(f"Edit path failed - Upload ID not found: {upload_id}")
-            return False, f"Upload ID {upload_id} not found in log"
+        # Check if source file exists
+        if not os.path.exists(source_item):
+            logger.warning(f"Move file failed - Source not found: {old_path}")
+            return False, f'Source item "{os.path.basename(old_path)}" not found'
+        
+        # Ensure parent directories exist
+        os.makedirs(os.path.dirname(destination_path), exist_ok=True)
+        
+        # Check for conflicts in destination and get unique filename if needed
+        if os.path.exists(destination_path):
+            # File exists in destination, get unique filename
+            if os.path.isfile(destination_path):
+                dest_dir = os.path.dirname(destination_path)
+                dest_base = os.path.basename(destination_path)
+                # Calculate relative path from share_dir
+                if dest_dir:
+                    rel_dir = os.path.relpath(dest_dir, share_dir)
+                    if rel_dir == '.':
+                        rel_dir = ''
+                    dest_filename_with_path = os.path.join(rel_dir, dest_base).replace('\\', '/') if rel_dir else dest_base
+                else:
+                    dest_filename_with_path = dest_base
+                
+                # Use get_unique_filename with share_dir as base
+                _, unique_dest_path, _ = UploadService.get_unique_filename(share_dir, dest_filename_with_path, save_flat=False)
+                destination_path = unique_dest_path
+                # Extract the relative path from share_dir
+                rel_path = os.path.relpath(unique_dest_path, share_dir).replace('\\', '/')
+                new_path = rel_path
+        
+        safe_destination = os.path.abspath(destination_path)
+        if not safe_destination.startswith(os.path.abspath(share_dir)):
+            logger.warning(f"Move file failed - Invalid target path: {new_path}")
+            return False, "Invalid target path"
+        
+        try:
+            # Move the file
+            shutil.move(source_item, destination_path)
+            logger.info(f"File moved successfully - ID: {upload_id}, New path: {new_path}")
+            return True, new_path
+        except FileNotFoundError:
+            logger.error(f"Move file failed - Source not found: {old_path}")
+            return False, f'Source item "{os.path.basename(old_path)}" not found'
+        except Exception as e:
+            logger.error(f"Move file failed - Error: {str(e)}")
+            return False, f"An error occurred while moving the item: {e}"
+    
+    @staticmethod
+    def edit_upload_path(upload_id, new_path):
+        """Edit the path of a completed upload and move the file."""
+        logger.info(f"Editing upload path - ID: {upload_id}, New path: {new_path}")
+        
+        # Ensure files are in project root
+        file_log_path = UploadRepository.get_completed_log_path()
+        
+        # Remove leading slash if present
+        if new_path.startswith('/'):
+            new_path = new_path[1:]
+        
+        rows = []
+        found = False
+        old_path = None
+        
+        with _log_lock:
+            try:
+                # Read all rows
+                with open(file_log_path, mode='r', newline='', encoding='utf-8') as f:
+                    reader = csv.reader(f)
+                    header = next(reader, None)
+                    rows = [header] if header else []
+                    for row in reader:
+                        if len(row) >= 7 and row[0] == str(upload_id):  # upload_id is first column
+                            # Update the path column (index 6 - final_path)
+                            old_path = row[6]
+                            # Move the file
+                            move_success, move_result = UploadService.move_file_for_edit(upload_id, old_path, new_path)
+                            if not move_success:
+                                logger.error(f"Edit path failed - Could not move file: {move_result}")
+                                return False, move_result
+                            # Update path with potentially unique filename
+                            if isinstance(move_result, str):
+                                row[6] = move_result
+                            else:
+                                row[6] = new_path
+                            found = True
+                        rows.append(row)
+                
+                # Write back all rows with updated path
+                if found:
+                    updated_path = new_path
+                    # Find the updated row to get the final path
+                    for r in rows:
+                        if len(r) >= 7 and r[0] == str(upload_id):
+                            updated_path = r[6]
+                            break
+                    with open(file_log_path, mode='w', newline='', encoding='utf-8') as f:
+                        writer = csv.writer(f)
+                        writer.writerows(rows)
+                    logger.info(f"Upload path updated - ID: {upload_id}, New path: {updated_path}")
+                    return True, None
+                else:
+                    logger.warning(f"Edit path failed - Upload ID not found: {upload_id}")
+                    return False, f"Upload ID {upload_id} not found in log"
+            except FileNotFoundError:
+                logger.error(f"Edit path failed - Log file not found: {file_log_path}")
+                return False, "Pending log file not found"
+            except Exception as e:
+                logger.error(f"Edit path failed - Error: {str(e)}")
+                return False, f"An error occurred while updating the path: {e}"
 

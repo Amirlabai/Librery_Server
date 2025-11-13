@@ -20,7 +20,7 @@ import run_ngrok
 
 # Initialize logging
 setup_logging(logging.DEBUG)
-setup_logging(logging.INFO)
+#setup_logging(logging.INFO)
 logger = get_logger(__name__)
 
 #lessgoo
