@@ -46,16 +46,18 @@ export class UploadFileComponent implements OnInit {
   }
 
   onSubmitFiles() {
+    const input = document.getElementById('fileInput') as HTMLInputElement
     this.isUploadingFile = true;
 
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
 
       next: () => {
         this.isUploadingFile = false;
-        window.location.reload();
-        this.notificationService.show('Files uploaded successfully', true);
+        
+        
+        this.notificationService.show('Files uploaded successfully', true);  
+        input.value = '';
       },
-
       error: () => {
         this.isUploadingFile = false;
         this.notificationService.show('Failed to upload files', false);
@@ -64,15 +66,16 @@ export class UploadFileComponent implements OnInit {
   }
 
   onSubmitFolder() {
-
+    const input = document.getElementById('folderInput') as HTMLInputElement
     this.isUploadingFolder = true;
 
-    this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
+    this.userService.uploadFiles(this.selectedFolderFiles, this.subpath).subscribe({
     
       next: () => {
         this.isUploadingFolder = false;
-        window.location.reload();
+        
         this.notificationService.show('Folders uploaded successfully',true);
+        input.value = '';
       },
 
       error: () => {
