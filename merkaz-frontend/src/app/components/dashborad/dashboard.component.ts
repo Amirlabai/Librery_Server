@@ -108,7 +108,9 @@ export class DashboardComponent {
     window.open(url, '_blank');
   }
 
-  deleteItem(item: any) {
+  deleteItem(item: any,event: MouseEvent) {
+
+    event.stopPropagation();
     if (!confirm(`Delete ${item.name}?`)) return;
 
     const currentPathBeforeDelete = this.currentPath;
@@ -188,6 +190,7 @@ export class DashboardComponent {
         if (res.message) {
           this.notificationService.show(res.message,true)
           this.closeCreateFolderModal();
+          this.loadFiles();
         }
       },
       error: () => {
