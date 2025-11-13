@@ -107,8 +107,15 @@ Returns:
     - `email`
     - `user_id`
 
+- `move_file_for_edit(upload_id, old_path, new_path)`
+  - Move a file from old_path to new_path in the share directory.
+  - Arguments:
+    - `upload_id`
+    - `old_path`
+    - `new_path`
+
 - `edit_upload_path(upload_id, new_path)`
-  - Edit the path of a completed upload.
+  - Edit the path of a completed upload and move the file.
   - Arguments:
     - `upload_id`
     - `new_path`
