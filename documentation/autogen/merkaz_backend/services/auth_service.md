@@ -69,6 +69,18 @@ Service for authentication operations.
 - `clear_session()`
   - Clear the current session.
 
+- `invalidate_user_session(email)`
+  - Invalidate all sessions for a specific user by email.
+  - Arguments:
+    - `email`
+
+- `is_session_valid()`
+  - Check if the current session is valid (not invalidated).
+
+- `validate_and_clear_if_invalidated()`
+  - Validate the current session and clear it if it has been invalidated.
+Returns (is_valid, error_message) tuple.
+
 - `find_user_by_email(email)`
   - Find a user by email in authenticated users.
   - Arguments:
