@@ -51,3 +51,22 @@ Repository for user data operations.
 
 - `get_admin_emails()`
   - Get all admin email addresses.
+
+- `create_user(email, password, role, status, user_id)`
+  - Create a new user using the factory method.
+  - Arguments:
+    - `email`
+    - `password`
+    - `role`
+    - `status`
+    - `user_id`
+
+- `toggle_role(email)`
+  - Toggle a user's role between admin and user.
+  - Arguments:
+    - `email`
+
+- `toggle_status(email)`
+  - Toggle a user's status between active and inactive.
+  - Arguments:
+    - `email`

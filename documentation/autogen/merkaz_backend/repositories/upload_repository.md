@@ -24,3 +24,27 @@ Repository for upload data operations.
 
 - `read_completed_uploads()`
   - Read all completed uploads from the log file.
+
+- `read_declined_uploads()`
+  - Read all declined uploads from the log file.
+
+- `find_pending_by_id(upload_id)`
+  - Find a pending upload by upload_id.
+  - Arguments:
+    - `upload_id`
+
+- `find_pending_by_filename(filename)`
+  - Find pending uploads by filename or path.
+  - Arguments:
+    - `filename`
+
+- `remove_from_pending(upload_id)`
+  - Remove an entry from the pending log by upload_id.
+  - Arguments:
+    - `upload_id`
+
+- `update_completed_path(upload_id, new_path)`
+  - Update the path of a completed upload.
+  - Arguments:
+    - `upload_id`
+    - `new_path`
