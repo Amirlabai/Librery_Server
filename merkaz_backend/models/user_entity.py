@@ -7,12 +7,13 @@ from abc import ABC
 class User(ABC):
     """Base class for all user types. Implements common functionality."""
     
-    def __init__(self, email, password, role='user', status='active', user_id=None):
+    def __init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False):
         self.user_id = user_id  # Unique user ID
         self.email = email
         self.password = password  # This will now be a hashed password
         self.role = role
         self.status = status
+        self._is_boss_admin = is_boss_admin  # Boss admin status (set manually by dev)
 
     @property
     def is_admin(self):
@@ -23,6 +24,11 @@ class User(ABC):
     def is_active(self):
         """Returns True if user status is active."""
         return self.status == 'active'
+    
+    @property
+    def is_boss_admin(self):
+        """Returns True if user is a boss admin (set manually by dev)."""
+        return self._is_boss_admin
 
     def check_password(self, password_to_check):
         """Checks the provided password against the stored hash."""
@@ -44,16 +50,17 @@ class User(ABC):
             "role": self.role,
             "status": self.status,
             "is_admin": self.is_admin,
-            "is_active": self.is_active
+            "is_active": self.is_active,
+            "is_boss_admin": self.is_boss_admin
         }
 
     @staticmethod
-    def create_user(email, password, role='user', status='active', user_id=None):
+    def create_user(email, password, role='user', status='active', user_id=None, is_boss_admin=False):
         """Factory method to create the appropriate user type based on role. Polymorphic factory."""
         if role == 'admin':
-            return Admin(email=email, password=password, status=status, user_id=user_id)
+            return Admin(email=email, password=password, status=status, user_id=user_id, is_boss_admin=is_boss_admin)
         else:
-            return RegularUser(email=email, password=password, status=status, user_id=user_id)
+            return RegularUser(email=email, password=password, status=status, user_id=user_id, is_boss_admin=is_boss_admin)
 
     # --- Methods for Authenticated Users (auth_users.csv) ---
     @staticmethod
@@ -122,7 +129,8 @@ class User(ABC):
                     password=user.password,
                     role=new_role,
                     status=user.status,
-                    user_id=user.user_id
+                    user_id=user.user_id,
+                    is_boss_admin=user.is_boss_admin
                 )
                 User.save_all(users)
                 return users[i]
@@ -149,35 +157,52 @@ class User(ABC):
                 reader = csv.reader(f)
                 header = next(reader, None) # Skip header
                 
-                # Determine if ID column exists (new format vs old format)
+                # Determine format based on header columns
                 has_id_column = header and len(header) > 0 and header[0].lower() == 'id'
+                has_boss_admin_column = header and 'is_boss_admin' in [col.lower() for col in header]
+                
+                # Find column indices
+                if has_id_column:
+                    id_idx = 0
+                    email_idx = 1
+                    password_idx = 2
+                    role_idx = 3
+                    status_idx = 4
+                    boss_admin_idx = 5 if has_boss_admin_column else None
+                else:
+                    id_idx = None
+                    email_idx = 0
+                    password_idx = 1
+                    role_idx = 2
+                    status_idx = 3
+                    boss_admin_idx = 4 if has_boss_admin_column else None
                 
                 for row in reader:
                     if not row:
                         continue
                     
-                    if has_id_column:
-                        # New format: id,email,password,role,status
-                        if len(row) >= 4:
-                            try:
-                                user_id = int(row[0]) if row[0] else None
-                                email = row[1]
-                                password = row[2]
-                                role = row[3]
-                                status = row[4] if len(row) > 4 else 'active'
-                                # Use factory method for polymorphic instantiation
-                                users.append(User.create_user(email=email, password=password, role=role, status=status, user_id=user_id))
-                            except (ValueError, IndexError):
-                                continue
-                    else:
-                        # Old format: email,password,role,status (backward compatibility)
-                        if len(row) >= 3:
-                            email = row[0]
-                            password = row[1]
-                            role = row[2]
-                            status = row[3] if len(row) > 3 else 'active'
-                            # Use factory method for polymorphic instantiation
-                            users.append(User.create_user(email=email, password=password, role=role, status=status, user_id=None))
+                    try:
+                        user_id = int(row[id_idx]) if id_idx is not None and id_idx < len(row) and row[id_idx] else None
+                        email = row[email_idx] if email_idx < len(row) else None
+                        password = row[password_idx] if password_idx < len(row) else None
+                        role = row[role_idx] if role_idx < len(row) else 'user'
+                        status = row[status_idx] if status_idx < len(row) else 'active'
+                        is_boss_admin = row[boss_admin_idx].lower() == 'true' if boss_admin_idx is not None and boss_admin_idx < len(row) and row[boss_admin_idx] else False
+                        
+                        if not email or not password:
+                            continue
+                            
+                        # Use factory method for polymorphic instantiation
+                        users.append(User.create_user(
+                            email=email, 
+                            password=password, 
+                            role=role, 
+                            status=status, 
+                            user_id=user_id,
+                            is_boss_admin=is_boss_admin
+                        ))
+                    except (ValueError, IndexError):
+                        continue
         except FileNotFoundError:
             return []
         return users
@@ -187,14 +212,16 @@ class User(ABC):
         """Helper to write a list of users to a given CSV file."""
         with open(filepath, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
-            writer.writerow(["id", "email", "password", "role", "status"]) # Write header with ID
+            # Write header with all columns including is_boss_admin
+            writer.writerow(["id", "email", "password", "role", "status", "is_boss_admin"])
             for user in users:
                 writer.writerow([
                     user.user_id if user.user_id is not None else '',
                     user.email,
                     user.password,
                     user.role,
-                    user.status
+                    user.status,
+                    'true' if user.is_boss_admin else 'false'
                 ])
 
 
@@ -202,8 +229,8 @@ class User(ABC):
 class RegularUser(User):
     """Regular user class. Inherits from User base class."""
     
-    def __init__(self, email, password, status='active', user_id=None):
-        super().__init__(email, password, role='user', status=status, user_id=user_id)
+    def __init__(self, email, password, status='active', user_id=None, is_boss_admin=False):
+        super().__init__(email, password, role='user', status=status, user_id=user_id, is_boss_admin=is_boss_admin)
 
     @property
     def is_admin(self):
@@ -223,8 +250,8 @@ class RegularUser(User):
 class Admin(User):
     """Admin user class. Inherits from User base class with admin privileges."""
     
-    def __init__(self, email, password, status='active', user_id=None):
-        super().__init__(email, password, role='admin', status=status, user_id=user_id)
+    def __init__(self, email, password, status='active', user_id=None, is_boss_admin=False):
+        super().__init__(email, password, role='admin', status=status, user_id=user_id, is_boss_admin=is_boss_admin)
 
     @property
     def is_admin(self):

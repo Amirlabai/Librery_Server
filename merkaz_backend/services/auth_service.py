@@ -212,7 +212,12 @@ class AuthService:
         exists = UserRepository.find_by_email(email) or UserRepository.find_pending_by_email(email) or UserRepository.find_denied_by_email(email)
         logger.debug(f"Email existence check - Email: {email}, Exists: {exists}")
         return exists
-
+        
+    @staticmethod
+    def is_user_boss_admin(email):
+        """Check if a user is a boss admin."""
+        user = UserRepository.find_by_email(email)
+        return user.is_boss_admin
 
 # Legacy functions for backward compatibility
 def mark_user_online():
