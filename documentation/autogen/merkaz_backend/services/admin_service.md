@@ -21,11 +21,16 @@ Service for admin operations.
     - `email`
 
 - `toggle_user_role(email)`
-  - Toggle a user's role between admin and user.
+  - Toggle a user's role between admin and user. Uses polymorphic User.toggle_role().
   - Arguments:
     - `email`
 
 - `toggle_user_status(email)`
-  - Toggle a user's status between active and inactive.
+  - Toggle a user's status between active and inactive. Uses User.toggle_status().
+  - Arguments:
+    - `email`
+
+- `re_pend_user(email)`
+  - Move a denied user back to pending.
   - Arguments:
     - `email`

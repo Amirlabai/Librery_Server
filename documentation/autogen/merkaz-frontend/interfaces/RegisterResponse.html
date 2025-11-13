@@ -315,6 +315,9 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+  refreshSession(): Observable&lt;any&gt; {
+    return this.http.get(&#x60;${this.baseUrl}/refresh-session&#x60;, { withCredentials: true });
+  }
 }
 </code></pre>
     </div>

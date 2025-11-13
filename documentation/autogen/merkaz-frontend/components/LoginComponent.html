@@ -571,11 +571,7 @@ export class LoginComponent {
 
         this.notificationService.show(&#x27;Login succsseful&#x27;,true);
 
-        if(res.role &#x3D;&#x3D;&#x3D; &#x27;admin&#x27;){
-            this.router.navigate([&#x27;/dashboard&#x27;]);
-          } else {  
           this.router.navigate([&#x27;/dashboard&#x27;]);
-          }
         },
         error: () &#x3D;&gt; {
           this.notificationService.show(&#x27;Invalid credentials or server error&#x27;,false);

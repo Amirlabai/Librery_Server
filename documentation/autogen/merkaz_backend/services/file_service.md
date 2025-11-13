@@ -44,3 +44,38 @@ Service for file management operations.
   - Create a ZIP file from a folder in memory.
   - Arguments:
     - `folder_path`
+
+- `browse_directory(subpath)`
+  - Browse a directory and return files/folders with metadata.
+  - Arguments:
+    - `subpath`
+
+- `delete_item(item_path, email)`
+  - Delete an item by moving it to trash.
+  - Arguments:
+    - `item_path`
+    - `email`
+
+- `create_folder(parent_path, folder_name, email)`
+  - Create a new folder.
+  - Arguments:
+    - `parent_path`
+    - `folder_name`
+    - `email`
+
+- `get_download_file_path(file_path)`
+  - Get the directory and filename for file download.
+  - Arguments:
+    - `file_path`
+
+- `get_download_folder_path(folder_path)`
+  - Get the absolute path for folder download.
+  - Arguments:
+    - `folder_path`
+
+- `submit_suggestion(suggestion_text, email, session_data)`
+  - Submit a suggestion with cooldown management.
+  - Arguments:
+    - `suggestion_text`
+    - `email`
+    - `session_data`

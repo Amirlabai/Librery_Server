@@ -2,13 +2,6 @@
 
 ## Functions
 
-### `email_exists(email)`
-
-Checks if an email exists in auth, pending, or denied users.
-
-**Arguments:**
-- `email`
-
 ### `before_request()`
 
 Reset the session timer with each request.

@@ -177,7 +177,7 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(authService: <a href="../injectables/AuthService.html" target="_self">AuthService</a>, router: Router)</code>
+<code>constructor(auth: <a href="../injectables/AuthService.html" target="_self">AuthService</a>, router: Router)</code>
                     </td>
                 </tr>
                         <tr>
@@ -200,7 +200,7 @@
                                         </thead>
                                         <tbody>
                                                 <tr>
-                                                        <td>authService</td>
+                                                        <td>auth</td>
                                                   
                                                         <td>
                                                                         <code><a href="../injectables/AuthService.html" target="_self" >AuthService</a></code>
@@ -267,7 +267,7 @@
                 <td class="col-md-4">
 
                         <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/boolean" target="_blank" >boolean</a></code>
+                            <b>Returns : </b>    <code>Observable&lt;boolean&gt;</code>
 
                         </div>
                 </td>
@@ -282,23 +282,36 @@
             <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Injectable } from &#x27;@angular/core&#x27;;
 import { CanActivate, Router } from &#x27;@angular/router&#x27;;
 import { AuthService } from &#x27;../services/auth.service&#x27;;
+import { Observable, of } from &#x27;rxjs&#x27;;
+import { catchError, map } from &#x27;rxjs/operators&#x27;;
 
-@Injectable({
-  providedIn: &#x27;root&#x27;
-})
+@Injectable({ providedIn: &#x27;root&#x27; })
 export class AuthGuard implements CanActivate {
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
-  canActivate(): boolean {
-    if (this.authService.isLoggedIn()) {
-      return true;
-    } else {
+  canActivate(): Observable&lt;boolean&gt; {
+
+    const token &#x3D; this.auth.getToken();
+
+    if (!token) {
       this.router.navigate([&#x27;/login&#x27;]);
-      return false;
+      return of(false);
     }
+
+    return this.auth.refreshSession().pipe(
+      map(() &#x3D;&gt; true), 
+      catchError(() &#x3D;&gt; {
+        
+        this.auth.clearToken();
+        sessionStorage.clear();
+        this.router.navigate([&#x27;/login&#x27;]);
+        return of(false);
+      })
+    );
   }
-}</code></pre>
+}
+</code></pre>
         </div>
 </div>
 
