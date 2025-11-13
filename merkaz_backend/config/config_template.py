@@ -1,6 +1,7 @@
 # --- Core App Settings ---
 SUPER_SECRET_KEY = "123_default_secret_key_for_dev"
 TOKEN_SECRET_KEY = "123_default_token_key_for_dev"
+ICON_PATH = "<path to icon>.ico"
 
 # --- File Paths ---
 SHARE_FOLDER = "files_to_share"

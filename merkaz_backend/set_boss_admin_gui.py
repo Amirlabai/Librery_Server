@@ -8,6 +8,7 @@ import sys
 import tkinter as tk
 from tkinter import ttk, messagebox
 from models.user_entity import User
+from config.config import ICON_PATH
 
 class BossAdminGUI:
     def __init__(self, root):
@@ -15,6 +16,16 @@ class BossAdminGUI:
         self.root.title("Boss Admin Manager")
         self.root.geometry("800x600")
         self.root.resizable(True, True)
+        
+        # Set window icon
+        try:
+            import os
+            icon_path = os.path.join(os.path.dirname(__file__), ICON_PATH)
+            if os.path.exists(icon_path):
+                self.root.iconbitmap(icon_path)
+        except Exception as e:
+            # Icon loading failed, but continue without it
+            pass
         
         # Load users
         self.users = User.get_all()
