@@ -67,7 +67,7 @@
           </td>
           <td style="text-align: center;">
             <div class="action-cell">
-              <button (click)="download(item)" class="action-btn download-btn">Download</button>
+              <button (click)="download(item, $event)" class="action-btn download-btn">Download</button>
               
               @if(isAdmin){
                 <button (click)="deleteItem(item, $event)" class="action-btn delete-btn">Delete</button>

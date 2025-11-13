@@ -103,9 +103,11 @@ export class DashboardComponent {
   }
 
 
-  download(item: any) {
+  download(item: any, event: Event) {
+    event.stopPropagation();
     const url = this.dashboardService.getDownloadUrl(item);
     window.open(url, '_blank');
+    
   }
 
   deleteItem(item: any,event: MouseEvent) {
