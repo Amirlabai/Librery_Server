@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { ApiConfigService } from "./api-config.service";
 
 
 
@@ -9,9 +10,14 @@ import { Observable } from "rxjs";
 })
 export class DashboardService {
 
-    private baseUrl = 'http://localhost:8000';
-
-    constructor(private http: HttpClient) {}
+    constructor(
+      private http: HttpClient,
+      private apiConfig: ApiConfigService
+    ) {}
+    
+    private get baseUrl(): string {
+      return this.apiConfig.getBackendUrl();
+    }
 
     loadFiles(path: string = ''): Observable<any> {
 

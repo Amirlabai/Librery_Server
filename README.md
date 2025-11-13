@@ -178,16 +178,20 @@ merkaz-frontend/
 
 4. **Configure the application**
    
-   Edit `merkaz_backend/config.py` to set:
-   - Secret keys for sessions and tokens
+   The configuration file is located at `merkaz_backend/config/config.py`. A template file (`merkaz_backend/config/config_template.py`) is provided for reference.
+   
+   Edit `merkaz_backend/config/config.py` to set:
+   - Secret keys for sessions and tokens (automatically generated, but can be customized)
    - Mail server configuration (Gmail SMTP settings)
    - File paths and folder names
    - Allowed file extensions
+   
+   **Note**: On first run, the application will automatically create the necessary directories (`merkaz_server/data/`, `merkaz_server/logs/`, `merkaz_server/server_files/`) and initialize CSV log files.
 
 5. **Run the backend server**
    ```bash
    cd merkaz_backend
-   python main.py
+   python app.py
    ```
    
    The server will start on `http://localhost:8000` using Waitress.
@@ -228,15 +232,17 @@ merkaz-frontend/
 
 ## Configuration
 
-### Backend Configuration (`merkaz_backend/config.py`)
+### Backend Configuration (`merkaz_backend/config/config.py`)
 
 Key configuration options:
 
-- **Secret Keys**: Change `SUPER_SECRET_KEY` and `TOKEN_SECRET_KEY` for production
+- **Secret Keys**: `SUPER_SECRET_KEY` and `TOKEN_SECRET_KEY` are automatically generated using `os.urandom()`, but can be customized for production
 - **Mail Settings**: Configure Gmail SMTP settings for email notifications
-- **File Paths**: Customize folder names for shared files, uploads, and trash
+- **File Paths**: All paths are automatically resolved relative to the project root. Data, logs, and server files are stored in the `merkaz_server/` directory
 - **Allowed Extensions**: Modify `ALLOWED_EXTENSIONS` and `VIDEO_EXTENSIONS` as needed
 - **File Size Limits**: Adjust `MAX_CONTENT_LENGTH` and `MAX_VIDEO_CONTENT_LENGTH`
+
+**Note**: A template configuration file (`config_template.py`) is available in the same directory for reference. The actual `config.py` uses dynamic path resolution and includes additional settings for ID sequence management.
 
 ### Frontend Configuration
 
@@ -248,7 +254,7 @@ The frontend is configured to connect to `http://localhost:8000` by default. Upd
 
 1. **Start the backend server** (from `merkaz_backend/`):
    ```bash
-   python main.py
+   python app.py
    ```
 
 2. **Start the frontend** (from `merkaz-frontend/`):
@@ -320,13 +326,44 @@ The upload system has been enhanced with:
 
 To expose the local server to the internet for testing:
 
+### Installation on Windows
+
+**Option 1 - Using winget (Recommended):**
+```powershell
+winget install ngrok.ngrok
+```
+
+**Option 2 - Using Chocolatey:**
+```powershell
+choco install ngrok
+```
+
+**Option 3 - Manual Installation:**
 1. Visit: https://dashboard.ngrok.com/get-started/setup
-2. Follow the setup instructions for your OS
-3. Run ngrok:
-   ```bash
-   ngrok http 8000
-   ```
-   
+2. Download ngrok for Windows
+3. Extract `ngrok.exe` to a folder (e.g., `C:\ngrok`)
+4. Add that folder to your system PATH:
+   - Press `Win+X` and select "System"
+   - Click "Advanced system settings"
+   - Click "Environment Variables"
+   - Under "System variables", find "Path" and click "Edit"
+   - Click "New" and add the folder path (e.g., `C:\ngrok`)
+   - Click "OK" on all dialogs
+5. Restart your terminal/PowerShell
+6. Verify installation: `ngrok version`
+
+### Running Ngrok
+
+After installation, you can use the provided script:
+```bash
+python merkaz_backend/run_ngrok.py [BACKEND_PORT] [FRONTEND_PORT]
+```
+
+Or run ngrok manually:
+```bash
+ngrok http 8000
+```
+
 This creates a public URL that tunnels to your local server.
 
 ## Development Notes
@@ -337,27 +374,33 @@ pip freeze > requirements.txt
 ```
 
 ### Database Files
-User data and activity logs are stored in CSV format:
-- `data/auth_users.csv` - Authenticated users
-- `data/new_users.csv` - Pending user registrations
-- `data/denied_users.csv` - Denied registrations
-- `logs/` - Various activity logs
+User data and activity logs are stored in CSV format within the `merkaz_server/` directory:
+- `merkaz_server/data/auth_users.csv` - Authenticated users
+- `merkaz_server/data/new_users.csv` - Pending user registrations
+- `merkaz_server/data/denied_users.csv` - Denied registrations
+- `merkaz_server/data/password_reset.csv` - Password reset tokens
+- `merkaz_server/data/user_id_sequence.txt` - User ID sequence counter
+- `merkaz_server/logs/` - Various activity logs (session, download, upload, suggestion logs)
+- `merkaz_server/server_files/files_to_share/` - Approved shared files
+- `merkaz_server/server_files/uploads/` - Pending uploads awaiting approval
+- `merkaz_server/server_files/trash/` - Deleted files
 
 ### File Upload Flow
-1. User uploads file → Saved in `uploads/` directory (flat structure)
-2. Entry created in `upload_pending_log.csv` with unique upload ID
-3. Admin reviews pending uploads
-4. Admin approves → File moved to `files_to_share/`, entry moved to `upload_completed_log.csv`
-5. Admin declines → File deleted, entry removed from pending log
+1. User uploads file → Saved in `merkaz_server/server_files/uploads/` directory (flat structure)
+2. Entry created in `merkaz_server/logs/upload_pending_log.csv` with unique upload ID
+3. Admin reviews pending uploads via admin dashboard
+4. Admin approves → File moved to `merkaz_server/server_files/files_to_share/`, entry moved to `merkaz_server/logs/upload_completed_log.csv`
+5. Admin declines → File deleted, entry moved to `merkaz_server/logs/declined_log.csv`
 
 ## Security Considerations
 
-- Change default secret keys in production
-- Use HTTPS in production
-- Implement proper input validation
-- Regular security audits
-- Keep dependencies updated
-- Review file upload restrictions
+- **Secret Keys**: While secret keys are automatically generated, review and customize them for production if needed
+- **Mail Credentials**: Never commit `config.py` with real mail credentials to version control. Use environment variables or secure configuration management
+- **HTTPS**: Use HTTPS in production
+- **Input Validation**: Implement proper input validation (already included in the application)
+- **Regular Updates**: Keep dependencies updated
+- **File Upload Restrictions**: Review and adjust `ALLOWED_EXTENSIONS` and file size limits as needed
+- **CORS Configuration**: Update CORS origins in `app.py` for production to restrict access to authorized domains only
 
 ## License
 

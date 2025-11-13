@@ -29,3 +29,5 @@ merkaz_backend/ngrok.yml
 /uploads
 /trash
 /merkaz_server
+config.py
+vite.config.ts

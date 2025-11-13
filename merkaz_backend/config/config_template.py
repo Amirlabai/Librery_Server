@@ -27,8 +27,8 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'zip', 'rar', '
 VIDEO_EXTENSIONS = {'mp4', 'mov', 'avi', 'mkv'}
 # General upload size limit: 100 MB
 MAX_CONTENT_LENGTH = 100 * 1024 * 1024
-# Video upload size limit: 1 GB
-MAX_VIDEO_CONTENT_LENGTH = 1 * 1024 * 1024 * 1024
+# Video upload size limit: 2 GB
+MAX_VIDEO_CONTENT_LENGTH = 2 * 1024 * 1024 * 1024
 
 # --- Mail Server ---
 MAIL_SERVER = 'smtp.gmail.com'

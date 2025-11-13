@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { ApiConfigService } from "./api-config.service";
 
 export interface DeniedUser {
   email: string;
@@ -22,9 +23,14 @@ export interface UploadItem {
 
 export class AdminDashboardService {
 
-  private baseUrl = 'http://localhost:8000/admin';
-
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private apiConfig: ApiConfigService
+  ) {}
+  
+  private get baseUrl(): string {
+    return `${this.apiConfig.getBackendUrl()}/admin`;
+  }
 
   loadDeniedUsers(): Observable<DeniedUser[]> {
     return this.http.get<DeniedUser[]>(`${this.baseUrl}/denied`, { withCredentials: true });

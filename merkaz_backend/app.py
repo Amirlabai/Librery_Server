@@ -1,7 +1,7 @@
 import sys, os
 import logging
 
-from flask import Flask
+from flask import Flask, jsonify
 from waitress import serve
 from datetime import datetime, timedelta
 
@@ -45,11 +45,20 @@ def create_app():
     logger.info("Mail service initialized")
 
     logger.debug("Configuring CORS")
+    # Allow localhost and ngrok domains using regex patterns
+    allowed_origins = [
+        "http://localhost:4200",
+        "http://127.0.0.1:4200",
+        r"https://.*\.ngrok-free\.dev",
+        r"https://.*\.ngrok-free\.app",
+        r"https://.*\.ngrok\.dev",
+        r"https://.*\.ngrok\.app"
+    ]
     CORS(
         app,
         resources={r"/*": {
-            "origins": ["http://localhost:4200"],
-            "allow_headers": ["Content-Type", "Authorization"],
+            "origins": allowed_origins,
+            "allow_headers": ["Content-Type", "Authorization", "ngrok-skip-browser-warning"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         }},
         supports_credentials=True
@@ -63,6 +72,21 @@ def create_app():
     app.register_blueprint(uploads_bp)
     app.register_blueprint(admin_bp)
     logger.info("All blueprints registered successfully")
+    
+    # Root route
+    @app.route("/", methods=["GET"])
+    def root():
+        """Root endpoint to verify server is running."""
+        return jsonify({
+            "message": "Merkaz Server API",
+            "status": "running",
+            "endpoints": {
+                "auth": "/login, /register, /logout, /forgot-password, /reset-password",
+                "files": "/browse, /download/file, /download/folder, /delete, /create_folder",
+                "uploads": "/upload, /my_uploads",
+                "admin": "/admin/metrics, /admin/users, /admin/pending"
+            }
+        }), 200
 
     return app
 

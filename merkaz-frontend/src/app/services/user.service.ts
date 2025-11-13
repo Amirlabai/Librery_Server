@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
+import { ApiConfigService } from "./api-config.service";
 
 export interface UploadHistory {
   timestamp: string;
@@ -15,9 +16,14 @@ export interface UploadHistory {
 })
 export class UserService {
 
-  private baseUrl = 'http://localhost:8000';
-
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private apiConfig: ApiConfigService
+  ) { }
+  
+  private get baseUrl(): string {
+    return this.apiConfig.getBackendUrl();
+  }
 
   loadUploads(): Observable<UploadHistory[]> {
     return this.http.get<UploadHistory[]>(`${this.baseUrl}/my_uploads`, { withCredentials: true });
