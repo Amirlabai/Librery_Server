@@ -49,4 +49,7 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+  refreshSession(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/refresh-session`, { withCredentials: true });
+  }
 }

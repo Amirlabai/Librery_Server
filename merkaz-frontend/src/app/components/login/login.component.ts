@@ -57,11 +57,7 @@ export class LoginComponent {
 
         this.notificationService.show('Login succsseful',true);
 
-        if(res.role === 'admin'){
-            this.router.navigate(['/dashboard']);
-          } else {  
           this.router.navigate(['/dashboard']);
-          }
         },
         error: () => {
           this.notificationService.show('Invalid credentials or server error',false);
