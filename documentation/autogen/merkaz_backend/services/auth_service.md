@@ -90,3 +90,8 @@ Returns (is_valid, error_message) tuple.
   - Check if an email exists in auth, pending, or denied users.
   - Arguments:
     - `email`
+
+- `is_user_boss_admin(email)`
+  - Check if a user is a boss admin.
+  - Arguments:
+    - `email`

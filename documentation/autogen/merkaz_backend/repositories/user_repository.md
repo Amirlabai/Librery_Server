@@ -52,7 +52,7 @@ Repository for user data operations.
 - `get_admin_emails()`
   - Get all admin email addresses.
 
-- `create_user(email, password, role, status, user_id)`
+- `create_user(email, password, role, status, user_id, is_boss_admin=False)`
   - Create a new user using the factory method.
   - Arguments:
     - `email`
@@ -60,6 +60,7 @@ Repository for user data operations.
     - `role`
     - `status`
     - `user_id`
+    - `is_boss_admin` (default: `False`)
 
 - `toggle_role(email)`
   - Toggle a user's role between admin and user.
@@ -68,5 +69,10 @@ Repository for user data operations.
 
 - `toggle_status(email)`
   - Toggle a user's status between active and inactive.
+  - Arguments:
+    - `email`
+
+- `is_user_boss_admin(email)`
+  - Check if a user is a boss admin.
   - Arguments:
     - `email`

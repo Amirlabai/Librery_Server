@@ -264,7 +264,7 @@
             <tr>
                 <td class="col-md-4">
                         <div class="io-description"><p>Get the backend API URL.
-Checks localStorage first, then detects if running through ngrok,
+Checks localStorage first, then detects if running through ngrok or served from Flask,
 otherwise defaults to localhost.</p>
 </div>
 
@@ -398,7 +398,7 @@ export class ApiConfigService {
   
   /**
    * Get the backend API URL.
-   * Checks localStorage first, then detects if running through ngrok,
+   * Checks localStorage first, then detects if running through ngrok or served from Flask,
    * otherwise defaults to localhost.
    */
   getBackendUrl(): string {
@@ -408,26 +408,26 @@ export class ApiConfigService {
       return storedUrl;
     }
     
-    // Detect if frontend is accessed through ngrok
+    // Detect environment
     if (typeof window !&#x3D;&#x3D; &#x27;undefined&#x27;) {
       const hostname &#x3D; window.location.hostname;
-      const protocol &#x3D; window.location.protocol;
+      const port &#x3D; window.location.port;
       
-      // If accessed via ngrok, we need to use the backend ngrok URL
-      // Since ngrok creates different URLs for frontend and backend,
-      // we&#x27;ll need to prompt or use a pattern
+      // If accessed via ngrok, use relative URLs (Vite proxy handles it)
       if (hostname.includes(&#x27;ngrok-free.dev&#x27;) || 
           hostname.includes(&#x27;ngrok-free.app&#x27;) ||
           hostname.includes(&#x27;ngrok.dev&#x27;) ||
           hostname.includes(&#x27;ngrok.app&#x27;)) {
-        // For ngrok, you&#x27;ll need to set the backend URL manually
-        // This is a placeholder - user should set it via setBackendUrl()
-        // For now, return localhost (won&#x27;t work externally)
-        return &#x27;http://localhost:8000&#x27;;
+        return &#x27;&#x27;;
+      }
+      
+      // If served from Flask on port 8000, use relative URLs (same origin)
+      if (port &#x3D;&#x3D;&#x3D; &#x27;8000&#x27; || hostname &#x3D;&#x3D;&#x3D; &#x27;localhost&#x27; &amp;&amp; port &#x3D;&#x3D;&#x3D; &#x27;&#x27;) {
+        return &#x27;&#x27;;
       }
     }
     
-    // Default to localhost for local development
+    // Default to localhost for local development (separate frontend/backend)
     return &#x27;http://localhost:8000&#x27;;
   }
   
