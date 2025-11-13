@@ -357,6 +357,7 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient } from &#x27;@angular/common/http&#x27;;
 import { Injectable } from &#x27;@angular/core&#x27;;
 import { Observable } from &#x27;rxjs&#x27;;
+import { ApiConfigService } from &#x27;./api-config.service&#x27;;
 
 
 export interface LoginResponse {
@@ -375,9 +376,15 @@ export interface RegisterResponse {
 
 export class AuthService {
   private readonly tokenKey &#x3D; &#x27;token&#x27;;
-  private baseUrl &#x3D; &#x27;http://localhost:8000&#x27;;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private apiConfig: ApiConfigService
+  ) {}
+  
+  private get baseUrl(): string {
+    return this.apiConfig.getBackendUrl();
+  }
 
   login(email: string, password: string): Observable&lt;LoginResponse&gt; {
     const payload &#x3D; { email: email.trim(), password: password.trim() };

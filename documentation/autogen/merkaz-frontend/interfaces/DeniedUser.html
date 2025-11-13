@@ -216,6 +216,7 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient } from &quot;@angular/common/http&quot;;
 import { Injectable } from &quot;@angular/core&quot;;
 import { Observable } from &quot;rxjs&quot;;
+import { ApiConfigService } from &quot;./api-config.service&quot;;
 
 export interface DeniedUser {
   email: string;
@@ -237,9 +238,14 @@ export interface UploadItem {
 
 export class AdminDashboardService {
 
-  private baseUrl &#x3D; &#x27;http://localhost:8000/admin&#x27;;
-
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private apiConfig: ApiConfigService
+  ) {}
+  
+  private get baseUrl(): string {
+    return &#x60;${this.apiConfig.getBackendUrl()}/admin&#x60;;
+  }
 
   loadDeniedUsers(): Observable&lt;DeniedUser[]&gt; {
     return this.http.get&lt;DeniedUser[]&gt;(&#x60;${this.baseUrl}/denied&#x60;, { withCredentials: true });
