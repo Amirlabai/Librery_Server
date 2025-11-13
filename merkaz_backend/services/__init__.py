@@ -7,6 +7,7 @@ from .mail_service import (
     send_password_reset_email
 )
 from .auth_service import (
+    AuthService,
     mark_user_online,
     mark_user_offline,
     get_active_users,
@@ -25,6 +26,7 @@ __all__ = [
     'send_approval_email',
     'send_denial_email',
     'send_password_reset_email',
+    'AuthService',
     'mark_user_online',
     'mark_user_offline',
     'get_active_users',

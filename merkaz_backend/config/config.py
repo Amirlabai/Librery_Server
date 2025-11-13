@@ -1,8 +1,8 @@
 import os
 from utils.path_utils import get_project_root
 # --- Core App Settings ---
-SUPER_SECRET_KEY = "123_default_secret_key_for_dev"
-TOKEN_SECRET_KEY = "123_default_token_key_for_dev"
+SUPER_SECRET_KEY = os.urandom(32).hex()
+TOKEN_SECRET_KEY = os.urandom(32).hex()
 
 project_root = get_project_root()
 SERVER_ROOT_DIR = os.path.join(project_root, "merkaz_server").replace('\\', '/')

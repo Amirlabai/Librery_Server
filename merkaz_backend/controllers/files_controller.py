@@ -1,16 +1,7 @@
-import os
-import shutil
-import zipfile
-from io import BytesIO
-from datetime import datetime
 from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
-import csv
-
-import config.config as config
-from utils import log_event, get_project_root
 from utils.logger_config import get_logger
+from services.file_service import FileService
 from flask_cors import cross_origin
-
 
 files_bp = Blueprint('files', __name__)
 logger = get_logger(__name__)
@@ -23,73 +14,18 @@ def downloads(subpath=''):
         logger.warning("Browse request failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
     
-    # Get project root (one level up from merkaz_backend directory)
-    project_root = get_project_root()
-    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
-    upload_completed_log = os.path.join(share_dir,config.UPLOAD_COMPLETED_LOG_FILE)
-
-    safe_subpath = os.path.normpath(subpath).replace('\\', '/')
-    if safe_subpath == '.':
-        safe_subpath = ''
-        
-    if '/.' in safe_subpath:
-        logger.warning(f"Invalid path detected: {safe_subpath}")
-        return jsonify({"error": "Invalid path"}), 404
-        
-    current_path = os.path.join(share_dir, safe_subpath)
+    browse_data, error = FileService.browse_directory(subpath)
     
-    if not os.path.abspath(current_path).startswith(os.path.abspath(share_dir)):
-        logger.warning(f"Access denied - Path traversal attempt: {safe_subpath}, User: {session.get('email', 'unknown')}")
-        return jsonify({"error": "Access denied"}), 403
-
-    items = []
-    if os.path.exists(current_path) and os.path.isdir(current_path):
-        folders = []
-        files = []
-        for item_name in os.listdir(current_path):
-            if item_name.startswith('.'): continue
-            
-            item_path_os = os.path.join(current_path, item_name)
-            item_path_url = os.path.join(safe_subpath, item_name).replace('\\', '/')
-            
-            with open(upload_completed_log, mode='r', newline='', encoding='utf-8') as f:
-                reader = csv.reader(f)
-                header = next(reader, None)
-                rows = [header] if header else []
-                for row in reader:
-                    a = row[6]
-                    b = item_path_url
-                    if len(row) >= 6 and row[6] == item_path_url:  # upload_id is first column
-                        # Update the path column (index 5)
-                        item_id = row[0]
-                        break
-                    else:
-                        item_id = "0"
-
-            item_data = {"upload_id":item_id,
-                        "name": item_name, 
-                        "path": item_path_url
-                        }
-            
-            if os.path.isdir(item_path_os):
-                item_data["is_folder"] = True
-                folders.append(item_data)
-            else:
-                item_data["is_folder"] = False
-                files.append(item_data)
-        
-        folders.sort(key=lambda x: x['name'].lower())
-        files.sort(key=lambda x: x['name'].lower())
-
-    back_path = os.path.dirname(safe_subpath).replace('\\', '/') if safe_subpath else None
+    if error:
+        status_code = 403 if error == "Access denied" else 404
+        logger.warning(f"Browse failed - {error} for path: {subpath}")
+        return jsonify({"error": error}), status_code
+    
     cooldown_level = session.get("cooldown_index", 0) + 1
-
-    logger.info(f"Browse completed - Path: {safe_subpath}, Files: {len(files)}, Folders: {len(folders)}, User: {session.get('email', 'unknown')}")
+    logger.info(f"Browse completed - Path: {subpath}, Files: {len(browse_data['files'])}, Folders: {len(browse_data['folders'])}, User: {session.get('email', 'unknown')}")
+    
     return jsonify({
-        "files": files,
-        "folders": folders,
-        "current_path": safe_subpath,
-        "back_path": back_path,
+        **browse_data,
         "is_admin": session.get('is_admin', False),
         "cooldown_level": cooldown_level
     }), 200
@@ -103,29 +39,17 @@ def delete_item(item_path):
         logger.warning(f"Access denied to delete - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
     
-    project_root = get_project_root()
-    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
-    trash_dir = os.path.join(project_root, config.TRASH_FOLDER)
-
-    source_path = os.path.join(share_dir, item_path)
-
-    if not os.path.exists(source_path) or not source_path.startswith(share_dir):
-        logger.warning(f"Delete failed - File/folder not found: {item_path}")
-        return jsonify({"error": "File or folder not found"}), 404
-
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    import os
     base_name = os.path.basename(item_path)
-    dest_name = f"{timestamp}_{base_name}"
-    dest_path = os.path.join(trash_dir, dest_name)
-
-    try:
-        shutil.move(source_path, dest_path)
-        log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "DELETE", item_path])
-        logger.info(f"Item deleted successfully - Path: {item_path}, Moved to trash: {dest_name}, Admin: {admin_email}")
-        return jsonify({"message": f"Successfully moved '{base_name}' to trash."}), 200
-    except Exception as e:
-        logger.error(f"Error deleting item: {item_path}, Error: {str(e)}", exc_info=True)
-        return jsonify({"error": f"Error deleting item: {e}"}), 500
+    success, error = FileService.delete_item(item_path, admin_email)
+    
+    if error:
+        status_code = 404 if "not found" in error.lower() else 500
+        logger.warning(f"Delete failed - {error} for path: {item_path}")
+        return jsonify({"error": error}), status_code
+    
+    logger.info(f"Item deleted successfully - Path: {item_path}, Admin: {admin_email}")
+    return jsonify({"message": f"Successfully moved '{base_name}' to trash."}), 200
 
 @files_bp.route("/create_folder", methods=["POST"])
 def create_folder():
@@ -144,38 +68,15 @@ def create_folder():
     folder_name = data.get("folder_name", "").strip()
     logger.debug(f"Creating folder - Name: {folder_name}, Parent: {parent_path}")
     
-    if not folder_name:
-        logger.warning("Create folder failed - Empty folder name")
-        return jsonify({"error": "Folder name cannot be empty."}), 400
+    success, error = FileService.create_folder(parent_path, folder_name, admin_email)
     
-    if '/' in folder_name or '\\' in folder_name or '..' in folder_name:
-        logger.warning(f"Create folder failed - Invalid characters in name: {folder_name}")
-        return jsonify({"error": "Invalid characters in folder name."}), 400
+    if error:
+        status_code = 400 if "cannot be empty" in error or "Invalid" in error else (409 if "already exists" in error else 500)
+        logger.warning(f"Create folder failed - {error} for name: {folder_name}")
+        return jsonify({"error": error}), status_code
     
-    project_root = get_project_root()
-    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
-    
-    safe_parent_path = os.path.normpath(parent_path).replace('\\', '/')
-    if safe_parent_path == '.':
-        safe_parent_path = ''
-    
-    new_folder_path = os.path.join(share_dir, safe_parent_path, folder_name)
-    
-    if not os.path.abspath(new_folder_path).startswith(os.path.abspath(share_dir)):
-        return jsonify({"error": "Invalid path."}), 400
-    
-    if os.path.exists(new_folder_path):
-        return jsonify({"error": f"A folder or file named '{folder_name}' already exists."}), 409
-    
-    try:
-        os.makedirs(new_folder_path)
-        folder_path_url = os.path.join(safe_parent_path, folder_name).replace('\\', '/') if safe_parent_path else folder_name
-        log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), session.get("email", "unknown"), "CREATE_FOLDER", folder_path_url])
-        logger.info(f"Folder created successfully - Path: {folder_path_url}, Admin: {admin_email}")
-        return jsonify({"message": f"Folder '{folder_name}' created successfully."}), 200
-    except Exception as e:
-        logger.error(f"Error creating folder: {folder_name}, Error: {str(e)}", exc_info=True)
-        return jsonify({"error": f"Error creating folder: {e}"}), 500
+    logger.info(f"Folder created successfully - Name: {folder_name}, Admin: {admin_email}")
+    return jsonify({"message": f"Folder '{folder_name}' created successfully."}), 200
 
 @files_bp.route("/download/file/<path:file_path>")
 def download_file(file_path):
@@ -184,15 +85,19 @@ def download_file(file_path):
     if not session.get("logged_in"):
         logger.warning("File download failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
+    
+    from datetime import datetime
+    import config.config as config
+    from utils.log_utils import log_event
+    
     log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FILE", file_path])
-    project_root = get_project_root()
-    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
-
-    directory, filename = os.path.split(file_path)
-    safe_dir = os.path.join(share_dir, directory)
-    if not safe_dir.startswith(share_dir) or not os.path.isdir(safe_dir):
-        logger.warning(f"File download access denied - Path: {file_path}, User: {user_email}")
-        return jsonify({"error": "Access denied"}), 403
+    
+    safe_dir, filename, error = FileService.get_download_file_path(file_path)
+    
+    if error:
+        logger.warning(f"File download failed - {error} for path: {file_path}, User: {user_email}")
+        return jsonify({"error": error}), 403
+    
     logger.debug(f"File download successful - File: {filename}, User: {user_email}")
     return send_from_directory(safe_dir, filename, as_attachment=True)
 
@@ -203,26 +108,24 @@ def download_folder(folder_path):
     if not session.get("logged_in"):
         logger.warning("Folder download failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
-    log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FOLDER", folder_path])
-    project_root = get_project_root()
-    share_dir = os.path.join(project_root, config.SHARE_FOLDER)
-
-    absolute_folder_path = os.path.join(share_dir, folder_path)
-    if not os.path.isdir(absolute_folder_path) or not absolute_folder_path.startswith(share_dir):
-        logger.warning(f"Folder download failed - Folder not found: {folder_path}")
-        return jsonify({"error": "Folder not found"}), 404
     
-    memory_file = BytesIO()
-    with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zf:
-        for root, _, files in os.walk(absolute_folder_path):
-            for file in files:
-                file_path = os.path.join(root, file)
-                zf.write(file_path, os.path.relpath(file_path, absolute_folder_path))
-    memory_file.seek(0)
+    from datetime import datetime
+    import os
+    import config.config as config
+    from utils.log_utils import log_event
+    
+    log_event(config.DOWNLOAD_LOG_FILE, [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FOLDER", folder_path])
+    
+    absolute_folder_path, error = FileService.get_download_folder_path(folder_path)
+    
+    if error:
+        logger.warning(f"Folder download failed - {error} for path: {folder_path}")
+        return jsonify({"error": error}), 404
+    
+    memory_file = FileService.create_zip_from_folder(absolute_folder_path)
     logger.debug(f"Folder download successful - Folder: {folder_path}, User: {user_email}")
     return send_file(memory_file, download_name=f'{os.path.basename(folder_path)}.zip', as_attachment=True)
 
-COOLDOWN_LEVELS = [0, 60, 300, 600, 1800, 3600]
 @files_bp.route("/suggest", methods=["POST"])
 def suggest():
     user_email = session.get("email", "unknown")
@@ -237,36 +140,22 @@ def suggest():
         return jsonify({"error": "Missing JSON body"}), 400
     
     suggestion_text = data.get("suggestion")
-    if not suggestion_text:
-        logger.warning(f"Suggestion submission failed - Empty suggestion text, User: {user_email}")
-        return jsonify({"error": "Suggestion text is required"}), 400
     
-    now = datetime.now()
-    last_suggestion_time_str = session.get("last_suggestion_time")
-    cooldown_index = session.get("cooldown_index", 0)
+    success, error = FileService.submit_suggestion(suggestion_text, user_email, session)
     
-    if last_suggestion_time_str:
-        last_suggestion_time = datetime.fromisoformat(last_suggestion_time_str)
-        if last_suggestion_time.date() < now.date() and cooldown_index > 0:
-            cooldown_index = 0
-            session["cooldown_index"] = 0
-        elapsed_time = (now - last_suggestion_time).total_seconds()
-        current_cooldown = COOLDOWN_LEVELS[cooldown_index]
-        if elapsed_time < current_cooldown:
-            remaining = max(1, (current_cooldown - elapsed_time) / 60)
-            if remaining == 1:
-                remaining_str = str(int(current_cooldown - elapsed_time)) + " seconds"
-            else:
-                remaining_str = str(int(remaining)) + " minutes"
+    if error:
+        if "wait another" in error:
+            # Extract remaining minutes from error message for response
+            import re
+            match = re.search(r'(\d+(?:\.\d+)?)', error)
+            remaining = float(match.group(1)) if match else 1
+            logger.warning(f"Suggestion submission failed - Cooldown active, User: {user_email}")
             return jsonify({
-                "error": f"You must wait another {remaining_str} before submitting again.",
+                "error": error,
                 "remaining_minutes": remaining
             }), 429
-            
-    log_event(config.SUGGESTION_LOG_FILE, [now.strftime("%Y-%m-%d %H:%M:%S"), user_email, suggestion_text])
-    logger.info(f"Suggestion submitted successfully - User: {user_email}, Cooldown: {COOLDOWN_LEVELS[cooldown_index]}s")
-    session["last_suggestion_time"] = now.isoformat()
-    if cooldown_index < len(COOLDOWN_LEVELS) - 1:
-        session["cooldown_index"] = cooldown_index + 1
+        logger.warning(f"Suggestion submission failed - {error}, User: {user_email}")
+        return jsonify({"error": error}), 400
     
+    logger.info(f"Suggestion submitted successfully - User: {user_email}")
     return jsonify({"message": "Thank you, your suggestion has been submitted!"}), 200
