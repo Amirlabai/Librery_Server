@@ -254,17 +254,19 @@ cd NagoAmir_Server</code></pre></div></li>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">pip install -r requirements.txt</code></pre></div><p>Note: If you encounter encoding issues, you may need to install dependencies manually from <code>venv_prerequsites.txt</code></p>
 </li>
 <li><p><strong>Configure the application</strong></p>
-<p>Edit <code>merkaz_backend/config.py</code> to set:</p>
+<p>The configuration file is located at <code>merkaz_backend/config/config.py</code>. A template file (<code>merkaz_backend/config/config_template.py</code>) is provided for reference.</p>
+<p>Edit <code>merkaz_backend/config/config.py</code> to set:</p>
 <ul>
-<li>Secret keys for sessions and tokens</li>
+<li>Secret keys for sessions and tokens (automatically generated, but can be customized)</li>
 <li>Mail server configuration (Gmail SMTP settings)</li>
 <li>File paths and folder names</li>
 <li>Allowed file extensions</li>
 </ul>
+<p><strong>Note</strong>: On first run, the application will automatically create the necessary directories (<code>merkaz_server/data/</code>, <code>merkaz_server/logs/</code>, <code>merkaz_server/server_files/</code>) and initialize CSV log files.</p>
 </li>
 <li><p><strong>Run the backend server</strong></p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">cd merkaz_backend
-python main.py</code></pre></div><p>The server will start on <code>http://localhost:8000</code> using Waitress.</p>
+python app.py</code></pre></div><p>The server will start on <code>http://localhost:8000</code> using Waitress.</p>
 </li>
 </ol>
 <h3>Frontend Setup</h3>
@@ -285,22 +287,23 @@ npm -v</code></pre></div></li>
 </li>
 </ol>
 <h2>Configuration</h2>
-<h3>Backend Configuration (<code>merkaz_backend/config.py</code>)</h3>
+<h3>Backend Configuration (<code>merkaz_backend/config/config.py</code>)</h3>
 <p>Key configuration options:</p>
 <ul>
-<li><strong>Secret Keys</strong>: Change <code>SUPER_SECRET_KEY</code> and <code>TOKEN_SECRET_KEY</code> for production</li>
+<li><strong>Secret Keys</strong>: <code>SUPER_SECRET_KEY</code> and <code>TOKEN_SECRET_KEY</code> are automatically generated using <code>os.urandom()</code>, but can be customized for production</li>
 <li><strong>Mail Settings</strong>: Configure Gmail SMTP settings for email notifications</li>
-<li><strong>File Paths</strong>: Customize folder names for shared files, uploads, and trash</li>
+<li><strong>File Paths</strong>: All paths are automatically resolved relative to the project root. Data, logs, and server files are stored in the <code>merkaz_server/</code> directory</li>
 <li><strong>Allowed Extensions</strong>: Modify <code>ALLOWED_EXTENSIONS</code> and <code>VIDEO_EXTENSIONS</code> as needed</li>
 <li><strong>File Size Limits</strong>: Adjust <code>MAX_CONTENT_LENGTH</code> and <code>MAX_VIDEO_CONTENT_LENGTH</code></li>
 </ul>
+<p><strong>Note</strong>: A template configuration file (<code>config_template.py</code>) is available in the same directory for reference. The actual <code>config.py</code> uses dynamic path resolution and includes additional settings for ID sequence management.</p>
 <h3>Frontend Configuration</h3>
 <p>The frontend is configured to connect to <code>http://localhost:8000</code> by default. Update API endpoints in components if using a different backend URL.</p>
 <h2>Running the Application</h2>
 <h3>Development Mode</h3>
 <ol>
 <li><p><strong>Start the backend server</strong> (from <code>merkaz_backend/</code>):</p>
-<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">python main.py</code></pre></div></li>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">python app.py</code></pre></div></li>
 <li><p><strong>Start the frontend</strong> (from <code>merkaz-frontend/</code>):</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">ng serve</code></pre></div></li>
 <li><p><strong>Access the application</strong>:</p>
@@ -373,38 +376,62 @@ npm -v</code></pre></div></li>
 </ul>
 <h2>Ngrok Setup (Optional)</h2>
 <p>To expose the local server to the internet for testing:</p>
+<h3>Installation on Windows</h3>
+<p><strong>Option 1 - Using winget (Recommended):</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-powershell">winget install ngrok.ngrok</code></pre></div><p><strong>Option 2 - Using Chocolatey:</strong></p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-powershell">choco install ngrok</code></pre></div><p><strong>Option 3 - Manual Installation:</strong></p>
 <ol>
 <li>Visit: <a href="https://dashboard.ngrok.com/get-started/setup">https://dashboard.ngrok.com/get-started/setup</a></li>
-<li>Follow the setup instructions for your OS</li>
-<li>Run ngrok:<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">ngrok http 8000</code></pre></div></li>
+<li>Download ngrok for Windows</li>
+<li>Extract <code>ngrok.exe</code> to a folder (e.g., <code>C:\ngrok</code>)</li>
+<li>Add that folder to your system PATH:<ul>
+<li>Press <code>Win+X</code> and select &quot;System&quot;</li>
+<li>Click &quot;Advanced system settings&quot;</li>
+<li>Click &quot;Environment Variables&quot;</li>
+<li>Under &quot;System variables&quot;, find &quot;Path&quot; and click &quot;Edit&quot;</li>
+<li>Click &quot;New&quot; and add the folder path (e.g., <code>C:\ngrok</code>)</li>
+<li>Click &quot;OK&quot; on all dialogs</li>
+</ul>
+</li>
+<li>Restart your terminal/PowerShell</li>
+<li>Verify installation: <code>ngrok version</code></li>
 </ol>
-<p>This creates a public URL that tunnels to your local server.</p>
+<h3>Running Ngrok</h3>
+<p>After installation, you can use the provided script:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">python merkaz_backend/run_ngrok.py [BACKEND_PORT] [FRONTEND_PORT]</code></pre></div><p>Or run ngrok manually:</p>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-bash">ngrok http 8000</code></pre></div><p>This creates a public URL that tunnels to your local server.</p>
 <h2>Development Notes</h2>
 <h3>Generating Requirements File</h3>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">pip freeze &gt; requirements.txt</code></pre></div><h3>Database Files</h3>
-<p>User data and activity logs are stored in CSV format:</p>
+<p>User data and activity logs are stored in CSV format within the <code>merkaz_server/</code> directory:</p>
 <ul>
-<li><code>data/auth_users.csv</code> - Authenticated users</li>
-<li><code>data/new_users.csv</code> - Pending user registrations</li>
-<li><code>data/denied_users.csv</code> - Denied registrations</li>
-<li><code>logs/</code> - Various activity logs</li>
+<li><code>merkaz_server/data/auth_users.csv</code> - Authenticated users</li>
+<li><code>merkaz_server/data/new_users.csv</code> - Pending user registrations</li>
+<li><code>merkaz_server/data/denied_users.csv</code> - Denied registrations</li>
+<li><code>merkaz_server/data/password_reset.csv</code> - Password reset tokens</li>
+<li><code>merkaz_server/data/user_id_sequence.txt</code> - User ID sequence counter</li>
+<li><code>merkaz_server/logs/</code> - Various activity logs (session, download, upload, suggestion logs)</li>
+<li><code>merkaz_server/server_files/files_to_share/</code> - Approved shared files</li>
+<li><code>merkaz_server/server_files/uploads/</code> - Pending uploads awaiting approval</li>
+<li><code>merkaz_server/server_files/trash/</code> - Deleted files</li>
 </ul>
 <h3>File Upload Flow</h3>
 <ol>
-<li>User uploads file → Saved in <code>uploads/</code> directory (flat structure)</li>
-<li>Entry created in <code>upload_pending_log.csv</code> with unique upload ID</li>
-<li>Admin reviews pending uploads</li>
-<li>Admin approves → File moved to <code>files_to_share/</code>, entry moved to <code>upload_completed_log.csv</code></li>
-<li>Admin declines → File deleted, entry removed from pending log</li>
+<li>User uploads file → Saved in <code>merkaz_server/server_files/uploads/</code> directory (flat structure)</li>
+<li>Entry created in <code>merkaz_server/logs/upload_pending_log.csv</code> with unique upload ID</li>
+<li>Admin reviews pending uploads via admin dashboard</li>
+<li>Admin approves → File moved to <code>merkaz_server/server_files/files_to_share/</code>, entry moved to <code>merkaz_server/logs/upload_completed_log.csv</code></li>
+<li>Admin declines → File deleted, entry moved to <code>merkaz_server/logs/declined_log.csv</code></li>
 </ol>
 <h2>Security Considerations</h2>
 <ul>
-<li>Change default secret keys in production</li>
-<li>Use HTTPS in production</li>
-<li>Implement proper input validation</li>
-<li>Regular security audits</li>
-<li>Keep dependencies updated</li>
-<li>Review file upload restrictions</li>
+<li><strong>Secret Keys</strong>: While secret keys are automatically generated, review and customize them for production if needed</li>
+<li><strong>Mail Credentials</strong>: Never commit <code>config.py</code> with real mail credentials to version control. Use environment variables or secure configuration management</li>
+<li><strong>HTTPS</strong>: Use HTTPS in production</li>
+<li><strong>Input Validation</strong>: Implement proper input validation (already included in the application)</li>
+<li><strong>Regular Updates</strong>: Keep dependencies updated</li>
+<li><strong>File Upload Restrictions</strong>: Review and adjust <code>ALLOWED_EXTENSIONS</code> and file size limits as needed</li>
+<li><strong>CORS Configuration</strong>: Update CORS origins in <code>app.py</code> for production to restrict access to authorized domains only</li>
 </ul>
 <h2>License</h2>
 <p>[Add your license information here]</p>

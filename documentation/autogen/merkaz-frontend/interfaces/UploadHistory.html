@@ -333,6 +333,7 @@
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient } from &quot;@angular/common/http&quot;;
 import { Injectable } from &quot;@angular/core&quot;;
 import { Observable } from &quot;rxjs&quot;;
+import { ApiConfigService } from &quot;./api-config.service&quot;;
 
 export interface UploadHistory {
   timestamp: string;
@@ -347,9 +348,14 @@ export interface UploadHistory {
 })
 export class UserService {
 
-  private baseUrl &#x3D; &#x27;http://localhost:8000&#x27;;
-
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private apiConfig: ApiConfigService
+  ) { }
+  
+  private get baseUrl(): string {
+    return this.apiConfig.getBackendUrl();
+  }
 
   loadUploads(): Observable&lt;UploadHistory[]&gt; {
     return this.http.get&lt;UploadHistory[]&gt;(&#x60;${this.baseUrl}/my_uploads&#x60;, { withCredentials: true });
