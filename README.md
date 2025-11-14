@@ -2,6 +2,11 @@
 
 An open library for file-sharing among students. A full-stack web application built with Flask (Python) backend and Angular frontend.
 
+## Authors
+
+- **Amir Labai**
+- **Yosef Nago**
+
 ## Features
 
 - **User Authentication & Authorization**
@@ -404,7 +409,7 @@ User data and activity logs are stored in CSV format within the `merkaz_server/`
 
 ## License
 
-[Add your license information here]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contributing
 
