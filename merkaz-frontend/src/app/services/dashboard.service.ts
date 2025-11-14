@@ -36,6 +36,14 @@ export class DashboardService {
         }
     }
 
+    getPreviewUrl(item: any): string {
+        if (item.is_folder || item.isFolder) {
+            return ''; // Folders cannot be previewed
+        } else {
+            return `${this.baseUrl}/preview/${item.path}`;
+        }
+    }
+
     deleteItem(path: string): Observable<any> {
 
         const url = `${this.baseUrl}/delete/${path}`;

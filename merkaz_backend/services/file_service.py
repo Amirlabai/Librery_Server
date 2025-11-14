@@ -251,6 +251,74 @@ class FileService:
         return safe_dir, filename, None
     
     @staticmethod
+    def get_file_mime_type(file_path):
+        """Get MIME type of a file."""
+        try:
+            import magic
+            with open(file_path, 'rb') as f:
+                file_signature = f.read(2048)
+                mime_type = magic.from_buffer(file_signature, mime=True)
+                return mime_type
+        except Exception as e:
+            logger.warning(f"Could not determine MIME type for {file_path}: {e}")
+            # Fallback to extension-based detection
+            ext = os.path.splitext(file_path)[1].lower()
+            mime_map = {
+                '.txt': 'text/plain',
+                '.pdf': 'application/pdf',
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.jpeg': 'image/jpeg',
+                '.gif': 'image/gif',
+                '.mp4': 'video/mp4',
+                '.mov': 'video/quicktime',
+                '.avi': 'video/x-msvideo',
+                '.mkv': 'video/x-matroska',
+                '.doc': 'application/msword',
+                '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                '.xls': 'application/vnd.ms-excel',
+                '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                '.ppt': 'application/vnd.ms-powerpoint',
+                '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                '.zip': 'application/zip',
+                '.rar': 'application/x-rar-compressed',
+                '.7z': 'application/x-7z-compressed'
+            }
+            return mime_map.get(ext, 'application/octet-stream')
+    
+    @staticmethod
+    def is_previewable(file_path):
+        """Check if file can be previewed in browser."""
+        mime_type = FileService.get_file_mime_type(file_path)
+        previewable_types = [
+            'text/', 'image/', 'application/pdf', 'video/',
+            'application/vnd.openxmlformats-officedocument',
+            'application/vnd.ms-'
+        ]
+        return any(mime_type.startswith(prefix) for prefix in previewable_types)
+    
+    @staticmethod
+    def get_preview_file_path(file_path):
+        """Get the directory and filename for file preview."""
+        logger.debug(f"Getting preview file path - Path: {file_path}")
+        share_dir = FileService.get_share_directory()
+        
+        directory, filename = os.path.split(file_path)
+        safe_dir = os.path.join(share_dir, directory)
+        full_path = os.path.join(safe_dir, filename)
+        
+        if not os.path.abspath(full_path).startswith(os.path.abspath(share_dir)):
+            logger.warning(f"File preview access denied - Path: {file_path}")
+            return None, None, None, "Access denied"
+        
+        if not os.path.exists(full_path):
+            logger.warning(f"File preview failed - File not found: {file_path}")
+            return None, None, None, "File not found"
+        
+        mime_type = FileService.get_file_mime_type(full_path)
+        return safe_dir, filename, mime_type, None
+    
+    @staticmethod
     def get_download_folder_path(folder_path):
         """Get the absolute path for folder download."""
         logger.debug(f"Getting download folder path - Path: {folder_path}")

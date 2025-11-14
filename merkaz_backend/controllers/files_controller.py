@@ -6,6 +6,7 @@ from repositories.download_repository import DownloadRepository
 from utils.log_utils import log_event
 from datetime import datetime
 from flask_cors import cross_origin
+from urllib.parse import quote
 
 files_bp = Blueprint('files', __name__)
 logger = get_logger(__name__)
@@ -141,6 +142,56 @@ def download_folder(folder_path):
     memory_file = FileService.create_zip_from_folder(absolute_folder_path)
     logger.debug(f"Folder download successful - Folder: {folder_path}, User: {user_email}")
     return send_file(memory_file, download_name=f'{os.path.basename(folder_path)}.zip', as_attachment=True)
+
+@files_bp.route("/preview/<path:file_path>")
+def preview_file(file_path):
+    """Preview a file in the browser (without forcing download)."""
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
+    user_email = session.get("email", "unknown")
+    logger.info(f"File preview request - Path: {file_path}, User: {user_email}")
+    if not session.get("logged_in"):
+        logger.warning("File preview failed - User not logged in")
+        return jsonify({"error": "Not logged in"}), 401
+    
+    safe_dir, filename, mime_type, error = FileService.get_preview_file_path(file_path)
+    
+    if error:
+        logger.warning(f"File preview failed - {error} for path: {file_path}, User: {user_email}")
+        return jsonify({"error": error}), 403 if error == "Access denied" else 404
+    
+    logger.debug(f"File preview successful - File: {filename}, MIME: {mime_type}, User: {user_email}")
+    # Send file without attachment flag so browser can preview it
+    response = send_from_directory(safe_dir, filename, mimetype=mime_type)
+    
+    # Add headers to allow preview with proper Unicode encoding for filenames
+    # Use RFC 2231 encoding for non-ASCII characters to avoid Waitress latin-1 encoding errors
+    try:
+        # Check if filename contains non-ASCII characters
+        try:
+            filename.encode('ascii')
+            # Filename is ASCII-safe - use standard format
+            response.headers['Content-Disposition'] = f'inline; filename="{filename}"'
+        except UnicodeEncodeError:
+            # Filename contains non-ASCII characters - use RFC 2231 encoding
+            # Format: filename*=UTF-8''encoded_filename
+            filename_utf8_encoded = quote(filename, safe='')
+            response.headers['Content-Disposition'] = f"inline; filename*=UTF-8''{filename_utf8_encoded}"
+    except Exception as e:
+        # Fallback: use URL-encoded filename without Content-Disposition if encoding fails
+        logger.warning(f"Error encoding filename for Content-Disposition header: {e}")
+        # Response will still work, just without the filename in header
+    
+    # Add headers to allow PDF viewing in iframes/objects (X-Frame-Options)
+    # Note: Some browsers may still block PDFs in iframes for security
+    if mime_type == 'application/pdf':
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        # Allow embedding in same origin (for preview modal)
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    
+    return response
 
 @files_bp.route("/suggest", methods=["POST"])
 def suggest():
