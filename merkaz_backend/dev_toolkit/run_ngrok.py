@@ -42,8 +42,9 @@ def main():
         print("=" * 70)
         sys.exit(1)
     
-    # Write config to temp file
-    config_path = os.path.join(os.path.dirname(__file__), "ngrok.yml")
+    # Find ngrok.yml config file (one level up from dev_toolkit directory)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(os.path.dirname(script_dir), "ngrok.yml")
     
     def fetch_tunnel_urls():
         """Fetch tunnel URLs from ngrok API after a short delay."""
