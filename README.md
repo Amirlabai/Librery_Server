@@ -4,8 +4,8 @@ An open library for file-sharing among students. A full-stack web application bu
 
 ## Authors
 
-- **Amir Labai**
-- **Yosef Nago**
+- **Amir Labai** - Backend Developer
+- **Yosef Nago** - Frontend Developer
 
 ## Features
 
