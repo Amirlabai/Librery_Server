@@ -1,3 +1,9 @@
+"""
+Merkaz Server Application - Main entry point.
+backend made by Amir Labay
+frontend made by Yosef Nago
+"""
+
 import sys, os
 import logging
 
