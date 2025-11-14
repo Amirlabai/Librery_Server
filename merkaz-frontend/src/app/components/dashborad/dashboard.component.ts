@@ -4,7 +4,6 @@ import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DashboardService } from '../../services/dashboard.service';
 import { NotificationService } from '../../services/notifications/Notifications.service';
 
@@ -48,16 +47,14 @@ export class DashboardComponent {
 
   searchFiles: string = '';
   
-  showPreviewModal = false;
   previewFile: any = null;
   previewUrl: string = '';
-  safePreviewUrl: SafeResourceUrl | null = null;
+ 
 
   constructor(
     private dashboardService: DashboardService,
     private router: Router,
     private notificationService: NotificationService,
-    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit() {
@@ -120,15 +117,7 @@ export class DashboardComponent {
     }
     this.previewFile = item;
     this.previewUrl = this.dashboardService.getPreviewUrl(item);
-    this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.previewUrl);
-    this.showPreviewModal = true;
-  }
-
-  closePreviewModal() {
-    this.showPreviewModal = false;
-    this.previewFile = null;
-    this.previewUrl = '';
-    this.safePreviewUrl = null;
+    window.open(this.previewUrl);
   }
 
   isImageFile(filename: string): boolean {

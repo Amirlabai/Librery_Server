@@ -144,54 +144,8 @@
             <button type="button" (click)="closeCreateFolderModal()" class="cancel-btn">
               Cancel
             </button>
+            <button (click)="preview(previewFile, $event)" class="action-btn download-btn">Download</button>
           </div>
-        </div>
-      </div>
-    </div>
-  }
-
-  <!-- Preview Modal -->
-  @if (showPreviewModal && previewFile) {
-    <div class="preview-modal-overlay" (click)="closePreviewModal()">
-      <div class="preview-modal-content" (click)="$event.stopPropagation()">
-        <div class="preview-modal-header">
-          <h2>{{ previewFile.name }}</h2>
-          <button class="preview-modal-close" (click)="closePreviewModal()">×</button>
-        </div>
-        <div class="preview-modal-body">
-          @if (previewUrl) {
-            @if (isImageFile(previewFile.name)) {
-              <img [src]="previewUrl" alt="{{ previewFile.name }}" class="preview-image" />
-            } @else if (isVideoFile(previewFile.name)) {
-              <video [src]="previewUrl" controls class="preview-video">
-                Your browser does not support the video tag.
-              </video>
-            } @else if (isPdfFile(previewFile.name)) {
-              @if (safePreviewUrl) {
-                <object [data]="safePreviewUrl" type="application/pdf" class="preview-iframe">
-                  <iframe [src]="safePreviewUrl" class="preview-iframe" frameborder="0"></iframe>
-                  <div class="pdf-fallback">
-                    <p>Your browser cannot display PDFs. <a [href]="previewUrl" target="_blank">Click here to open in a new tab</a></p>
-                  </div>
-                </object>
-              }
-            } @else if (isTextFile(previewFile.name)) {
-              @if (safePreviewUrl) {
-                <iframe [src]="safePreviewUrl" class="preview-iframe-text" frameborder="0"></iframe>
-              }
-            } @else {
-              <div class="preview-unsupported">
-                <p>Preview not available for this file type.</p>
-                <button (click)="preview(previewFile, $event)" class="action-btn download-btn">Download Instead</button>
-              </div>
-            }
-          } @else {
-            <div class="preview-loading">Loading preview...</div>
-          }
-        </div>
-        <div class="preview-modal-footer">
-          <button (click)="preview(previewFile, $event)" class="action-btn download-btn">Download</button>
-          <button (click)="closePreviewModal()" class="cancel-btn">Close</button>
         </div>
       </div>
     </div>
