@@ -823,7 +823,7 @@ h1 {
 }
 
 .table-wrapper {
-  max-height: 400px; /* ניתן לשנות לפי הצורך */
+  max-height: 400px; 
   overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -898,29 +898,54 @@ th {
   background-color: #f9d8d6;
 }
 
-/* Flash messages */
-.flash-messages {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 15px;
-}
+@media(max-width: 768px){
+    :host {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding-top:0;
+        width: 100%;
+        align-items: flex-start;
+        justify-content: flex-start;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        
+    }
+    .container{
+        height: 100vh;
+    }
+    .content-wrapper{
+        height: 100%;
+    }
+    .admin-nav {
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc transparent;
+    }
 
-.flash-messages li {
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
+    .admin-nav::-webkit-scrollbar {
+      height: 6px;
+    }
 
-.flash-success {
-  color: #1e8e3e;
-  background-color: #e6f4ea;
-}
+    .admin-nav::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 4px;
+    }
 
-.flash-error {
-  color: #d93025;
-  background-color: #fce8e6;
-}
-</code></pre>
+    .admin-nav::-webkit-scrollbar-thumb:hover {
+      background: #999;
+    }
+
+    .nav-tab {
+      display: inline-block;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      margin-right: 6px;
+    }
+}</code></pre>
     </div>
 
     <div class="tab-pane fade " id="tree">

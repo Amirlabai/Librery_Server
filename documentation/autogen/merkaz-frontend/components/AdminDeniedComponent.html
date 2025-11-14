@@ -574,7 +574,8 @@ export class AdminDeniedComponent {
     </div>
 
     <div class="tab-pane fade " id="templateData">
-        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;container&quot;&gt;
+        <pre class="line-numbers"><code class="language-html">
+&lt;div class&#x3D;&quot;container&quot;&gt;
   &lt;div class&#x3D;&quot;header&quot;&gt;
     &lt;h1&gt;Admin Dashboard&lt;/h1&gt;
     &lt;a routerLink&#x3D;&quot;/dashboard&quot;&gt;Back to Files&lt;/a&gt;
@@ -751,25 +752,52 @@ th, td {
 .action-btn:hover {
   background-color: #d2d5d9;
 }
-.flash-messages {
-  list-style: none;
-  padding: 0;
-  margin-bottom: 15px;
-}
-.flash-messages li {
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-.flash-success {
-  color: #1e8e3e;
-  background-color: #e6f4ea;
-}
-.flash-error {
-  color: #d93025;
-  background-color: #fce8e6;
-}
-</code></pre>
+
+@media(max-width: 768px){
+  :host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding-top:0;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .container{
+    height: 100vh;
+  }
+  .content-wrapper{
+    height: 100%;
+  }
+  .admin-nav {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+  }
+
+  .admin-nav::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+
+  .nav-tab {
+    display: inline-block;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    margin-right: 6px;
+  }
+}</code></pre>
     </div>
 
     <div class="tab-pane fade " id="tree">
