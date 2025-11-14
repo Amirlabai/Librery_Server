@@ -22,7 +22,7 @@ from controllers.auth_controller import auth_bp
 from controllers.files_controller import files_bp
 from controllers.uploads_controller import uploads_bp
 from controllers.admin_controller import admin_bp
-import run_ngrok
+import dev_toolkit.run_ngrok as run_ngrok
 
 # Initialize logging
 setup_logging(logging.DEBUG)

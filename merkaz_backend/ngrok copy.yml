@@ -1,0 +1,10 @@
+# change file name to ngrok.yml and replace your_authtoken_here with your authtoken and your_port_here with your port
+version: 3
+agent:
+  authtoken: your_authtoken_here
+tunnels:
+  # Expose Flask server on port 8000 (serves both frontend and backend)
+  app:
+    proto: http
+    addr: your_port_here
+    host_header: rewrite
