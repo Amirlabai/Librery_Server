@@ -156,4 +156,3 @@ For production deployment:
 - If build doesn't exist, Flask falls back to API-only mode
 - CORS is configured to allow same-origin requests
 - All routes are handled correctly (API first, then static files)
-
