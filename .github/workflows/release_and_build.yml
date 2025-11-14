@@ -47,6 +47,11 @@ jobs:
         run: |
           npm install
           
+      - name: 🏗️ Build Angular Application
+        working-directory: merkaz-frontend
+        run: |
+          npm run build -- --configuration production
+          
       - name: 🏷️ Semantic Release (Version Control)
         # This action automatically versions the software.
         # Configured via .releaserc.json to skip npm (Python project, not Node.js).
