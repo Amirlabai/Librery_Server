@@ -17,7 +17,7 @@ import csv
 # Add parent directory to path to import modules
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import config
+import config.config as config
 from models.user_entity import User
 from utils import get_next_user_id, get_max_user_id_from_files
 
