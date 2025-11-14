@@ -38,25 +38,14 @@ html, body {
   90% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(20px); }
 }
-
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateY(20px); }
-  10% { opacity: 1; transform: translateY(0); }
-  90% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(20px); }
-}
 @media (max-width: 768px) {
   .app-notification {
-    position: fixed;
-    left: 50%;
-    top: 20px;
-    bottom: auto;
-    transform: translateX(-50%);
-    display: flex;
-    justify-content: center;
-    width: max-content;
-    max-width: 95vw;
-    z-index: 9999;
+    top: 20px !important;
+    bottom: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    max-width: 90vw !important;
+    text-align: center !important;
+    width: max-content !important;
   }
 }

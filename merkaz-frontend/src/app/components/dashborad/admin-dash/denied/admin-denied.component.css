@@ -123,3 +123,48 @@ th, td {
   background-color: #d2d5d9;
 }
 
+@media(max-width: 768px){
+  :host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding-top:0;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .container{
+    height: 100vh;
+  }
+  .content-wrapper{
+    height: 100%;
+  }
+  .admin-nav {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+  }
+
+  .admin-nav::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+
+  .nav-tab {
+    display: inline-block;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    margin-right: 6px;
+  }
+}

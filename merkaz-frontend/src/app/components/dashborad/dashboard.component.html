@@ -24,10 +24,12 @@
       <input [(ngModel)]="searchFiles" (input)="onSearchChange()" placeholder="search" class="search-items"> 
     }
     @if (currentPath) {
-      <a (click)="goUp()" style="margin-left: 15px;">⬅️ Back</a>
+      <div class="back-btn-wrapper">
+        <a class="backPathButton" (click)="goUp()" >⬅️ Back</a>
+        <span class="pathFolders">{{ currentPath || '/' }}</span>
+      </div>
     }
     
-    <span>{{ currentPath || '/' }}</span>
     
   </div>
  
