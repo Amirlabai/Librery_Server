@@ -14,19 +14,6 @@
     <a routerLink="/uploads" class="nav-tab">Uploads</a>
   </div>
 
-  <!-- Flash Messages -->
-  @if (flashMessages.length > 0) {
-    <div class="flash-messages">
-      <ul>
-        @for (msg of flashMessages; track $index) {
-          <li [class]="'flash-' + msg.type">
-            {{ msg.text }}
-          </li>
-        }
-      </ul>
-    </div>
-  }
-
   <div class="content-wrapper">
     <div class="scrollable-content">
       <!-- Users Table -->
