@@ -182,7 +182,7 @@
             } @else {
               <div class="preview-unsupported">
                 <p>Preview not available for this file type.</p>
-                <button (click)="download(previewFile, $event)" class="action-btn download-btn">Download Instead</button>
+                <button (click)="preview(previewFile, $event)" class="action-btn download-btn">Download Instead</button>
               </div>
             }
           } @else {
@@ -190,7 +190,7 @@
           }
         </div>
         <div class="preview-modal-footer">
-          <button (click)="download(previewFile, $event)" class="action-btn download-btn">Download</button>
+          <button (click)="preview(previewFile, $event)" class="action-btn download-btn">Download</button>
           <button (click)="closePreviewModal()" class="cancel-btn">Close</button>
         </div>
       </div>
