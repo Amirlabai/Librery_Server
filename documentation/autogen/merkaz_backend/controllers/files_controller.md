@@ -34,6 +34,13 @@ No description provided.
 **Arguments:**
 - `folder_path`
 
+### `preview_file(file_path)`
+
+Preview a file in the browser (without forcing download).
+
+**Arguments:**
+- `file_path`
+
 ### `suggest()`
 
 No description provided.

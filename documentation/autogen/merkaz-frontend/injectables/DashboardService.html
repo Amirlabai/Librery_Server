@@ -169,6 +169,9 @@
                                 <a href="#getDownloadUrl" >getDownloadUrl</a>
                             </li>
                             <li>
+                                <a href="#getPreviewUrl" >getPreviewUrl</a>
+                            </li>
+                            <li>
                                 <a href="#loadFiles" >loadFiles</a>
                             </li>
                             <li>
@@ -289,8 +292,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="78"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:78</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="86"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:86</a></div>
                         </td>
                     </tr>
 
@@ -360,8 +363,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="58"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:58</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="66"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:66</a></div>
                         </td>
                     </tr>
 
@@ -439,8 +442,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="39"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:39</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="47"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:47</a></div>
                         </td>
                     </tr>
 
@@ -506,8 +509,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="70"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:70</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="78"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:78</a></div>
                         </td>
                     </tr>
 
@@ -587,6 +590,73 @@
                         <td class="col-md-4">
                             <div class="io-line">Defined in <a href="" data-line="30"
                                     class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:30</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>item</td>
+                                            <td>
+                                                            <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getPreviewUrl"></a>
+                    <span class="name">
+                        <span ><b>getPreviewUrl</b></span>
+                        <a href="#getPreviewUrl"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getPreviewUrl(item: <a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank">any</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="39"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:39</a></div>
                         </td>
                     </tr>
 
@@ -723,8 +793,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="45"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:45</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="53"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:53</a></div>
                         </td>
                     </tr>
 
@@ -760,8 +830,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="50"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:50</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="58"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:58</a></div>
                         </td>
                     </tr>
 
@@ -875,6 +945,14 @@ export class DashboardService {
             return &#x60;${this.baseUrl}/download/folder/${item.path}&#x60;;
         } else {
             return &#x60;${this.baseUrl}/download/file/${item.path}&#x60;;
+        }
+    }
+
+    getPreviewUrl(item: any): string {
+        if (item.is_folder || item.isFolder) {
+            return &#x27;&#x27;; // Folders cannot be previewed
+        } else {
+            return &#x60;${this.baseUrl}/preview/${item.path}&#x60;;
         }
     }
 

@@ -68,6 +68,21 @@ Service for file management operations.
   - Arguments:
     - `file_path`
 
+- `get_file_mime_type(file_path)`
+  - Get MIME type of a file.
+  - Arguments:
+    - `file_path`
+
+- `is_previewable(file_path)`
+  - Check if file can be previewed in browser.
+  - Arguments:
+    - `file_path`
+
+- `get_preview_file_path(file_path)`
+  - Get the directory and filename for file preview.
+  - Arguments:
+    - `file_path`
+
 - `get_download_folder_path(folder_path)`
   - Get the absolute path for folder download.
   - Arguments:

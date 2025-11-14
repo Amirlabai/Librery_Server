@@ -6,7 +6,14 @@ File operations and MIME validation utilities.
 
 ### `allowed_file(filename)`
 
-Check if file extension is in allowed extensions list.
+Check if file extension is in allowed extensions list (includes both regular and video extensions).
+
+**Arguments:**
+- `filename`
+
+### `is_video_file(filename)`
+
+Check if file is a video based on extension.
 
 **Arguments:**
 - `filename`
