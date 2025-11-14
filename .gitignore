@@ -31,4 +31,4 @@ merkaz_backend/ngrok.yml
 /merkaz_server
 vite.config.ts
 merkaz_backend/config/config.py
-large logo.ico
+merkaz_backend/large logo.ico
