@@ -133,3 +133,52 @@ h1 {
 .download-btn:hover {
     background-color: #185abc;
 }
+@media (max-width: 768px) {
+  :host {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding-top:0;
+        width: 100%;
+        align-items: flex-start;
+        justify-content: flex-start;
+        
+  }
+  .container{
+    height: auto;
+  }
+  .admin-nav {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+  }
+
+  .admin-nav::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+
+  .nav-tab {
+    display: inline-block;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    margin-right: 6px;
+  }
+  .content-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+    padding-top: 0; 
+  }
+}
