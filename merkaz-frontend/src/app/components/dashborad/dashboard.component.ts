@@ -120,7 +120,6 @@ export class DashboardComponent {
     }
     this.previewFile = item;
     this.previewUrl = this.dashboardService.getPreviewUrl(item);
-    // Sanitize URL for safe use in iframe/object tags
     this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.previewUrl);
     this.showPreviewModal = true;
   }
