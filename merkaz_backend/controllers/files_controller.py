@@ -164,8 +164,10 @@ def preview_file(file_path):
     
     logger.debug(f"File preview successful - File: {filename}, MIME: {mime_type}, User: {user_email}")
     # Send file without attachment flag so browser can preview it
-    response = send_from_directory(safe_dir, filename, mimetype=mime_type)
+    # IMPORTANT: as_attachment=False ensures inline display, not download
+    response = send_from_directory(safe_dir, filename, mimetype=mime_type, as_attachment=False)
     
+    # Force Content-Disposition to inline to prevent downloads
     # Add headers to allow preview with proper Unicode encoding for filenames
     # Use RFC 2231 encoding for non-ASCII characters to avoid Waitress latin-1 encoding errors
     try:
@@ -180,16 +182,18 @@ def preview_file(file_path):
             filename_utf8_encoded = quote(filename, safe='')
             response.headers['Content-Disposition'] = f"inline; filename*=UTF-8''{filename_utf8_encoded}"
     except Exception as e:
-        # Fallback: use URL-encoded filename without Content-Disposition if encoding fails
+        # Fallback: set inline without filename if encoding fails
         logger.warning(f"Error encoding filename for Content-Disposition header: {e}")
-        # Response will still work, just without the filename in header
+        response.headers['Content-Disposition'] = 'inline'
     
-    # Add headers to allow PDF viewing in iframes/objects (X-Frame-Options)
-    # Note: Some browsers may still block PDFs in iframes for security
-    if mime_type == 'application/pdf':
-        response.headers['X-Content-Type-Options'] = 'nosniff'
-        # Allow embedding in same origin (for preview modal)
-        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    # Ensure Content-Type is set correctly
+    if mime_type:
+        response.headers['Content-Type'] = mime_type
+    
+    # Add headers to allow embedding in iframes/objects
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    # Allow embedding in same origin (for preview modal)
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
     
     return response
 
