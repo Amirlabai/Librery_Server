@@ -5,9 +5,18 @@ import magic
 import config.config as config
 
 def allowed_file(filename):
-    """Check if file extension is in allowed extensions list."""
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in config.ALLOWED_EXTENSIONS
+    """Check if file extension is in allowed extensions list (includes both regular and video extensions)."""
+    if '.' not in filename:
+        return False
+    ext = filename.rsplit('.', 1)[1].lower()
+    return ext in config.ALLOWED_EXTENSIONS or ext in config.VIDEO_EXTENSIONS
+
+def is_video_file(filename):
+    """Check if file is a video based on extension."""
+    if '.' not in filename:
+        return False
+    ext = filename.rsplit('.', 1)[1].lower()
+    return ext in config.VIDEO_EXTENSIONS
 
 def is_file_malicious(file_stream):
     """

@@ -4,6 +4,7 @@ import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DashboardService } from '../../services/dashboard.service';
 import { NotificationService } from '../../services/notifications/Notifications.service';
 
@@ -46,9 +47,18 @@ export class DashboardComponent {
   modalFolders: any[] = [];   
 
   searchFiles: string = '';
-   
+  
+  showPreviewModal = false;
+  previewFile: any = null;
+  previewUrl: string = '';
+  safePreviewUrl: SafeResourceUrl | null = null;
 
-  constructor(private dashboardService: DashboardService,private router: Router,private notificationService:NotificationService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private router: Router,
+    private notificationService: NotificationService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit() {
     this.userRole = localStorage.getItem('role') || '';
@@ -102,6 +112,44 @@ export class DashboardComponent {
     }
   }
 
+
+  preview(item: any, event: Event) {
+    event.stopPropagation();
+    if (item.is_folder || item.isFolder) {
+      return;
+    }
+    this.previewFile = item;
+    this.previewUrl = this.dashboardService.getPreviewUrl(item);
+    // Sanitize URL for safe use in iframe/object tags
+    this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.previewUrl);
+    this.showPreviewModal = true;
+  }
+
+  closePreviewModal() {
+    this.showPreviewModal = false;
+    this.previewFile = null;
+    this.previewUrl = '';
+    this.safePreviewUrl = null;
+  }
+
+  isImageFile(filename: string): boolean {
+    const ext = filename.toLowerCase().split('.').pop();
+    return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(ext || '');
+  }
+
+  isVideoFile(filename: string): boolean {
+    const ext = filename.toLowerCase().split('.').pop();
+    return ['mp4', 'mov', 'avi', 'mkv', 'webm', 'ogg'].includes(ext || '');
+  }
+
+  isPdfFile(filename: string): boolean {
+    return filename.toLowerCase().endsWith('.pdf');
+  }
+
+  isTextFile(filename: string): boolean {
+    const ext = filename.toLowerCase().split('.').pop();
+    return ['txt', 'md', 'json', 'xml', 'csv', 'log', 'html', 'css', 'js', 'ts'].includes(ext || '');
+  }
 
   download(item: any, event: Event) {
     event.stopPropagation();

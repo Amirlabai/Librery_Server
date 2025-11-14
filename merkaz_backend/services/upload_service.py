@@ -9,7 +9,7 @@ from datetime import datetime
 from utils.path_utils import get_project_root
 from utils.csv_utils import get_next_upload_id
 from utils.log_utils import log_event
-from utils.file_utils import allowed_file, is_file_malicious
+from utils.file_utils import allowed_file, is_file_malicious, is_video_file
 from utils.logger_config import get_logger
 from repositories.user_repository import UserRepository
 from repositories.upload_repository import UploadRepository
@@ -219,6 +219,30 @@ class UploadService:
                 errors.append(f"{error_msg}: {filename}")
                 continue
             
+            # Check file size based on file type (video vs regular)
+            # Note: Flask's request.content_length might not be available for all files in multipart
+            # We'll check after saving, but also try to check content_length if available
+            if hasattr(file, 'content_length') and file.content_length:
+                file_size = file.content_length
+                is_video = is_video_file(filename)
+                max_size = config.MAX_VIDEO_CONTENT_LENGTH if is_video else config.MAX_CONTENT_LENGTH
+                
+                if file_size > max_size:
+                    size_mb = file_size / (1024 * 1024)
+                    max_mb = max_size / (1024 * 1024)
+                    file_type = "video" if is_video else "file"
+                    error_msg = f"{file_type.capitalize()} size ({size_mb:.2f} MB) exceeds maximum allowed size ({max_mb:.2f} MB)"
+                    ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'no extension'
+                    error_type = 'file_size_exceeded'
+                    if error_type not in failed_files_by_type:
+                        failed_files_by_type[error_type] = {}
+                    if ext not in failed_files_by_type[error_type]:
+                        failed_files_by_type[error_type][ext] = []
+                    failed_files_by_type[error_type][ext].append(filename)
+                    errors.append(f"{error_msg}: {filename}")
+                    logger.warning(f"File size check failed - {error_msg} for file: {filename}")
+                    continue
+            
             # Security check
             if '..' in filename.split('/') or '..' in filename.split('\\') or os.path.isabs(filename):
                 errors.append(f"Invalid path in filename: '{filename}' was skipped.")
@@ -257,6 +281,33 @@ class UploadService:
                 
                 file.save(save_path)
                 
+                # Verify file size after saving (in case content_length wasn't available)
+                file_size = os.path.getsize(save_path)
+                is_video = is_video_file(filename)
+                max_size = config.MAX_VIDEO_CONTENT_LENGTH if is_video else config.MAX_CONTENT_LENGTH
+                
+                if file_size > max_size:
+                    # Remove the file we just saved
+                    try:
+                        os.remove(save_path)
+                    except:
+                        pass
+                    
+                    size_mb = file_size / (1024 * 1024)
+                    max_mb = max_size / (1024 * 1024)
+                    file_type = "video" if is_video else "file"
+                    error_msg = f"{file_type.capitalize()} size ({size_mb:.2f} MB) exceeds maximum allowed size ({max_mb:.2f} MB)"
+                    ext = filename.rsplit('.', 1)[1].lower() if '.' in filename else 'no extension'
+                    error_type = 'file_size_exceeded'
+                    if error_type not in failed_files_by_type:
+                        failed_files_by_type[error_type] = {}
+                    if ext not in failed_files_by_type[error_type]:
+                        failed_files_by_type[error_type][ext] = []
+                    failed_files_by_type[error_type][ext].append(filename)
+                    errors.append(f"{error_msg}: {filename}")
+                    logger.warning(f"File size check failed after save - {error_msg} for file: {filename}")
+                    continue
+                
                 # Build suggested path
                 if '/' in filename or '\\' in filename:
                     final_path_suggestion = os.path.join(upload_subpath, full_relative_path).replace('\\', '/')
@@ -291,6 +342,8 @@ class UploadService:
                         summary_parts.append(f"{count} file(s) with .{ext} extension (malicious file detected)")
                     elif error_type == 'upload_error':
                         summary_parts.append(f"{count} file(s) with .{ext} extension (upload failed)")
+                    elif error_type == 'file_size_exceeded':
+                        summary_parts.append(f"{count} file(s) with .{ext} extension (file size exceeded)")
             
             if summary_parts:
                 error_summary = "Failed file types:\n" + "\n".join(summary_parts)
