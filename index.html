@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Java Code Review</title>
+    <style>
+        body {
+            font-family: Consolas, monospace;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        pre {
+            background: #2b2b2b;
+            color: #f1f1f1;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            line-height: 1.4;
+            margin-top: 10px;
+        }
+        h2 {
+            font-family: Arial, sans-serif;
+        }
+        .doc {
+            background: #ffffff;
+            padding: 15px;
+            border-left: 5px solid #444;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        ul {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================= -->
+<!-- Main.java -->
+<!-- ============================= -->
+
+<h2>Main.java</h2>
+
+<div class="doc">
+    <p><strong>Entry point for the Search Optimize application.</strong></p>
+    <p>This program loads a list of file record entries into memory and provides a simple command-line interface that allows the user to:</p>
+    <ul>
+        <li>add new records</li>
+        <li>delete existing records</li>
+        <li>search for records containing a specific substring</li>
+        <li>print all stored records</li>
+    </ul>
+    <p>Commands are read from standard input and processed continuously until the user enters "exit".</p>
+</div>
+
+<pre><code>
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        System.out.println("Welcome to the Search Optimize");
+
+        Records records = new Records();
+        records.readFilesToAlist();
+
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Commands:\n" +
+                "1.update &lt;fileName&gt;\n" +
+                "2.delete &lt;fileName&gt;\n" +
+                "3.search &lt;fileName&gt;\n" +
+                "4.print\n" +
+                "5.exit");
+
+        while (true) {
+
+            System.out.print("\n&gt; ");
+            String line = scanner.nextLine().trim();
+
+            if (line.equals("exit")) break;
+
+            String[] parts = line.split("\\s+", 2);
+            String command = parts[0];
+            String value = parts.length > 1 ? parts[1] : "";
+
+            switch (command) {
+                case "update":
+                    records.updateList(value);
+                    break;
+
+                case "delete":
+                    records.deleteFromList(value);
+                    break;
+
+                case "search":
+                    records.search(value);
+                    break;
+
+                case "print":
+                    records.printList();
+                    break;
+
+                default:
+                    System.out.println("Unknown command: " + command);
+            }
+        }
+
+        System.out.println("Goodbye.");
+    }
+}
+</code></pre>
+
+
+<!-- ============================= -->
+<!-- Records.java -->
+<!-- ============================= -->
+
+<h2>Records.java</h2>
+
+<div class="doc">
+    <p><strong>Manages an in-memory collection of file record entries.</strong></p>
+    <p>This class loads file names from a text file into a list, allows searching within the loaded records, and supports basic operations such as:</p>
+    <ul>
+        <li>adding records</li>
+        <li>removing records</li>
+        <li>printing records</li>
+    </ul>
+    <p>Each file name is stored as a separate record in memory.</p>
+</div>
+
+<pre><code>
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
+
+public class Records {
+
+    private File file = new File("src/2000_file_records.txt");
+
+    private List&lt;String&gt; list = new LinkedList&lt;&gt;();
+
+    public void readFilesToAlist() throws IOException {
+
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        String line;
+
+        while ((line = reader.readLine()) != null){
+            list.add(line);
+        }
+    }
+
+    public List&lt;String&gt; search(String word) {
+
+        System.out.println("Searching for: " + word + "\n");
+
+        long startTime = System.currentTimeMillis();
+
+        List&lt;String&gt; newList = list.stream()
+                .filter(item -> item.contains(word))
+                .toList();
+
+        long endTime = System.currentTimeMillis();
+        double elapsedSeconds = (endTime - startTime) / 1000.0;
+
+        System.out.println("Time elapsed: " + elapsedSeconds + " seconds\n");
+        newList.forEach(System.out::println);
+
+        return newList;
+    }
+
+    public void updateList(String newFile){
+        list.add(newFile);
+    }
+
+    public void deleteFromList(String fileToBeDeleted){
+        list.remove(fileToBeDeleted);
+    }
+
+    public void printList(){
+        list.forEach(System.out::println);
+    }
+}
+</code></pre>
+
+</body>
+</html>
