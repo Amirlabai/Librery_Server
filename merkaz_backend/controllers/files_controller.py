@@ -203,15 +203,23 @@ def search():
     is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
     if not is_valid:
         return jsonify({"error": error_msg}), 401
+
     user_email = session.get("email", "unknown")
     logger.info(f"Search request received - User: {user_email}")
     search_query = request.args.get("q", "")
     search_results, error = FileService.search_uploaded_files(search_query)
+
     if error:
         logger.warning(f"Search failed - {error} for query: {search_query}, User: {user_email}")
         return jsonify({"error": error}), 404
+
     logger.info(f"Search completed - Query: {search_query}, Results: {len(search_results)}, User: {user_email}")
-    return jsonify(**search_results), 200
+    cooldown_level = session.get("cooldown_index", 0) + 1
+    
+    return jsonify({**search_results,
+        "is_admin": session.get('is_admin', False),
+        "cooldown_level": cooldown_level
+    }), 200
 
 @files_bp.route("/suggest", methods=["POST"])
 def suggest():
