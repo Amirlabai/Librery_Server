@@ -39,6 +39,12 @@ export class AuthService {
     const payload = { email: email.trim(), password: password.trim() };
     return this.http.post<RegisterResponse>(`${this.baseUrl}/register`, payload);
   }
+  resetPass(token: string, password: string) {
+    return this.http.post(
+      `${this.baseUrl}/reset-password/${token}`,
+      { password }
+    );
+  }
 
   saveToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
