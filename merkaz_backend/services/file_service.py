@@ -16,8 +16,16 @@ from repositories.download_repository import DownloadRepository
 from repositories.suggestion_repository import SuggestionRepository
 from repositories.upload_repository import UploadRepository
 import config.config as config
+import time
+import threading
 
 logger = get_logger(__name__)
+
+# Cache monitoring state
+_pending_log_monitor_lock = threading.Lock()
+_pending_log_row_count = None
+_pending_log_last_change_time = None
+_cache_priming_timer = None
 
 class FileService:
     """Service for file management operations."""
@@ -332,7 +340,160 @@ class FileService:
             return None, "Folder not found"
         
         return absolute_folder_path, None
-    
+
+    @staticmethod
+    def _get_pending_log_row_count():
+        """Get the current row count of upload_pending_log.csv (excluding header)."""
+        try:
+            if not os.path.exists(config.UPLOAD_PENDING_LOG_FILE):
+                return 0
+            with open(config.UPLOAD_PENDING_LOG_FILE, 'r', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                header = next(reader, None)  # Skip header
+                return sum(1 for _ in reader)
+        except Exception as e:
+            logger.warning(f"Error reading pending log row count: {e}")
+            return None
+
+    @staticmethod
+    def _check_and_trigger_cache_priming():
+        """Check if pending log hasn't changed in 1 minute and trigger cache priming."""
+        global _pending_log_row_count, _pending_log_last_change_time, _cache_priming_timer
+        
+        with _pending_log_monitor_lock:
+            current_count = FileService._get_pending_log_row_count()
+            current_time = time.time()
+            
+            if current_count is None:
+                return
+            
+            # Initialize tracking on first call
+            if _pending_log_row_count is None:
+                _pending_log_row_count = current_count
+                _pending_log_last_change_time = current_time
+                logger.debug(f"Initialized pending log monitoring - Row count: {current_count}")
+                
+                # Schedule first check in 1 minute
+                _cache_priming_timer = threading.Timer(60.0, FileService._trigger_cache_priming)
+                _cache_priming_timer.daemon = True
+                _cache_priming_timer.start()
+                logger.debug("Scheduled initial cache priming check in 1 minute")
+                return
+            
+            # If count changed, update tracking
+            if current_count != _pending_log_row_count:
+                _pending_log_row_count = current_count
+                _pending_log_last_change_time = current_time
+                logger.debug(f"Pending log changed - Row count: {current_count}")
+                
+                # Cancel existing timer if any
+                if _cache_priming_timer:
+                    _cache_priming_timer.cancel()
+                    _cache_priming_timer = None
+                
+                # Schedule new check in 1 minute
+                _cache_priming_timer = threading.Timer(60.0, FileService._trigger_cache_priming)
+                _cache_priming_timer.daemon = True
+                _cache_priming_timer.start()
+                logger.debug("Scheduled cache priming check in 1 minute")
+            else:
+                # Count hasn't changed, check if 1 minute has passed
+                if _pending_log_last_change_time is not None:
+                    elapsed = current_time - _pending_log_last_change_time
+                    if elapsed >= 60.0:
+                        FileService._trigger_cache_priming()
+                        _pending_log_last_change_time = None
+                        _cache_priming_timer = None
+
+    @staticmethod
+    def _trigger_cache_priming():
+        """Trigger cache priming in a background thread."""
+        logger.info("Triggering cache priming after 1 minute of no pending log changes")
+        thread = threading.Thread(target=FileService.prime_search_cache, daemon=True)
+        thread.start()
+
+    @staticmethod
+    def monitor_pending_log_changes():
+        """
+        Monitor upload_pending_log.csv for changes.
+        When row count hasn't changed for 1 minute, triggers cache priming.
+        Should be called after operations that modify the pending log.
+        """
+        FileService._check_and_trigger_cache_priming()
+
+    @staticmethod
+    def prime_search_cache():
+        """
+        Prime the search cache by reading upload_completed_log.csv and splitting it
+        into separate CSV files based on the first character of filenames (a-z).
+        Files starting with non-a-z characters are saved to misc.csv.
+        """
+        logger.info("Starting search cache priming")
+        start_time = time.time()
+        
+        try:
+            # Ensure cache directory exists
+            if not os.path.exists(config.SEARCH_CACHE_DIR):
+                os.makedirs(config.SEARCH_CACHE_DIR)
+                logger.info(f"Created cache directory: {config.SEARCH_CACHE_DIR}")
+            
+            # Read the upload completed log
+            df = pd.read_csv(config.UPLOAD_COMPLETED_LOG_FILE, encoding='utf-8')
+            logger.debug(f"Loaded {len(df)} rows from upload_completed_log.csv")
+            
+            # Dictionary to store rows grouped by first letter
+            cache_dict = {}
+            misc_rows = []
+            
+            # Process each row
+            for idx, row in df.iterrows():
+                filename = str(row['filename']) if pd.notna(row['filename']) else ''
+                
+                if not filename:
+                    misc_rows.append(row)
+                    continue
+                
+                # Get first character and convert to lowercase
+                first_char = filename[0].lower()
+                
+                # Check if it's a-z
+                if first_char.isalpha() and 'a' <= first_char <= 'z':
+                    if first_char not in cache_dict:
+                        cache_dict[first_char] = []
+                    cache_dict[first_char].append(row)
+                else:
+                    # Non-a-z character, add to misc
+                    misc_rows.append(row)
+            
+            # Save each letter's cache file (without headers to match search_uploaded_files reading format)
+            for letter, rows in cache_dict.items():
+                cache_file_path = os.path.join(config.SEARCH_CACHE_DIR, f"{letter}.csv")
+                letter_df = pd.DataFrame(rows)
+                letter_df.to_csv(cache_file_path, index=False, header=False, encoding='utf-8')
+                logger.debug(f"Saved {len(rows)} rows to {letter}.csv")
+            
+            # Save misc file for non-a-z files
+            if misc_rows:
+                misc_file_path = os.path.join(config.SEARCH_CACHE_DIR, "misc.csv")
+                misc_df = pd.DataFrame(misc_rows)
+                misc_df.to_csv(misc_file_path, index=False, header=False, encoding='utf-8')
+                logger.debug(f"Saved {len(misc_rows)} rows to misc.csv")
+            
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            logger.info(f"Search cache priming completed - Elapsed time: {elapsed_time:.2f} seconds, "
+                       f"Created {len(cache_dict)} letter files, {len(misc_rows)} misc files")
+            
+            return True, None
+            
+        except FileNotFoundError:
+            error_msg = f"Upload completed log file not found: {config.UPLOAD_COMPLETED_LOG_FILE}"
+            logger.error(error_msg)
+            return False, error_msg
+        except Exception as e:
+            logger.exception("Error during search cache priming")
+            return False, str(e)
+
     @staticmethod
     def search_uploaded_files(query):
         """
@@ -340,13 +501,31 @@ class FileService:
         against the filename (column 6).
         Returns a dict in the format similar to browse_directory() with file results.
         """
-
+        start_time = time.time()
         logger.debug(f"Searching uploaded files - Query: {query}")
-        upload_completed_log = UploadRepository.get_completed_log_path()
         files = []
 
         try:
-            df = pd.read_csv(upload_completed_log, header=None, encoding='utf-8')
+            # Get first character of query and build cache file path
+            if not query:
+                return {
+                    "files": [],
+                    "folders": [],
+                    "current_path": "",
+                    "back_path": None
+                }, "Empty query"
+            
+            first_char = query[0].lower()
+            
+            # Determine cache file: a-z use letter.csv, others use misc.csv
+            if first_char.isalpha() and 'a' <= first_char <= 'z':
+                cache_file_path = os.path.join(config.SEARCH_CACHE_DIR, f"{first_char}.csv")
+            else:
+                cache_file_path = os.path.join(config.SEARCH_CACHE_DIR, "misc.csv")
+            
+            # Load the cache CSV file into DataFrame
+            df = pd.read_csv(cache_file_path, header=None, encoding='utf-8')
+            
             # Column 5 (0-indexed) is the filename
             matching = df[df[5].str.contains(query, na=False, case=False)]
             for idx, row in matching.iterrows():
@@ -359,13 +538,13 @@ class FileService:
                 files.append(item_data)
             files.sort(key=lambda x: x['name'].lower())
         except FileNotFoundError:
-            logger.warning("Upload completed log file not found for search.")
+            logger.warning(f"Search cache file not found: {cache_file_path}")
             return {
                 "files": [],
                 "folders": [],
                 "current_path": "",
                 "back_path": None
-            }, "Upload completed log not found"
+            }, "Search cache file not found"
         except Exception as e:
             logger.exception("Error during search_uploaded_files")
             return {
@@ -375,6 +554,9 @@ class FileService:
                 "back_path": None
             }, str(e)
 
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        logger.info(f"Search completed - Query: {query}, Elapsed time: {elapsed_time} seconds")
         return {
             "files": files,
             "folders": [],
