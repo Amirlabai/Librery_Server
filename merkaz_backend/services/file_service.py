@@ -1,6 +1,7 @@
 """
 File service - File management and validation.
 """
+import pandas as pd
 import os
 import shutil
 import zipfile
@@ -331,6 +332,55 @@ class FileService:
             return None, "Folder not found"
         
         return absolute_folder_path, None
+    
+    @staticmethod
+    def search_uploaded_files(query):
+        """
+        Search for uploaded files in the upload_completed_log based on a query string
+        against the filename (column 6).
+        Returns a dict in the format similar to browse_directory() with file results.
+        """
+
+        logger.debug(f"Searching uploaded files - Query: {query}")
+        upload_completed_log = UploadRepository.get_completed_log_path()
+        files = []
+
+        try:
+            df = pd.read_csv(upload_completed_log, header=None, encoding='utf-8')
+            # Column 5 (0-indexed) is the filename
+            matching = df[df[5].str.contains(query, na=False, case=False)]
+            for idx, row in matching.iterrows():
+                item_data = {
+                    "upload_id": str(row[0]),
+                    "name": row[5],
+                    "path": row[6],
+                    "is_folder": False
+                }
+                files.append(item_data)
+            files.sort(key=lambda x: x['name'].lower())
+        except FileNotFoundError:
+            logger.warning("Upload completed log file not found for search.")
+            return {
+                "files": [],
+                "folders": [],
+                "current_path": "",
+                "back_path": None
+            }, "Upload completed log not found"
+        except Exception as e:
+            logger.exception("Error during search_uploaded_files")
+            return {
+                "files": [],
+                "folders": [],
+                "current_path": "",
+                "back_path": None
+            }, str(e)
+
+        return {
+            "files": files,
+            "folders": [],
+            "current_path": f"search:{query}",
+            "back_path": None
+        }, None
     
     @staticmethod
     def submit_suggestion(suggestion_text, email, session_data):
