@@ -11,6 +11,7 @@ import { AdminDeniedComponent } from './components/dashborad/admin-dash/denied/a
 import { MyUploadsComponent } from './components/uploads/my-uploads.component';
 import { UploadFileComponent } from './components/uploads/upload-file.component';
 import { AuthGuard } from './services/auth.guard'; 
+import { ResetPassComponent } from './components/resetpass/reset-pass.component';
 
 
 export const routes: Routes = [
@@ -18,6 +19,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password' , component:ResetPassComponent },
 
   // ------------------- DASHBOARD -------------------
   {
