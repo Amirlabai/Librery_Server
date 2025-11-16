@@ -41,6 +41,10 @@ Preview a file in the browser (without forcing download).
 **Arguments:**
 - `file_path`
 
+### `search()`
+
+No description provided.
+
 ### `suggest()`
 
 No description provided.

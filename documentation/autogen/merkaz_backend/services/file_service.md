@@ -88,6 +88,32 @@ Service for file management operations.
   - Arguments:
     - `folder_path`
 
+- `_get_pending_log_row_count()`
+  - Get the current row count of upload_pending_log.csv (excluding header).
+
+- `_check_and_trigger_cache_priming()`
+  - Check if pending log hasn't changed in 1 minute and trigger cache priming.
+
+- `_trigger_cache_priming()`
+  - Trigger cache priming in a background thread.
+
+- `monitor_pending_log_changes()`
+  - Monitor upload_pending_log.csv for changes.
+When row count hasn't changed for 1 minute, triggers cache priming.
+Should be called after operations that modify the pending log.
+
+- `prime_search_cache()`
+  - Prime the search cache by reading upload_completed_log.csv and splitting it
+into separate CSV files based on the first character of filenames (a-z).
+Files starting with non-a-z characters are saved to misc.csv.
+
+- `search_uploaded_files(query)`
+  - Search for uploaded files in the upload_completed_log based on a query string
+against the filename (column 6).
+Returns a dict in the format similar to browse_directory() with file results.
+  - Arguments:
+    - `query`
+
 - `submit_suggestion(suggestion_text, email, session_data)`
   - Submit a suggestion with cooldown management.
   - Arguments:
