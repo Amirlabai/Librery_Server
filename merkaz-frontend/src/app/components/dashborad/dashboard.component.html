@@ -21,7 +21,7 @@
        <div class="create-folder-wrapper">
           <button (click)="openCreateFolderModal()" class="create-folder-btn">📁 Create Folder</button>
        </div>
-      <input [(ngModel)]="searchFiles" (input)="onSearchChange()" placeholder="search" class="search-items"> 
+      <input [(ngModel)]="searchFiles" (input)="onSearchChange()" placeholder="search" class="search-items">
     }
     @if (currentPath) {
       <div class="back-btn-wrapper">
@@ -43,8 +43,16 @@
         </tr>
       </thead>
       <tbody>
+        @if (isSearching) {
+          <tr>
+            <td colspan="2" style="text-align:center; padding:20px;">
+              Loading...
+            </td>
+          </tr>
+        }@else {
 
-        @for (item of items; track item.path) {
+        
+        @for (item of allItems; track item.path) {
         <tr 
         [ngClass]="{ 'selected-row': selectedFile?.path === item.path }"
         (click)="navigate(item)"
@@ -84,13 +92,14 @@
             </div>
           </td>
         </tr>
-      }
-      @if (items.length === 0) {
-        <tr>
-          <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
-              This folder is empty.
-          </td>
-        </tr>
+        }
+        @if (allItems.length === 0) {
+          <tr>
+            <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
+                This folder is empty.
+            </td>
+          </tr>
+        }
       }
       </tbody>
     </table>
@@ -144,7 +153,6 @@
             <button type="button" (click)="closeCreateFolderModal()" class="cancel-btn">
               Cancel
             </button>
-            <button (click)="preview(previewFile, $event)" class="action-btn download-btn">Download</button>
           </div>
         </div>
       </div>
