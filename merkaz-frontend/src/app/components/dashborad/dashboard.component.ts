@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 import { NotificationService } from '../../services/notifications/Notifications.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,8 +26,9 @@ import { NotificationService } from '../../services/notifications/Notifications.
 export class DashboardComponent {
   items: any[] = [];
   folders: any[] = [];
-  private originalItems: any[] = [];
   allItems: any[] = [];
+  private searchSubject = new Subject<string>();
+  isSearching = false;
 
   isAdmin = false;
   userRole = '';
@@ -50,7 +53,7 @@ export class DashboardComponent {
   previewFile: any = null;
   previewUrl: string = '';
  
-
+searchCallsCount = 0;
   constructor(
     private dashboardService: DashboardService,
     private router: Router,
@@ -61,6 +64,17 @@ export class DashboardComponent {
     this.userRole = localStorage.getItem('role') || '';
     this.isAdmin = this.userRole === 'admin';
     this.loadFiles();
+
+
+    this.searchSubject
+    .pipe(
+      debounceTime(100),
+      distinctUntilChanged()
+    )
+    .subscribe(value => {
+      this.executeSearch(value);   
+    });
+
   }
 
   loadFiles() {
@@ -70,7 +84,7 @@ export class DashboardComponent {
         const folders = res.folders || [];
 
         this.items = [...folders, ...files];
-        this.originalItems = [...this.items];
+        this.allItems = [...this.items]; 
 
         if (res.current_path) this.currentPath = res.current_path;
         if (res.is_admin !== undefined) this.isAdmin = res.is_admin;
@@ -322,46 +336,30 @@ export class DashboardComponent {
       }
     });
   }
-  public async onSearchChange() {
-    const input = this.searchFiles.trim().toLowerCase();
+  
+  onSearchChange() {
+    this.isSearching = true; 
+    this.searchSubject.next(this.searchFiles);
+  }
 
-    if (!input) {
-      this.items = [...this.originalItems];
+  private executeSearch(query: string) {
+
+    if (!query.trim()) {
+      this.loadFiles();  
+      this.isSearching = false;
       return;
     }
-
-    if (this.allItems.length === 0) {
-      await this.loadAllRecursively('');
-    }
-
-    this.items = this.allItems.filter(item => {
-      const nameMatch = item.name?.toLowerCase().includes(input);
-      const pathMatch = item.path?.toLowerCase().includes(input);
-      return nameMatch || pathMatch;
-    });
-
-    this.items.sort((a, b) => {
-      if (a.is_folder && !b.is_folder) return -1;
-      if (!a.is_folder && b.is_folder) return 1;
-      return a.name.localeCompare(b.name);
-    });
-  }
-  private async loadAllRecursively(path: string) {
-  
-    try {
-      const res: any = await this.dashboardService.loadFiles(path).toPromise();
-      const folders = res.folders || [];
-      const files = res.files || [];
-
-      this.allItems.push(...folders, ...files);
-
-      
-      for (const folder of folders) {
-        await this.loadAllRecursively(folder.path);
+    this.dashboardService.searchFiles(query).subscribe({
+      next: res => {
+        const folders = res.folders || [];
+        const files = res.files || [];
+        this.allItems = [...folders, ...files];
+        this.isSearching = false;
+      },
+      error: err => {
+        this.notificationService.show(`search error: ${err}`, false);
+        this.isSearching = false; 
       }
-    } catch (err) {
-      this.notificationService.show(`load error ${err}`,false)
-    }
+    });
   }
-  
 }

@@ -22,6 +22,9 @@ SUGGESTION_LOG_FILE = "logs/suggestion_log.csv"
 UPLOAD_LOG_FILE = "logs/upload_log.csv"
 DECLINED_UPLOAD_LOG_FILE = "logs/declined_log.csv"
 
+# --- chache files ---
+SEARCH_CACHE_DIR = "cache"
+
 # --- File Upload Settings ---
 # General file extensions
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'zip', 'rar', '7z', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'}
