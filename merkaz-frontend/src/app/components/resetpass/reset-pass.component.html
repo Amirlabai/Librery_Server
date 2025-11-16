@@ -1,0 +1,42 @@
+<div class="register-container">
+  <h1>Reset your Password</h1>
+
+  <form (ngSubmit)="onSubmit()">
+    
+    <div class="password-wrapper">
+      <input
+        type="{{ showPassword ? 'text' : 'password' }}"
+        name="password"
+        [(ngModel)]="password"
+        placeholder="Password"
+        required
+      />
+
+      <span class="toggle-password" (click)="togglePasswordVisibility()">
+        @if (!showPassword) {
+          <img
+            src="../../../assets/icons/eye.png"
+            alt="Show password"
+          />
+        } @else {
+          <img
+            src="../../../assets/icons/eye-crossed.png"
+            alt="Hide password"
+          />
+        }
+      </span>
+    </div>
+
+    <div class="password-requirements">
+      <ul>
+        <li>At least 8 characters</li>
+        <li>Uppercase & lowercase letters</li>
+        <li>At least one number</li>
+        <li>At least one special character</li>
+      </ul>
+    </div>
+
+    <button type="submit">Reset</button>
+  </form>
+
+</div>

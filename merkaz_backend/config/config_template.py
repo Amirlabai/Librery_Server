@@ -1,4 +1,5 @@
 # --- Core App Settings ---
+NGROK_LINK = "web_ngrok_link"
 SUPER_SECRET_KEY = "123_default_secret_key_for_dev"
 TOKEN_SECRET_KEY = "123_default_token_key_for_dev"
 ICON_PATH = "<path to icon>.ico"

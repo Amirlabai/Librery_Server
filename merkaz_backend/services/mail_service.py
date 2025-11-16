@@ -38,8 +38,7 @@ def _send_new_user_notification_sync(app, user_email, pending_url):
 def send_new_user_notification(app, user_email):
     """Notifies all admins that a new user has registered (asynchronously)."""
     # Generate URL in the request context before starting the thread
-    pending_url = url_for('admin.admin_pending', _external=True)
-    pending_url = "http://localhost:4200/pending"
+    pending_url = f"http://{config.NGROK_LINK}/pending"
     thread = threading.Thread(target=_send_new_user_notification_sync, args=(app, user_email, pending_url))
     thread.daemon = True
     thread.start()
@@ -68,7 +67,7 @@ def _send_approval_email_sync(app, user_email, login_url):
 def send_approval_email(app, user_email):
     """Sends an email to the user when their account is approved (asynchronously)."""
     # Generate URL in the request context before starting the thread
-    login_url = url_for('auth.api_login', _external=True)
+    login_url = f"http://{config.NGROK_LINK}/login"
     thread = threading.Thread(target=_send_approval_email_sync, args=(app, user_email, login_url))
     thread.daemon = True
     thread.start()
@@ -122,7 +121,7 @@ def _send_password_reset_email_sync(app, user_email, token, reset_url):
 def send_password_reset_email(app, user_email, token):
     """Sends a password reset email to the user (asynchronously)."""
     # Generate URL in the request context before starting the thread
-    reset_url = url_for('auth.reset_password', token=token, _external=True)
+    reset_url = f"http://{config.NGROK_LINK}/reset-password?token={token}"
     thread = threading.Thread(target=_send_password_reset_email_sync, args=(app, user_email, token, reset_url))
     thread.daemon = True
     thread.start()

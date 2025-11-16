@@ -305,6 +305,12 @@ export class AuthService {
     const payload &#x3D; { email: email.trim(), password: password.trim() };
     return this.http.post&lt;RegisterResponse&gt;(&#x60;${this.baseUrl}/register&#x60;, payload);
   }
+  resetPass(token: string, password: string) {
+    return this.http.post(
+      &#x60;${this.baseUrl}/reset-password/${token}&#x60;,
+      { password }
+    );
+  }
 
   saveToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
