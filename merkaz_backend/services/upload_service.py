@@ -13,6 +13,7 @@ from utils.file_utils import allowed_file, is_file_malicious, is_video_file
 from utils.logger_config import get_logger
 from repositories.user_repository import UserRepository
 from repositories.upload_repository import UploadRepository
+from services.file_service import FileService
 import config.config as config
 
 logger = get_logger(__name__)
@@ -67,6 +68,8 @@ class UploadService:
                 path
             ])
         logger.info(f"Pending upload logged - ID: {upload_id}, File: {filename}")
+        # Monitor pending log changes for cache priming
+        FileService.monitor_pending_log_changes()
     
     @staticmethod
     def log_completed_upload(upload_id, original_timestamp, email, user_id, filename, final_path):
@@ -579,6 +582,8 @@ class UploadService:
                 )
             
             logger.info(f"Upload moved successfully - ID: {upload_id}, Target: {target_path_str}")
+            # Monitor pending log changes for cache priming
+            FileService.monitor_pending_log_changes()
             return True, None
         except FileNotFoundError:
             logger.error(f"Move failed - Source not found: {flat_filename}")
@@ -650,6 +655,9 @@ class UploadService:
         
         # Log to declined log
         UploadService.log_declined_upload(email, user_id, flat_filename)
+        
+        # Monitor pending log changes for cache priming
+        FileService.monitor_pending_log_changes()
         
         try:
             if os.path.exists(item_to_delete):

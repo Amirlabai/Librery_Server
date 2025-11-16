@@ -68,7 +68,7 @@ searchCallsCount = 0;
 
     this.searchSubject
     .pipe(
-      debounceTime(2000),
+      debounceTime(100),
       distinctUntilChanged()
     )
     .subscribe(value => {

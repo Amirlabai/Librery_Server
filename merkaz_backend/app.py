@@ -191,6 +191,18 @@ if __name__ == "__main__":
     create_file_with_header(config.DECLINED_UPLOAD_LOG_FILE, ["timestamp", "email", "user_id", "filename"])
     logger.info("All CSV log files initialized")
 
+    # Save the return json from FileService.browse_directory("") into the cache file
+    try:
+        from services.file_service import FileService
+        import json
+
+        root_browse_json, _ = FileService.browse_directory("")
+        with open(config.ROOT_SEARCH_CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(root_browse_json, f, ensure_ascii=False, indent=2)
+        logger.info(f"Root search cache file created at {config.ROOT_SEARCH_CACHE_FILE}")
+    except Exception as e:
+        logger.error(f"Error initializing root search cache: {e}")
+
     app = create_app()
     
     logger.info("Starting server with Waitress on 0.0.0.0:8000")
