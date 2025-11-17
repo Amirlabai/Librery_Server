@@ -433,9 +433,9 @@ class FileService:
         
         try:
             # Ensure cache directory exists
-            if not os.path.exists(config.SEARCH_CACHE_DIR):
-                os.makedirs(config.SEARCH_CACHE_DIR)
-                logger.info(f"Created cache directory: {config.SEARCH_CACHE_DIR}")
+            if not os.path.exists(config.ROOT_SEARCH_CACHE_FILE):
+                os.makedirs(config.ROOT_SEARCH_CACHE_FILE)
+                logger.info(f"Created cache directory: {config.ROOT_SEARCH_CACHE_FILE}")
             
             # Read the upload completed log
             df = pd.read_csv(config.UPLOAD_COMPLETED_LOG_FILE, encoding='utf-8')
@@ -467,14 +467,14 @@ class FileService:
             
             # Save each letter's cache file (without headers to match search_uploaded_files reading format)
             for letter, rows in cache_dict.items():
-                cache_file_path = os.path.join(config.SEARCH_CACHE_DIR, f"{letter}.csv")
+                cache_file_path = os.path.join(config.ROOT_SEARCH_CACHE_FILE, f"{letter}.csv")
                 letter_df = pd.DataFrame(rows)
                 letter_df.to_csv(cache_file_path, index=False, header=False, encoding='utf-8')
                 logger.debug(f"Saved {len(rows)} rows to {letter}.csv")
             
             # Save misc file for non-a-z files
             if misc_rows:
-                misc_file_path = os.path.join(config.SEARCH_CACHE_DIR, "misc.csv")
+                misc_file_path = os.path.join(config.ROOT_SEARCH_CACHE_FILE, "misc.csv")
                 misc_df = pd.DataFrame(misc_rows)
                 misc_df.to_csv(misc_file_path, index=False, header=False, encoding='utf-8')
                 logger.debug(f"Saved {len(misc_rows)} rows to misc.csv")
@@ -519,9 +519,9 @@ class FileService:
             
             # Determine cache file: a-z use letter.csv, others use misc.csv
             if first_char.isalpha() and 'a' <= first_char <= 'z':
-                cache_file_path = os.path.join(config.SEARCH_CACHE_DIR, f"{first_char}.csv")
+                cache_file_path = os.path.join(config.ROOT_SEARCH_CACHE_FILE, f"{first_char}.csv")
             else:
-                cache_file_path = os.path.join(config.SEARCH_CACHE_DIR, "misc.csv")
+                cache_file_path = os.path.join(config.ROOT_SEARCH_CACHE_FILE, "misc.csv")
             
             # Load the cache CSV file into DataFrame
             df = pd.read_csv(cache_file_path, header=None, encoding='utf-8')
@@ -539,6 +539,7 @@ class FileService:
             files.sort(key=lambda x: x['name'].lower())
         except FileNotFoundError:
             logger.warning(f"Search cache file not found: {cache_file_path}")
+            FileService.trigger_cache_priming()
             return {
                 "files": [],
                 "folders": [],

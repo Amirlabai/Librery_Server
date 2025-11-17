@@ -23,7 +23,7 @@ UPLOAD_LOG_FILE = "logs/upload_log.csv"
 DECLINED_UPLOAD_LOG_FILE = "logs/declined_log.csv"
 
 # --- chache files ---
-SEARCH_CACHE_DIR = "cache"
+ROOT_SEARCH_CACHE_FILE = "cache"
 
 # --- File Upload Settings ---
 # General file extensions
