@@ -539,7 +539,7 @@ class FileService:
             files.sort(key=lambda x: x['name'].lower())
         except FileNotFoundError:
             logger.warning(f"Search cache file not found: {cache_file_path}")
-            FileService.trigger_cache_priming()
+            FileService._trigger_cache_priming()
             return {
                 "files": [],
                 "folders": [],
