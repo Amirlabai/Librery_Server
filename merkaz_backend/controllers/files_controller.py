@@ -207,7 +207,8 @@ def search():
     user_email = session.get("email", "unknown")
     logger.info(f"Search request received - User: {user_email}")
     search_query = request.args.get("q", "")
-    search_results, error = FileService.search_uploaded_files(search_query)
+    folder_path = request.args.get("folder_path", "")
+    search_results, error = FileService.search_uploaded_files(search_query,folder_path)
 
     if error:
         logger.warning(f"Search failed - {error} for query: {search_query}, User: {user_email}")
