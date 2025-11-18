@@ -495,7 +495,7 @@ class FileService:
             return False, str(e)
 
     @staticmethod
-    def search_uploaded_files(query):
+    def search_uploaded_files(query, folder_path=''):
         """
         Search for uploaded files in the upload_completed_log based on a query string
         against the filename (column 6).
@@ -525,7 +525,10 @@ class FileService:
             
             # Load the cache CSV file into DataFrame
             df = pd.read_csv(cache_file_path, header=None, encoding='utf-8')
-            
+
+            if folder_path:
+                df = df[df[6].str.contains(folder_path, na=False, case=False)]
+
             # Column 5 (0-indexed) is the filename
             matching = df[df[5].str.contains(query, na=False, case=False)]
             for idx, row in matching.iterrows():
