@@ -22,6 +22,7 @@ AUTH_USER_DATABASE = os.path.join(SERVER_DATA_DIR, "auth_users.csv").replace('\\
 NEW_USER_DATABASE = os.path.join(SERVER_DATA_DIR, "new_users.csv").replace('\\', '/')
 DENIED_USER_DATABASE = os.path.join(SERVER_DATA_DIR, "denied_users.csv").replace('\\', '/')
 PASSWORD_RESET_DATABASE = os.path.join(SERVER_DATA_DIR, "password_reset.csv").replace('\\', '/')
+OUTSIDE_USERS_DATABASE_SOURCE = os.path.join(SERVER_DATA_DIR, "outside_users.csv").replace('\\', '/')
 
 # --- ID Sequence Management ---
 ID_SEQUENCE_FILE = os.path.join(SERVER_DATA_DIR, "user_id_sequence.txt").replace('\\', '/')
