@@ -154,7 +154,7 @@ if __name__ == "__main__":
     logger.info("Starting Merkaz Server Application")
     logger.info("=" * 60)
     
-    #run_ngrok.main()
+    run_ngrok.main()
     # --- Directory and File Initialization ---
     # Get project root (one level up from merkaz_backend directory)
     project_root = get_project_root()
