@@ -97,6 +97,6 @@ Returns (is_valid, error_message) tuple.
     - `email`
 
 - `is_outside_user(email)`
-  - Check if a user is an outside user without pandas.
+  - Check if a user is an outside user (comparing username only, case-insensitive).
   - Arguments:
     - `email`
