@@ -826,7 +826,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>searchFiles(query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>searchFiles(query: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, folderPath: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
@@ -851,6 +851,7 @@
                                             <td>Name</td>
                                                 <td>Type</td>
                                             <td>Optional</td>
+                                                <td>Default value</td>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -864,6 +865,23 @@
                                                     No
                                             </td>
 
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>folderPath</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>&#x27;&#x27;</code>
+                                            </td>
 
                                         </tr>
                                     </tbody>
@@ -1071,8 +1089,8 @@ export class DashboardService {
         return this.http.get(url, { withCredentials: true });
     }
 
-    searchFiles(query: string): Observable&lt;any&gt; {
-        return this.http.get(&#x60;${this.baseUrl}/search?q&#x3D;${query}&#x60;, {
+    searchFiles(query: string,folderPath: string &#x3D; &#x27;&#x27;): Observable&lt;any&gt; {
+        return this.http.get(&#x60;${this.baseUrl}/search?q&#x3D;${query}&amp;folder_path&#x3D;${folderPath}&#x60;, {
             withCredentials: true
         });
     }
