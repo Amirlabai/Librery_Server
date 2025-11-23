@@ -95,3 +95,8 @@ Returns (is_valid, error_message) tuple.
   - Check if a user is a boss admin.
   - Arguments:
     - `email`
+
+- `is_outside_user(email)`
+  - Check if a user is an outside user without pandas.
+  - Arguments:
+    - `email`
