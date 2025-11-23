@@ -82,13 +82,13 @@
               @if (!(item.is_folder || item.isFolder)) {
                 <button (click)="preview(item, $event)" class="action-btn preview-btn">Preview</button>
               }
-              <button (click)="download(item, $event)" class="action-btn download-btn">Download</button>
+              <button (click)="openDonwloadWarningModal(item,$event)" class="action-btn download-btn">Download</button>
               
               @if(isAdmin){
                 <button (click)="deleteItem(item, $event)" class="action-btn delete-btn">Delete</button>
                 <button (click) = "openEditPathModal()" class="edit-btn">Edit</button>
               }
-
+<!--(click)="download(item, $event)" -->
             </div>
           </td>
         </tr>
@@ -207,6 +207,33 @@
             </div>
 
             <button class="edit-back-btn" (click)="goBackInModal()">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  <!-- Download warning Modal -->
+  @if (showDonwloadWarningModal) {
+    <div class="modal-overlay" (click)="closeDonwloadWarningModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Warning ⚠️</h2>
+          <button class="modal-close" (click)="closeDonwloadWarningModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+          
+          <label for="folderName">This file may pose security risks.
+            Make sure it comes from a trusted source before downloading.<br><br> 
+            Proceed?</label>
+          
+          <div class="modal-actions">
+            <button type="button" (click)="download($event); closeDonwloadWarningModal(); $event.stopPropagation()"  class="create-btn">
+              Continue
+            </button>
+            <button type="button" (click)="closeDonwloadWarningModal()" class="cancel-btn">
+              Cancel
+            </button>
           </div>
         </div>
       </div>
