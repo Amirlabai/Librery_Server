@@ -89,8 +89,8 @@ export class DashboardService {
         return this.http.get(url, { withCredentials: true });
     }
 
-    searchFiles(query: string): Observable<any> {
-        return this.http.get(`${this.baseUrl}/search?q=${query}`, {
+    searchFiles(query: string,folderPath: string = ''): Observable<any> {
+        return this.http.get(`${this.baseUrl}/search?q=${query}&folder_path=${folderPath}`, {
             withCredentials: true
         });
     }
