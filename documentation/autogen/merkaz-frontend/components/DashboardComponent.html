@@ -3047,7 +3047,7 @@ export class DashboardComponent {
       this.isSearching &#x3D; false;
       return;
     }
-    this.dashboardService.searchFiles(query).subscribe({
+    this.dashboardService.searchFiles(query,this.currentPath).subscribe({
       next: res &#x3D;&gt; {
         const folders &#x3D; res.folders || [];
         const files &#x3D; res.files || [];
