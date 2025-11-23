@@ -8,6 +8,7 @@ from repositories.user_repository import UserRepository
 from utils.logger_config import get_logger
 from utils import get_next_user_id
 import config.config as config
+import csv
 
 logger = get_logger(__name__)
 
@@ -219,6 +220,22 @@ class AuthService:
         user = UserRepository.find_by_email(email)
         return user.is_boss_admin
 
+    @staticmethod
+    def is_outside_user(email):
+        """Check if a user is an outside user without pandas."""
+        try:
+            with open(config.OUTSIDE_USERS_DATABASE_SOURCE, 'r', newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                
+                next(reader, None) 
+                
+                for row in reader:
+                    if row and row[0] == email:
+                        return True
+            return False
+        except FileNotFoundError:
+            return False
+
 # Legacy functions for backward compatibility
 def mark_user_online():
     """Mark the current user as online."""
@@ -267,4 +284,3 @@ def get_current_user_id():
     user_id = session.get("user_id")
     logger.debug(f"Retrieved current user ID: {user_id}")
     return user_id
-

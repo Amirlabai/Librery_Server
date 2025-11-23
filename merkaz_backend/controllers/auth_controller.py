@@ -6,10 +6,11 @@ from flask_cors import cross_origin
 import config.config as config
 from utils import log_event
 from utils.logger_config import get_logger
-from services.mail_service import send_new_user_notification, send_password_reset_email
+from services.mail_service import send_new_user_notification, send_password_reset_email, send_approval_email
 from services.auth_service import AuthService, mark_user_online, mark_user_offline
 from repositories.session_repository import SessionRepository
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
+from services.admin_service import AdminService
 
 auth_bp = Blueprint('auth', __name__)
 logger = get_logger(__name__)
@@ -68,9 +69,15 @@ def api_register():
         logger.warning(f"Registration failed - {error} for email: {email}")
         return jsonify({"error": error}), status_code
 
-    send_new_user_notification(current_app._get_current_object(), email)
-    logger.info(f"Registration successful - Email: {email}, user_id: {new_user.user_id}")
-    return jsonify({"message": "Registration successful. Pending admin approval."}), 201
+    if not AuthService.is_outside_user(email):
+        send_new_user_notification(current_app._get_current_object(), email)
+        logger.info(f"Registration successful - Email: {email}, user_id: {new_user.user_id}")
+        return jsonify({"message": "Registration successful. Pending admin approval."}), 201
+    else:
+        logger.info(f"Registration successful - Email: {email}, user_id: {new_user.user_id}")
+        AdminService.approve_user(email)
+        send_approval_email(current_app._get_current_object(), email)
+        return jsonify({"message": "Registration successful. Outside user."}), 201
 
 @auth_bp.route("/logout", methods=["POST"])
 @cross_origin(supports_credentials=True)
