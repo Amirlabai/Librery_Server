@@ -107,12 +107,13 @@ Should be called after operations that modify the pending log.
 into separate CSV files based on the first character of filenames (a-z).
 Files starting with non-a-z characters are saved to misc.csv.
 
-- `search_uploaded_files(query)`
+- `search_uploaded_files(query, folder_path='')`
   - Search for uploaded files in the upload_completed_log based on a query string
 against the filename (column 6).
 Returns a dict in the format similar to browse_directory() with file results.
   - Arguments:
     - `query`
+    - `folder_path` (default: `''`)
 
 - `submit_suggestion(suggestion_text, email, session_data)`
   - Submit a suggestion with cooldown management.
