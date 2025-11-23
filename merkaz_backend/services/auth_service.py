@@ -222,16 +222,25 @@ class AuthService:
 
     @staticmethod
     def is_outside_user(email):
-        """Check if a user is an outside user without pandas."""
+        """Check if a user is an outside user (comparing username only, case-insensitive)."""
         try:
+            # Pre-process the input: get part before '@' and lowercase it
+            target_user = email.split('@')[0].lower()
+
             with open(config.OUTSIDE_USERS_DATABASE_SOURCE, 'r', newline='', encoding='utf-8') as f:
                 reader = csv.reader(f)
                 
+                # Optional: Skip the header row
                 next(reader, None) 
                 
                 for row in reader:
-                    if row and row[0] == email:
-                        return True
+                    # Ensure the row has data before processing
+                    if row:
+                        # Process CSV entry: get part before '@' and lowercase it
+                        csv_user = row[0].split('@')[0].lower()
+                        
+                        if csv_user == target_user:
+                            return True
             return False
         except FileNotFoundError:
             return False
