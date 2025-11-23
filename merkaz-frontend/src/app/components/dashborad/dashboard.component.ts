@@ -42,6 +42,9 @@ export class DashboardComponent {
   
   showEditPathModal = false;
   editedFilePath = '';
+
+  showDonwloadWarningModal = false;
+  downloadItem = '';
   
   selectedFile: any = null;
 
@@ -52,8 +55,8 @@ export class DashboardComponent {
   
   previewFile: any = null;
   previewUrl: string = '';
- 
-searchCallsCount = 0;
+
+
   constructor(
     private dashboardService: DashboardService,
     private router: Router,
@@ -153,11 +156,11 @@ searchCallsCount = 0;
     return ['txt', 'md', 'json', 'xml', 'csv', 'log', 'html', 'css', 'js', 'ts'].includes(ext || '');
   }
 
-  download(item: any, event: Event) {
+  download(event: Event) {
     event.stopPropagation();
-    const url = this.dashboardService.getDownloadUrl(item);
-    window.open(url, '_blank');
     
+    const url = this.dashboardService.getDownloadUrl(this.downloadItem);
+    window.open(url, '_blank');
   }
 
   deleteItem(item: any,event: MouseEvent) {
@@ -225,6 +228,15 @@ searchCallsCount = 0;
   closeCreateFolderModal() {
     this.showCreateFolderModal = false;
     this.newFolderName = '';
+  }
+  closeDonwloadWarningModal(){
+    this.showDonwloadWarningModal = false;
+  }
+  openDonwloadWarningModal(item: any, event: Event){
+    event.stopPropagation();
+    this.showDonwloadWarningModal = true;
+    this.downloadItem = item;
+    
   }
 
   createFolder() {
