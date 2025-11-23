@@ -361,7 +361,7 @@ export class DashboardComponent {
       this.isSearching = false;
       return;
     }
-    this.dashboardService.searchFiles(query).subscribe({
+    this.dashboardService.searchFiles(query,this.currentPath).subscribe({
       next: res => {
         const folders = res.folders || [];
         const files = res.files || [];
