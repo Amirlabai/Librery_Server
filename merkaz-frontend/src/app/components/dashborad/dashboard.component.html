@@ -1,6 +1,27 @@
 <div class="container">
+  <div class="intro-header">
+    <div class="intro-left">
+      @if(userEmail){
+        <h1>Welcome, {{ userEmail }}</h1>
+      }
+    </div>
+
+    <div class="suggestion-group" 
+        (click)="openSuggestBox()" 
+        [ngClass]="{'lightbulb-active': showSuggestBox}">
+        
+         <span class="suggest-text">Report Bug/Help</span> 
+
+        <span class="lightbulb-wrapper">
+          <mat-icon>lightbulb</mat-icon>
+        </span>
+      </div>
+  </div>
+
   <div class="header">
+    
     <h1><a (click)="goToRoot()">Public Files</a></h1>
+  
     <div class="header-right">
       <a routerLink="my-uploads" class="my-uploads-btn">My Uploads</a>
       <a [routerLink]="['upload']" [queryParams]="{ path: currentPath }" class="upload-btn">Upload File</a>
@@ -113,17 +134,6 @@
     <p style="color:red;text-align:center;">Failed to load items.</p>
   }
   
-
-  <div class="suggestion-box">
-    
-    <h2>Have a Suggestion? (Cooldown: Level {{ cooldownLevel }})</h2>
-
-    <form (ngSubmit)="submitSuggestion()">
-      <textarea [(ngModel)]="suggestionText" name="suggestion" rows="4" placeholder="Type your suggestion here..." required></textarea>
-      <br />
-      <button type="submit">Submit Suggestion</button>
-    </form>
-  </div>
 
   <!-- Create Folder Modal -->
   @if (showCreateFolderModal) {
@@ -238,6 +248,305 @@
         </div>
       </div>
     </div>
+  }
+  @if(showSuggestBox){
+      <div class="suggestion-box-modal-overlay"
+      (click)="closeSuggestBox()"
+    
+      >
+        
+        <div class="suggestion-box-content"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="suggestion-box-header">
+            <h2>Write to us </h2>
+            <div class="container">
+  <div class="intro-header">
+    <div class="intro-left">
+      @if(userEmail){
+        <h1>Welcome, {{ userEmail }}</h1>
+      }
+    </div>
+
+    <div class="suggestion-group" 
+        (click)="openSuggestBox()" 
+        [ngClass]="{'lightbulb-active': showSuggestBox}">
+        
+         <span class="suggest-text">Report Bug/Help</span> 
+
+        <span class="lightbulb-wrapper">
+          <mat-icon>lightbulb</mat-icon>
+        </span>
+      </div>
+  </div>
+
+  <div class="header">
+    
+    <h1><a (click)="goToRoot()">Public Files</a></h1>
+  
+    <div class="header-right">
+      <a routerLink="my-uploads" class="my-uploads-btn">My Uploads</a>
+      <a [routerLink]="['upload']" [queryParams]="{ path: currentPath }" class="upload-btn">Upload File</a>
+
+      @if (isAdmin) {
+        <a (click)="navAdmin()" routerLink="/admin-dash" class="admin-dashboard-btn">
+          Admin Dashboard
+        </a>
+      }
+      <a (click)="logout()" class="logout-btn">Logout</a>
+    </div>
+  </div>
+
+  
+  <div class="path-bar">
+
+    @if (isAdmin) {
+       <div class="create-folder-wrapper">
+          <button (click)="openCreateFolderModal()" class="create-folder-btn">📁 Create Folder</button>
+       </div>
+      <input [(ngModel)]="searchFiles" (input)="onSearchChange()" placeholder="search" class="search-items">
+    }
+    @if (currentPath) {
+      <div class="back-btn-wrapper">
+        <a class="backPathButton" (click)="goUp()" >⬅️ Back</a>
+        <span class="pathFolders">{{ currentPath || '/' }}</span>
+      </div>
+    }
+    
+    
+  </div>
+ 
+  @defer (on idle) {
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th style="width: 200px; text-align:center;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (isSearching) {
+          <tr>
+            <td colspan="2" style="text-align:center; padding:20px;">
+              Loading...
+            </td>
+          </tr>
+        }@else {
+
+        
+        @for (item of allItems; track item.path) {
+        <tr 
+        [ngClass]="{ 'selected-row': selectedFile?.path === item.path }"
+        (click)="navigate(item)"
+        >
+          <td>
+          <div class="item-name">
+            @if (item.is_folder || item.isFolder) {
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"
+                  ></path>
+                </svg>
+              <span>{{ item.name }}/</span>
+
+            } @else {
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z"
+                  ></path>
+                </svg>
+              <span>{{ item.name }}</span>
+            }
+            </div>
+          </td>
+          <td style="text-align: center;">
+            <div class="action-cell">
+              @if (!(item.is_folder || item.isFolder)) {
+                <button (click)="preview(item, $event)" class="action-btn preview-btn">Preview</button>
+              }
+              <button (click)="openDonwloadWarningModal(item,$event)" class="action-btn download-btn">Download</button>
+              
+              @if(isAdmin){
+                <button (click)="deleteItem(item, $event)" class="action-btn delete-btn">Delete</button>
+                <button (click) = "openEditPathModal()" class="edit-btn">Edit</button>
+              }
+<!--(click)="download(item, $event)" -->
+            </div>
+          </td>
+        </tr>
+        }
+        @if (allItems.length === 0) {
+          <tr>
+            <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
+                This folder is empty.
+            </td>
+          </tr>
+        }
+      }
+      </tbody>
+    </table>
+  </div>
+
+  } @placeholder {
+    <p style="text-align:center;color:#777;">Loading items...</p>
+  } @loading {
+    <p>Loading...</p>
+  } @error {
+    <p style="color:red;text-align:center;">Failed to load items.</p>
+  }
+  
+
+  <!-- Create Folder Modal -->
+  @if (showCreateFolderModal) {
+    <div class="modal-overlay" (click)="closeCreateFolderModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Create New Folder</h2>
+          <button class="modal-close" (click)="closeCreateFolderModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+          
+          <label for="folderName">Folder Name:</label>
+          <input
+            type="text"
+            id="folderName"
+            [(ngModel)]="newFolderName"
+            placeholder="Enter folder name..."
+            (keyup.enter)="createFolder()"
+            autofocus
+          />
+
+          <div class="modal-actions">
+            <button type="button" (click)="createFolder()" class="create-btn">
+              Create
+            </button>
+            <button type="button" (click)="closeCreateFolderModal()" class="cancel-btn">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!--Edit file path Modal-->
+  @if (showEditPathModal) {
+    <div class="edit-modal-overlay" (click)="closeEditPathModal()">
+      <div class="edit-modal-content" (click)="$event.stopPropagation()">
+        <div class="edit-modal-header">
+          <h2>Edit file path</h2>
+          <button class="edit-modal-close" (click)="closeEditPathModal()">×</button>
+        </div>
+
+        <div class="edit-modal-body">
+          
+          <label for="newFilePath">New File Path:</label>
+          <input
+            type="text"
+            id="newFilePath"
+            [(ngModel)]="editedFilePath"
+            placeholder="Enter new file path..."
+            readonly
+            (keyup.enter)="editFilePath()"
+            autofocus
+          />
+
+          <div class="edit-modal-actions">
+            <button type="button" (click)="editFilePath()" class="edit-update-btn">Update</button>
+            <button type="button" (click)="closeEditPathModal()" class="edit-cancel-btn">Cancel</button>
+          </div>
+
+          <div class="edit-left-side">
+            <h3>Your folders</h3>
+
+            <p class="path-display">📂 {{ editModalPath || '/' }}</p>
+
+            <div class="folders-content">
+              <ul>
+                @for (folder of modalFolders; track folder.name) {
+                  <li class="folder-item">
+                    <span class="openFolderInModalBtn" (click)="openFolderInModal(folder)">
+                      📁 {{ folder.name }}
+                    </span>
+                  </li>
+                }
+                @if (modalFolders.length === 0) {
+                  <li class="no-folders">This folder is empty.</li>
+                }
+              </ul>
+            </div>
+
+            <button class="edit-back-btn" (click)="goBackInModal()">Back</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  <!-- Download warning Modal -->
+  @if (showDonwloadWarningModal) {
+    <div class="modal-overlay" (click)="closeDonwloadWarningModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Warning ⚠️</h2>
+          <button class="modal-close" (click)="closeDonwloadWarningModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+          
+          <label for="folderName">This file may pose security risks.
+            Make sure it comes from a trusted source before downloading.<br><br> 
+            Proceed?</label>
+          
+          <div class="modal-actions">
+            <button type="button" (click)="download($event); closeDonwloadWarningModal(); $event.stopPropagation()"  class="create-btn">
+              Continue
+            </button>
+            <button type="button" (click)="closeDonwloadWarningModal()" class="cancel-btn">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+  @if(showSuggestBox){
+      <div class="suggestion-box-modal-overlay"
+      (click)="closeSuggestBox()"
+    
+      >
+        
+        <div class="suggestion-box-content"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="suggestion-box-header">
+            <h2>Write to us </h2>
+            <h3 class="cooldownLevel">(Cooldown: Level {{ cooldownLevel }})</h3>
+            <form (ngSubmit)="submitSuggestion()">
+              <textarea [(ngModel)]="suggestionText" name="suggestion" rows="4" placeholder="Type your suggestion here..." required></textarea>
+              <br />
+              <button type="submit">Submit Suggestion</button>
+          </form>
+          
+          </div>
+        </div>
+      </div>
+  }
+
+
+  <router-outlet></router-outlet>
+</div>
+
+            <form (ngSubmit)="submitSuggestion()">
+              <textarea [(ngModel)]="suggestionText" name="suggestion" rows="4" placeholder="Type your suggestion here..." required></textarea>
+              <br />
+              <button type="submit">Submit Suggestion</button>
+          </form>
+          
+          </div>
+        </div>
+      </div>
   }
 
 

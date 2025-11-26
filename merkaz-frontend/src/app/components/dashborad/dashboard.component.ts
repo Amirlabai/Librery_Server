@@ -8,6 +8,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import { NotificationService } from '../../services/notifications/Notifications.service';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'app-dashboard',
@@ -17,8 +18,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     NgClass,
     FormsModule,
     CommonModule,
-    RouterModule
-  ],
+    RouterModule,
+    MatIcon
+],
   styleUrls: ['./dashboard.component.css']
 })
 
@@ -30,6 +32,7 @@ export class DashboardComponent {
   private searchSubject = new Subject<string>();
   isSearching = false;
 
+  userEmail: string | null = null;
   isAdmin = false;
   userRole = '';
   currentPath = '';
@@ -45,6 +48,8 @@ export class DashboardComponent {
 
   showDonwloadWarningModal = false;
   downloadItem = '';
+
+  showSuggestBox = false;
   
   selectedFile: any = null;
 
@@ -67,6 +72,7 @@ export class DashboardComponent {
     this.userRole = localStorage.getItem('role') || '';
     this.isAdmin = this.userRole === 'admin';
     this.loadFiles();
+    this.getUserEmail();
 
 
     this.searchSubject
@@ -206,6 +212,8 @@ export class DashboardComponent {
       next: () => {
         this.notificationService.show('Suggestion submited!',true)
         this.suggestionText = '';
+
+        this.closeSuggestBox();
       },
       error: (err) => {
         if (err.status === 429 && err.error?.error) {
@@ -373,5 +381,18 @@ export class DashboardComponent {
         this.isSearching = false; 
       }
     });
+  }
+  private getUserEmail(){
+    const userEmailLoad = localStorage.getItem('email');
+
+    if(userEmailLoad){
+      this.userEmail = userEmailLoad;
+    }
+  }
+  openSuggestBox(){
+    this.showSuggestBox = true;
+  }
+  closeSuggestBox() {
+    this.showSuggestBox = false;
   }
 }
