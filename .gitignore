@@ -34,3 +34,6 @@ vite.config.ts
 merkaz_backend/config/config.py
 merkaz_backend/large logo.ico
 merkaz_backend/favicon.ico
+merkaz-frontend/src/assets/icons/to-be-logo.jpeg
+merkaz-frontend/src/assets/icons/to-be-logo-256x.png
+merkaz-frontend/src/assets/icons/to-be-logo.ico
