@@ -568,6 +568,9 @@ export class LoginComponent {
         if (res.role) {
           localStorage.setItem(&#x27;role&#x27;, res.role);
         }
+        if(res.email){
+          localStorage.setItem(&#x27;email&#x27;,this.email);
+        }
 
         this.notificationService.show(&#x27;Login succsseful&#x27;,true);
 
