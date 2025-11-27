@@ -18,9 +18,10 @@
 
 /merkaz-frontend/.angular/
 /merkaz-frontend/node_modules/
-
 /merkaz-frontend/.cache/
-
+src/assets/icons/to1-be-logo.ico
+merkaz-frontend/src/assets/icons/to1-be-logo.ico
+/merkaz-frontend/src/assets/icons/to1-be-logo.ico
 /data/
 .logs/
 .DS_Store
