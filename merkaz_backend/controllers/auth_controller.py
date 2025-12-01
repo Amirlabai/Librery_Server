@@ -43,14 +43,7 @@ def api_login():
     log_event(SessionRepository.get_session_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGIN_SUCCESS"])
     logger.info(f"Login successful for user: {email}, role: {'admin' if user.is_admin else 'user'}")
 
-    return jsonify({
-        "message": "Login successful",
-        "email": user.email,
-        "role": "admin" if user.is_admin else "user",
-        "full_name": user.full_name,
-        "username": user.username,
-        "token": "mock-token"
-    }), 200
+    return user.login_response(user), 200
 
 @auth_bp.route("/register", methods=["POST"])
 def api_register():

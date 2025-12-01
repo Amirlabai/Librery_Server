@@ -96,6 +96,18 @@ class User(ABC):
         """Returns a list of all admin email addresses."""
         return [user.email for user in User.get_all() if user.is_admin]
 
+    @staticmethod
+    def login_response(self):
+        """Returns a login response for the user."""
+        return {
+            "message": "Login successful",
+            "email": self.email,
+            "role": "admin" if self.is_admin else "user",
+            "full_name": self.full_name,
+            "username": self.username,
+            "token": "mock-token"
+        }
+
     # --- Methods for Pending Users (new_users.csv) ---
     @staticmethod
     def find_pending_by_email(email):
