@@ -793,3 +793,80 @@ class UploadService:
                 logger.error(f"Edit path failed - Error: {str(e)}")
                 return False, f"An error occurred while updating the path: {e}"
 
+    @staticmethod
+    def edit_folder_path(upload_id, new_path, old_path):
+        """Edit the path of a folder and move the folder, updating all nested files/folders in log."""
+        if upload_id != 0:
+            return False, "Failed to edit folder path: upload_id must be 0 for folders"
+        logger.info(f"Editing folder path - Old: {old_path}, New: {new_path}")
+
+        # Remove leading slashes if present
+        if old_path.startswith('/'):
+            old_path = old_path[1:]
+        if new_path.startswith('/'):
+            new_path = new_path[1:]
+        
+        # Normalize paths - ensure old_path ends with / for prefix matching
+        # But also handle cases where it doesn't
+        old_path_normalized = old_path.rstrip('/')
+        new_path_normalized = new_path.rstrip('/')
+
+        # Move the folder
+        move_success, move_result = UploadService.move_file_for_edit(upload_id, old_path, new_path)
+        if not move_success:
+            logger.error(f"Edit folder path failed - Could not move folder: {move_result}")
+            return False, move_result
+        
+        # Update new_path if move_file_for_edit returned a different path (e.g., due to conflicts)
+        if isinstance(move_result, str):
+            new_path_normalized = move_result.rstrip('/')
+        
+        file_log_path = UploadRepository.get_completed_log_path()
+        updated_count = 0
+        
+        with _log_lock:
+            try:
+                # Read all rows
+                with open(file_log_path, mode='r', newline='', encoding='utf-8') as f:
+                    reader = csv.reader(f)
+                    header = next(reader, None)
+                    rows = [header] if header else []
+                    
+                    for row in reader:
+                        if len(row) >= 7:
+                            current_path = row[6]  # final_path is column 6
+                            
+                            # Check if this path is within the moved folder
+                            # Path should start with old_path (with or without trailing slash)
+                            if current_path.startswith(old_path_normalized + '/') or current_path == old_path_normalized:
+                                # Replace the old_path prefix with new_path
+                                if current_path == old_path_normalized:
+                                    # This is the folder itself
+                                    row[6] = new_path_normalized
+                                else:
+                                    # This is a file/folder inside the moved folder
+                                    # Remove old_path prefix and add new_path prefix
+                                    relative_path = current_path[len(old_path_normalized):].lstrip('/')
+                                    row[6] = new_path_normalized + '/' + relative_path if new_path_normalized else relative_path
+                                
+                                updated_count += 1
+                                logger.debug(f"Updating path: {current_path} -> {row[6]}")
+                        
+                        rows.append(row)
+                
+                # Write back all rows with updated paths
+                if updated_count > 0:
+                    with open(file_log_path, mode='w', newline='', encoding='utf-8') as f:
+                        writer = csv.writer(f)
+                        writer.writerows(rows)
+                    logger.info(f"Folder path updated - Updated {updated_count} entries in log")
+                    return True, None
+                else:
+                    logger.warning(f"Edit folder path - No entries found with path starting with: {old_path_normalized}")
+                    return True, None  # Folder moved successfully, but no log entries to update
+            except FileNotFoundError:
+                logger.error(f"Edit folder path failed - Log file not found: {file_log_path}")
+                return False, "Completed log file not found"
+            except Exception as e:
+                logger.error(f"Edit folder path failed - Error: {str(e)}")
+                return False, f"An error occurred while updating folder paths: {e}"
