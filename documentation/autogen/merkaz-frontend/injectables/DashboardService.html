@@ -295,8 +295,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="86"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:86</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:84</a></div>
                         </td>
                     </tr>
 
@@ -505,15 +505,15 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>editFilePath(uploadId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, newPath: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>editFilePath(uploadId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, newPath: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, oldPath: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="78"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:78</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="77"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:77</a></div>
                         </td>
                     </tr>
 
@@ -547,6 +547,18 @@
                                         </tr>
                                         <tr>
                                                 <td>newPath</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>oldPath</td>
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
@@ -833,8 +845,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="92"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:92</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="90"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:90</a></div>
                         </td>
                     </tr>
 
@@ -1074,15 +1086,13 @@ export class DashboardService {
                 { withCredentials: true }
         );
     }
-
-    editFilePath(uploadId: number, newPath: string): Observable&lt;any&gt; {
+    editFilePath(uploadId: number, newPath: string, oldPath:string): Observable&lt;any&gt; {
         return this.http.post(
             &#x60;${this.baseUrl}/admin/edit_upload_path/&#x60;,
-            { upload_id: uploadId, new_path: newPath },
+            { upload_id: uploadId, new_path: newPath ,oldPath},
             { withCredentials: true }
         );
     }
-
     browse(path: string &#x3D; &#x27;&#x27;): Observable&lt;any&gt; {
         const clean &#x3D; path.replace(/^\/+|\/+$/g, &#x27;&#x27;);
         const url &#x3D; clean ? &#x60;${this.baseUrl}/browse/${clean}&#x60; : &#x60;${this.baseUrl}/browse&#x60;;
