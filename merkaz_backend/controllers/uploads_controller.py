@@ -175,7 +175,7 @@ def edit_upload_path():
     data = request.get_json() or {}
     request_upload_id = data.get("upload_id")
     request_new_path = data.get("new_path", "")
-    request_old_path = data.get("old_path", "")
+    request_old_path = data.get("oldPath", "")
     
     if not request_upload_id:
         logger.warning("Edit upload path failed - upload_id required")
