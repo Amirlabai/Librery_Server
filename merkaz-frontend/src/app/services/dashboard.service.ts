@@ -74,15 +74,13 @@ export class DashboardService {
                 { withCredentials: true }
         );
     }
-
-    editFilePath(uploadId: number, newPath: string): Observable<any> {
+    editFilePath(uploadId: number, newPath: string, oldPath:string): Observable<any> {
         return this.http.post(
             `${this.baseUrl}/admin/edit_upload_path/`,
-            { upload_id: uploadId, new_path: newPath },
+            { upload_id: uploadId, new_path: newPath ,oldPath},
             { withCredentials: true }
         );
     }
-
     browse(path: string = ''): Observable<any> {
         const clean = path.replace(/^\/+|\/+$/g, '');
         const url = clean ? `${this.baseUrl}/browse/${clean}` : `${this.baseUrl}/browse`;
