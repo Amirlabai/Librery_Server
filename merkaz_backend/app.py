@@ -154,7 +154,7 @@ if __name__ == "__main__":
     logger.info("Starting Merkaz Server Application")
     logger.info("=" * 60)
     
-    run_ngrok.main()
+    #run_ngrok.main()
     # --- Directory and File Initialization ---
     # Get project root (one level up from merkaz_backend directory)
     project_root = get_project_root()
@@ -178,9 +178,9 @@ if __name__ == "__main__":
     # Create necessary CSV files with headers if they don't exist
     logger.debug("Initializing CSV log files")
     # User databases now include ID column
-    create_file_with_header(config.AUTH_USER_DATABASE, ["id", "email", "password", "role", "status"])
-    create_file_with_header(config.NEW_USER_DATABASE, ["id", "email", "password", "role", "status"])
-    create_file_with_header(config.DENIED_USER_DATABASE, ["id", "email", "password", "role", "status"])
+    create_file_with_header(config.AUTH_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
+    create_file_with_header(config.NEW_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
+    create_file_with_header(config.DENIED_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
     create_file_with_header(config.PASSWORD_RESET_DATABASE, ["email", "token", "timestamp"])
     create_file_with_header(config.SESSION_LOG_FILE, ["timestamp", "email", "event"])
     create_file_with_header(config.DOWNLOAD_LOG_FILE, ["timestamp", "email", "type", "path"])
