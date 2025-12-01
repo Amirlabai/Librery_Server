@@ -60,9 +60,11 @@ def api_register():
 
     email = data.get("email")
     password = data.get("password")
+    first_name = data.get("first_name")
+    last_name = data.get("last_name")
     logger.debug(f"Registration attempt for email: {email}")
 
-    new_user, error = AuthService.register(email, password)
+    new_user, error = AuthService.register(email, password, first_name, last_name)
     
     if error:
         status_code = 409 if error == "Email already registered or pending" else 400

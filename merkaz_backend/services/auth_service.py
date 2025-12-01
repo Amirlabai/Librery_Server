@@ -50,7 +50,7 @@ class AuthService:
         return user, None
     
     @staticmethod
-    def register(email, password):
+    def register(email, password, first_name, last_name):
         """Register a new user."""
         logger.info(f"Registration attempt for email: {email}")
         
@@ -69,7 +69,7 @@ class AuthService:
         user_id = get_next_user_id()
         logger.debug(f"Generated user_id: {user_id} for new user: {email}")
         
-        new_user = UserRepository.create_user(email=email, password=hashed_password, role='user', status='pending', user_id=user_id)
+        new_user = UserRepository.create_user(email=email, password=hashed_password, role='user', status='pending', user_id=user_id, first_name=first_name, last_name=last_name)
         
         # Save to pending
         pending_users = UserRepository.get_pending()
