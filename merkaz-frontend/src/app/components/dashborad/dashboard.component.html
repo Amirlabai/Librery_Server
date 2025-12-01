@@ -86,7 +86,7 @@
               
               @if(isAdmin){
                 <button (click)="deleteItem(item, $event)" class="action-btn delete-btn">Delete</button>
-                <button (click) = "openEditPathModal()" class="edit-btn">Edit</button>
+                <button (click) = "openEditPathModal(item, $event)" class="edit-btn">Edit</button>
               }
 <!--(click)="download(item, $event)" -->
             </div>
