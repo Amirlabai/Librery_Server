@@ -139,7 +139,10 @@ class AuthService:
             "email": user.email,
             "role": "admin" if user.is_admin else "user",
             "is_admin": user.is_admin,
-            "is_active": user.is_active
+            "is_active": user.is_active,
+            "full_name": user.full_name,
+            "username": user.username,
+            "is_boss_admin": user.is_boss_admin,
         }, None
     
     @staticmethod

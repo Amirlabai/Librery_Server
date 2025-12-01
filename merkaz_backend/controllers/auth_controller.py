@@ -47,6 +47,8 @@ def api_login():
         "message": "Login successful",
         "email": user.email,
         "role": "admin" if user.is_admin else "user",
+        "full_name": user.full_name,
+        "username": user.username,
         "token": "mock-token"
     }), 200
 
