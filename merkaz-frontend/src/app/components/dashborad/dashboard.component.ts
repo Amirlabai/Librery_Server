@@ -295,6 +295,7 @@ export class DashboardComponent {
     }
 
     const uploadId = this.selectedFile.upload_id;
+    const oldPath = this.currentPath;
     const newPath = this.editedFilePath.trim();
 
     if (!newPath) {
@@ -302,7 +303,7 @@ export class DashboardComponent {
       return;
     }
 
-    this.dashboardService.editFilePath(uploadId, newPath).subscribe({
+    this.dashboardService.editFilePath(uploadId, newPath, oldPath).subscribe({
       next: () => {
         this.notificationService.show('Path updated successfully.',true)
         this.closeEditPathModal();
