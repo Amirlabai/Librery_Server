@@ -75,6 +75,7 @@ export class DashboardService {
         );
     }
     editFilePath(uploadId: number, newPath: string, oldPath:string): Observable<any> {
+
         return this.http.post(
             `${this.baseUrl}/admin/edit_upload_path/`,
             { upload_id: uploadId, new_path: newPath ,oldPath},
