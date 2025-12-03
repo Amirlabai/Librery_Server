@@ -1,6 +1,27 @@
 <div class="container">
+  <div class="intro-header">
+    <div class="intro-left">
+      @if(userEmail){
+        <h1>Welcome, {{ userEmail }}</h1>
+      }
+    </div>
+
+    <div class="suggestion-group" 
+        (click)="openSuggestBox()" 
+        [ngClass]="{'lightbulb-active': showSuggestBox}">
+        
+         <span class="suggest-text">Report Bug/Help</span> 
+
+        <span class="lightbulb-wrapper">
+          <mat-icon>lightbulb</mat-icon>
+        </span>
+      </div>
+  </div>
+
   <div class="header">
+    
     <h1><a (click)="goToRoot()">Public Files</a></h1>
+  
     <div class="header-right">
       <a routerLink="my-uploads" class="my-uploads-btn">My Uploads</a>
       <a [routerLink]="['upload']" [queryParams]="{ path: currentPath }" class="upload-btn">Upload File</a>
@@ -88,7 +109,6 @@
                 <button (click)="deleteItem(item, $event)" class="action-btn delete-btn">Delete</button>
                 <button (click) = "openEditPathModal(item, $event)" class="edit-btn">Edit</button>
               }
-<!--(click)="download(item, $event)" -->
             </div>
           </td>
         </tr>
@@ -113,17 +133,6 @@
     <p style="color:red;text-align:center;">Failed to load items.</p>
   }
   
-
-  <div class="suggestion-box">
-    
-    <h2>Have a Suggestion? (Cooldown: Level {{ cooldownLevel }})</h2>
-
-    <form (ngSubmit)="submitSuggestion()">
-      <textarea [(ngModel)]="suggestionText" name="suggestion" rows="4" placeholder="Type your suggestion here..." required></textarea>
-      <br />
-      <button type="submit">Submit Suggestion</button>
-    </form>
-  </div>
 
   <!-- Create Folder Modal -->
   @if (showCreateFolderModal) {
@@ -239,7 +248,27 @@
       </div>
     </div>
   }
-
-
+  @if(showSuggestBox){
+      <div class="suggestion-box-modal-overlay"
+      (click)="closeSuggestBox()"
+    
+      >
+        
+        <div class="suggestion-box-content"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="suggestion-box-header">
+            <h2>Write to us </h2>
+            <h3 class="cooldownLevel">(Cooldown: Level {{ cooldownLevel }})</h3>
+            <form (ngSubmit)="submitSuggestion()">
+              <textarea [(ngModel)]="suggestionText" name="suggestion" rows="4" placeholder="Type your suggestion here..." required></textarea>
+              <br />
+              <button type="submit">Submit Suggestion</button>
+          </form>
+          
+          </div>
+        </div>
+      </div>
+  }
   <router-outlet></router-outlet>
 </div>
