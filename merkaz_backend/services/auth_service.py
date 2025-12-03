@@ -9,6 +9,7 @@ from utils.logger_config import get_logger
 from utils import get_next_user_id
 import config.config as config
 import csv
+import os
 
 logger = get_logger(__name__)
 
@@ -229,7 +230,10 @@ class AuthService:
         try:
             # Pre-process the input: get part before '@' and lowercase it
             target_user = email.split('@')[0].lower()
-
+            
+            if not os.path.isfile(config.OUTSIDE_USERS_DATABASE_SOURCE):
+                logger.warning(f"Outside users database file not found: {config.OUTSIDE_USERS_DATABASE_SOURCE}")
+                return False
             with open(config.OUTSIDE_USERS_DATABASE_SOURCE, 'r', newline='', encoding='utf-8') as f:
                 reader = csv.reader(f)
                 
