@@ -27,6 +27,7 @@ export class RegisterComponent{
   email = '';
   password = '';
   showPassword = false
+  fullName = '';
   
 
   private passwordPattern =
@@ -45,7 +46,8 @@ export class RegisterComponent{
 
     if (!this.validateForm()) return;
 
-    this.authService.register(this.email, this.password).subscribe({
+    this.fullName.toLocaleLowerCase();
+    this.authService.register(this.fullName,this.email, this.password).subscribe({
 
       next: () => {
         

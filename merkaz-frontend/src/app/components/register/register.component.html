@@ -2,6 +2,15 @@
   <h1>Create your Account</h1>
 
   <form (ngSubmit)="onsubmit()">
+
+    <input
+      type="text"
+      name="full-name"
+      [(ngModel)] = "fullName"
+      placeholder="Full Name"
+      required="true"
+    >
+
     <input
       type="email"
       name="email"
