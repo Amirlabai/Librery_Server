@@ -796,7 +796,7 @@ class UploadService:
     @staticmethod
     def edit_folder_path(upload_id, new_path, old_path):
         """Edit the path of a folder and move the folder, updating all nested files/folders in log."""
-        if upload_id != 0:
+        if upload_id != '0':
             return False, "Failed to edit folder path: upload_id must be 0 for folders"
         logger.info(f"Editing folder path - Old: {old_path}, New: {new_path}")
 
