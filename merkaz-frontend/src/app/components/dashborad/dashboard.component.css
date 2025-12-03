@@ -33,7 +33,7 @@ html, body {
   border-radius: 6px;
   margin-bottom: 20px;
   min-height: 0;
-  max-height: 50vh; 
+  max-height: 100%; 
 }
 
 .table-wrapper thead th {
@@ -52,6 +52,129 @@ html, body {
 }
 .table-wrapper::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+.intro-header{
+  font-size: 8px; 
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+}
+.suggestion-group {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+    cursor: pointer;
+}
+.suggest-text {
+    font-size: 11px; 
+    font-weight: 500;
+    color: #5f6368;
+    line-height: 1;
+}
+.lightbulb-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 34px; 
+  height: 34px;
+  border-radius: 50%;
+  transition: all 0.5s ease-in-out;
+  background-color: #a4a9aa; 
+  box-shadow: none;
+}
+
+.lightbulb-wrapper mat-icon {
+  font-size: 26px; 
+  width: 26px; 
+  height: 26px; 
+  color: #555555;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+}
+
+.suggestion-group.lightbulb-active .lightbulb-wrapper {
+ background-color: #fdd835; 
+ box-shadow: 0 0 15px 5px rgba(253, 216, 53, 0.9), 0 0 20px 8px rgba(253, 216, 53, 0.4); 
+}
+
+.suggestion-group.lightbulb-active .lightbulb-wrapper mat-icon {
+ color: rgb(255, 255, 100); 
+}
+
+.suggestion-group:hover .lightbulb-wrapper {
+ background-color: #fdd835; 
+ box-shadow: 0 0 15px 5px rgba(253, 216, 53, 0.9), 0 0 20px 8px rgba(253, 216, 53, 0.4); 
+}
+
+.suggestion-group:hover .lightbulb-wrapper mat-icon {
+ color: rgb(255, 255, 100); 
+}
+
+.suggestion-group:hover .suggest-text {
+  color: #5f6368; 
+}
+.suggestion-box-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: transparent; 
+  z-index: 999; 
+}
+.suggestion-box-content {
+  position: absolute; 
+  top: 60px; 
+  right: 370px; 
+  width: 330px; 
+  height: 284px;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(167, 165, 165, 0.2);
+  border: 1px solid #ddd;
+  z-index: 1001;
+}
+.suggestion-box-header{
+  color: #1967d2;
+  z-index: 1002;
+}
+.suggestion-box-header form {
+  display: flex; 
+  flex-direction: column; 
+}
+.suggestion-box-header textarea {
+  
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical; 
+  font-size: 14px;
+  box-sizing: border-box; 
+  margin-top: 2px;
+  margin-bottom: 5px; 
+  min-height: 150px;
+  font-family: Arial, Helvetica, sans-serif;
+  border: 1px solid #afaaaa; 
+}
+.suggestion-box-header br {
+  display: none;
+}
+.suggestion-box-header button[type="submit"] {
+  padding: 8px 15px;
+  background-color: #1967d2; 
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  
+  box-sizing: border-box;
+}
+
+.suggestion-box-header button[type="submit"]:hover {
+  background-color: #1a73e8;
 }
 .header {
   display: flex;
@@ -191,39 +314,6 @@ tr:hover {
 .delete-btn:hover { 
   background-color: #f9d8d6; 
 }
-.suggestion-box {
-  margin-top: 40px; 
-  padding-top: 20px; 
-  border-top: 1px solid #ddd; 
-}
-.suggestion-box h2 { 
-  font-size: 18px; 
-  font-weight: 500; 
-  margin-bottom: 15px; 
-}
-.suggestion-box textarea { 
-  width: 100%; 
-  padding: 10px; 
-  font-size: 14px; 
-  font-family: Arial, Helvetica, sans-serif;
-  border: 1px solid #ccc; 
-  border-radius: 4px; 
-  box-sizing: border-box; 
-}
-.suggestion-box button { 
-  margin-top: 10px; 
-  padding: 10px 20px; 
-  background-color: #1a73e8; 
-  color: white; 
-  border: none; 
-  border-radius: 4px; 
-  font-weight: 500; 
-  cursor: pointer; 
-}
-.suggestion-box button:hover { 
-  background-color: #185abc; 
-}
-
 .edit-btn{
   background-color: #e8f0fe; 
   color: #1967d2; 
@@ -584,7 +674,6 @@ tr:hover {
     min-width: 600px; 
   }
 
-
   .modal-content,
   .edit-modal-content{
     width: 95%;
@@ -592,6 +681,25 @@ tr:hover {
     max-height: 90vh;
   }
   
+  .suggestion-box-modal-overlay {
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(65, 63, 63, 0.5); 
+    z-index: 999; 
+  }
+  .suggestion-box-content {
+    position: relative; 
+    top: auto;
+    right: auto;
+    width: 90%;
+    max-width: 350px; 
+    height: auto; 
+    max-height: 80vh; 
+    margin: 20px; 
+    overflow-y: auto; 
+    z-index: 1001; 
+  }
 }
 
 

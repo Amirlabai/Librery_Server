@@ -119,3 +119,10 @@ Returns:
   - Arguments:
     - `upload_id`
     - `new_path`
+
+- `edit_folder_path(upload_id, new_path, old_path)`
+  - Edit the path of a folder and move the folder, updating all nested files/folders in log.
+  - Arguments:
+    - `upload_id`
+    - `new_path`
+    - `old_path`
