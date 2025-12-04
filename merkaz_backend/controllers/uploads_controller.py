@@ -175,12 +175,13 @@ def edit_upload_path():
     data = request.get_json() or {}
     request_upload_id = data.get("upload_id")
     request_new_path = data.get("new_path", "")
+    request_old_path = data.get("oldPath", "")
     
     if not request_upload_id:
         logger.warning("Edit upload path failed - upload_id required")
         return jsonify({"error": "upload_id is required"}), 400
     
-    if not request_new_path:
+    if not request_new_path or request_old_path==request_new_path:
         logger.warning("Edit upload path failed - new_path required")
         return jsonify({"error": "new_path is required"}), 400
     
@@ -188,7 +189,10 @@ def edit_upload_path():
     if request_new_path.startswith('/'):
         request_new_path = request_new_path[1:]
     
-    success, error = UploadService.edit_upload_path(request_upload_id, request_new_path)
+    if request_upload_id != '0':
+        success, error = UploadService.edit_upload_path(request_upload_id, request_new_path)
+    else:
+        success, error = UploadService.edit_folder_path(request_upload_id, request_new_path, request_old_path)
     
     if error:
         status_code = 404 if "not found" in error.lower() else 500
