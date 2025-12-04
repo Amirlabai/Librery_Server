@@ -17,7 +17,7 @@
           "documentation/**/*.md",
           "documentation/autogen/merkaz-frontend/**/*"
         ],
-        "message": "chore(release): ${nextRelease.version}"
+        "message": "chore(release): ${nextRelease.type} - ${nextRelease.version}"
       }
     ],
     [
