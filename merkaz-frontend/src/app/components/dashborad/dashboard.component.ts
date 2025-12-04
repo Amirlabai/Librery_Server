@@ -61,6 +61,8 @@ export class DashboardComponent {
   previewFile: any = null;
   previewUrl: string = '';
 
+  oldPath: string = '';
+
 
   constructor(
     private dashboardService: DashboardService,
