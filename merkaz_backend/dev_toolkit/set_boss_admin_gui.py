@@ -5,8 +5,14 @@ Shows a list of users and allows setting/revoking boss admin status.
 Usage: python set_boss_admin_gui.py
 """
 import sys
+import os
 import tkinter as tk
 from tkinter import ttk, messagebox
+
+# Add parent directory (merkaz_backend) to path to import modules
+_backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, _backend_dir)
+
 from models.user_entity import User
 from config.config import ICON_PATH
 

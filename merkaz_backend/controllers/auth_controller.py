@@ -43,12 +43,7 @@ def api_login():
     log_event(SessionRepository.get_session_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGIN_SUCCESS"])
     logger.info(f"Login successful for user: {email}, role: {'admin' if user.is_admin else 'user'}")
 
-    return jsonify({
-        "message": "Login successful",
-        "email": user.email,
-        "role": "admin" if user.is_admin else "user",
-        "token": "mock-token"
-    }), 200
+    return user.login_response(user), 200
 
 @auth_bp.route("/register", methods=["POST"])
 def api_register():
@@ -60,9 +55,11 @@ def api_register():
 
     email = data.get("email")
     password = data.get("password")
+    first_name = data.get("first_name")
+    last_name = data.get("last_name")
     logger.debug(f"Registration attempt for email: {email}")
 
-    new_user, error = AuthService.register(email, password)
+    new_user, error = AuthService.register(email, password, first_name, last_name)
     
     if error:
         status_code = 409 if error == "Email already registered or pending" else 400

@@ -7,13 +7,22 @@ from abc import ABC
 class User(ABC):
     """Base class for all user types. Implements common functionality."""
     
-    def __init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False):
+    def __init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None):
         self.user_id = user_id  # Unique user ID
         self.email = email
         self.password = password  # This will now be a hashed password
         self.role = role
         self.status = status
         self._is_boss_admin = is_boss_admin  # Boss admin status (set manually by dev)
+        self.first_name = first_name
+        self.last_name = last_name
+        self.username = self.email.split("@")[0]
+        self.__full_name = f"{first_name} {last_name}" if first_name and last_name else self.username
+
+    @property
+    def full_name(self):
+        """Returns the full name of the user."""
+        return self.__full_name
 
     @property
     def is_admin(self):
@@ -51,16 +60,20 @@ class User(ABC):
             "status": self.status,
             "is_admin": self.is_admin,
             "is_active": self.is_active,
-            "is_boss_admin": self.is_boss_admin
+            "is_boss_admin": self.is_boss_admin,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "full_name": self.__full_name,
+            "username": self.username
         }
 
     @staticmethod
-    def create_user(email, password, role='user', status='active', user_id=None, is_boss_admin=False):
+    def create_user(email, password, role='user', status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None):
         """Factory method to create the appropriate user type based on role. Polymorphic factory."""
         if role == 'admin':
-            return Admin(email=email, password=password, status=status, user_id=user_id, is_boss_admin=is_boss_admin)
+            return Admin(email=email, password=password, status=status, user_id=user_id, is_boss_admin=is_boss_admin, first_name=first_name, last_name=last_name)
         else:
-            return RegularUser(email=email, password=password, status=status, user_id=user_id, is_boss_admin=is_boss_admin)
+            return RegularUser(email=email, password=password, status=status, user_id=user_id, is_boss_admin=is_boss_admin, first_name=first_name, last_name=last_name)
 
     # --- Methods for Authenticated Users (auth_users.csv) ---
     @staticmethod
@@ -82,6 +95,18 @@ class User(ABC):
     def get_admin_emails():
         """Returns a list of all admin email addresses."""
         return [user.email for user in User.get_all() if user.is_admin]
+
+    @staticmethod
+    def login_response(self):
+        """Returns a login response for the user."""
+        return {
+            "message": "Login successful",
+            "email": self.email,
+            "role": "admin" if self.is_admin else "user",
+            "full_name": self.full_name,
+            "username": self.username,
+            "token": "mock-token"
+        }
 
     # --- Methods for Pending Users (new_users.csv) ---
     @staticmethod
@@ -130,7 +155,9 @@ class User(ABC):
                     role=new_role,
                     status=user.status,
                     user_id=user.user_id,
-                    is_boss_admin=user.is_boss_admin
+                    is_boss_admin=user.is_boss_admin,
+                    first_name=user.first_name,
+                    last_name=user.last_name
                 )
                 User.save_all(users)
                 return users[i]
@@ -169,6 +196,8 @@ class User(ABC):
                     role_idx = 3
                     status_idx = 4
                     boss_admin_idx = 5 if has_boss_admin_column else None
+                    first_name_idx = 6 if 'first_name' in [col.lower() for col in header] else None
+                    last_name_idx = 7 if 'last_name' in [col.lower() for col in header] else None
                 else:
                     id_idx = None
                     email_idx = 0
@@ -176,6 +205,8 @@ class User(ABC):
                     role_idx = 2
                     status_idx = 3
                     boss_admin_idx = 4 if has_boss_admin_column else None
+                    first_name_idx = 5 if 'first_name' in [col.lower() for col in header] else None
+                    last_name_idx = 6 if 'last_name' in [col.lower() for col in header] else None
                 
                 for row in reader:
                     if not row:
@@ -188,7 +219,8 @@ class User(ABC):
                         role = row[role_idx] if role_idx < len(row) else 'user'
                         status = row[status_idx] if status_idx < len(row) else 'active'
                         is_boss_admin = row[boss_admin_idx].lower() == 'true' if boss_admin_idx is not None and boss_admin_idx < len(row) and row[boss_admin_idx] else False
-                        
+                        first_name = row[first_name_idx] if first_name_idx is not None and first_name_idx < len(row) else None
+                        last_name = row[last_name_idx] if last_name_idx is not None and last_name_idx < len(row) else None
                         if not email or not password:
                             continue
                             
@@ -199,7 +231,9 @@ class User(ABC):
                             role=role, 
                             status=status, 
                             user_id=user_id,
-                            is_boss_admin=is_boss_admin
+                            is_boss_admin=is_boss_admin,
+                            first_name=first_name,
+                            last_name=last_name
                         ))
                     except (ValueError, IndexError):
                         continue
@@ -213,7 +247,7 @@ class User(ABC):
         with open(filepath, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.writer(f)
             # Write header with all columns including is_boss_admin
-            writer.writerow(["id", "email", "password", "role", "status", "is_boss_admin"])
+            writer.writerow(["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
             for user in users:
                 writer.writerow([
                     user.user_id if user.user_id is not None else '',
@@ -221,7 +255,9 @@ class User(ABC):
                     user.password,
                     user.role,
                     user.status,
-                    'true' if user.is_boss_admin else 'false'
+                    'true' if user.is_boss_admin else 'false',
+                    user.first_name if user.first_name is not None else '',
+                    user.last_name if user.last_name is not None else ''
                 ])
 
 
@@ -229,8 +265,8 @@ class User(ABC):
 class RegularUser(User):
     """Regular user class. Inherits from User base class."""
     
-    def __init__(self, email, password, status='active', user_id=None, is_boss_admin=False):
-        super().__init__(email, password, role='user', status=status, user_id=user_id, is_boss_admin=is_boss_admin)
+    def __init__(self, email, password, status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None):
+        super().__init__(email, password, role='user', status=status, user_id=user_id, is_boss_admin=is_boss_admin, first_name=first_name, last_name=last_name)
 
     @property
     def is_admin(self):
@@ -250,8 +286,8 @@ class RegularUser(User):
 class Admin(User):
     """Admin user class. Inherits from User base class with admin privileges."""
     
-    def __init__(self, email, password, status='active', user_id=None, is_boss_admin=False):
-        super().__init__(email, password, role='admin', status=status, user_id=user_id, is_boss_admin=is_boss_admin)
+    def __init__(self, email, password, status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None):
+        super().__init__(email, password, role='admin', status=status, user_id=user_id, is_boss_admin=is_boss_admin, first_name=first_name, last_name=last_name)
 
     @property
     def is_admin(self):

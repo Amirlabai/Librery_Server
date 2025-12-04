@@ -74,10 +74,10 @@ class UserRepository:
         return User.get_admin_emails()
     
     @staticmethod
-    def create_user(email, password, role, status, user_id, is_boss_admin=False):
+    def create_user(email, password, role, status, user_id, is_boss_admin=False, first_name=None, last_name=None):
         """Create a new user using the factory method."""
         logger.debug(f"Creating user - Email: {email}, Role: {role}, Status: {status}, ID: {user_id}, Boss Admin: {is_boss_admin}")
-        user = User.create_user(email=email, password=password, role=role, status=status, user_id=user_id, is_boss_admin=is_boss_admin)
+        user = User.create_user(email=email, password=password, role=role, status=status, user_id=user_id, is_boss_admin=is_boss_admin, first_name=first_name, last_name=last_name)
         logger.info(f"User created - Email: {email}, ID: {user_id}, Boss Admin: {is_boss_admin}")
         return user
     
