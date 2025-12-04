@@ -276,9 +276,14 @@ export class DashboardComponent {
     this.loadFiles();
   }
 
-  openEditPathModal() {
-  
-    if (!this.selectedFile) return;               
+  openEditPathModal(item:any, $event:any) {
+    $event.stopPropagation();
+
+    this.selectedFile = item;
+    this.oldPath = item.path;
+    
+    if (!this.selectedFile) return;
+    
       this.showEditPathModal = true;
       this.editedFilePath = this.selectedFile.path; 
       this.editModalPath = '';            
@@ -295,15 +300,9 @@ export class DashboardComponent {
     }
 
     const uploadId = this.selectedFile.upload_id;
-    const oldPath = this.currentPath;
-    const newPath = this.editedFilePath.trim();
-
-    if (!newPath) {
-      this.notificationService.show('New path cannot be empty.',false)
-      return;
-    }
-
-    this.dashboardService.editFilePath(uploadId, newPath, oldPath).subscribe({
+    const newPath = this.editedFilePath;
+    
+    this.dashboardService.editFilePath(uploadId, newPath, this.oldPath).subscribe({
       next: () => {
         this.notificationService.show('Path updated successfully.',true)
         this.closeEditPathModal();

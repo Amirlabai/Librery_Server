@@ -9,6 +9,7 @@ from utils.logger_config import get_logger
 from utils import get_next_user_id
 import config.config as config
 import csv
+import os
 
 logger = get_logger(__name__)
 
@@ -50,7 +51,7 @@ class AuthService:
         return user, None
     
     @staticmethod
-    def register(email, password):
+    def register(email, password, first_name, last_name):
         """Register a new user."""
         logger.info(f"Registration attempt for email: {email}")
         
@@ -69,7 +70,7 @@ class AuthService:
         user_id = get_next_user_id()
         logger.debug(f"Generated user_id: {user_id} for new user: {email}")
         
-        new_user = UserRepository.create_user(email=email, password=hashed_password, role='user', status='pending', user_id=user_id)
+        new_user = UserRepository.create_user(email=email, password=hashed_password, role='user', status='pending', user_id=user_id, first_name=first_name, last_name=last_name)
         
         # Save to pending
         pending_users = UserRepository.get_pending()
@@ -139,7 +140,10 @@ class AuthService:
             "email": user.email,
             "role": "admin" if user.is_admin else "user",
             "is_admin": user.is_admin,
-            "is_active": user.is_active
+            "is_active": user.is_active,
+            "full_name": user.full_name,
+            "username": user.username,
+            "is_boss_admin": user.is_boss_admin,
         }, None
     
     @staticmethod
@@ -226,7 +230,10 @@ class AuthService:
         try:
             # Pre-process the input: get part before '@' and lowercase it
             target_user = email.split('@')[0].lower()
-
+            
+            if not os.path.isfile(config.OUTSIDE_USERS_DATABASE_SOURCE):
+                logger.warning(f"Outside users database file not found: {config.OUTSIDE_USERS_DATABASE_SOURCE}")
+                return False
             with open(config.OUTSIDE_USERS_DATABASE_SOURCE, 'r', newline='', encoding='utf-8') as f:
                 reader = csv.reader(f)
                 
