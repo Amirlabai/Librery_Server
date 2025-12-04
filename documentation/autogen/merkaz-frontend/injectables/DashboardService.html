@@ -295,8 +295,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="84"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:84</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="85"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:85</a></div>
                         </td>
                     </tr>
 
@@ -845,8 +845,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="90"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:90</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="91"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:91</a></div>
                         </td>
                     </tr>
 
@@ -1087,6 +1087,7 @@ export class DashboardService {
         );
     }
     editFilePath(uploadId: number, newPath: string, oldPath:string): Observable&lt;any&gt; {
+
         return this.http.post(
             &#x60;${this.baseUrl}/admin/edit_upload_path/&#x60;,
             { upload_id: uploadId, new_path: newPath ,oldPath},

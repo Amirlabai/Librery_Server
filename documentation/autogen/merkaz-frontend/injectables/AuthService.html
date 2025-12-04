@@ -525,7 +525,7 @@
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>register(email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, password: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+<code>register(first_name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, last_name: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, email: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, password: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
@@ -553,6 +553,30 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <tr>
+                                                <td>first_name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>last_name</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
                                         <tr>
                                                 <td>email</td>
                                             <td>
@@ -846,8 +870,8 @@ export class AuthService {
     return this.http.post&lt;LoginResponse&gt;(&#x60;${this.baseUrl}/login&#x60;, payload, { withCredentials: true });
   }
 
-  register(email: string, password: string): Observable&lt;RegisterResponse&gt; {
-    const payload &#x3D; { email: email.trim(), password: password.trim() };
+  register(first_name:string,last_name:string,email: string, password: string): Observable&lt;RegisterResponse&gt; {
+    const payload &#x3D; {first_name,last_name, email: email.trim(), password: password.trim() };
     return this.http.post&lt;RegisterResponse&gt;(&#x60;${this.baseUrl}/register&#x60;, payload);
   }
   resetPass(token: string, password: string) {

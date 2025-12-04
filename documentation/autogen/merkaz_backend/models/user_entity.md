@@ -8,7 +8,7 @@ Base class for all user types. Implements common functionality.
 
 #### Methods
 
-- `__init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False)`
+- `__init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None)`
   - No description provided.
   - Arguments:
     - `self`
@@ -18,6 +18,13 @@ Base class for all user types. Implements common functionality.
     - `status` (default: `'active'`)
     - `user_id` (default: `None`)
     - `is_boss_admin` (default: `False`)
+    - `first_name` (default: `None`)
+    - `last_name` (default: `None`)
+
+- `full_name(self)`
+  - Returns the full name of the user.
+  - Arguments:
+    - `self`
 
 - `is_admin(self)`
   - Returns True if user is an admin. Overridden in Admin class.
@@ -55,7 +62,7 @@ Base class for all user types. Implements common functionality.
   - Arguments:
     - `self`
 
-- `create_user(email, password, role='user', status='active', user_id=None, is_boss_admin=False)`
+- `create_user(email, password, role='user', status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None)`
   - Factory method to create the appropriate user type based on role. Polymorphic factory.
   - Arguments:
     - `email`
@@ -64,6 +71,8 @@ Base class for all user types. Implements common functionality.
     - `status` (default: `'active'`)
     - `user_id` (default: `None`)
     - `is_boss_admin` (default: `False`)
+    - `first_name` (default: `None`)
+    - `last_name` (default: `None`)
 
 - `find_by_email(email)`
   - Finds a user by email in the authentication database.
@@ -80,6 +89,11 @@ Base class for all user types. Implements common functionality.
 
 - `get_admin_emails()`
   - Returns a list of all admin email addresses.
+
+- `login_response(self)`
+  - Returns a login response for the user.
+  - Arguments:
+    - `self`
 
 - `find_pending_by_email(email)`
   - Finds a user by email in the pending database.
@@ -134,7 +148,7 @@ Regular user class. Inherits from User base class.
 
 #### Methods
 
-- `__init__(self, email, password, status='active', user_id=None, is_boss_admin=False)`
+- `__init__(self, email, password, status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None)`
   - No description provided.
   - Arguments:
     - `self`
@@ -143,6 +157,8 @@ Regular user class. Inherits from User base class.
     - `status` (default: `'active'`)
     - `user_id` (default: `None`)
     - `is_boss_admin` (default: `False`)
+    - `first_name` (default: `None`)
+    - `last_name` (default: `None`)
 
 - `is_admin(self)`
   - Regular users are not admins.
@@ -165,7 +181,7 @@ Admin user class. Inherits from User base class with admin privileges.
 
 #### Methods
 
-- `__init__(self, email, password, status='active', user_id=None, is_boss_admin=False)`
+- `__init__(self, email, password, status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None)`
   - No description provided.
   - Arguments:
     - `self`
@@ -174,6 +190,8 @@ Admin user class. Inherits from User base class with admin privileges.
     - `status` (default: `'active'`)
     - `user_id` (default: `None`)
     - `is_boss_admin` (default: `False`)
+    - `first_name` (default: `None`)
+    - `last_name` (default: `None`)
 
 - `is_admin(self)`
   - Admin users are always admins.
