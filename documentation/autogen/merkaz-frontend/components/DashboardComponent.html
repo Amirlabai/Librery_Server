@@ -628,8 +628,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="395"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:395</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="396"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:396</a></div>
                         </td>
                     </tr>
 
@@ -887,8 +887,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="365"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:365</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="366"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:366</a></div>
                         </td>
                     </tr>
 
@@ -956,8 +956,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="385"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:385</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="386"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:386</a></div>
                         </td>
                     </tr>
 
@@ -993,8 +993,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="335"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:335</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="336"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:336</a></div>
                         </td>
                     </tr>
 
@@ -1411,8 +1411,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="347"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:347</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="348"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:348</a></div>
                         </td>
                     </tr>
 
@@ -1660,8 +1660,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="360"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:360</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="361"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:361</a></div>
                         </td>
                     </tr>
 
@@ -1850,8 +1850,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="325"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:325</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="326"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:326</a></div>
                         </td>
                     </tr>
 
@@ -1917,8 +1917,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="392"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:392</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="393"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:393</a></div>
                         </td>
                     </tr>
 
@@ -2033,8 +2033,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="317"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:317</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="318"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/dashboard.component.ts:318</a></div>
                         </td>
                     </tr>
 
@@ -3173,6 +3173,7 @@ export class DashboardComponent {
     }
 
     const uploadId &#x3D; this.selectedFile.upload_id;
+    const oldPath &#x3D; this.currentPath;
     const newPath &#x3D; this.editedFilePath.trim();
 
     if (!newPath) {
@@ -3180,7 +3181,7 @@ export class DashboardComponent {
       return;
     }
 
-    this.dashboardService.editFilePath(uploadId, newPath).subscribe({
+    this.dashboardService.editFilePath(uploadId, newPath, oldPath).subscribe({
       next: () &#x3D;&gt; {
         this.notificationService.show(&#x27;Path updated successfully.&#x27;,true)
         this.closeEditPathModal();
