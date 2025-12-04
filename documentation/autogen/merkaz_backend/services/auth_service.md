@@ -46,11 +46,13 @@ Service for authentication operations.
     - `email`
     - `password`
 
-- `register(email, password)`
+- `register(email, password, first_name, last_name)`
   - Register a new user.
   - Arguments:
     - `email`
     - `password`
+    - `first_name`
+    - `last_name`
 
 - `reset_password(email, new_password)`
   - Reset a user's password.

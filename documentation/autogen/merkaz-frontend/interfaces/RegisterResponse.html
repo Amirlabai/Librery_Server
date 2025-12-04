@@ -301,8 +301,8 @@ export class AuthService {
     return this.http.post&lt;LoginResponse&gt;(&#x60;${this.baseUrl}/login&#x60;, payload, { withCredentials: true });
   }
 
-  register(email: string, password: string): Observable&lt;RegisterResponse&gt; {
-    const payload &#x3D; { email: email.trim(), password: password.trim() };
+  register(first_name:string,last_name:string,email: string, password: string): Observable&lt;RegisterResponse&gt; {
+    const payload &#x3D; {first_name,last_name, email: email.trim(), password: password.trim() };
     return this.http.post&lt;RegisterResponse&gt;(&#x60;${this.baseUrl}/register&#x60;, payload);
   }
   resetPass(token: string, password: string) {
