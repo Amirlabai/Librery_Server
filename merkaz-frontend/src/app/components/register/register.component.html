@@ -12,11 +12,27 @@
     >
 
     <input
+      type="text"
+      name="first_name"
+      [(ngModel)]="first_name"
+      placeholder="First Name"
+      required="true"
+    />
+
+    <input
+      type="text"
+      name="last_name"
+      [(ngModel)]="last_name"
+      placeholder="Last Name"
+      required="true"
+    />
+
+    <input
       type="email"
       name="email"
       [(ngModel)]="email"
       placeholder="Email"
-      required
+      required="true"
     />
 
     <div class="password-wrapper">
@@ -25,7 +41,7 @@
         name="password"
         [(ngModel)]="password"
         placeholder="Password"
-        required
+        required="true"
       />
 
       <span class="toggle-password" (click)="togglePasswordVisibility()">
