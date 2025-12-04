@@ -2,12 +2,37 @@
   <h1>Create your Account</h1>
 
   <form (ngSubmit)="onsubmit()">
+
+    <input
+      type="text"
+      name="full-name"
+      [(ngModel)] = "fullName"
+      placeholder="Full Name"
+      required="true"
+    >
+
+    <input
+      type="text"
+      name="first_name"
+      [(ngModel)]="first_name"
+      placeholder="First Name"
+      required="true"
+    />
+
+    <input
+      type="text"
+      name="last_name"
+      [(ngModel)]="last_name"
+      placeholder="Last Name"
+      required="true"
+    />
+
     <input
       type="email"
       name="email"
       [(ngModel)]="email"
       placeholder="Email"
-      required
+      required="true"
     />
 
     <div class="password-wrapper">
@@ -16,7 +41,7 @@
         name="password"
         [(ngModel)]="password"
         placeholder="Password"
-        required
+        required="true"
       />
 
       <span class="toggle-password" (click)="togglePasswordVisibility()">

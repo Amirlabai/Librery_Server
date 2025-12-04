@@ -27,8 +27,9 @@ export class RegisterComponent{
   email = '';
   password = '';
   showPassword = false
+  first_name = '';
+  last_name = '';
   
-
   private passwordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[{\]};:'",.<>/?]).{8,}$/;
 
@@ -45,7 +46,12 @@ export class RegisterComponent{
 
     if (!this.validateForm()) return;
 
-    this.authService.register(this.email, this.password).subscribe({
+    this.first_name.toLowerCase();
+    this.last_name.toLocaleLowerCase();
+
+    
+
+    this.authService.register(this.first_name,this.last_name,this.email, this.password).subscribe({
 
       next: () => {
         
