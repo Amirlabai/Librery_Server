@@ -7,6 +7,7 @@
 @use '@angular/material' as mat;
 
 html {
+  color-scheme: dark;
   @include mat.theme((
     color: (
       primary: mat.$rose-palette,

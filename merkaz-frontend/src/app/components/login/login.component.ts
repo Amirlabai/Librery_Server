@@ -1,17 +1,14 @@
-
-/**
- * LoginComponent
- * -----------------------
- * Handles user authentication.
- * Sends credentials to Flask backend and handles success/failure responses.
- * Backend is expected to respond strictly in JSON format.
- */
 import { Component } from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../../services/auth.service';
 import { NotificationService } from '../../services/notifications/Notifications.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +19,12 @@ import { NotificationService } from '../../services/notifications/Notifications.
     CommonModule,
     FormsModule,
     RouterLink,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule
   ]
 })
 export class LoginComponent {
