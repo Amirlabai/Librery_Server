@@ -5,10 +5,13 @@ import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,MatIconModule],
+  imports: [RouterOutlet, MatIconModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
 export class AppComponent {
   protected title = 'merkaz-frontend';
+
 }
+
+
