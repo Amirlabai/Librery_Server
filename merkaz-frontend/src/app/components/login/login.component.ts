@@ -57,6 +57,13 @@ export class LoginComponent {
         if(res.email){
           localStorage.setItem('email',this.email);
         }
+        if(res){
+          this.authService.saveToken(res.token);
+          localStorage.setItem('role', res.role);
+          localStorage.setItem('email',this.email);
+          localStorage.setItem('fullName',res.full_name);
+        }
+        console.log('fullName',res.full_name);
 
         this.notificationService.show('Login succsseful',true);
 

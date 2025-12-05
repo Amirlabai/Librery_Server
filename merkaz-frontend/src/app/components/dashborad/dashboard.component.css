@@ -184,6 +184,14 @@ html, body {
   padding-bottom: 15px;
   margin-bottom: 15px;
 }
+.logo{
+  margin-right: 5px;
+}
+.logo img {
+  width: 110px; 
+  height: 60px;
+  display: block; 
+}
 .header-right {
   display: flex;
   align-items: center;

@@ -1,22 +1,17 @@
 {
-  "files": [],
-  "folders": [
+  "files": [
     {
-      "upload_id": "0",
-      "name": "a",
-      "path": "a",
-      "is_folder": true
-    },
+      "upload_id": "9",
+      "name": "invoice_INV-1000.pdf",
+      "path": "invoice_INV-1000.pdf",
+      "is_folder": false
+    }
+  ],
+  "folders": [
     {
       "upload_id": "0",
       "name": "b",
       "path": "b",
-      "is_folder": true
-    },
-    {
-      "upload_id": "0",
-      "name": "c",
-      "path": "c",
       "is_folder": true
     }
   ],
