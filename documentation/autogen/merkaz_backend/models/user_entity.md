@@ -8,6 +8,11 @@ Base class for all user types. Implements common functionality.
 
 #### Methods
 
+- `_format_name(name)`
+  - Format a name: lowercase and capitalize first letter.
+  - Arguments:
+    - `name`
+
 - `__init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None)`
   - No description provided.
   - Arguments:
