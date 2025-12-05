@@ -7,6 +7,16 @@ from abc import ABC
 class User(ABC):
     """Base class for all user types. Implements common functionality."""
     
+    @staticmethod
+    def _format_name(name):
+        """Format a name: lowercase and capitalize first letter."""
+        if not name or not isinstance(name, str):
+            return name
+        name = name.strip()
+        if not name:
+            return None
+        return name.lower().capitalize()
+    
     def __init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None):
         self.user_id = user_id  # Unique user ID
         self.email = email
@@ -14,10 +24,10 @@ class User(ABC):
         self.role = role
         self.status = status
         self._is_boss_admin = is_boss_admin  # Boss admin status (set manually by dev)
-        self.first_name = first_name
-        self.last_name = last_name
+        self.first_name = User._format_name(first_name)
+        self.last_name = User._format_name(last_name)
         self.username = self.email.split("@")[0]
-        self.__full_name = f"{first_name} {last_name}" if first_name and last_name else self.username
+        self.__full_name = f"{self.first_name} {self.last_name}" if self.first_name and self.last_name else self.username
 
     @property
     def full_name(self):
