@@ -32,7 +32,7 @@ export class DashboardComponent {
   private searchSubject = new Subject<string>();
   isSearching = false;
 
-  userEmail: string | null = null;
+  userFullName: string | null = null;
   isAdmin = false;
   userRole = '';
   currentPath = '';
@@ -74,7 +74,7 @@ export class DashboardComponent {
     this.userRole = localStorage.getItem('role') || '';
     this.isAdmin = this.userRole === 'admin';
     this.loadFiles();
-    this.getUserEmail();
+    this.getUserFullName();
 
 
     this.searchSubject
@@ -384,11 +384,11 @@ export class DashboardComponent {
       }
     });
   }
-  private getUserEmail(){
-    const userEmailLoad = localStorage.getItem('email');
+  private getUserFullName(){
+    const userFullNameLoad = localStorage.getItem('fullName');
 
-    if(userEmailLoad){
-      this.userEmail = userEmailLoad;
+    if(userFullNameLoad){
+      this.userFullName = userFullNameLoad;
     }
   }
   openSuggestBox(){

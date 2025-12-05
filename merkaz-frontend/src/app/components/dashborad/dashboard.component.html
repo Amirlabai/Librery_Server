@@ -1,8 +1,11 @@
 <div class="container">
   <div class="intro-header">
-    <div class="intro-left">
-      @if(userEmail){
-        <h1>Welcome, {{ userEmail }}</h1>
+    <div class="logo" >
+      <img src="assets\icons\to-be-logo-2.png" alt="לוגו לבדיקה">
+    </div>
+    <div class="intro-left" >
+      @if(userFullName){
+        <h1>Welcome, {{ userFullName }}</h1>
       }
     </div>
 
