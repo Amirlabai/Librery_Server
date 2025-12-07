@@ -178,6 +178,12 @@
                             <code>CommonModule</code>
                             <code>FormsModule</code>
                             <code>RouterLink</code>
+                            <code>MatCardModule</code>
+                            <code>MatFormFieldModule</code>
+                            <code>MatInputModule</code>
+                            <code>MatButtonModule</code>
+                            <code>MatIconModule</code>
+                            <code>FormsModule</code>
                 </td>
             </tr>
 
@@ -266,7 +272,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:31</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:34</a></div>
                             </td>
                         </tr>
 
@@ -357,8 +363,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="44"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:44</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="47"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:47</a></div>
                         </td>
                     </tr>
 
@@ -398,8 +404,8 @@ Backend should respond with a JSON object (see API Contract above).</p>
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="35"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:35</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="38"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:38</a></div>
                         </td>
                     </tr>
 
@@ -445,7 +451,7 @@ Backend should respond with a JSON object (see API Contract above).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="29" class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:29</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="32" class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:32</a></div>
                         </td>
                     </tr>
 
@@ -476,7 +482,7 @@ Backend should respond with a JSON object (see API Contract above).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="30" class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:30</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="33" class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:33</a></div>
                         </td>
                     </tr>
 
@@ -507,7 +513,7 @@ Backend should respond with a JSON object (see API Contract above).</p>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="31" class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:31</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="34" class="link-to-prism">merkaz-frontend/src/app/components/login/login.component.ts:34</a></div>
                         </td>
                     </tr>
 
@@ -526,6 +532,11 @@ import { FormsModule } from &#x27;@angular/forms&#x27;;
 import {CommonModule} from &#x27;@angular/common&#x27;;
 import {AuthService} from &#x27;../../services/auth.service&#x27;;
 import { NotificationService } from &#x27;../../services/notifications/Notifications.service&#x27;;
+import { MatCardModule } from &#x27;@angular/material/card&#x27;;
+import { MatFormFieldModule } from &#x27;@angular/material/form-field&#x27;;
+import { MatInputModule } from &#x27;@angular/material/input&#x27;;
+import { MatButtonModule } from &#x27;@angular/material/button&#x27;;
+import { MatIconModule } from &#x27;@angular/material/icon&#x27;;
 
 @Component({
   selector: &#x27;app-login&#x27;,
@@ -536,6 +547,12 @@ import { NotificationService } from &#x27;../../services/notifications/Notificat
     CommonModule,
     FormsModule,
     RouterLink,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule
   ]
 })
 export class LoginComponent {
