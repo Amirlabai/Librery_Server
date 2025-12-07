@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { EasterService } from '../../services/easter';
 
 @Component({
   selector: 'app-login',
@@ -33,8 +34,11 @@ export class LoginComponent {
   password = '';
   showPassword = false;
 
-  constructor(private router: Router, private authService: AuthService,private notificationService:NotificationService) {}
+  constructor(private router: Router, private authService: AuthService,private notificationService:NotificationService,private easter:EasterService) {}
 
+  ngOnInit(){
+    this.easter.draw();
+  }
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
