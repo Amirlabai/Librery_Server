@@ -1,0 +1,14 @@
+##########---TITLE---#############
+1. For changing title of the web go to index.html Line 6 [<title>"""WRITE_THE_TITLE_HERE"""</title>]
+
+2. For changing the title icon go to index.html linr 9 [href="assets/icons/to-be-logo.ico"]
+
+
+
+
+
+
+##########---LOGO---############
+
+1. Go to dashboard.component.html line 4 [<img src="PATH_TO_YOUR_LOGO_SRC" alt="banner-logo">]
+
