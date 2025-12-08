@@ -478,9 +478,6 @@ User data and activity logs are stored in CSV format within the `merkaz_server/`
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Contributing
-
-[Add contribution guidelines if applicable]
 
 ## Support
 
