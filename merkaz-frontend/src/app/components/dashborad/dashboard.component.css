@@ -22,7 +22,7 @@ html, body {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 20px 40px;
+  padding: 10px 20px;
   box-sizing: border-box;
 }
 
@@ -31,7 +31,7 @@ html, body {
   overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 6px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   min-height: 0;
   max-height: 100%; 
 }
@@ -54,10 +54,7 @@ html, body {
   background: #999;
 }
 .intro-header{
-  font-size: 8px; 
-  justify-content: space-between;
-  display: flex;
-  align-items: center;
+  display: none;
 }
 .suggestion-group {
     display: flex;
@@ -123,9 +120,10 @@ html, body {
   z-index: 999; 
 }
 .suggestion-box-content {
-  position: absolute; 
-  top: 60px; 
-  right: 370px; 
+  position: fixed; 
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 330px; 
   height: 284px;
   padding: 15px;
@@ -176,13 +174,170 @@ html, body {
 .suggestion-box-header button[type="submit"]:hover {
   background-color: #1a73e8;
 }
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  margin-top: auto;
+  border-top: 1px solid #e0e0e0;
+}
+
+.report-bug-group {
+  margin-left: 0;
+}
+
+.useful-links-group {
+  margin-left: 0;
+}
+
+.useful-links-group .suggest-text {
+  color: #5f6368;
+}
+
+.useful-links-modal {
+  position: fixed;
+  top: auto;
+  bottom: 60px;
+  left: 20px;
+  right: auto;
+  width: 330px;
+  max-width: 90vw;
+  transform: none;
+}
+
+.useful-links-content .suggestion-box-header h2 {
+  color: #000000;
+}
+
+.useful-links-content .link-title {
+  color: #1967d2;
+}
+
+.useful-links-content .link-description {
+  color: #5f6368;
+}
+
+.useful-links-content .useful-link:hover .link-title {
+  color: #0f5ec7;
+  text-decoration: underline;
+}
+
+.useful-links-content {
+  height: auto;
+  min-height: 200px;
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+.useful-links-list {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  flex: 1;
+  max-height: 300px; /* approx 4 items visible */
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.useful-link-item {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.useful-link-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.useful-link {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: #1967d2;
+  transition: color 0.2s;
+  text-align: left;
+}
+
+.useful-link[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+.ghost-link {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.useful-link:hover {
+  color: #1a73e8;
+}
+
+.link-title {
+  font-weight: 500;
+  font-size: 16px;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.link-title[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+.link-description {
+  font-size: 13px;
+  color: #5f6368;
+  font-weight: normal;
+  text-align: left;
+}
+
+.link-description[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+.close-links-btn {
+  padding: 8px 15px;
+  background-color: #1967d2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.close-links-btn:hover {
+  background-color: #1a73e8;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ddd;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #202124;
+  white-space: nowrap;
+}
+.header-logo {
+  margin: 0;
 }
 .logo{
   margin-right: 5px;
@@ -233,10 +388,31 @@ h1 a {
 .path-bar { 
   color: #5f6368; 
   font-size: 14px; 
-  margin-bottom: 20px; 
+  margin-bottom: 10px; 
   display: flex; 
   align-items: center; 
   gap: 12px;
+}
+.home-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e8f0fe;
+  color: #1a73e8;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.home-link mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+.home-link:hover {
+  background: #d2e3fc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 .path-bar a { 
   color: #1a73e8; 
@@ -296,6 +472,8 @@ tr:hover {
 .action-cell { 
   display: flex; 
   gap: 8px; 
+  justify-content: flex-end;
+  width: 100%;
 }
 .action-btn {
   padding: 6px 12px;
