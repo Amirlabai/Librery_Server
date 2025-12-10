@@ -472,6 +472,8 @@ tr:hover {
 .action-cell { 
   display: flex; 
   gap: 8px; 
+  justify-content: flex-end;
+  width: 100%;
 }
 .action-btn {
   padding: 6px 12px;
