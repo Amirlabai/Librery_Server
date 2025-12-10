@@ -22,7 +22,7 @@ html, body {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  padding: 20px 40px;
+  padding: 10px 20px;
   box-sizing: border-box;
 }
 
@@ -31,7 +31,7 @@ html, body {
   overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 6px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   min-height: 0;
   max-height: 100%; 
 }
@@ -54,10 +54,7 @@ html, body {
   background: #999;
 }
 .intro-header{
-  font-size: 8px; 
-  justify-content: space-between;
-  display: flex;
-  align-items: center;
+  display: none;
 }
 .suggestion-group {
     display: flex;
@@ -182,7 +179,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
+  padding: 10px 0;
   margin-top: auto;
   border-top: 1px solid #e0e0e0;
 }
@@ -325,8 +322,22 @@ footer {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ddd;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.user-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #202124;
+  white-space: nowrap;
+}
+.header-logo {
+  margin: 0;
 }
 .logo{
   margin-right: 5px;
@@ -377,10 +388,31 @@ h1 a {
 .path-bar { 
   color: #5f6368; 
   font-size: 14px; 
-  margin-bottom: 20px; 
+  margin-bottom: 10px; 
   display: flex; 
   align-items: center; 
   gap: 12px;
+}
+.home-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e8f0fe;
+  color: #1a73e8;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.home-link mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+.home-link:hover {
+  background: #d2e3fc;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
 }
 .path-bar a { 
   color: #1a73e8; 
