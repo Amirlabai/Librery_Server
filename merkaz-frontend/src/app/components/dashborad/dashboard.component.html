@@ -273,8 +273,46 @@
         </div>
       </div>
   }
+  @if(showUsefulLinksModal){
+      <div class="suggestion-box-modal-overlay"
+      (click)="closeUsefulLinksModal()"
+      >
+        
+        <div class="suggestion-box-content useful-links-content useful-links-modal"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="suggestion-box-header">
+            <h2>Useful Links</h2>
+            <div class="useful-links-list">
+              <div class="useful-link-item">
+                <a href="https://www.noteshare.live" target="_blank" class="useful-link">
+                  <span class="link-title">NoteShare</span>
+                  <span class="link-description">Official personal note-sharing platform</span>
+                </a>
+              </div>
+              <div class="useful-link-item">
+                <a href="https://www.bis.org.il/copy-of-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%90%D7%A7%D7%93%D7%9E%D7%99%D7%95%D7%AA" target="_blank" class="useful-link">
+                  <span class="link-title" dir="rtl">אגודת סטודנטים בר אילן</span>
+                  <span class="link-description" dir="rtl">סיכומי עזר בר אילן</span>
+                </a>
+              </div>
+            </div>
+            <button type="button" (click)="closeUsefulLinksModal()" class="close-links-btn">Close</button>
+          </div>
+        </div>
+      </div>
+  }
   <footer>
-    Also visit: <a href="https://www.noteshare.live" target="_blank">https://www.noteshare.live</a> | Official personal note-sharing platform <br>
+    <div class="suggestion-group useful-links-group" 
+        (click)="openUsefulLinksModal()" 
+        [ngClass]="{'lightbulb-active': showUsefulLinksModal}">
+        
+        <span class="lightbulb-wrapper">
+          <mat-icon>link</mat-icon>
+        </span>
+
+         <span class="suggest-text">Useful links</span> 
+      </div>
   </footer>
   <router-outlet></router-outlet>
 </div>
