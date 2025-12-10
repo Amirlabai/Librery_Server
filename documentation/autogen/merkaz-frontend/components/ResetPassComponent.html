@@ -783,12 +783,12 @@ export class ResetPassComponent implements OnInit {
       &lt;span class&#x3D;&quot;toggle-password&quot; (click)&#x3D;&quot;togglePasswordVisibility()&quot;&gt;
         @if (!showPassword) {
           &lt;img
-            src&#x3D;&quot;../../../assets/icons/eye.png&quot;
+            src&#x3D;&quot;../../../assets/icons/eye.webp&quot;
             alt&#x3D;&quot;Show password&quot;
           /&gt;
         } @else {
           &lt;img
-            src&#x3D;&quot;../../../assets/icons/eye-crossed.png&quot;
+            src&#x3D;&quot;../../../assets/icons/eye-crossed.webp&quot;
             alt&#x3D;&quot;Hide password&quot;
           /&gt;
         }
@@ -955,7 +955,7 @@ a:hover {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="register-container">  <h1>Reset your Password</h1>  <form (ngSubmit)="onSubmit()">        <div class="password-wrapper">      <input        type="{{ showPassword ? \'text\' : \'password\' }}"        name="password"        [(ngModel)]="password"        placeholder="Password"        required      />      <span class="toggle-password" (click)="togglePasswordVisibility()">        @if (!showPassword) {          <img            src="../../../assets/icons/eye.png"            alt="Show password"          />        } @else {          <img            src="../../../assets/icons/eye-crossed.png"            alt="Hide password"          />        }      </span>    </div>    <div class="password-requirements">      <ul>        <li>At least 8 characters</li>        <li>Uppercase & lowercase letters</li>        <li>At least one number</li>        <li>At least one special character</li>      </ul>    </div>    <button type="submit">Reset</button>  </form></div></div>'
+        var COMPONENT_TEMPLATE = '<div><div class="register-container">  <h1>Reset your Password</h1>  <form (ngSubmit)="onSubmit()">        <div class="password-wrapper">      <input        type="{{ showPassword ? \'text\' : \'password\' }}"        name="password"        [(ngModel)]="password"        placeholder="Password"        required      />      <span class="toggle-password" (click)="togglePasswordVisibility()">        @if (!showPassword) {          <img            src="../../../assets/icons/eye.webp"            alt="Show password"          />        } @else {          <img            src="../../../assets/icons/eye-crossed.webp"            alt="Hide password"          />        }      </span>    </div>    <div class="password-requirements">      <ul>        <li>At least 8 characters</li>        <li>Uppercase & lowercase letters</li>        <li>At least one number</li>        <li>At least one special character</li>      </ul>    </div>    <button type="submit">Reset</button>  </form></div></div>'
     var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'ResetPassComponent'};
