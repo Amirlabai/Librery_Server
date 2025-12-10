@@ -8,17 +8,6 @@
         <h1>Welcome, {{ userFullName }}</h1>
       }
     </div>
-
-    <div class="suggestion-group" 
-        (click)="openSuggestBox()" 
-        [ngClass]="{'lightbulb-active': showSuggestBox}">
-        
-         <span class="suggest-text">Report Bug/Help</span> 
-
-        <span class="lightbulb-wrapper">
-          <mat-icon>lightbulb</mat-icon>
-        </span>
-      </div>
   </div>
 
   <div class="header">
@@ -312,6 +301,17 @@
         </span>
 
          <span class="suggest-text">Useful links</span> 
+      </div>
+
+    <div class="suggestion-group report-bug-group" 
+        (click)="openSuggestBox()" 
+        [ngClass]="{'lightbulb-active': showSuggestBox}">
+        
+         <span class="suggest-text">Report Bug/Help</span> 
+
+        <span class="lightbulb-wrapper">
+          <mat-icon>lightbulb</mat-icon>
+        </span>
       </div>
   </footer>
   <router-outlet></router-outlet>

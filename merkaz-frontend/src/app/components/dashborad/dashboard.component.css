@@ -123,9 +123,10 @@ html, body {
   z-index: 999; 
 }
 .suggestion-box-content {
-  position: absolute; 
-  top: 60px; 
-  right: 370px; 
+  position: fixed; 
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 330px; 
   height: 284px;
   padding: 15px;
@@ -179,11 +180,15 @@ html, body {
 
 footer {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   padding: 15px 0;
   margin-top: auto;
   border-top: 1px solid #e0e0e0;
+}
+
+.report-bug-group {
+  margin-left: 0;
 }
 
 .useful-links-group {
@@ -195,12 +200,14 @@ footer {
 }
 
 .useful-links-modal {
-  position: absolute;
+  position: fixed;
   top: auto;
   bottom: 60px;
   left: 20px;
   right: auto;
   width: 330px;
+  max-width: 90vw;
+  transform: none;
 }
 
 .useful-links-content .suggestion-box-header h2 {
