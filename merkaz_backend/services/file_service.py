@@ -142,11 +142,24 @@ class FileService:
                                 break
                 except (FileNotFoundError, StopIteration):
                     pass
-                
+                # Check if folder at item_path_os contains files
+                if os.path.isdir(item_path_os):
+                    try:
+                        has_files = any(
+                            os.path.isfile(os.path.join(item_path_os, f))
+                            for f in os.listdir(item_path_os)
+                            if not f.startswith('.')
+                        )
+                    except Exception:
+                        has_files = False
+                else:
+                    has_files = False
+
                 item_data = {
                     "upload_id": item_id,
                     "name": item_name,
-                    "path": item_path_url
+                    "path": item_path_url,
+                    "has_files": has_files
                 }
                 
                 if os.path.isdir(item_path_os):
