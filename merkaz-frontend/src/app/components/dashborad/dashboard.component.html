@@ -1,19 +1,17 @@
 <div class="container">
-  <div class="intro-header">
-    <div class="logo" >
-      <img src="assets\icons\to-be-logo-2.png" alt="banner-logo">
-    </div>
-    <div class="intro-left" >
-      @if(userFullName){
-        <h1>Welcome, {{ userFullName }}</h1>
-      }
-    </div>
-  </div>
+  <div class="intro-header"></div>
 
   <div class="header">
-    
-    <h1><a (click)="goToRoot()">Public Files</a></h1>
-  
+
+    <div class="header-left">
+      <div class="logo header-logo">
+        <img src="assets\icons\to-be-logo-2.png" alt="banner-logo">
+      </div>
+      @if(userFullName){
+        <span class="user-name">Welcome, {{ userFullName }}</span>
+      }
+    </div>
+
     <div class="header-right">
       <a routerLink="my-uploads" class="my-uploads-btn">My Uploads</a>
       <a [routerLink]="['upload']" [queryParams]="{ path: currentPath }" class="upload-btn">Upload File</a>
@@ -30,6 +28,10 @@
   
   <div class="path-bar">
 
+    <div class="home-link" (click)="goToRoot()">
+      <mat-icon>home</mat-icon>
+    </div>
+
     @if (isAdmin) {
        <div class="create-folder-wrapper">
           <button (click)="openCreateFolderModal()" class="create-folder-btn">📁 Create Folder</button>
@@ -38,8 +40,8 @@
     }
     @if (currentPath) {
       <div class="back-btn-wrapper">
-        <a class="backPathButton" (click)="goUp()" >⬅️ Back</a>
-        <span class="pathFolders">{{ currentPath || '/' }}</span>
+        <a class="backPathButton" (click)="goUp()" >⬅️ Back </a>
+        <span class="pathFolders"> {{ currentPath || '/' }}</span>
       </div>
     }
     
