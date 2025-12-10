@@ -1,30 +1,17 @@
 <div class="container">
-  <div class="intro-header">
-    <div class="logo" >
-      <img src="assets\icons\to-be-logo-2.png" alt="banner-logo">
-    </div>
-    <div class="intro-left" >
+  <div class="intro-header"></div>
+
+  <div class="header">
+
+    <div class="header-left">
+      <div class="logo header-logo">
+        <img src="assets\icons\to-be-logo-2.webp" alt="banner-logo">
+      </div>
       @if(userFullName){
-        <h1>Welcome, {{ userFullName }}</h1>
+        <span class="user-name">Welcome, {{ userFullName }}</span>
       }
     </div>
 
-    <div class="suggestion-group" 
-        (click)="openSuggestBox()" 
-        [ngClass]="{'lightbulb-active': showSuggestBox}">
-        
-         <span class="suggest-text">Report Bug/Help</span> 
-
-        <span class="lightbulb-wrapper">
-          <mat-icon>lightbulb</mat-icon>
-        </span>
-      </div>
-  </div>
-
-  <div class="header">
-    
-    <h1><a (click)="goToRoot()">Public Files</a></h1>
-  
     <div class="header-right">
       <a routerLink="my-uploads" class="my-uploads-btn">My Uploads</a>
       <a [routerLink]="['upload']" [queryParams]="{ path: currentPath }" class="upload-btn">Upload File</a>
@@ -41,6 +28,10 @@
   
   <div class="path-bar">
 
+    <div class="home-link" (click)="goToRoot()">
+      <mat-icon>home</mat-icon>
+    </div>
+
     @if (isAdmin) {
        <div class="create-folder-wrapper">
           <button (click)="openCreateFolderModal()" class="create-folder-btn">📁 Create Folder</button>
@@ -49,8 +40,8 @@
     }
     @if (currentPath) {
       <div class="back-btn-wrapper">
-        <a class="backPathButton" (click)="goUp()" >⬅️ Back</a>
-        <span class="pathFolders">{{ currentPath || '/' }}</span>
+        <a class="backPathButton" (click)="goUp()" >⬅️ Back </a>
+        <span class="pathFolders"> {{ currentPath || '/' }}</span>
       </div>
     }
     
@@ -273,8 +264,57 @@
         </div>
       </div>
   }
+  @if(showUsefulLinksModal){
+      <div class="suggestion-box-modal-overlay"
+      (click)="closeUsefulLinksModal()"
+      >
+        
+        <div class="suggestion-box-content useful-links-content useful-links-modal"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="suggestion-box-header">
+            <h2>Useful Links</h2>
+            <div class="useful-links-list">
+              <div class="useful-link-item">
+                <a href="https://www.noteshare.live" target="_blank" class="useful-link">
+                  <span class="link-title">NoteShare</span>
+                  <span class="link-description">Official personal note-sharing platform</span>
+                </a>
+              </div>
+              <div class="useful-link-item">
+                <a href="https://www.bis.org.il/copy-of-%D7%96%D7%9B%D7%95%D7%99%D7%95%D7%AA-%D7%90%D7%A7%D7%93%D7%9E%D7%99%D7%95%D7%AA" target="_blank" class="useful-link">
+                  <span class="link-title" dir="rtl">אגודת סטודנטים בר אילן</span>
+                  <span class="link-description" dir="rtl">סיכומי עזר בר אילן</span>
+                </a>
+              </div>
+            </div>
+            <button type="button" (click)="closeUsefulLinksModal()" class="close-links-btn">Close</button>
+          </div>
+        </div>
+      </div>
+  }
   <footer>
-    Also visit: <a href="https://www.noteshare.live" target="_blank">https://www.noteshare.live</a> | Official personal note-sharing platform <br>
+    <div class="suggestion-group useful-links-group" 
+        (click)="openUsefulLinksModal()" 
+        [ngClass]="{'lightbulb-active': showUsefulLinksModal}">
+        
+        <span class="lightbulb-wrapper">
+          <mat-icon>link</mat-icon>
+        </span>
+
+         <span class="suggest-text">Useful links</span> 
+      </div>
+
+    <div class="suggestion-group report-bug-group" 
+        (click)="openSuggestBox()" 
+        [ngClass]="{'lightbulb-active': showSuggestBox}">
+        
+         <span class="suggest-text">Report Bug/Help</span> 
+
+        <span class="lightbulb-wrapper">
+          <mat-icon>lightbulb</mat-icon>
+        </span>
+      </div>
   </footer>
   <router-outlet></router-outlet>
 </div>
