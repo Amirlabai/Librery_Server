@@ -45,6 +45,17 @@ Service for file management operations.
   - Arguments:
     - `folder_path`
 
+- `_has_files_recursive(directory_path)`
+  - Recursively check if a directory contains any files at any depth.
+
+Args:
+    directory_path: Path to the directory to check
+    
+Returns:
+    True if the directory contains files at any depth, False if completely empty
+  - Arguments:
+    - `directory_path`
+
 - `browse_directory(subpath)`
   - Browse a directory and return files/folders with metadata.
   - Arguments:
