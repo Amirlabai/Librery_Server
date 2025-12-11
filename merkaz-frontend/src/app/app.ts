@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { EasterService } from './services/easter';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,15 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class AppComponent {
   protected title = 'merkaz-frontend';
+
+
+  constructor(private easter:EasterService) {
+  }
+
+  ngOnInit(){
+    
+    this.easter.draw();
+  }
 
 }
 
