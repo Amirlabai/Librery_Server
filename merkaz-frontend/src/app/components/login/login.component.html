@@ -1,51 +1,60 @@
-<div class="login-container">
-  <h1>Sign In</h1>
-  <p style="margin-top: -15px; margin-bottom: 25px; color: #5f6368;">
-    to access your files
-  </p>
+<mat-card class="login-container">
+  <mat-card-header class="mat-card-header">
+    <mat-card-title>Sign In</mat-card-title>
+    <mat-card-subtitle >
+      to access your files
+    </mat-card-subtitle>
+   
+  </mat-card-header>
 
-  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-    <input
-      type="email"
-      name="email"
-      [(ngModel)]="email"
-      placeholder="Email"
-      required
-      autocomplete="on"
-    />
-
-    <div class="password-wrapper">
+  <form  (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
       <input
-        type="{{ showPassword ? 'text' : 'password' }}"
+        matInput
+        type="email"
+        name="email"
+        [(ngModel)]="email"
+        required
+        autocomplete="on"
+        
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input
+        matInput
+        [type]="showPassword ? 'text' : 'password'"
         name="password"
         [(ngModel)]="password"
         placeholder="Password"
         required
       />
 
-      <span class="toggle-password" (click)="togglePasswordVisibility()">
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="togglePasswordVisibility()"
+      >
         @if (!showPassword) {
-          <img
-            src="assets/icons/eye.webp"
-            alt="Show password"
-          />
+          <mat-icon>visibility</mat-icon>
         } @else {
-          <img
-            src="assets/icons/eye-crossed.webp"
-            alt="Hide password"
-          />
+          <mat-icon>visibility_off</mat-icon>
         }
-      </span>
-    </div>
+      </button>
 
-    <button type="submit">Login</button>
-  </form>
+  </mat-form-field>
+    <button mat-button type="submit" class="button">Login</button>
+  </form >
 
-  <p>
-    <a class="forgot-pass" routerLink="/forgot-password">Forgot password?</a>
-  </p>
-  <p>
+  <mat-card-subtitle>
+    <mat-label class="forgot-pass" routerLink="/forgot-password">Forgot password?</mat-label>
+  </mat-card-subtitle>
+  <mat-card-subtitle>
     Don't have an account?
-    <a class="create" routerLink="/register">Create one</a>
-  </p>
-</div>
+    <mat-label class="create" routerLink="/register">Create one</mat-label>
+  </mat-card-subtitle>
+
+</mat-card>

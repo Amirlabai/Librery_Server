@@ -32,6 +32,7 @@ export class LoginComponent {
   email = '';
   password = '';
   showPassword = false;
+  auto: any;
 
   constructor(private router: Router, private authService: AuthService,private notificationService:NotificationService) {}
 
