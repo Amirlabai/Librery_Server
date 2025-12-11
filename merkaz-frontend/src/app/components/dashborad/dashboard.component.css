@@ -20,7 +20,7 @@ html, body {
   width: 100%;
   max-width: 900px;
   height: calc(100vh - 30px);
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   padding: 10px 20px;
@@ -40,7 +40,7 @@ html, body {
 .table-wrapper thead th {
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--card-bg);
   z-index: 2;
 }
 
@@ -48,7 +48,7 @@ html, body {
   width: 8px;
 }
 .table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--scroll-color);
   border-radius: 4px;
 }
 .table-wrapper::-webkit-scrollbar-thumb:hover {
@@ -62,12 +62,16 @@ html, body {
     align-items: center;
     gap: 8px; 
     cursor: pointer;
+    
 }
 .suggest-text {
     font-size: 11px; 
     font-weight: 500;
     color: #5f6368;
     line-height: 1;
+}
+.suggestion-text-area{
+  background-color: var(--suggestion-box-color);
 }
 .lightbulb-wrapper {
   display: flex;
@@ -119,6 +123,7 @@ html, body {
   height: 100vh;
   background-color: transparent; 
   z-index: 999; 
+  
 }
 .suggestion-box-content {
   position: fixed; 
@@ -129,7 +134,7 @@ html, body {
   height: 284px;
   padding: 15px;
   border-radius: 8px;
-  background-color: #fff;
+  background-color: var(--suggestion-box-color);
   box-shadow: 0 4px 12px rgba(167, 165, 165, 0.2);
   border: 1px solid #ddd;
   z-index: 1001;
@@ -141,6 +146,7 @@ html, body {
 .suggestion-box-header form {
   display: flex; 
   flex-direction: column; 
+  
 }
 .suggestion-box-header textarea {
   
@@ -151,8 +157,8 @@ html, body {
   font-size: 14px;
   box-sizing: border-box; 
   margin-top: 2px;
-  margin-bottom: 5px; 
-  min-height: 150px;
+  margin-bottom: 4px; 
+  min-height: 140px;
   font-family: Arial, Helvetica, sans-serif;
   border: 1px solid #afaaaa; 
 }
@@ -161,19 +167,18 @@ html, body {
 }
 .suggestion-box-header button[type="submit"] {
   padding: 8px 15px;
-  background-color: #1967d2; 
+  background-color: var(--primary-buttons); 
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.2s;
-  
   box-sizing: border-box;
 }
 
 .suggestion-box-header button[type="submit"]:hover {
-  background-color: #1a73e8;
+  background-color: var(--card-bg); 
 }
 
 footer {
@@ -206,18 +211,19 @@ footer {
   width: 330px;
   max-width: 90vw;
   transform: none;
+  background-color: var(--suggestion-box-color);
 }
 
 .useful-links-content .suggestion-box-header h2 {
-  color: #000000;
+  color: var(--text-color);
 }
 
 .useful-links-content .link-title {
-  color: #1967d2;
+  color: var(--text-color);
 }
 
 .useful-links-content .link-description {
-  color: #5f6368;
+  color: var(--text-color);
 }
 
 .useful-links-content .useful-link:hover .link-title {
@@ -237,7 +243,7 @@ footer {
   margin-top: 15px;
   margin-bottom: 15px;
   flex: 1;
-  max-height: 300px; /* approx 4 items visible */
+  max-height: 300px; 
   overflow-y: auto;
   padding-right: 8px;
 }
@@ -303,7 +309,7 @@ footer {
 
 .close-links-btn {
   padding: 8px 15px;
-  background-color: #1967d2;
+  background-color: var(--primary-buttons);
   color: white;
   border: none;
   border-radius: 4px;
@@ -361,8 +367,8 @@ h1 a {
   cursor: pointer;
 }
 .logout-btn, .my-uploads-btn { 
-  background-color: #e8eaed;
-  color: #3c4043;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
   padding: 8px 16px;
   border-radius: 4px;
   text-decoration: none;
@@ -374,7 +380,7 @@ h1 a {
   background-color: #d2d5d9;
 }
 .admin-dashboard-btn, .upload-btn {
-  background-color: #1a73e8;
+  background-color: var(--primary-buttons);
   color: white;
   padding: 8px 16px;
   border-radius: 4px;
@@ -727,12 +733,12 @@ tr:hover {
   background-color: #d2d5d9;
 }
 .selected-row {
-  background-color: #e8f0fe;
+  background-color: var(--selected-row-color);
   transition: background-color 0.2s ease-in-out;
 }
 
 .selected-row:hover {
-  background-color: #d2e3fc;
+  background-color: var(--selected-row-color);
 }
 
 .edit-left-side{

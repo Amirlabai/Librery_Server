@@ -258,7 +258,7 @@
             <h2>Write to us </h2>
             <h3 class="cooldownLevel">(Cooldown: Level {{ cooldownLevel }})</h3>
             <form (ngSubmit)="submitSuggestion()">
-              <textarea [(ngModel)]="suggestionText" name="suggestion" rows="4" placeholder="Type your suggestion here..." required></textarea>
+              <textarea [(ngModel)]="suggestionText" name="suggestion" class="suggestion-text-area" rows="4" placeholder="Type your suggestion here..." required></textarea>
               <br />
               <button type="submit">Submit Suggestion</button>
           </form>

@@ -12,9 +12,11 @@
   flex-direction: column;
   align-items: center;
 }
-
+.mat-card-title{
+  color: var(--text-color);
+}
 .login-container {
-  background-color: white;
+  background-color: var(--card-bg);
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -26,7 +28,7 @@
 .login-form {
   width: 100%;
   height: auto;
-  margin-top: 80px;
+  margin-top: 60px;
 }
 
 
@@ -41,7 +43,7 @@
   color: white !important;
 }
 .sub{
-  margin-top: 20px;
+  margin-top: 30px;
 }
 .forgot-pass {
   font-size: 14px;
