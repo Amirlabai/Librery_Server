@@ -1,13 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --bg-color: #d6e0e6;
+  --text-color: #000000;
+  --primary-color: #3f51b5;
+  --card-bg: #fdfdfd;
+  --buttons-color: #dadee2;
+  --primary-buttons:#1a73e8;
+}
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #f0f2f5;
   font-family: 'Roboto', 'Arial', sans-serif;
   overflow: hidden; 
 }
 
+body.dark-mode {
+  --bg-color: #3d3b3b;
+  --text-color: #080808;
+  --primary-color: #bb86fc;
+  --card-bg: #bcbdae;
+  --buttons-color: #a09b9b;
+  --placeholder-color: #b0a9a9;
+  --scroll-color:white;
+  --suggestion-box-color: #968e8e;
+  --primary-buttons:#4b6383;
+  --selected-row-color: #a19b9b;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s; 
+}
 .app-notification {
   position: fixed;
   bottom: 20px;

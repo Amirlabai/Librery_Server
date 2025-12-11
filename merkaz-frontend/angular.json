@@ -30,7 +30,7 @@
             }
         ],
             "styles": [
-              "src/custom-theme.scss",
+              "src/custom.scss",
               "src/styles.css"
             ]
           },

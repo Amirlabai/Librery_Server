@@ -1,2 +1,6 @@
-
+<button mat-button class="dark-mode-button" (click)="toggleMode()">
+  <mat-icon>
+    {{ isDark ? 'light_mode' : 'dark_mode' }}
+  </mat-icon>
+</button>
 <router-outlet></router-outlet>

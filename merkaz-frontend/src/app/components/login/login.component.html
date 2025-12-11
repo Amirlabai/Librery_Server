@@ -1,7 +1,8 @@
+
 <mat-card class="login-container">
   <mat-card-header class="mat-card-header">
     <mat-card-title>Sign In</mat-card-title>
-    <mat-card-subtitle >
+    <mat-card-subtitle class="mat-card-title">
       to access your files
     </mat-card-subtitle>
    
@@ -15,7 +16,7 @@
         type="email"
         name="email"
         [(ngModel)]="email"
-        required
+        
         autocomplete="on"
         
       />
@@ -29,7 +30,7 @@
         name="password"
         [(ngModel)]="password"
         placeholder="Password"
-        required
+        
       />
 
       <button
