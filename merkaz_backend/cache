@@ -22,8 +22,8 @@
       "upload_id": "0",
       "name": "1",
       "path": "1",
-      "has_files": false,
-      "size": 0,
+      "has_files": true,
+      "size": 1416,
       "is_folder": true
     },
     {

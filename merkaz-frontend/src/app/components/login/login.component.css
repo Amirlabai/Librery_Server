@@ -37,4 +37,21 @@
 .button{
   width: 100%;
   margin-top: 20px;
+  background-color: #1a73e8;
+  color: white !important;
+}
+.sub{
+  margin-top: 20px;
+}
+.forgot-pass {
+  font-size: 14px;
+  cursor: pointer;
+  color: #1a73e8;
+  text-decoration: underline;
+}
+.create {
+  font-size: 14px;
+  cursor: pointer;
+  color: #1a73e8;
+  text-decoration: underline;
 }
