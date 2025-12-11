@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { DashboardService } from '../../services/dashboard.service';
 import { NotificationService } from '../../services/notifications/Notifications.service';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { MatIcon } from "@angular/material/icon";
 
 @Component({
@@ -63,6 +63,7 @@ export class DashboardComponent {
   previewUrl: string = '';
 
   oldPath: string = '';
+  
 
 
   constructor(
@@ -88,7 +89,11 @@ export class DashboardComponent {
     });
 
   }
-
+  getFolderCount(path: string) {
+    return this.dashboardService.loadFiles(path).pipe(
+      map(res => (res.files?.length || 0) + (res.folders?.length || 0))
+    );
+  }
   loadFiles() {
     this.dashboardService.loadFiles(this.currentPath).subscribe({
       next: (res: any) => {
