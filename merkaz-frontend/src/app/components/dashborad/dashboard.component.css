@@ -13,11 +13,7 @@ html, body {
   overflow-y: auto;     
   
 }
-.welcome-header title{
-  font-size: 2px;
-  font-weight: 500;
-  color: #000000;
-}
+
 .container {
   display: flex;
   flex-direction: column;
