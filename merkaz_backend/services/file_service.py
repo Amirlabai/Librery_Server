@@ -99,6 +99,47 @@ class FileService:
         return memory_file
     
     @staticmethod
+    def _has_files_recursive(directory_path):
+        """
+        Recursively check if a directory contains any files at any depth.
+        
+        Args:
+            directory_path: Path to the directory to check
+            
+        Returns:
+            True if the directory contains files at any depth, False if completely empty
+        """
+        if not os.path.isdir(directory_path):
+            return False
+
+        try:
+            size = 0
+            has_files = False
+            for item_name in os.listdir(directory_path):
+                if item_name.startswith('.'):
+                    continue
+                
+                item_path = os.path.join(directory_path, item_name)
+                
+                # If it's a file, return True immediately
+                if os.path.isfile(item_path):
+                    size += os.path.getsize(item_path)
+                    has_files = True
+                
+                # If it's a directory, recursively check it
+                if os.path.isdir(item_path):
+                    _has_files, sub_size = FileService._has_files_recursive(item_path)
+                    size += sub_size
+                    if _has_files:
+                        has_files = True
+            
+            # Return whether files were found and total size
+            return has_files, size
+        except (PermissionError, OSError) as e:
+            logger.warning(f"Error checking directory {directory_path}: {e}")
+            return False, 0
+    
+    @staticmethod
     def browse_directory(subpath):
         """Browse a directory and return files/folders with metadata."""
         logger.debug(f"Browsing directory - Path: {subpath}")
@@ -142,24 +183,25 @@ class FileService:
                                 break
                 except (FileNotFoundError, StopIteration):
                     pass
-                # Check if folder at item_path_os contains files
+                
+                # Check if folder contains files recursively
                 if os.path.isdir(item_path_os):
-                    try:
-                        has_files = any(
-                            os.path.isfile(os.path.join(item_path_os, f))
-                            for f in os.listdir(item_path_os)
-                            if not f.startswith('.')
-                        )
-                    except Exception:
-                        has_files = False
+                    has_files, size = FileService._has_files_recursive(item_path_os)
                 else:
-                    has_files = False
+                    # For files, get the file size
+                    try:
+                        size = os.path.getsize(item_path_os)
+                        has_files = True
+                    except (OSError, PermissionError):
+                        size = 0
+                        has_files = False
 
                 item_data = {
                     "upload_id": item_id,
                     "name": item_name,
                     "path": item_path_url,
-                    "has_files": has_files
+                    "has_files": has_files,
+                    "size": size
                 }
                 
                 if os.path.isdir(item_path_os):

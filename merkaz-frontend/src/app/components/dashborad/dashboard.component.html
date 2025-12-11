@@ -54,7 +54,7 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th style="width: 50px; text-align:center;">contents</th>
+          <th style="width: 70px; text-align:center;">Size</th>
           <th style="width: 200px; text-align:center;">Actions</th>
         </tr>
       </thead>
@@ -94,11 +94,7 @@
             </div>
           </td>
           <td style="text-align: center;">
-            @if (!(item.is_folder || item.isFolder) || item.has_files) {
-              <span>—</span>
-            } @else if ((item.is_folder || item.isFolder) && !item.has_files) {
-              <span>empty</span>
-            }
+            <span>{{ formatSize(item.size) }}</span>
           </td>
           <td style="text-align: center;">
             <div class="action-cell">
