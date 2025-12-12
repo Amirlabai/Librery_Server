@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Inject, DOCUMENT } from '@angular/core';
 import { Router } from '@angular/router';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -70,7 +70,12 @@ export class DashboardComponent {
     private dashboardService: DashboardService,
     private router: Router,
     private notificationService: NotificationService,
+    @Inject(DOCUMENT) private document: Document
   ) {}
+
+  get isDarkMode(): boolean {
+    return this.document.body.classList.contains('dark-mode');
+  }
 
   ngOnInit() {
     this.userRole = localStorage.getItem('role') || '';
