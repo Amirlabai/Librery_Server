@@ -182,7 +182,7 @@
 
             <tr>
                 <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./admin-pending.component.css</code></td>
+                <td class="col-md-9"><code>./admin-pending.component.css,<br>../admin-dash-shared.css</code></td>
             </tr>
 
 
@@ -587,7 +587,7 @@ import { NotificationService } from &#x27;../../../../services/notifications/Not
   standalone: true,
   imports: [RouterLink ,CommonModule],
   templateUrl: &#x27;./admin-pending.component.html&#x27;,
-  styleUrls: [&#x27;./admin-pending.component.css&#x27;]
+  styleUrls: [&#x27;./admin-pending.component.css&#x27;, &#x27;../admin-dash-shared.css&#x27;]
 })
 export class AdminPendingComponent {
   users: PendingUser[] &#x3D; [];
@@ -706,86 +706,109 @@ export class AdminPendingComponent {
                 <p class="comment">
                     <code>./admin-pending.component.css</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">:host {
+                <pre class="line-numbers"><code class="language-scss">
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 70vh;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.table-wrapper {
+  max-height: 400px; 
+  margin-bottom: 20px;
+  border: 1px solid var(--table-border-color);
+}
+
+.content-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb {
+  background: var(--scroll-color);
+  border-radius: 4px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.deny-btn {
+  margin-left: 5px;
+}
+</code></pre>
+                <p class="comment">
+                    <code>../admin-dash-shared.css</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">/* Shared styles for all admin-dash components */
+
+/* Host styles - common to all components */
+:host {
   font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
   margin: 0;
-  background-color: #f0f2f5;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   display: flex;
   justify-content: center;
   padding-top: 40px;
 }
 
+/* Container */
 .container {
   display: flex;
   flex-direction: column;
   width: 100%;
   max-width: 1000px;
   height: calc(100vh - 80px);
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  padding: 10px 20px;
   box-sizing: border-box;
 }
-.content-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 60vh;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-.table-wrapper {
-  overflow-y: auto;
-  flex: 1;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
 
-.table-wrapper thead th {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 2;
-}
-
-.content-wrapper::-webkit-scrollbar,
-.table-wrapper::-webkit-scrollbar {
-  width: 8px;
-}
-
-.content-wrapper::-webkit-scrollbar-thumb,
-.table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 4px;
-}
-
-.content-wrapper::-webkit-scrollbar-thumb:hover,
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
 /* Header */
 .header {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--table-border-color);
   padding-bottom: 15px;
   margin-bottom: 25px;
 }
 
-h1 {
+.header a {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.header a:hover {
+  background-color: var(--buttons-hover-color);
+}
+
+h1,
+.header h1,
+.container h1 {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
   font-size: 24px;
   font-weight: 500;
-  color: #202124;
+  color: var(--text-color);
   margin: 0;
 }
 
 .back-link {
-  background-color: #e8eaed;
-  color: #3c4043;
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
   padding: 8px 16px;
   border-radius: 4px;
   text-decoration: none;
@@ -794,62 +817,36 @@ h1 {
 }
 
 .back-link:hover {
-  background-color: #d2d5d9;
+  background-color: var(--buttons-hover-color);
 }
 
-/* Nav Tabs */
+/* Navigation Tabs */
 .admin-nav {
   display: flex;
   gap: 5px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--table-border-color);
   margin-bottom: 25px;
 }
 
 .nav-tab {
   padding: 10px 15px;
   text-decoration: none;
-  color: #5f6368;
+  color: var(--placeholder-color);
   border-radius: 6px 6px 0 0;
   font-weight: 500;
 }
 
 .nav-tab.active {
-  color: #1a73e8;
-  border-bottom: 3px solid #1a73e8;
+  color: var(--primary-buttons);
+  border-bottom: 3px solid var(--primary-buttons);
 }
 
+.nav-tab:hover:not(.active),
 .nav-tab:not(.active):hover {
-  background-color: #f1f3f4;
+  background-color: var(--selected-row-color);
 }
 
-.table-wrapper {
-  max-height: 400px; 
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
-
-.table-wrapper thead th {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 2;
-}
-
-.table-wrapper::-webkit-scrollbar {
-  width: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 4px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-
-/* Table */
+/* Table Styles */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -859,93 +856,149 @@ table {
 th, td {
   padding: 12px 8px;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--th-td-border-color);
   vertical-align: middle;
 }
 
 th {
-  color: #5f6368;
+  color: var(--placeholder-color);
   font-weight: 500;
 }
 
-/* Buttons */
+tr:hover {
+  background-color: var(--selected-row-color);
+}
+
+/* Table Wrapper */
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
+  border: 1px solid var(--th-td-border-color);
+  border-radius: 6px;
+}
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  z-index: 2;
+}
+
+/* Scrollbar Styles */
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--scroll-color);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--card-bg);
+  border-radius: 4px;
+}
+
+/* Action Button Base */
 .action-btn {
   padding: 6px 12px;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: var(--buttons-border);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
 }
 
-.approve-btn {
-  background-color: #e6f4ea;
-  color: #1e8e3e;
+.action-btn:hover {
+  background-color: var(--buttons-hover-color);
 }
 
-.approve-btn:hover {
-  background-color: #c6e6d4;
+/* Approve Button (Green) */
+.approve-btn,
+.make-admin {
+  background-color: var(--success-bg);
+  color: var(--success-text);
 }
 
-.deny-btn {
-  background-color: #fce8e6;
-  color: #c5221f;
-  margin-left: 5px;
+.approve-btn:hover,
+.make-admin:hover {
+  background-color: var(--success-hover);
 }
 
-.deny-btn:hover {
-  background-color: #f9d8d6;
+/* Deny/Decline Button (Red) */
+.deny-btn,
+.deactivate-btn,
+.decline-btn {
+  background-color: var(--error-bg);
+  color: var(--error-text);
 }
 
-@media(max-width: 768px){
-    :host {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        padding-top:0;
-        width: 100%;
-        align-items: flex-start;
-        justify-content: flex-start;
-        overflow-y: hidden;
-        overflow-x: hidden;
-        
-    }
-    .container{
-        height: 100vh;
-    }
-    .content-wrapper{
-        height: 100%;
-    }
-    .admin-nav {
-      overflow-x: auto;
-      overflow-y: hidden;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin;
-      scrollbar-color: #ccc transparent;
-    }
+.deny-btn:hover,
+.deactivate-btn:hover,
+.decline-btn:hover {
+  background-color: var(--error-hover);
+}
 
-    .admin-nav::-webkit-scrollbar {
-      height: 6px;
-    }
+/* Mobile Responsive */
+@media(max-width: 768px) {
+  :host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding-top: 0;
+    width: 100%;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
 
-    .admin-nav::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 4px;
-    }
+  .container {
+    height: 100vh;
+  }
 
-    .admin-nav::-webkit-scrollbar-thumb:hover {
-      background: #999;
-    }
+  .content-wrapper {
+    height: 100%;
+  }
 
-    .nav-tab {
-      display: inline-block;
-      white-space: nowrap;
-      flex: 0 0 auto;
-      margin-right: 6px;
-    }
-}</code></pre>
+  .admin-nav {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-color) transparent;
+  }
+
+  .admin-nav::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb {
+    background: var(--scroll-color);
+    border-radius: 4px;
+  }
+
+  .admin-nav::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+
+  .nav-tab {
+    display: inline-block;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    margin-right: 6px;
+  }
+}
+</code></pre>
     </div>
 
     <div class="tab-pane fade " id="tree">
@@ -974,7 +1027,7 @@ th {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab">Users</a>    <a routerLink="/pending" class="nav-tab active">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab">Uploads</a>  </div>  <!-- Users Table -->  <div class="table-wrapper">    <table>      <thead>        <tr>          <th>Email</th>          <th style="width: 25%; text-align: center;">Action</th>        </tr>      </thead>      <tbody>        @for (user of users; track user.email) {          <tr>            <td>{{ user.email }}</td>            <td style="text-align: center;">              <button                class="action-btn approve-btn"                (click)="approveUser(user.email)"              >                Approve              </button>              <button                class="action-btn deny-btn"                (click)="denyUser(user.email)"              >                Deny              </button>            </td>          </tr>        }        @if (users.length === 0) {          <tr>            <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">              No users are pending approval.            </td>          </tr>        }      </tbody>    </table>  </div></div></div>'
-    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
+    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'},{'name': 'UsefulLinksComponent', 'selector': 'app-useful-links'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'AdminPendingComponent'};
 </script>
