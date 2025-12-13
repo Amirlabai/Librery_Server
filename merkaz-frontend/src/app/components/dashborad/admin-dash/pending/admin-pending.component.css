@@ -1,4 +1,25 @@
+:host {
+  font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  padding-top: 40px;
+}
 
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+  height: calc(100vh - 80px);
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
 .content-wrapper {
   flex: 1;
   display: flex;
@@ -9,24 +30,213 @@
   overflow-y: auto;
 }
 .table-wrapper {
-  max-height: 400px; 
-  margin-bottom: 20px;
+  overflow-y: auto;
+  flex: 1;
   border: 1px solid var(--table-border-color);
+  border-radius: 6px;
 }
 
-.content-wrapper::-webkit-scrollbar {
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  z-index: 2;
+}
+
+.content-wrapper::-webkit-scrollbar,
+.table-wrapper::-webkit-scrollbar {
   width: 8px;
 }
 
-.content-wrapper::-webkit-scrollbar-thumb {
+.content-wrapper::-webkit-scrollbar-thumb,
+.table-wrapper::-webkit-scrollbar-thumb {
   background: var(--scroll-color);
   border-radius: 4px;
 }
 
-.content-wrapper::-webkit-scrollbar-thumb:hover {
+.content-wrapper::-webkit-scrollbar-thumb:hover,
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--table-border-color);
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.back-link {
+  background-color: var(--buttons-color);
+  color: var(--text-color);
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.back-link:hover {
+  background-color: var(--buttons-hover-color);
+}
+
+/* Nav Tabs */
+.admin-nav {
+  display: flex;
+  gap: 5px;
+  border-bottom: 1px solid var(--table-border-color);
+  margin-bottom: 25px;
+}
+
+.nav-tab {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: var(--placeholder-color);
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+}
+
+.nav-tab.active {
+  color: var(--primary-buttons);
+  border-bottom: 3px solid var(--primary-buttons);
+}
+
+.nav-tab:not(.active):hover {
+  background-color: var(--selected-row-color);
+}
+
+.table-wrapper {
+  max-height: 400px; 
+  overflow-y: auto;
+  border: 1px solid var(--table-border-color);
+  border-radius: 6px;
+}
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  z-index: 2;
+}
+
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
   background: #999;
 }
 
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: var(--th-td-border-color);
+  vertical-align: middle;
+}
+
+th {
+  color: var(--placeholder-color);
+  font-weight: 500;
+}
+tr:hover {
+    background-color: var(--selected-row-color);
+}
+/* Buttons */
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: var(--buttons-border);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.approve-btn {
+  background-color: #e6f4ea;
+  color: #1e8e3e;
+}
+
+.approve-btn:hover {
+  background-color: #c6e6d4;
+}
+
 .deny-btn {
+  background-color: var(--delete-button-bg);
+  color: var(--delete-button-text);
   margin-left: 5px;
+}
+
+.deny-btn:hover {
+  background-color: #901616;
+}
+
+@media(max-width: 768px){
+    :host {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding-top:0;
+        width: 100%;
+        align-items: flex-start;
+        justify-content: flex-start;
+        overflow-y: hidden;
+        overflow-x: hidden;
+        
+    }
+    .container{
+        height: 100vh;
+    }
+    .content-wrapper{
+        height: 100%;
+    }
+    .admin-nav {
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc transparent;
+    }
+
+    .admin-nav::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .admin-nav::-webkit-scrollbar-thumb {
+      background: var(--scroll-color);
+      border-radius: 4px;
+    }
+
+    .admin-nav::-webkit-scrollbar-thumb:hover {
+      background: #999;
+    }
+
+    .nav-tab {
+      display: inline-block;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      margin-right: 6px;
+    }
 }
