@@ -1,0 +1,10 @@
+.dark-mode-button{
+  position: absolute;
+  top: 20px;
+  right: 15px;
+  border: none;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: none !important;
+  min-width: auto !important;
+}
