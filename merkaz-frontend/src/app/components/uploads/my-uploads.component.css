@@ -3,7 +3,7 @@
   width: 100%;
   max-width: 900px;
   height: calc(100vh - 80px);
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   padding: 20px 40px;
@@ -12,12 +12,13 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  color: var(--text-color);
 }
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--th-td-border-color);
   padding-bottom: 15px;
   margin-bottom: 25px;
   flex-shrink: 0;
@@ -31,14 +32,14 @@
   overflow-y: auto;
   overflow-x: auto;
   min-height: 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--th-td-border-color);
   border-radius: 6px;
 }
 
 .table-wrapper thead th {
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--card-bg);
   z-index: 2;
 }
 
@@ -48,7 +49,7 @@
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--scroll-color);
   border-radius: 4px;
 }
 
@@ -57,19 +58,19 @@
 }
 
 .table-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--card-bg);
   border-radius: 4px;
 }
 .header a {
-  background-color: #e8eaed;
-  color: #3c4043;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
   padding: 8px 16px;
   border-radius: 4px;
   text-decoration: none;
   font-size: 14px;
 }
 .header a:hover {
-  background-color: #d2d5d9;
+  background-color: var(--buttons-hover-color);
 }
 table {
   width: 100%;
@@ -79,10 +80,13 @@ table {
 th, td {
   padding: 12px 8px;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--th-td-border-color);
+}
+tr:hover {
+    background-color: var(--selected-row-color);
 }
 th {
-  color: #5f6368;
+  color: var(--placeholder-color);
   font-weight: 500;
 }
 .status-pending {
@@ -94,7 +98,7 @@ th {
   font-weight: 500;
 }
 .status-declined {
-  color: #c5221f;
+  color: var(--delete-button-text);
   font-weight: 500;
 }
 @media (max-width: 768px) {
