@@ -23,7 +23,10 @@
   margin-bottom: 25px;
   flex-shrink: 0;
 }
-
+.label-header{
+  font-size: 18px;
+  font-weight: 600;
+}
 .table-wrapper {
   flex: 1;
   overflow-y: auto;
@@ -97,4 +100,30 @@ th {
 .status-declined {
   color: var(--delete-button-text);
   font-weight: 500;
+}
+@media (max-width: 768px) {
+    
+    :host {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding-top:0;
+        width: 100%;
+        align-items: flex-start;
+        justify-content: flex-start;
+        
+    }
+    .label-header{
+        font-size: 18px;
+        font-weight: 600;
+    }
+    .container{
+        display: flex;
+        flex-direction: column;
+        
+        height: 90vh;
+        box-sizing: border-box;
+        
+    }
+    
 }

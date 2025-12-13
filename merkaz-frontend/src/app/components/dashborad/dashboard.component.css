@@ -595,13 +595,13 @@ footer {
   :host {
     align-items: flex-start;
     justify-content: flex-start;
-    
+    padding: 0;
   }
+    
   .container {
     padding: 10px 15px;
-    height: 100vh;
     max-width: 100%;
-    max-height: 100vh;
+    height: 95vh;
   }
 
   .header {
@@ -675,17 +675,9 @@ footer {
     background-color: rgba(65, 63, 63, 0.5); 
     z-index: 999; 
   }
-  .suggestion-box-content {
-    position: relative; 
-    top: auto;
-    right: auto;
-    width: 90%;
-    max-width: 350px; 
-    height: auto; 
-    max-height: 80vh; 
-    margin: 20px; 
-    overflow-y: auto; 
-    z-index: 1001; 
+  
+  .suggestion-group {
+    margin-bottom: 5px;
   }
   .useful-links-modal {
     display: none;
