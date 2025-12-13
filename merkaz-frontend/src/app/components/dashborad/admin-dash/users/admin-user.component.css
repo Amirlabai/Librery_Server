@@ -125,7 +125,6 @@ table {
 th, td { 
     padding: 12px 8px; 
     text-align: left; 
-    border-bottom: var(--th-td-border-color);
     vertical-align: middle;
 }
 th { 

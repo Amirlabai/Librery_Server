@@ -65,7 +65,7 @@ body.dark-mode {
   --buttons-border: none;
 
   --search-box-color: #2c2c2c;
-  --th-td-border-color: 1px solid rgb(97, 94, 94);
+  --th-td-border-color: rgb(75, 75, 75);
 }
 
 body {
