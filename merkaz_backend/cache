@@ -1,29 +1,12 @@
 {
-  "files": [
-    {
-      "upload_id": "9",
-      "name": "invoice_INV-1000.pdf",
-      "path": "invoice_INV-1000.pdf",
-      "has_files": true,
-      "size": 1410,
-      "is_folder": false
-    },
-    {
-      "upload_id": "10",
-      "name": "invoice_INV-1004.pdf",
-      "path": "invoice_INV-1004.pdf",
-      "has_files": true,
-      "size": 1416,
-      "is_folder": false
-    }
-  ],
+  "files": [],
   "folders": [
     {
       "upload_id": "0",
       "name": "1",
       "path": "1",
       "has_files": true,
-      "size": 1416,
+      "size": 4242,
       "is_folder": true
     },
     {

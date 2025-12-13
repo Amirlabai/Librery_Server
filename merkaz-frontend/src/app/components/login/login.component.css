@@ -39,7 +39,7 @@
 .button{
   width: 100%;
   margin-top: 20px;
-  background-color: #1a73e8;
+  background-color: var(--primary-buttons);
   color: white !important;
 }
 .sub{
@@ -56,4 +56,7 @@
   cursor: pointer;
   color: #1a73e8;
   text-decoration: underline;
+}
+.have-account{
+  color: var(--text-color);
 }

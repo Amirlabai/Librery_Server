@@ -17,8 +17,6 @@
         name="email"
         [(ngModel)]="email"
         
-        autocomplete="on"
-        
       />
     </mat-form-field>
 
@@ -29,8 +27,6 @@
         [type]="showPassword ? 'text' : 'password'"
         name="password"
         [(ngModel)]="password"
-        placeholder="Password"
-        
       />
 
       <button
@@ -53,7 +49,7 @@
   <mat-card-subtitle class="sub">
     <mat-label class="forgot-pass" routerLink="/forgot-password">Forgot password?</mat-label>
   </mat-card-subtitle>
-  <mat-card-subtitle>
+  <mat-card-subtitle class="have-account">
     Don't have an account?
     <mat-button color="accent" class="create" routerLink="/register">Create one</mat-button>
   </mat-card-subtitle>
