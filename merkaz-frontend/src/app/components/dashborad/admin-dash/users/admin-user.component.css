@@ -1,8 +1,8 @@
 :host {
     font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
     margin: 0;
-    background-color: #f0f2f5;
-    color: #333;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     display: flex;
     justify-content: center;
     padding-top: 40px;
@@ -13,7 +13,7 @@
   width: 100%;
   max-width: 1000px;
   height: calc(100vh - 80px);
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px 40px;
@@ -41,7 +41,7 @@
   overflow-y: auto;
   overflow-x: auto;
   min-height: 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--table-border-color);
   border-radius: 6px;
   margin-bottom: 20px;
 }
@@ -49,7 +49,7 @@
 .table-wrapper thead th {
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--card-bg);
   z-index: 2;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--scroll-color);
   border-radius: 4px;
 }
 
@@ -68,26 +68,26 @@
 }
 
 .table-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--card-bg);
   border-radius: 4px;
 }
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--table-border-color);
     padding-bottom: 15px;
     margin-bottom: 25px;
 }
 h1 {
     font-size: 24px;
     font-weight: 500;
-    color: #202124;
+    color: var(--text-color);
     margin: 0;
 }
 .header a {
-    background-color: #e8eaed;
-    color: #3c4043;
+    background-color: var(--buttons-color);
+    color: var(--text-color);
     padding: 8px 16px;
     border-radius: 4px;
     text-decoration: none;
@@ -95,27 +95,27 @@ h1 {
     font-weight: 500;
 }
 .header a:hover {
-    background-color: #d2d5d9;
+    background-color: var(--buttons-hover-color);
 }
 .admin-nav {
     display: flex;
     gap: 5px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--table-border-color);
     margin-bottom: 25px;
 }
 .nav-tab {
     padding: 10px 15px;
     text-decoration: none;
-    color: #5f6368;
+    color: var(--placeholder-color);
     border-radius: 6px 6px 0 0;
     font-weight: 500;
 }
 .nav-tab.active {
-    color: #1a73e8;
-    border-bottom: 3px solid #1a73e8;
+    color: var(--primary-buttons);
+    border-bottom: 3px solid var(--primary-buttons);
 }
 .nav-tab:not(.active):hover {
-    background-color: #f1f3f4;
+    background-color: var(--selected-row-color);
 }
 table { 
     width: 100%; 
@@ -125,35 +125,38 @@ table {
 th, td { 
     padding: 12px 8px; 
     text-align: left; 
-    border-bottom: 1px solid #e0e0e0; 
+    border-bottom: var(--th-td-border-color);
     vertical-align: middle;
 }
 th { 
-    color: #5f6368; 
-    font-weight: 500;
+    color: var(--placeholder-color);
+    font-weight: 400;
+}
+tr:hover {
+    background-color: var(--selected-row-color);
 }
 .action-btn {
     padding: 6px 12px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: var(--buttons-border);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     text-decoration: none;
 }
 .make-admin { 
-    background-color: #e8f0fe; 
-    color: #1967d2; 
+    background-color: var(--download-edit-buttons); 
+    color: var(--buttons-text-color); 
 }
 .make-admin:hover { 
-    background-color: #d2e3fc; 
+    background-color: var(--buttons-hover-color); 
 }
 .remove-admin { 
-    background-color: #fce8e6; 
-    color: #c5221f; 
+    background-color: var(--delete-button-bg); 
+    color: var(--delete-button-text); 
 }
 .remove-admin:hover { 
-    background-color: #f9d8d6; 
+    background-color: #901616; 
 }
 .activate-user { 
     background-color: #e6f4ea; 
@@ -163,8 +166,8 @@ th {
     background-color: #c6e6d4; 
 }
 .deactivate-user { 
-    background-color: #fce8e6; 
-    color: #c5221f; 
+    background-color: var(--delete-button-bg); 
+    color: var(--delete-button-text); 
 }
 .deactivate-user:hover { 
     background-color: #f9d8d6; 
@@ -177,20 +180,20 @@ th {
     text-transform: uppercase;
 }
 .role-admin { 
-    background-color: #e8f0fe; 
-    color: #1967d2; 
+    background-color: var(--download-edit-buttons); 
+    color: var(--buttons-text-color); 
 }
 .role-user { 
-    background-color: #e8eaed; 
-    color: #3c4043; 
+    background-color: var(--buttons-color); 
+    color: var(--text-color); 
 }
 .status-active { 
     background-color: #e6f4ea; 
     color: #1e8e3e; 
 }
 .status-inactive { 
-    background-color: #fce8e6; 
-    color: #c5221f; 
+    background-color: var(--delete-button-bg); 
+    color: var(--delete-button-text); 
 }
 .online-status {
     display: inline-block;
@@ -203,7 +206,7 @@ th {
     background-color: #1e8e3e; 
 }
 .offline { 
-    background-color: #ccc; 
+    background-color: var(--placeholder-color);
 }
 .actions-cell { 
     display: flex; 
@@ -215,17 +218,17 @@ th {
     text-align: center;
 }
 .pagination a {
-    color: #1a73e8;
+    color: var(--primary-buttons);
     padding: 8px 16px;
     text-decoration: none;
     transition: background-color .3s;
-    border: 1px solid #ddd;
+    border: 1px solid var(--table-border-color);
     margin: 0 4px;
 }
 .pagination a.active {
-    background-color: #1a73e8;
+    background-color: var(--primary-buttons);
     color: white;
-    border: 1px solid #1a73e8;
+    border: 1px solid var(--primary-buttons);
 }
 @media(max-width: 768px){
     :host {
@@ -258,7 +261,7 @@ th {
     }
 
     .admin-nav::-webkit-scrollbar-thumb {
-        background: #ccc;
+        background: var(--scroll-color);
         border-radius: 4px;
     }
 

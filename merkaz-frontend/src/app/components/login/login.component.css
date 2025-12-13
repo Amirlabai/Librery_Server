@@ -5,6 +5,7 @@
   align-items: center;
   width: 100%;
   height: 100%;
+  background-color: var(--bg-color);
 }
 .mat-card-header {
   text-align: center;
@@ -23,8 +24,8 @@
   max-width: 400px;
   text-align: center;
   height: 500px;
+  color: var(--text-color);
 }
-
 .login-form {
   width: 100%;
   height: auto;
@@ -59,4 +60,8 @@
 }
 .have-account{
   color: var(--text-color);
+}
+.login-form input {
+    color: var(--text-color);
+    
 }

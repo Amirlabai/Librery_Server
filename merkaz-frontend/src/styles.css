@@ -27,6 +27,8 @@
 
   --buttons-border:1px solid #ccc;
   --search-box-color: #ffffff;
+
+  --th-td-border-color:rgb(175, 167, 167);
 }
 html, body {
   height: 100%;
@@ -63,6 +65,7 @@ body.dark-mode {
   --buttons-border: none;
 
   --search-box-color: #2c2c2c;
+  --th-td-border-color: 1px solid rgb(97, 94, 94);
 }
 
 body {

@@ -1,8 +1,8 @@
 :host {
   font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
   margin: 0;
-  background-color: #f0f2f5;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   display: flex;
   justify-content: center;
   padding-top: 40px;
@@ -14,7 +14,7 @@
   width: 100%;
   max-width: 1000px;
   height: calc(100vh - 80px);
-  background-color: white;
+  background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px 40px;
@@ -32,14 +32,14 @@
 .table-wrapper {
   overflow-y: auto;
   flex: 1;
-  border: 1px solid #ddd;
+  border: 1px solid var(--table-border-color);
   border-radius: 6px;
 }
 
 .table-wrapper thead th {
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--card-bg);
   z-index: 2;
 }
 
@@ -50,7 +50,7 @@
 
 .content-wrapper::-webkit-scrollbar-thumb,
 .table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: var(--scroll-color);
   border-radius: 4px;
 }
 
@@ -63,7 +63,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--table-border-color);
   padding-bottom: 15px;
   margin-bottom: 25px;
 }
@@ -71,13 +71,13 @@
 h1 {
   font-size: 24px;
   font-weight: 500;
-  color: #202124;
+  color: var(--text-color);
   margin: 0;
 }
 
 .back-link {
-  background-color: #e8eaed;
-  color: #3c4043;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
   padding: 8px 16px;
   border-radius: 4px;
   text-decoration: none;
@@ -86,45 +86,45 @@ h1 {
 }
 
 .back-link:hover {
-  background-color: #d2d5d9;
+  background-color: var(--buttons-hover-color);
 }
 
 /* Nav Tabs */
 .admin-nav {
   display: flex;
   gap: 5px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--table-border-color);
   margin-bottom: 25px;
 }
 
 .nav-tab {
   padding: 10px 15px;
   text-decoration: none;
-  color: #5f6368;
+  color: var(--placeholder-color);
   border-radius: 6px 6px 0 0;
   font-weight: 500;
 }
 
 .nav-tab.active {
-  color: #1a73e8;
-  border-bottom: 3px solid #1a73e8;
+  color: var(--primary-buttons);
+  border-bottom: 3px solid var(--primary-buttons);
 }
 
 .nav-tab:not(.active):hover {
-  background-color: #f1f3f4;
+  background-color: var(--selected-row-color);
 }
 
 .table-wrapper {
   max-height: 400px; 
   overflow-y: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--table-border-color);
   border-radius: 6px;
 }
 
 .table-wrapper thead th {
   position: sticky;
   top: 0;
-  background: #fff;
+  background: var(--card-bg);
   z-index: 2;
 }
 
@@ -151,20 +151,22 @@ table {
 th, td {
   padding: 12px 8px;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: var(--th-td-border-color);
   vertical-align: middle;
 }
 
 th {
-  color: #5f6368;
+  color: var(--placeholder-color);
   font-weight: 500;
 }
-
+tr:hover {
+    background-color: var(--selected-row-color);
+}
 /* Buttons */
 .action-btn {
   padding: 6px 12px;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: var(--buttons-border);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -181,13 +183,13 @@ th {
 }
 
 .deny-btn {
-  background-color: #fce8e6;
-  color: #c5221f;
+  background-color: var(--delete-button-bg);
+  color: var(--delete-button-text);
   margin-left: 5px;
 }
 
 .deny-btn:hover {
-  background-color: #f9d8d6;
+  background-color: #901616;
 }
 
 @media(max-width: 768px){
@@ -223,7 +225,7 @@ th {
     }
 
     .admin-nav::-webkit-scrollbar-thumb {
-      background: #ccc;
+      background: var(--scroll-color);
       border-radius: 4px;
     }
 
