@@ -12,6 +12,7 @@ import { MyUploadsComponent } from './components/uploads/my-uploads.component';
 import { UploadFileComponent } from './components/uploads/upload-file.component';
 import { AuthGuard } from './services/auth.guard'; 
 import { ResetPassComponent } from './components/resetpass/reset-pass.component';
+import { UsefulLinksComponent } from './components/useful-links/useful-links.component';
 
 
 export const routes: Routes = [
@@ -28,7 +29,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: DashboardComponent },
       { path: 'my-uploads', component: MyUploadsComponent },
-      { path: 'upload', component: UploadFileComponent }
+      { path: 'upload', component: UploadFileComponent },
+      { path: 'useful-links', component: UsefulLinksComponent }
     ]
   },
 

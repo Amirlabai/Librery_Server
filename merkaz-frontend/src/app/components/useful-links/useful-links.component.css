@@ -1,0 +1,34 @@
+/* Component-specific styles for useful-links */
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: var(--selected-row-color);
+}
+
+.link-title {
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+.link-title[dir="rtl"],
+.link-description[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+.link-description {
+  font-size: 13px;
+  color: var(--placeholder-color);
+  font-weight: normal;
+}
+
