@@ -1,11 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
 :root {
+  
   --bg-color: #d6e0e6;
   --text-color: #000000;
-  --primary-color: #3f51b5;
-  --card-bg: #fdfdfd;
-  --buttons-color: #dadee2;
-  --primary-buttons:#1a73e8;
+  --primary-color: #3f51b5; 
+
+  --card-bg: #fdfdfd; 
+  --search-box-color: #f1f3f4; 
+  --suggestion-box-color: #ffffff; 
+
+  --primary-buttons: #1a73e8; 
+  --buttons-color: #dadee2; 
+  --buttons-hover-color: #d2d5d9; 
+  --download-edit-buttons: #e8f0fe; 
+  --buttons-text-color: #1967d2; 
+
+  --placeholder-color: #5f6368; 
+
+  --scroll-color: #c5c5c5; 
+  --selected-row-color: #f1f3f4; 
+
+  --modal-card-color:white;
+
+  --delete-button-bg: #fce8e6;
+  --delete-button-text: #c5221f;
+
+  --buttons-border:1px solid #ccc;
+  --search-box-color: #ffffff;
 }
 html, body {
   height: 100%;
@@ -16,16 +37,32 @@ html, body {
 }
 
 body.dark-mode {
-  --bg-color: #3d3b3b;
-  --text-color: #080808;
-  --primary-color: #bb86fc;
-  --card-bg: #bcbdae;
-  --buttons-color: #a09b9b;
-  --placeholder-color: #b0a9a9;
-  --scroll-color:white;
-  --suggestion-box-color: #968e8e;
-  --primary-buttons:#4b6383;
-  --selected-row-color: #a19b9b;
+  --bg-color: #121212; 
+  --text-color: #ffffff; 
+  --primary-color: #0d47a1; 
+
+  --card-bg: #1e1e1e; 
+  --search-box-color: #1e1e1e; 
+  --suggestion-box-color: #2c2c2c; 
+
+  --primary-buttons: #1a73e8; 
+  --buttons-color: #333333; 
+  --buttons-hover-color: #4a4a4a; 
+  --download-edit-buttons: #1a73e8; 
+  --buttons-text-color: #ffffff; 
+
+  --placeholder-color: #b0b0b0; 
+  
+  --scroll-color: #444444; 
+  --selected-row-color: #2a2a2a; 
+
+  --modal-card-color:#2c2c2c;
+
+  --delete-button-bg: #660605;
+  --delete-button-text: #b9b9b7;
+  --buttons-border: none;
+
+  --search-box-color: #2c2c2c;
 }
 
 body {
