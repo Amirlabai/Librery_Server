@@ -10,7 +10,10 @@ import { NotificationService } from '../../../../services/notifications/Notifica
   standalone: true,
   imports: [RouterLink ,CommonModule],
   templateUrl: './admin-pending.component.html',
-  styleUrls: ['./admin-pending.component.css']
+  styleUrls: [
+    '../admin-dash-shared.css',
+    './admin-pending.component.css'
+  ]
 })
 export class AdminPendingComponent {
   users: PendingUser[] = [];

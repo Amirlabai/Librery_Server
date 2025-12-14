@@ -18,7 +18,10 @@ interface User {
   standalone: true,
   imports: [CommonModule, RouterLink, NgClass],
   templateUrl: './admin-user.component.html',
-  styleUrls: ['./admin-user.component.css']
+  styleUrls: [
+    '../admin-dash-shared.css',
+    './admin-user.component.css'
+  ]
 })
 export class AdminUsersComponent implements OnInit { 
   users: User[] = [];

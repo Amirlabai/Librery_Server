@@ -13,7 +13,10 @@ interface DeniedUser {
   standalone: true,
   imports: [CommonModule, RouterLink],
   templateUrl: './admin-denied.component.html',
-  styleUrls: ['./admin-denied.component.css']
+  styleUrls: [
+    '../admin-dash-shared.css',
+    './admin-denied.component.css'
+  ]
 })
 
 export class AdminDeniedComponent {
