@@ -95,6 +95,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             <li class="link">
                                 <a href="components/UploadFileComponent.html" data-type="entity-link" >UploadFileComponent</a>
                             </li>
+                            <li class="link">
+                                <a href="components/UsefulLinksComponent.html" data-type="entity-link" >UsefulLinksComponent</a>
+                            </li>
                         </ul>
                     </li>
                         <li class="chapter">

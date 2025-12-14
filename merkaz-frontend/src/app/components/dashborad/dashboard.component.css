@@ -789,15 +789,16 @@ footer {
 
 
 @media (max-width: 768px) {
+  :host {
+    align-items: flex-start;
+    justify-content: flex-start;
+    
+  }
   .container {
-    padding: 20px;
-    border-radius: 0;
+    padding: 10px 15px;
+    height: 100vh;
     max-width: 100%;
-    width: 100%;
-    box-shadow: none;
-    height: 100%;
-    margin: 0;
-    height: 100%;
+    max-height: 100vh;
   }
   :host {
     display: flex;
@@ -875,7 +876,7 @@ footer {
   }
 
   .modal-content,
-  .edit-modal-content {
+  .edit-modal-content{
     width: 95%;
     max-height: 90vh;
     overflow-y: auto;
@@ -885,58 +886,16 @@ footer {
     height: 650px;
     background-color: transparent;
   }
-
-  .edit-left-side {
-    width: 100%;
-    height: 280px;
-    padding: 10px;
-    box-sizing: border-box;
-    background-color: var(--card-bg);
-  }
-  .folders-content{
-    max-height: 100px;
-    min-height: 100px;
-    overflow-y: auto;
-    box-sizing: border-box;
-    background-color: var(--modal-card-color);
-  }
-
   .suggestion-box-content {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative; 
+    top: auto;
+    right: auto;
     width: 90%;
-    max-width: 350px;
-    height: auto;
-    max-height: 80vh;
-    margin: 0;
-    overflow-y: auto;
-  }
-  
-  .useful-links-modal {
-    display: flex;
-    justify-content: center;    
-    flex-direction: column;
-    width: 100%;
-    
-  }
-
-  .suggestion-box-modal-overlay {
-    background-color: rgba(65, 63, 63, 0.5);
-    z-index: 999;
-  }
-
-  .suggestion-box-content {
-    position: fixed;
-    bottom: 20%;
-    width: 90%;
-    max-width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-    z-index: 1001;
+    max-width: 350px; 
+    height: auto; 
+    max-height: 80vh; 
+    margin: 20px; 
+    overflow-y: auto; 
+    z-index: 1001; 
   }
 }
-
-
-    
