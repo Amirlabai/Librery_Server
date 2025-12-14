@@ -5,7 +5,8 @@
     color: var(--text-color);
     display: flex;
     justify-content: center;
-    padding-top: 40px;
+    align-items: center;
+    height: 100vh;
 }
 .container {
   display: flex;
@@ -26,6 +27,8 @@
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
+  border: 1px solid var(--th-td-border-color);
+  border-radius: 6px;
 }
 
 .scrollable-content {
@@ -122,10 +125,17 @@ table {
     border-collapse: collapse; 
     font-size: 14px; 
 }
+thead tr {
+    border-bottom: 1px solid var(--th-td-border-color);
+}
 th, td { 
     padding: 12px 8px; 
     text-align: left; 
     vertical-align: middle;
+    font-size: 14px;
+}
+tbody tr{
+    border-bottom: 1px solid var(--th-td-border-color);
 }
 th { 
     color: var(--placeholder-color);
@@ -230,18 +240,30 @@ tr:hover {
     border: 1px solid var(--primary-buttons);
 }
 @media(max-width: 768px){
+    .container {
+        padding: 20px;
+        border-radius: 0;
+        max-width: 100%;
+        width: 100%;
+        box-shadow: none;
+        height: 100%;
+        margin: 0;
+        height: 100%;
+    }
     :host {
         display: flex;
         flex-direction: column;
-        height: 100vh;
-        padding-top:0;
-        width: 100%;
-        align-items: flex-start;
-        justify-content: flex-start;
-        
+        justify-content: center; 
+        align-items: center;
+        height: 100%;
     }
-    .container{
-        height: 100vh;
+    .header{
+        display: flex;
+        flex-direction:row ;
+        padding-right: 50px;
+    }
+    .header h1{
+        font-size: 16px;
     }
     .content-wrapper{
         height: 100%;

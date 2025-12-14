@@ -1,13 +1,13 @@
 :host {
-  font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
-  margin: 0;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: auto;
-  padding-top: 40px;
+    font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    
 }
 
 .container {
@@ -22,7 +22,6 @@
   padding: 20px 40px;
   box-sizing: border-box;
 }
-
 .content-wrapper {
   flex: 1;
   display: flex;
@@ -37,6 +36,7 @@
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
+  
 }
 
 .table-wrapper {
@@ -44,8 +44,6 @@
   overflow-y: auto;
   overflow-x: auto;
   min-height: 0;
-  border: 1px solid var(--table-border-color);
-  border-radius: 6px;
 }
 
 /* title sticky*/
@@ -54,6 +52,12 @@
   top: 0;
   background: var(--card-bg);
   z-index: 2;
+}
+thead tr {
+    border-bottom: 1px solid var(--th-td-border-color);
+}
+tbody tr{
+  border-bottom: 1px solid var(--th-td-border-color);
 }
 
 /* scroll bar*/
@@ -81,6 +85,7 @@
   border-bottom: 1px solid var(--table-border-color);
   padding-bottom: 15px;
   margin-bottom: 25px;
+  
 }
 
 h1 {
@@ -97,6 +102,7 @@ h1 {
   border-radius: 4px;
   text-decoration: none;
   font-size: 14px;
+  font-weight: 500;
 }
 .header a:hover {
     background-color: var(--buttons-hover-color);
@@ -129,11 +135,13 @@ table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  
 }
 th, td {
   padding: 12px 8px;
   text-align: left;
-  border-bottom: var(--th-td-border-color);
+  font-size: 14px;
+  font-weight: 500;
 }
 tr:hover {
     background-color: var(--selected-row-color);
@@ -182,17 +190,30 @@ input[type="text"]:focus {
   box-shadow: 0 0 3px rgba(26, 115, 232, 0.3);
 }
 @media(max-width: 768px){
+  .container {
+    padding: 20px;
+    border-radius: 0;
+    max-width: 100%;
+    width: 100%;
+    box-shadow: none;
+    height: 100%;
+    margin: 0;
+    height: 100%;
+  }
   :host {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    padding-top:0;
-    width: 100%;
-    align-items: flex-start;
-    justify-content: flex-start;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
   }
-  .container{
-    height: 100vh;
+  .header{
+    display: flex;
+    flex-direction:row ;
+    padding-right: 50px;
+  }
+  .header h1{
+    font-size: 16px;
   }
   .content-wrapper{
     height: 100%;
@@ -223,6 +244,6 @@ input[type="text"]:focus {
     display: inline-block;
     white-space: nowrap;
     flex: 0 0 auto;
-    margin-right: 6px;
+    margin-right: 8px;
   }
 }

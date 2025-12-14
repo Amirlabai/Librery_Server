@@ -103,23 +103,16 @@ a:hover {
         height: 100vh;
         padding-top:0;
         width: 100%;
-        align-items: flex-start;
-        justify-content: flex-start;
-        
     }
     .container{
-        display: flex;
-        flex-direction: column;
-        justify-content: space-evenly;
-        padding: 16px;
-        height: 100vh;
+        height: 100%;
+        overflow-y: auto;
         box-sizing: border-box;
-        overflow-y: unset;
-        
     }
     .upload-section {
-        padding-top: 15px;
-        margin-bottom: 16px;
+        padding-top: 0;
+        margin-bottom: 10px;
+        height: 30%;
     }
 
     .info {
@@ -128,7 +121,7 @@ a:hover {
     }
 
     input[type="file"] {
-        margin-bottom: 12px;
+        margin-bottom: 2px;
     }
 
     button {
