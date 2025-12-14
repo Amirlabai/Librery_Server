@@ -186,7 +186,7 @@ merkaz-frontend/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd NagoAmir_Server
+   cd Librery_Server
    ```
 
 2. **Create and activate virtual environment**
