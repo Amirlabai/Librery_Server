@@ -1,8 +1,8 @@
 import os
 # --- Core App Settings ---
 NGROK_LINK = "change_this_to_the_ngrok_link"
-SUPER_SECRET_KEY = "change_this_to_the_super_secret_key"
-TOKEN_SECRET_KEY = "change_this_to_the_token_secret_key"
+SUPER_SECRET_KEY = os.urandom(32).hex()
+TOKEN_SECRET_KEY = os.urandom(32).hex()
 ICON_PATH = "change_this_to_the_path_of_the_icon"
 
 
