@@ -1,11 +1,13 @@
 :host {
-  font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
-  margin: 0;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  display: flex;
-  justify-content: center;
-  padding-top: 40px;
+    font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    
 }
 
 .container {
@@ -153,6 +155,8 @@ th, td {
   text-align: left;
   border-bottom: var(--th-td-border-color);
   vertical-align: middle;
+  font-size: 14px;
+  
 }
 
 th {
@@ -193,20 +197,30 @@ tr:hover {
 }
 
 @media(max-width: 768px){
+    .container {
+        padding: 20px;
+        border-radius: 0;
+        max-width: 100%;
+        width: 100%;
+        box-shadow: none;
+        height: 100%;
+        margin: 0;
+        height: 100%;
+    }
     :host {
         display: flex;
         flex-direction: column;
-        height: 100vh;
-        padding-top:0;
-        width: 100%;
-        align-items: flex-start;
-        justify-content: flex-start;
-        overflow-y: hidden;
-        overflow-x: hidden;
-        
+        justify-content: center; 
+        align-items: center;
+        height: 100%;
     }
-    .container{
-        height: 100vh;
+    .header{
+      display: flex;
+      flex-direction:row ;
+      padding-right: 50px;
+    }
+    .header h1{
+      font-size: 16px;
     }
     .content-wrapper{
         height: 100%;

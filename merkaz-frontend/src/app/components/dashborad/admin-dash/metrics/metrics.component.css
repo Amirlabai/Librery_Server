@@ -5,7 +5,9 @@
     color: var(--text-color);
     display: flex;
     justify-content: center;
-    padding-top: 40px;
+    align-items: center;
+    height: 100vh;
+    
 }
 .container {
   display: flex;
@@ -18,6 +20,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px 40px;
   box-sizing: border-box;
+  
 }
 
 .content-wrapper {
@@ -25,35 +28,17 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 60vh;
-  max-height: 60vh;
   overflow-y: auto;
 }
-.table-wrapper {
-  overflow-y: auto;
-  flex: 1;
-}
 
-.table-wrapper thead th {
-  position: sticky;
-  top: 0;
-  background: var(--card-bg);
-  z-index: 2;
-}
-
-.content-wrapper::-webkit-scrollbar,
-.table-wrapper::-webkit-scrollbar {
+.content-wrapper::-webkit-scrollbar{
   width: 8px;
 }
-
-.content-wrapper::-webkit-scrollbar-thumb,
-.table-wrapper::-webkit-scrollbar-thumb {
+.content-wrapper::-webkit-scrollbar-thumb {
   background: var(--scroll-color);
   border-radius: 4px;
 }
-
-.content-wrapper::-webkit-scrollbar-thumb:hover,
-.table-wrapper::-webkit-scrollbar-thumb:hover {
+.content-wrapper::-webkit-scrollbar-thumb:hover {
   background: #999;
 }
 .header {
@@ -110,8 +95,9 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--card-bg);
+    
 }
+
 .log-details h2 {
     margin: 0 0 8px 0;
     font-size: 18px;
@@ -136,18 +122,31 @@ h1 {
     background-color: #185abc;
 }
 @media (max-width: 768px) {
-  :host {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        padding-top:0;
-        width: 100%;
-        align-items: flex-start;
-        justify-content: flex-start;
-        
+
+  .container {
+    padding: 20px;
+    border-radius: 0;
+    max-width: 100%;
+    width: 100%;
+    box-shadow: none;
+    height: 100%;
+    margin: 0;
+    height: 100%;
   }
-  .container{
-    height: auto;
+  :host {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+  }
+  .header{
+    display: flex;
+    flex-direction:row ;
+    padding-right: 50px;
+  }
+  .header h1{
+    font-size: 16px;
   }
   .admin-nav {
     overflow-x: auto;
