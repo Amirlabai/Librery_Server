@@ -182,7 +182,7 @@
 
             <tr>
                 <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./admin-pending.component.css,<br>../admin-dash-shared.css</code></td>
+                <td class="col-md-9"><code>./admin-pending.component.css</code></td>
             </tr>
 
 
@@ -587,7 +587,7 @@ import { NotificationService } from &#x27;../../../../services/notifications/Not
   standalone: true,
   imports: [RouterLink ,CommonModule],
   templateUrl: &#x27;./admin-pending.component.html&#x27;,
-  styleUrls: [&#x27;./admin-pending.component.css&#x27;, &#x27;../admin-dash-shared.css&#x27;]
+  styleUrls: [&#x27;./admin-pending.component.css&#x27;]
 })
 export class AdminPendingComponent {
   users: PendingUser[] &#x3D; [];
@@ -706,56 +706,18 @@ export class AdminPendingComponent {
                 <p class="comment">
                     <code>./admin-pending.component.css</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">
-.content-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 70vh;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-.table-wrapper {
-  max-height: 400px; 
-  margin-bottom: 20px;
-  border: 1px solid var(--table-border-color);
+                <pre class="line-numbers"><code class="language-scss">:host {
+    font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    
 }
 
-.content-wrapper::-webkit-scrollbar {
-  width: 8px;
-}
-
-.content-wrapper::-webkit-scrollbar-thumb {
-  background: var(--scroll-color);
-  border-radius: 4px;
-}
-
-.content-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-
-.deny-btn {
-  margin-left: 5px;
-}
-</code></pre>
-                <p class="comment">
-                    <code>../admin-dash-shared.css</code>
-                </p>
-                <pre class="line-numbers"><code class="language-scss">/* Shared styles for all admin-dash components */
-
-/* Host styles - common to all components */
-:host {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
-  margin: 0;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  display: flex;
-  justify-content: center;
-  padding-top: 40px;
-}
-
-/* Container */
 .container {
   display: flex;
   flex-direction: column;
@@ -764,14 +726,50 @@ export class AdminPendingComponent {
   height: calc(100vh - 80px);
   background-color: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  padding: 10px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px 40px;
   box-sizing: border-box;
 }
+.content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 60vh;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.table-wrapper {
+  overflow-y: auto;
+  flex: 1;
+  border: 1px solid var(--table-border-color);
+  border-radius: 6px;
+}
 
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  z-index: 2;
+}
+
+.content-wrapper::-webkit-scrollbar,
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb,
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--scroll-color);
+  border-radius: 4px;
+}
+
+.content-wrapper::-webkit-scrollbar-thumb:hover,
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
 /* Header */
 .header {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -780,25 +778,7 @@ export class AdminPendingComponent {
   margin-bottom: 25px;
 }
 
-.header a {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
-  background-color: var(--buttons-color);
-  color: var(--text-color);
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.header a:hover {
-  background-color: var(--buttons-hover-color);
-}
-
-h1,
-.header h1,
-.container h1 {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+h1 {
   font-size: 24px;
   font-weight: 500;
   color: var(--text-color);
@@ -806,7 +786,6 @@ h1,
 }
 
 .back-link {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
   background-color: var(--buttons-color);
   color: var(--text-color);
   padding: 8px 16px;
@@ -820,7 +799,7 @@ h1,
   background-color: var(--buttons-hover-color);
 }
 
-/* Navigation Tabs */
+/* Nav Tabs */
 .admin-nav {
   display: flex;
   gap: 5px;
@@ -841,41 +820,14 @@ h1,
   border-bottom: 3px solid var(--primary-buttons);
 }
 
-.nav-tab:hover:not(.active),
 .nav-tab:not(.active):hover {
   background-color: var(--selected-row-color);
 }
 
-/* Table Styles */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-th, td {
-  padding: 12px 8px;
-  text-align: left;
-  border-bottom: 1px solid var(--th-td-border-color);
-  vertical-align: middle;
-}
-
-th {
-  color: var(--placeholder-color);
-  font-weight: 500;
-}
-
-tr:hover {
-  background-color: var(--selected-row-color);
-}
-
-/* Table Wrapper */
 .table-wrapper {
-  flex: 1;
+  max-height: 400px; 
   overflow-y: auto;
-  overflow-x: auto;
-  min-height: 0;
-  border: 1px solid var(--th-td-border-color);
+  border: 1px solid var(--table-border-color);
   border-radius: 6px;
 }
 
@@ -886,14 +838,12 @@ tr:hover {
   z-index: 2;
 }
 
-/* Scrollbar Styles */
 .table-wrapper::-webkit-scrollbar {
   width: 8px;
-  height: 8px;
 }
 
 .table-wrapper::-webkit-scrollbar-thumb {
-  background: var(--scroll-color);
+  background: #ccc;
   border-radius: 4px;
 }
 
@@ -901,12 +851,30 @@ tr:hover {
   background: #999;
 }
 
-.table-wrapper::-webkit-scrollbar-track {
-  background: var(--card-bg);
-  border-radius: 4px;
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
 }
 
-/* Action Button Base */
+th, td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: var(--th-td-border-color);
+  vertical-align: middle;
+  font-size: 14px;
+  
+}
+
+th {
+  color: var(--placeholder-color);
+  font-weight: 500;
+}
+tr:hover {
+    background-color: var(--selected-row-color);
+}
+/* Buttons */
 .action-btn {
   padding: 6px 12px;
   border-radius: 4px;
@@ -915,90 +883,85 @@ tr:hover {
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  background-color: var(--buttons-color);
-  color: var(--text-color);
 }
 
-.action-btn:hover {
-  background-color: var(--buttons-hover-color);
+.approve-btn {
+  background-color: #e6f4ea;
+  color: #1e8e3e;
 }
 
-/* Approve Button (Green) */
-.approve-btn,
-.make-admin {
-  background-color: var(--success-bg);
-  color: var(--success-text);
+.approve-btn:hover {
+  background-color: #c6e6d4;
 }
 
-.approve-btn:hover,
-.make-admin:hover {
-  background-color: var(--success-hover);
+.deny-btn {
+  background-color: var(--delete-button-bg);
+  color: var(--delete-button-text);
+  margin-left: 5px;
 }
 
-/* Deny/Decline Button (Red) */
-.deny-btn,
-.deactivate-btn,
-.decline-btn {
-  background-color: var(--error-bg);
-  color: var(--error-text);
+.deny-btn:hover {
+  background-color: #901616;
 }
 
-.deny-btn:hover,
-.deactivate-btn:hover,
-.decline-btn:hover {
-  background-color: var(--error-hover);
-}
+@media(max-width: 768px){
+    .container {
+        padding: 20px;
+        border-radius: 0;
+        max-width: 100%;
+        width: 100%;
+        box-shadow: none;
+        height: 100%;
+        margin: 0;
+        height: 100%;
+    }
+    :host {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+        align-items: center;
+        height: 100%;
+    }
+    .header{
+      display: flex;
+      flex-direction:row ;
+      padding-right: 50px;
+    }
+    .header h1{
+      font-size: 16px;
+    }
+    .content-wrapper{
+        height: 100%;
+    }
+    .admin-nav {
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc transparent;
+    }
 
-/* Mobile Responsive */
-@media(max-width: 768px) {
-  :host {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding-top: 0;
-    width: 100%;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
+    .admin-nav::-webkit-scrollbar {
+      height: 6px;
+    }
 
-  .container {
-    height: 100vh;
-  }
+    .admin-nav::-webkit-scrollbar-thumb {
+      background: var(--scroll-color);
+      border-radius: 4px;
+    }
 
-  .content-wrapper {
-    height: 100%;
-  }
+    .admin-nav::-webkit-scrollbar-thumb:hover {
+      background: #999;
+    }
 
-  .admin-nav {
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--scroll-color) transparent;
-  }
-
-  .admin-nav::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .admin-nav::-webkit-scrollbar-thumb {
-    background: var(--scroll-color);
-    border-radius: 4px;
-  }
-
-  .admin-nav::-webkit-scrollbar-thumb:hover {
-    background: #999;
-  }
-
-  .nav-tab {
-    display: inline-block;
-    white-space: nowrap;
-    flex: 0 0 auto;
-    margin-right: 6px;
-  }
-}
-</code></pre>
+    .nav-tab {
+      display: inline-block;
+      white-space: nowrap;
+      flex: 0 0 auto;
+      margin-right: 6px;
+    }
+}</code></pre>
     </div>
 
     <div class="tab-pane fade " id="tree">
@@ -1027,7 +990,7 @@ tr:hover {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab">Users</a>    <a routerLink="/pending" class="nav-tab active">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab">Uploads</a>  </div>  <!-- Users Table -->  <div class="table-wrapper">    <table>      <thead>        <tr>          <th>Email</th>          <th style="width: 25%; text-align: center;">Action</th>        </tr>      </thead>      <tbody>        @for (user of users; track user.email) {          <tr>            <td>{{ user.email }}</td>            <td style="text-align: center;">              <button                class="action-btn approve-btn"                (click)="approveUser(user.email)"              >                Approve              </button>              <button                class="action-btn deny-btn"                (click)="denyUser(user.email)"              >                Deny              </button>            </td>          </tr>        }        @if (users.length === 0) {          <tr>            <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">              No users are pending approval.            </td>          </tr>        }      </tbody>    </table>  </div></div></div>'
-    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'},{'name': 'UsefulLinksComponent', 'selector': 'app-useful-links'}];
+    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'AdminPendingComponent'};
 </script>

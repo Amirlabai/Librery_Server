@@ -727,19 +727,21 @@ export class LoginComponent {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   max-width: 400px;
+  width: 90%; 
   text-align: center;
-  height: 500px;
   color: var(--text-color);
+  margin-top: 20px; 
+  margin-bottom: 20px; 
 }
 .login-form {
   width: 100%;
   height: auto;
-  margin-top: 60px;
+  margin-top: 30px;
 }
 
 
 .full-width {
-  width: 300px;
+  width: 100%;;
 }
 
 .button{
@@ -749,28 +751,6 @@ export class LoginComponent {
   color: white !important;
 }
 .sub{
-  margin-top: 30px;
-}
-.forgot-pass {
-  font-size: 14px;
-  cursor: pointer;
-  color: #1a73e8;
-  text-decoration: underline;
-}
-.create {
-  font-size: 14px;
-  cursor: pointer;
-  color: #1a73e8;
-  text-decoration: underline;
-}
-.have-account{
-  color: var(--text-color);
-}
-.login-form input {
-    color: var(--text-color);
-    
-}
-.sub{
   margin-top: 20px;
 }
 .forgot-pass {
@@ -784,6 +764,33 @@ export class LoginComponent {
   cursor: pointer;
   color: #1a73e8;
   text-decoration: underline;
+  line-height: 1;
+}
+.have-account{
+  color: var(--text-color);
+}
+.login-form input {
+    color: var(--text-color);
+    
+}
+@media (max-width: 600px) {
+ .login-container {
+    padding: 20px;
+    border-radius: 0;
+    max-width: 90%;
+    width: 90%;
+    box-shadow: none;
+    height: 100%;
+    margin: 0;
+    height: 50%;
+ }
+ :host {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+ }
 }</code></pre>
     </div>
 
@@ -813,7 +820,7 @@ export class LoginComponent {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><mat-card class="login-container">  <mat-card-header class="mat-card-header">    <mat-card-title>Sign In</mat-card-title>    <mat-card-subtitle class="mat-card-title">      to access your files    </mat-card-subtitle>     </mat-card-header>  <form  (ngSubmit)="onSubmit()" #loginForm="ngForm" class="login-form">    <mat-form-field appearance="outline" class="full-width">      <mat-label>Email</mat-label>      <input        matInput        type="email"        name="email"        [(ngModel)]="email"              />    </mat-form-field>    <mat-form-field appearance="outline" class="full-width">      <mat-label>Password</mat-label>      <input        matInput        [type]="showPassword ? \'text\' : \'password\'"        name="password"        [(ngModel)]="password"      />      <button        mat-icon-button        matSuffix        type="button"        (click)="togglePasswordVisibility()"      >        @if (!showPassword) {          <mat-icon>visibility</mat-icon>        } @else {          <mat-icon>visibility_off</mat-icon>        }      </button>  </mat-form-field>    <button mat-button type="submit" class="button">Login</button>  </form >  <mat-card-subtitle class="sub">    <mat-label class="forgot-pass" routerLink="/forgot-password">Forgot password?</mat-label>  </mat-card-subtitle>  <mat-card-subtitle class="have-account">    Don\'t have an account?    <mat-button color="accent" class="create" routerLink="/register">Create one</mat-button>  </mat-card-subtitle></mat-card></div>'
-    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'},{'name': 'UsefulLinksComponent', 'selector': 'app-useful-links'}];
+    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'LoginComponent'};
 </script>
