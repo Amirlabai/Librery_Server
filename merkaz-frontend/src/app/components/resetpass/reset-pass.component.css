@@ -6,7 +6,7 @@
   height: 100%;
 }
 .register-container {
-  background-color: white;
+  background-color: var(--card-bg);
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -17,7 +17,7 @@
 h1 {
   font-size: 24px;
   font-weight: 500;
-  color: #202124;
+  color: var(--text-color);
   margin-bottom: 25px;
 }
 form {
@@ -28,12 +28,14 @@ input {
   font-size: 16px;
   padding: 12px 15px;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  border: 1px solid var(--placeholder-color);
+  background-color: var(--search-box-color);
+  color: var(--text-color);
 }
 input:focus {
-  border-color: #1a73e8;
+  border-color: var(--primary-buttons);
   outline: none;
 }
 .password-wrapper {
@@ -51,7 +53,7 @@ input:focus {
   right: 12px;
   transform: translateY(-50%);
   cursor: pointer;
-  color: #5f6368;
+  color: var(--text-color);
   user-select: none;
   display: flex;
   align-items: center;
@@ -67,7 +69,7 @@ input:focus {
   transition: opacity 0.2s;
 }
 button {
-  background-color: #1a73e8;
+  background-color: var(--primary-buttons);
   color: white;
   font-size: 16px;
   font-weight: 500;
@@ -83,10 +85,10 @@ button:hover {
 p {
   margin-top: 20px;
   font-size: 14px;
-  color: #5f6368;
+  color: var(--placeholder-color);
 }
 a {
-  color: #1a73e8;
+  color: var(--primary-buttons);
   text-decoration: none;
   font-weight: 500;
 }
@@ -96,7 +98,7 @@ a:hover {
 
 .password-requirements {
   font-size: 13px;
-  color: #5f6368;
+  color: var(--placeholder-color);
   text-align: left;
   margin-top: -10px;
   margin-bottom: 15px;
