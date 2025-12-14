@@ -23,7 +23,7 @@ An open library for file-sharing among students. A full-stack web application bu
 - **File Management**
   - Browse and navigate folder structure
   - Search files and folders
-  - Preview files (if supported)
+  - Preview files 
   - Upload files (with admin approval workflow)
   - Download files and folders (folders as ZIP)
   - Create folders
