@@ -4049,27 +4049,26 @@ export class DashboardComponent {
                     <code>./dashboard.component.css</code>
                 </p>
                 <pre class="line-numbers"><code class="language-scss">:host {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+    font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    
 }
-html, body {
-  overflow-x: hidden;   
-  overflow-y: auto;    
-  margin: 0;
-}
-
 .container {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 900px;
-  height: 90vh;
+  max-width: 1000px;
+  height: calc(100vh - 80px);
   background-color: var(--card-bg);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  padding: 10px 20px;
+  padding: 20px 40px;
   box-sizing: border-box;
 }
 

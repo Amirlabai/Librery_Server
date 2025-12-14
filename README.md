@@ -2,6 +2,8 @@
 
 An open library for file-sharing among students. A full-stack web application built with Flask (Python) backend and Angular frontend.
 
+**Current Version:** 2.18.0 (as of 2025-12-14)
+
 ## Authors
 
 - **Amir Labai** - Backend Developer
@@ -111,8 +113,14 @@ merkaz-frontend/
 ├── src/
 │   ├── app/
 │   │   ├── components/                   # Main feature components
-│   │   │   ├── dashboard/
-│   │   │   │   ├── admin-dash/           # Admin dashboard page
+│   │   │   ├── dashborad/                # Dashboard (note: typo in folder name)
+│   │   │   │   ├── admin-dash/           # Admin dashboard components
+│   │   │   │   │   ├── users/           # User management
+│   │   │   │   │   ├── pending/         # Pending user approvals
+│   │   │   │   │   ├── denied/          # Denied user registrations
+│   │   │   │   │   ├── uploads/         # Upload management
+│   │   │   │   │   ├── metrics/         # System metrics
+│   │   │   │   │   └── admin-dash-shared.css
 │   │   │   │   ├── dashboard.component.css
 │   │   │   │   ├── dashboard.component.html
 │   │   │   │   └── dashboard.component.ts
@@ -132,6 +140,11 @@ merkaz-frontend/
 │   │   │   │   ├── register.component.html
 │   │   │   │   └── register.component.ts
 │   │   │   │
+│   │   │   ├── resetpass/                # Password reset page
+│   │   │   │   ├── reset-pass.component.css
+│   │   │   │   ├── reset-pass.component.html
+│   │   │   │   └── reset-pass.component.ts
+│   │   │   │
 │   │   │   └── uploads/                  # Uploads and user files
 │   │   │       ├── my-uploads.component.css
 │   │   │       ├── my-uploads.component.html
@@ -143,33 +156,37 @@ merkaz-frontend/
 │   │   ├── interceptors/
 │   │   │   └── auth.interceptor.ts       # HTTP interceptor for auth headers
 │   │   │
-│   │   ├── models/
-│   │   │   └── pending-user.model.ts     # Pending user data model
-│   │   │
 │   │   ├── services/
 │   │   │   ├── auth.guard.ts             # Route guard for authentication
 │   │   │   └── auth.service.ts           # Authentication and user session service
 │   │   │
 │   │   ├── app.config.ts                 # Global app configuration
+│   │   ├── app.routes.ts                 # Angular routing configuration
 │   │   ├── app.css                       # Global styling
 │   │   ├── app.html                      # Root template
-│   │   └── app.ts                        # Root component / bootstrap
+│   │   ├── app.ts                        # Root component / bootstrap
+│   │   └── version.ts                    # Application version (auto-generated)
+│   │
+│   ├── assets/                           # Static assets (icons, images)
+│   ├── custom.scss                       # Global SCSS styles
+│   ├── styles.css                        # Additional global styles
+│   └── index.html                        # Main HTML entry point
 ```
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.7+ 
-- Node.js 14+ and npm
-- Angular CLI (for frontend development)
+- **Python 3.7+** (Python 3.9+ recommended)
+- **Node.js 14+** and npm
+- **Angular CLI** (for frontend development) - Version 20.3.6+
 
 ### Backend Setup
 
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd NagoAmir_Server
+   cd Librery_Server
    ```
 
 2. **Create and activate virtual environment**
@@ -201,10 +218,10 @@ merkaz-frontend/
 
 4. **Configure the application**
    
-   The configuration file is located at `merkaz_backend/config/config.py`. A template file (`merkaz_backend/config/config_template.py`) is provided for reference.
+   The configuration file should be created at `merkaz_backend/config/config.py`. A template file (`merkaz_backend/config/config_template.py`) is provided for reference.
    
    Edit `merkaz_backend/config/config.py` to set:
-   - Secret keys for sessions and tokens (automatically generated, but can be customized)
+   - Secret keys for sessions and tokens
    - Mail server configuration (Gmail SMTP settings)
    - File paths and folder names
    - Allowed file extensions
@@ -252,6 +269,26 @@ merkaz-frontend/
    ```
    
    The frontend will be available at `http://localhost:4200`
+
+## Technology Stack
+
+### Backend
+- **Framework**: Flask 3.1.2 (Python)
+- **Server**: Waitress 3.0.2 (WSGI server)
+- **Data Storage**: CSV files (no database required)
+- **Email**: Flask-Mail 0.10.0 with Gmail SMTP
+- **Security**: Werkzeug 3.1.3 (password hashing, session management)
+- **File Validation**: python-magic-bin 0.4.14 (MIME type checking)
+- **CORS**: flask-cors 6.0.1
+- **Rate Limiting**: Flask-Limiter 3.8.0
+- **Utilities**: pandas 2.3.3, openpyxl 3.1.5
+
+### Frontend
+- **Framework**: Angular 20.3.0
+- **UI Components**: Angular Material 20.2.14
+- **Build Tool**: Angular CLI 20.3.6
+- **TypeScript**: 5.9.2
+- **RxJS**: 7.8.0
 
 ## Configuration
 
@@ -324,6 +361,8 @@ The frontend is configured to connect to `http://localhost:8000` by default. Upd
 - The backend serves static Angular files, so no separate frontend server is required
 
 ## API Endpoints Overview
+
+For detailed API documentation, see [documentation/api-reference.md](documentation/api-reference.md).
 
 ### Authentication
 - `POST /login` - User login
@@ -440,6 +479,20 @@ The project includes several development and maintenance utilities:
 - **`set_boss_admin_gui.py`** - GUI tool to set boss admin status for users
 - **`dev_log_share_files.py`** - Development utilities for logging and file sharing
 
+### Documentation
+
+Comprehensive documentation is available in the `documentation/` directory:
+
+- **API Reference**: [documentation/api-reference.md](documentation/api-reference.md)
+- **Architecture**: [documentation/architecture.md](documentation/architecture.md)
+- **Setup Guide**: [documentation/setup.md](documentation/setup.md)
+- **Configuration**: [documentation/configuration.md](documentation/configuration.md)
+- **Development**: [documentation/development.md](documentation/development.md)
+- **Production Build**: [PRODUCTION_BUILD.md](PRODUCTION_BUILD.md)
+- **New Computer Setup**: [SETUP_NEW_COMPUTER.md](SETUP_NEW_COMPUTER.md)
+
+Auto-generated documentation for backend modules is available in `documentation/autogen/merkaz_backend/`.
+
 ### Generating Requirements File
 ```bash
 pip freeze > requirements.txt
@@ -479,6 +532,31 @@ User data and activity logs are stored in CSV format within the `merkaz_server/`
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
+## Project Structure
+
+```
+Server/
+├── merkaz_backend/          # Flask backend application
+├── merkaz-frontend/         # Angular frontend application
+├── merkaz_server/           # Runtime data (logs, files, CSV databases)
+│   ├── data/               # User data and sequences
+│   ├── logs/               # Activity logs
+│   └── server_files/       # Shared files, uploads, trash
+├── documentation/          # Project documentation
+├── scripts/                # Utility scripts (docs generation, versioning)
+├── requirements.txt        # Python dependencies
+├── package.json           # Root package.json (for semantic-release)
+└── README.md              # This file
+```
+
+## Version Management
+
+This project uses **semantic-release** for automated version management. Version information is automatically generated in:
+- `merkaz_backend/version.py` (Python)
+- `merkaz-frontend/src/app/version.ts` (TypeScript)
+
+**Current Version:** 2.18.0
+
 ## Support
 
-For issues or questions, please [create an issue or contact information].
+For issues or questions, please create an issue in the repository or contact the project maintainers.
