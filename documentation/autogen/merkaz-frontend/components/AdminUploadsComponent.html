@@ -183,7 +183,7 @@
 
             <tr>
                 <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./admin-uploads.component.css</code></td>
+                <td class="col-md-9"><code>./admin-uploads.component.css,<br>../admin-dash-shared.css</code></td>
             </tr>
 
 
@@ -613,7 +613,7 @@ import { NotificationService } from &#x27;../../../../services/notifications/Not
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: &#x27;./admin-uploads.component.html&#x27;,
-  styleUrls: [&#x27;./admin-uploads.component.css&#x27;]
+  styleUrls: [&#x27;./admin-uploads.component.css&#x27;, &#x27;../admin-dash-shared.css&#x27;]
 })
 export class AdminUploadsComponent {
   
@@ -753,37 +753,16 @@ export class AdminUploadsComponent {
                 <p class="comment">
                     <code>./admin-uploads.component.css</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">:host {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
-  margin: 0;
-  background-color: #f0f2f5;
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: auto;
-  padding-top: 40px;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 1000px;
-  height: calc(100vh - 80px);
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px 40px;
-  box-sizing: border-box;
-}
+                <pre class="line-numbers"><code class="language-scss">
 
 .content-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  min-height: 0;
+  min-height: 70vh;
+  max-height: 70vh;
+  justify-content: space-between;
 }
 
 .scrollable-content {
@@ -799,123 +778,17 @@ export class AdminUploadsComponent {
   overflow-y: auto;
   overflow-x: auto;
   min-height: 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--th-td-border-color);
   border-radius: 6px;
 }
 
-/* title sticky*/
-.table-wrapper thead th {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 2;
-}
 
-/* scroll bar*/
-.table-wrapper::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-.table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 4px;
-}
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-.table-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-/* header title */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 15px;
-  margin-bottom: 25px;
-}
-
-h1 {
-  font-size: 24px;
-  font-weight: 500;
-  color: #202124;
-  margin: 0;
-}
-
-.header a {
-  background-color: #e8eaed;
-  color: #3c4043;
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-}
-.header a:hover {
-  background-color: #d2d5d9;
-}
-
-/* nav tabs */
-.admin-nav {
-  display: flex;
-  gap: 5px;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 25px;
-}
-.nav-tab {
-  padding: 10px 15px;
-  text-decoration: none;
-  color: #5f6368;
-  border-radius: 6px 6px 0 0;
-  font-weight: 500;
-}
-.nav-tab.active {
-  color: #1a73e8;
-  border-bottom: 3px solid #1a73e8;
-}
-.nav-tab:hover:not(.active) {
-  background-color: #f1f3f4;
-}
-
-/* table  */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-th, td {
-  padding: 12px 8px;
-  text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-/* buttons */
 .action-btn {
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
   transition: background-color 0.2s ease;
 }
 
 .approve-btn {
-  background-color: #e6f4ea;
-  color: #1e8e3e;
-}
-.approve-btn:hover {
-  background-color: #c6e6d4;
-}
-
-.decline-btn {
-  background-color: #fce8e6;
-  color: #c5221f;
-}
-.decline-btn:hover {
-  background-color: #f9d8d6;
+  margin: 5px 5px;
 }
 
 /*input fields*/
@@ -923,38 +796,254 @@ input[type&#x3D;&quot;text&quot;] {
   width: 100%;
   padding: 6px 8px;
   font-size: 13px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--placeholder-color);
   border-radius: 4px;
   box-sizing: border-box;
+  background-color: var(--search-box-color);
+  color: var(--text-color);
 }
 input[type&#x3D;&quot;text&quot;]:focus {
   outline: none;
-  border-color: #1a73e8;
+  border-color: var(--primary-buttons);
   box-shadow: 0 0 3px rgba(26, 115, 232, 0.3);
+}</code></pre>
+                <p class="comment">
+                    <code>../admin-dash-shared.css</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">/* Shared styles for all admin-dash components */
+
+/* Host styles - common to all components */
+:host {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+  margin: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  padding-top: 40px;
 }
-@media(max-width: 768px){
+
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+  height: calc(100vh - 80px);
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  padding: 10px 20px;
+  box-sizing: border-box;
+}
+
+/* Header */
+.header {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--table-border-color);
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+}
+
+.header a {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.header a:hover {
+  background-color: var(--buttons-hover-color);
+}
+
+h1,
+.header h1,
+.container h1 {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.back-link {
+  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.back-link:hover {
+  background-color: var(--buttons-hover-color);
+}
+
+/* Navigation Tabs */
+.admin-nav {
+  display: flex;
+  gap: 5px;
+  border-bottom: 1px solid var(--table-border-color);
+  margin-bottom: 25px;
+}
+
+.nav-tab {
+  padding: 10px 15px;
+  text-decoration: none;
+  color: var(--placeholder-color);
+  border-radius: 6px 6px 0 0;
+  font-weight: 500;
+}
+
+.nav-tab.active {
+  color: var(--primary-buttons);
+  border-bottom: 3px solid var(--primary-buttons);
+}
+
+.nav-tab:hover:not(.active),
+.nav-tab:not(.active):hover {
+  background-color: var(--selected-row-color);
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--th-td-border-color);
+  vertical-align: middle;
+}
+
+th {
+  color: var(--placeholder-color);
+  font-weight: 500;
+}
+
+tr:hover {
+  background-color: var(--selected-row-color);
+}
+
+/* Table Wrapper */
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
+  border: 1px solid var(--th-td-border-color);
+  border-radius: 6px;
+}
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  z-index: 2;
+}
+
+/* Scrollbar Styles */
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--scroll-color);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--card-bg);
+  border-radius: 4px;
+}
+
+/* Action Button Base */
+.action-btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: var(--buttons-border);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  background-color: var(--buttons-color);
+  color: var(--text-color);
+}
+
+.action-btn:hover {
+  background-color: var(--buttons-hover-color);
+}
+
+/* Approve Button (Green) */
+.approve-btn,
+.make-admin {
+  background-color: var(--success-bg);
+  color: var(--success-text);
+}
+
+.approve-btn:hover,
+.make-admin:hover {
+  background-color: var(--success-hover);
+}
+
+/* Deny/Decline Button (Red) */
+.deny-btn,
+.deactivate-btn,
+.decline-btn {
+  background-color: var(--error-bg);
+  color: var(--error-text);
+}
+
+.deny-btn:hover,
+.deactivate-btn:hover,
+.decline-btn:hover {
+  background-color: var(--error-hover);
+}
+
+/* Mobile Responsive */
+@media(max-width: 768px) {
   :host {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    padding-top:0;
+    padding-top: 0;
     width: 100%;
     align-items: flex-start;
     justify-content: flex-start;
   }
-  .container{
+
+  .container {
     height: 100vh;
   }
-  .content-wrapper{
+
+  .content-wrapper {
     height: 100%;
   }
+
   .admin-nav {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
-    scrollbar-color: #ccc transparent;
+    scrollbar-color: var(--scroll-color) transparent;
   }
 
   .admin-nav::-webkit-scrollbar {
@@ -962,7 +1051,7 @@ input[type&#x3D;&quot;text&quot;]:focus {
   }
 
   .admin-nav::-webkit-scrollbar-thumb {
-    background: #ccc;
+    background: var(--scroll-color);
     border-radius: 4px;
   }
 
@@ -976,7 +1065,8 @@ input[type&#x3D;&quot;text&quot;]:focus {
     flex: 0 0 auto;
     margin-right: 6px;
   }
-}</code></pre>
+}
+</code></pre>
     </div>
 
     <div class="tab-pane fade " id="tree">
@@ -1005,7 +1095,7 @@ input[type&#x3D;&quot;text&quot;]:focus {
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
         var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab">Users</a>    <a routerLink="/pending" class="nav-tab">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab active">Uploads</a>  </div>  <!-- Uploads Table -->  <div class="content-wrapper">    <div class="scrollable-content">      <div class="table-wrapper">        <table>          <thead>            <tr>              <th>Timestamp</th>              <th>User Email</th>              <th>Uploaded Item</th>              <th style="width: 40%;">Approve Location</th>              <th style="width: 15%; text-align: center;">Actions</th>            </tr>          </thead>          <tbody>            @for (upload of uploads; let i = $index; track upload.timestamp) {              <tr>                <td>{{ upload.timestamp }}</td>                <td>{{ upload.email }}</td>                <td>{{ upload.filename }}</td>                <td>                  <input                    type="text"                    [(ngModel)]="upload.path"                    placeholder="Enter destination path"                    class="path-input"                  />                </td>                <td style="text-align: center;">                  <div class="actions-cell">                    <button                      class="action-btn approve-btn"                      (click)="approve(upload, i)"                    >                      Approve                    </button>                    <button                      class="action-btn decline-btn"                      (click)="decline(upload, i)"                    >                      Decline                    </button>                  </div>                </td>              </tr>            }            @if (uploads.length === 0) {              <tr>                <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">                  No files are pending review.                </td>              </tr>            }          </tbody>        </table>      </div>    </div>  </div></div></div>'
-    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
+    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'},{'name': 'UsefulLinksComponent', 'selector': 'app-useful-links'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'AdminUploadsComponent'};
 </script>

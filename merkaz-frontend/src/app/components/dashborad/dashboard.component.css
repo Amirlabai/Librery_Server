@@ -875,7 +875,7 @@ footer {
   }
 
   .modal-content,
-  .edit-modal-content {
+  .edit-modal-content{
     width: 95%;
     max-height: 90vh;
     overflow-y: auto;
@@ -937,6 +937,3 @@ footer {
     z-index: 1001;
   }
 }
-
-
-    
