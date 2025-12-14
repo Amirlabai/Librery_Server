@@ -50,6 +50,7 @@ export class DashboardComponent {
   downloadItem = '';
 
   showSuggestBox = false;
+  showUsefulLinksModal = false;
   
   selectedFile: any = null;
 
@@ -406,6 +407,12 @@ export class DashboardComponent {
   }
   closeSuggestBox() {
     this.showSuggestBox = false;
+  }
+  openUsefulLinksModal(){
+    this.showUsefulLinksModal = true;
+  }
+  closeUsefulLinksModal() {
+    this.showUsefulLinksModal = false;
   }
 
   formatSize(bytes: number): string {

@@ -5,7 +5,7 @@
   --text-color: #000000;
   --primary-color: #3f51b5; 
 
-  --card-bg: #ffffff; 
+  --card-bg: #fdfdfd; 
   --search-box-color: #f1f3f4; 
   --suggestion-box-color: #ffffff; 
 
@@ -29,18 +29,6 @@
   --search-box-color: #ffffff;
 
   --th-td-border-color:rgb(175, 167, 167);
-
-  /* Success/Approve colors (green) */
-  --success-bg: #34a853;
-  --success-text: #ffffff;
-  --success-hover: #c6e6d4;
-  --success-dark: #2e7d32;
-
-  /* Error/Deny colors (red) */
-  --error-bg: #fce8e6;
-  --error-text: #c5221f;
-  --error-hover: #f9d8d6;
-  --error-dark: #d32f2f;
 }
 html, body {
   height: 100%;
@@ -77,24 +65,13 @@ body.dark-mode {
   --buttons-border: none;
 
   --search-box-color: #2c2c2c;
-  --th-td-border-color: #444444;
-
-  /* Success/Approve colors (green) - dark mode */
-  --success-bg: #34a853;
-  --success-text: #f5f5f5;
-  --success-hover: #2e7d32;
-  --success-dark: #4caf50;
-
-  /* Error/Deny colors (red) - dark mode */
-  --error-bg: #CC3333;
-  --error-text: #ffffff;
-  --error-hover: #d32f2f;
-  --error-dark: #f44336;
+  --th-td-border-color: rgb(75, 75, 75);
 }
+
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s; 
 }
 .app-notification {
   position: fixed;
@@ -136,10 +113,6 @@ body {
     max-width: 90vw !important;
     text-align: center !important;
     width: max-content !important;
-  }
-  .html body{
-    
-    height: 500px !important;
   }
 }
 

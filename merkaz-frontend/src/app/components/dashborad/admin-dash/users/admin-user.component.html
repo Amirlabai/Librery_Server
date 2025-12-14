@@ -60,10 +60,10 @@
                   {{ user.online_status ? 'Online' : 'Offline' }}
                 </td>
 
-                <td style="text-align: center;">
+                <td class="actions-cell">
                   @if (user.email !== currentUserEmail) {
                     <button
-                      class="action-btn make-admin"
+                      class="action-btn"
                       [ngClass]="user.is_admin ? 'remove-admin' : 'make-admin'"
                       (click)="toggleRole(user.email)"
                     >
@@ -71,7 +71,7 @@
                     </button>
 
                     <button
-                      class="action-btn deactivate-btn"
+                      class="action-btn"
                       [ngClass]="user.is_active ? 'deactivate-user' : 'activate-user'"
                       (click)="toggleStatus(user.email)"
                     >

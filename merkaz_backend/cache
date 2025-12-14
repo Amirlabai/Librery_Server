@@ -1,5 +1,14 @@
 {
-  "files": [],
+  "files": [
+    {
+      "upload_id": "14",
+      "name": "invoice_INV-1002.pdf",
+      "path": "invoice_INV-1002.pdf",
+      "has_files": true,
+      "size": 1416,
+      "is_folder": false
+    }
+  ],
   "folders": [
     {
       "upload_id": "0",

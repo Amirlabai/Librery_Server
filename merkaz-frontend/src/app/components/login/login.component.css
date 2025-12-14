@@ -22,19 +22,21 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   max-width: 400px;
+  width: 90%; 
   text-align: center;
-  height: 500px;
   color: var(--text-color);
+  margin-top: 20px; 
+  margin-bottom: 20px; 
 }
 .login-form {
   width: 100%;
   height: auto;
-  margin-top: 60px;
+  margin-top: 30px;
 }
 
 
 .full-width {
-  width: 300px;
+  width: 100%;;
 }
 
 .button{
@@ -44,28 +46,6 @@
   color: white !important;
 }
 .sub{
-  margin-top: 30px;
-}
-.forgot-pass {
-  font-size: 14px;
-  cursor: pointer;
-  color: #1a73e8;
-  text-decoration: underline;
-}
-.create {
-  font-size: 14px;
-  cursor: pointer;
-  color: #1a73e8;
-  text-decoration: underline;
-}
-.have-account{
-  color: var(--text-color);
-}
-.login-form input {
-    color: var(--text-color);
-    
-}
-.sub{
   margin-top: 20px;
 }
 .forgot-pass {
@@ -79,4 +59,31 @@
   cursor: pointer;
   color: #1a73e8;
   text-decoration: underline;
+  line-height: 1;
+}
+.have-account{
+  color: var(--text-color);
+}
+.login-form input {
+    color: var(--text-color);
+    
+}
+@media (max-width: 600px) {
+ .login-container {
+    padding: 20px;
+    border-radius: 0;
+    max-width: 90%;
+    width: 90%;
+    box-shadow: none;
+    height: 100%;
+    margin: 0;
+    height: 50%;
+ }
+ :host {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+ }
 }

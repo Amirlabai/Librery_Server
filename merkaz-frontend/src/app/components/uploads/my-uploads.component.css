@@ -23,10 +23,7 @@
   margin-bottom: 25px;
   flex-shrink: 0;
 }
-.label-header{
-  font-size: 18px;
-  font-weight: 600;
-}
+
 .table-wrapper {
   flex: 1;
   overflow-y: auto;
@@ -103,27 +100,34 @@ th {
 }
 @media (max-width: 768px) {
     
-    :host {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        padding-top:0;
-        width: 100%;
-        align-items: flex-start;
-        justify-content: flex-start;
-        
-    }
-    .label-header{
-        font-size: 18px;
-        font-weight: 600;
-    }
-    .container{
-        display: flex;
-        flex-direction: column;
-        
-        height: 90vh;
-        box-sizing: border-box;
-        
-    }
-    
+  .container {
+    padding: 20px;
+    border-radius: 0;
+    max-width: 100%;
+    width: 100%;
+    box-shadow: none;
+    height: 100%;
+    margin: 0;
+    height: 100%;
+  }
+  :host {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+  }
+  .header {
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  .header a {
+    flex-grow: 1; 
+    text-align: center;
+    max-width: 48%; 
+  }
+
 }
