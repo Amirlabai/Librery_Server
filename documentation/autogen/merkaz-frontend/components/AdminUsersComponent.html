@@ -189,7 +189,7 @@
 
             <tr>
                 <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./admin-user.component.css,<br>../admin-dash-shared.css</code></td>
+                <td class="col-md-9"><code>./admin-user.component.css</code></td>
             </tr>
 
 
@@ -670,7 +670,7 @@ interface User {
   standalone: true,
   imports: [CommonModule, RouterLink, NgClass],
   templateUrl: &#x27;./admin-user.component.html&#x27;,
-  styleUrls: [&#x27;./admin-user.component.css&#x27;, &#x27;../admin-dash-shared.css&#x27;]
+  styleUrls: [&#x27;./admin-user.component.css&#x27;]
 })
 export class AdminUsersComponent implements OnInit { 
   users: User[] &#x3D; [];
@@ -793,10 +793,10 @@ export class AdminUsersComponent implements OnInit {
                   {{ user.online_status ? &#x27;Online&#x27; : &#x27;Offline&#x27; }}
                 &lt;/td&gt;
 
-                &lt;td style&#x3D;&quot;text-align: center;&quot;&gt;
+                &lt;td class&#x3D;&quot;actions-cell&quot;&gt;
                   @if (user.email !&#x3D;&#x3D; currentUserEmail) {
                     &lt;button
-                      class&#x3D;&quot;action-btn make-admin&quot;
+                      class&#x3D;&quot;action-btn&quot;
                       [ngClass]&#x3D;&quot;user.is_admin ? &#x27;remove-admin&#x27; : &#x27;make-admin&#x27;&quot;
                       (click)&#x3D;&quot;toggleRole(user.email)&quot;
                     &gt;
@@ -804,7 +804,7 @@ export class AdminUsersComponent implements OnInit {
                     &lt;/button&gt;
 
                     &lt;button
-                      class&#x3D;&quot;action-btn deactivate-btn&quot;
+                      class&#x3D;&quot;action-btn&quot;
                       [ngClass]&#x3D;&quot;user.is_active ? &#x27;deactivate-user&#x27; : &#x27;activate-user&#x27;&quot;
                       (click)&#x3D;&quot;toggleStatus(user.email)&quot;
                     &gt;
@@ -837,17 +837,37 @@ export class AdminUsersComponent implements OnInit {
                 <p class="comment">
                     <code>./admin-user.component.css</code>
                 </p>
-                <pre class="line-numbers"><code class="language-scss">
+                <pre class="line-numbers"><code class="language-scss">:host {
+    font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 1000px;
+  height: calc(100vh - 80px);
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px 40px;
+  box-sizing: border-box;
+}
+
 .content-wrapper {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
-  min-height: 70vh;
-  max-height: 70vh;
-  justify-content: space-between;
-
+  border: 1px solid var(--th-td-border-color);
+  border-radius: 6px;
 }
 
 .scrollable-content {
@@ -859,20 +879,118 @@ export class AdminUsersComponent implements OnInit {
 }
 
 .table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
+  border: 1px solid var(--table-border-color);
+  border-radius: 6px;
   margin-bottom: 20px;
 }
-.header a {
-    border: 1px solid var(--table-border-color);
+
+.table-wrapper thead th {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  z-index: 2;
 }
 
-tr {
-    height: 30px;
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--scroll-color);
+  border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: var(--card-bg);
+  border-radius: 4px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--table-border-color);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 0;
+}
+.header a {
+    background-color: var(--buttons-color);
+    color: var(--text-color);
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+}
+.header a:hover {
+    background-color: var(--buttons-hover-color);
+}
+.admin-nav {
+    display: flex;
+    gap: 5px;
+    border-bottom: 1px solid var(--table-border-color);
+    margin-bottom: 25px;
+}
+.nav-tab {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--placeholder-color);
+    border-radius: 6px 6px 0 0;
+    font-weight: 500;
+}
+.nav-tab.active {
+    color: var(--primary-buttons);
+    border-bottom: 3px solid var(--primary-buttons);
+}
+.nav-tab:not(.active):hover {
+    background-color: var(--selected-row-color);
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 14px; 
+}
+thead tr {
+    border-bottom: 1px solid var(--th-td-border-color);
+}
+th, td { 
+    padding: 12px 8px; 
+    text-align: left; 
+    vertical-align: middle;
+    font-size: 14px;
+}
+tbody tr{
+    border-bottom: 1px solid var(--th-td-border-color);
 }
 th { 
+    color: var(--placeholder-color);
     font-weight: 400;
 }
+tr:hover {
+    background-color: var(--selected-row-color);
+}
 .action-btn {
-    margin-right: 5px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: var(--buttons-border);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
 }
 .make-admin { 
     background-color: var(--download-edit-buttons); 
@@ -882,25 +1000,25 @@ th {
     background-color: var(--buttons-hover-color); 
 }
 .remove-admin { 
-    background-color: var(--error-bg); 
-    color: var(--error-text); 
+    background-color: var(--delete-button-bg); 
+    color: var(--delete-button-text); 
 }
 .remove-admin:hover { 
-    background-color: var(--error-hover); 
+    background-color: #901616; 
 }
 .activate-user { 
-    background-color: var(--success-bg); 
-    color: var(--success-text); 
+    background-color: #e6f4ea; 
+    color: #1e8e3e; 
 }
 .activate-user:hover { 
-    background-color: var(--success-hover); 
+    background-color: #c6e6d4; 
 }
 .deactivate-user { 
-    background-color: var(--error-bg); 
-    color: var(--error-text); 
+    background-color: var(--delete-button-bg); 
+    color: var(--delete-button-text); 
 }
 .deactivate-user:hover { 
-    background-color: var(--error-hover); 
+    background-color: #f9d8d6; 
 }
 .badge {
     padding: 4px 8px;
@@ -939,7 +1057,7 @@ th {
     background-color: var(--placeholder-color);
 }
 .actions-cell { 
-    display: flex;
+    display: flex; 
     gap: 5px; 
     justify-content: center; 
 }
@@ -959,267 +1077,65 @@ th {
     background-color: var(--primary-buttons);
     color: white;
     border: 1px solid var(--primary-buttons);
+}
+@media(max-width: 768px){
+    .container {
+        padding: 20px;
+        border-radius: 0;
+        max-width: 100%;
+        width: 100%;
+        box-shadow: none;
+        height: 100%;
+        margin: 0;
+        height: 100%;
+    }
+    :host {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+        align-items: center;
+        height: 100%;
+    }
+    .header{
+        display: flex;
+        flex-direction:row ;
+        padding-right: 50px;
+    }
+    .header h1{
+        font-size: 16px;
+    }
+    .content-wrapper{
+        height: 100%;
+    }
+    .admin-nav {
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #ccc transparent;
+    }
+
+    .admin-nav::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .admin-nav::-webkit-scrollbar-thumb {
+        background: var(--scroll-color);
+        border-radius: 4px;
+    }
+
+    .admin-nav::-webkit-scrollbar-thumb:hover {
+        background: #999;
+    }
+
+    .nav-tab {
+        display: inline-block;
+        white-space: nowrap;
+        flex: 0 0 auto;
+        margin-right: 6px;
+    }
 }</code></pre>
-                <p class="comment">
-                    <code>../admin-dash-shared.css</code>
-                </p>
-                <pre class="line-numbers"><code class="language-scss">/* Shared styles for all admin-dash components */
-
-/* Host styles - common to all components */
-:host {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
-  margin: 0;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  display: flex;
-  justify-content: center;
-  padding-top: 40px;
-}
-
-/* Container */
-.container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 1000px;
-  height: calc(100vh - 80px);
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-  padding: 10px 20px;
-  box-sizing: border-box;
-}
-
-/* Header */
-.header {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--table-border-color);
-  padding-bottom: 15px;
-  margin-bottom: 25px;
-}
-
-.header a {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
-  background-color: var(--buttons-color);
-  color: var(--text-color);
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.header a:hover {
-  background-color: var(--buttons-hover-color);
-}
-
-h1,
-.header h1,
-.container h1 {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
-  font-size: 24px;
-  font-weight: 500;
-  color: var(--text-color);
-  margin: 0;
-}
-
-.back-link {
-  font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
-  background-color: var(--buttons-color);
-  color: var(--text-color);
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.back-link:hover {
-  background-color: var(--buttons-hover-color);
-}
-
-/* Navigation Tabs */
-.admin-nav {
-  display: flex;
-  gap: 5px;
-  border-bottom: 1px solid var(--table-border-color);
-  margin-bottom: 25px;
-}
-
-.nav-tab {
-  padding: 10px 15px;
-  text-decoration: none;
-  color: var(--placeholder-color);
-  border-radius: 6px 6px 0 0;
-  font-weight: 500;
-}
-
-.nav-tab.active {
-  color: var(--primary-buttons);
-  border-bottom: 3px solid var(--primary-buttons);
-}
-
-.nav-tab:hover:not(.active),
-.nav-tab:not(.active):hover {
-  background-color: var(--selected-row-color);
-}
-
-/* Table Styles */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-th, td {
-  padding: 12px 8px;
-  text-align: left;
-  border-bottom: 1px solid var(--th-td-border-color);
-  vertical-align: middle;
-}
-
-th {
-  color: var(--placeholder-color);
-  font-weight: 500;
-}
-
-tr:hover {
-  background-color: var(--selected-row-color);
-}
-
-/* Table Wrapper */
-.table-wrapper {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: auto;
-  min-height: 0;
-  border: 1px solid var(--th-td-border-color);
-  border-radius: 6px;
-}
-
-.table-wrapper thead th {
-  position: sticky;
-  top: 0;
-  background: var(--card-bg);
-  z-index: 2;
-}
-
-/* Scrollbar Styles */
-.table-wrapper::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-  background: var(--scroll-color);
-  border-radius: 4px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-  background: var(--card-bg);
-  border-radius: 4px;
-}
-
-/* Action Button Base */
-.action-btn {
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: var(--buttons-border);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-  background-color: var(--buttons-color);
-  color: var(--text-color);
-}
-
-.action-btn:hover {
-  background-color: var(--buttons-hover-color);
-}
-
-/* Approve Button (Green) */
-.approve-btn,
-.make-admin {
-  background-color: var(--success-bg);
-  color: var(--success-text);
-}
-
-.approve-btn:hover,
-.make-admin:hover {
-  background-color: var(--success-hover);
-}
-
-/* Deny/Decline Button (Red) */
-.deny-btn,
-.deactivate-btn,
-.decline-btn {
-  background-color: var(--error-bg);
-  color: var(--error-text);
-}
-
-.deny-btn:hover,
-.deactivate-btn:hover,
-.decline-btn:hover {
-  background-color: var(--error-hover);
-}
-
-/* Mobile Responsive */
-@media(max-width: 768px) {
-  :host {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    padding-top: 0;
-    width: 100%;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
-
-  .container {
-    height: 100vh;
-  }
-
-  .content-wrapper {
-    height: 100%;
-  }
-
-  .admin-nav {
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--scroll-color) transparent;
-  }
-
-  .admin-nav::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .admin-nav::-webkit-scrollbar-thumb {
-    background: var(--scroll-color);
-    border-radius: 4px;
-  }
-
-  .admin-nav::-webkit-scrollbar-thumb:hover {
-    background: #999;
-  }
-
-  .nav-tab {
-    display: inline-block;
-    white-space: nowrap;
-    flex: 0 0 auto;
-    margin-right: 6px;
-  }
-}
-</code></pre>
     </div>
 
     <div class="tab-pane fade " id="tree">
@@ -1247,8 +1163,8 @@ tr:hover {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab active">Users</a>    <a routerLink="/pending" class="nav-tab">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab">Uploads</a>  </div>  <div class="content-wrapper">    <div class="scrollable-content">      <!-- Users Table -->      <div class="table-wrapper">        <table>          <thead>            <tr>              <th>Email</th>              <th style="width: 15%; text-align: center;">Role</th>              <th style="width: 15%; text-align: center;">Status</th>              <th style="width: 15%; text-align: center;">Online Status</th>              <th style="width: 30%; text-align: center;">Actions</th>            </tr>          </thead>          <tbody>            @for (user of users; track user.email) {              <tr>                <td>{{ user.email }}</td>                <td style="text-align: center;">                  <span                    class="badge"                    [ngClass]="user.is_admin ? \'role-admin\' : \'role-user\'"                  >                    {{ user.is_admin ? \'Admin\' : \'User\' }}                  </span>                </td>                <td style="text-align: center;">                  <span                    class="badge"                    [ngClass]="user.is_active ? \'status-active\' : \'status-inactive\'"                  >                    {{ user.is_active ? \'Active\' : \'Inactive\' }}                  </span>                </td>                <td style="text-align: center;">                  <span                    class="online-status"                    [ngClass]="user.online_status ? \'online\' : \'offline\'"                  ></span>                  {{ user.online_status ? \'Online\' : \'Offline\' }}                </td>                <td style="text-align: center;">                  @if (user.email !== currentUserEmail) {                    <button                      class="action-btn make-admin"                      [ngClass]="user.is_admin ? \'remove-admin\' : \'make-admin\'"                      (click)="toggleRole(user.email)"                    >                      {{ user.is_admin ? \'Remove Admin\' : \'Make Admin\' }}                    </button>                    <button                      class="action-btn deactivate-btn"                      [ngClass]="user.is_active ? \'deactivate-user\' : \'activate-user\'"                      (click)="toggleStatus(user.email)"                    >                      {{ user.is_active ? \'Deactivate\' : \'Activate\' }}                    </button>                  } @else {                    <span>(You)</span>                  }                </td>              </tr>            }            @if (users.length === 0) {              <tr>                <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">                  No users found.                </td>              </tr>            }          </tbody>        </table>      </div>    </div>  </div></div></div>'
-    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'},{'name': 'UsefulLinksComponent', 'selector': 'app-useful-links'}];
+        var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab active">Users</a>    <a routerLink="/pending" class="nav-tab">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab">Uploads</a>  </div>  <div class="content-wrapper">    <div class="scrollable-content">      <!-- Users Table -->      <div class="table-wrapper">        <table>          <thead>            <tr>              <th>Email</th>              <th style="width: 15%; text-align: center;">Role</th>              <th style="width: 15%; text-align: center;">Status</th>              <th style="width: 15%; text-align: center;">Online Status</th>              <th style="width: 30%; text-align: center;">Actions</th>            </tr>          </thead>          <tbody>            @for (user of users; track user.email) {              <tr>                <td>{{ user.email }}</td>                <td style="text-align: center;">                  <span                    class="badge"                    [ngClass]="user.is_admin ? \'role-admin\' : \'role-user\'"                  >                    {{ user.is_admin ? \'Admin\' : \'User\' }}                  </span>                </td>                <td style="text-align: center;">                  <span                    class="badge"                    [ngClass]="user.is_active ? \'status-active\' : \'status-inactive\'"                  >                    {{ user.is_active ? \'Active\' : \'Inactive\' }}                  </span>                </td>                <td style="text-align: center;">                  <span                    class="online-status"                    [ngClass]="user.online_status ? \'online\' : \'offline\'"                  ></span>                  {{ user.online_status ? \'Online\' : \'Offline\' }}                </td>                <td class="actions-cell">                  @if (user.email !== currentUserEmail) {                    <button                      class="action-btn"                      [ngClass]="user.is_admin ? \'remove-admin\' : \'make-admin\'"                      (click)="toggleRole(user.email)"                    >                      {{ user.is_admin ? \'Remove Admin\' : \'Make Admin\' }}                    </button>                    <button                      class="action-btn"                      [ngClass]="user.is_active ? \'deactivate-user\' : \'activate-user\'"                      (click)="toggleStatus(user.email)"                    >                      {{ user.is_active ? \'Deactivate\' : \'Activate\' }}                    </button>                  } @else {                    <span>(You)</span>                  }                </td>              </tr>            }            @if (users.length === 0) {              <tr>                <td colspan="5" style="text-align: center; color: #5f6368; padding: 30px;">                  No users found.                </td>              </tr>            }          </tbody>        </table>      </div>    </div>  </div></div></div>'
+    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'AdminUsersComponent'};
 </script>

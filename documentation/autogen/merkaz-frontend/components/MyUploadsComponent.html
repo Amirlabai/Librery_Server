@@ -519,7 +519,7 @@ export class MyUploadsComponent {
     <div class="tab-pane fade " id="templateData">
         <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;container&quot;&gt;
   &lt;div class&#x3D;&quot;header&quot;&gt;
-    &lt;label class&#x3D;&quot;label-header&quot;&gt;My Upload History&lt;/label&gt;
+    &lt;h1&gt;My Upload History&lt;/h1&gt;
     &lt;a routerLink&#x3D;&quot;/dashboard&quot;&gt;Back to Files&lt;/a&gt;
   &lt;/div&gt;
 
@@ -596,10 +596,7 @@ export class MyUploadsComponent {
   margin-bottom: 25px;
   flex-shrink: 0;
 }
-.label-header{
-  font-size: 18px;
-  font-weight: 600;
-}
+
 .table-wrapper {
   flex: 1;
   overflow-y: auto;
@@ -676,31 +673,37 @@ th {
 }
 @media (max-width: 768px) {
     
-    :host {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        padding-top:0;
-        width: 100%;
-        align-items: flex-start;
-        justify-content: flex-start;
-        
-    }
-    .label-header{
-        font-size: 18px;
-        font-weight: 600;
-    }
-    .container{
-        display: flex;
-        flex-direction: column;
-        
-        height: 90vh;
-        box-sizing: border-box;
-        
-    }
-    
-}
-</code></pre>
+  .container {
+    padding: 20px;
+    border-radius: 0;
+    max-width: 100%;
+    width: 100%;
+    box-shadow: none;
+    height: 100%;
+    margin: 0;
+    height: 100%;
+  }
+  :host {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    height: 100%;
+  }
+  .header {
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  .header a {
+    flex-grow: 1; 
+    text-align: center;
+    max-width: 48%; 
+  }
+
+}</code></pre>
     </div>
 
     <div class="tab-pane fade " id="tree">
@@ -728,8 +731,8 @@ th {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="container">  <div class="header">    <label class="label-header">My Upload History</label>    <a routerLink="/dashboard">Back to Files</a>  </div>  <div class="table-wrapper">    <table>      <thead>        <tr>          <th>Timestamp</th>          <th>Filename</th>          <th>Suggested Path</th>          <th style="width: 20%;">Status</th>        </tr>      </thead>      <tbody>        @for (upload of uploads; track upload.timestamp) {          <tr>            <td>{{ upload.timestamp }}</td>            <td>{{ upload.filename }}</td>            <td>/{{ upload.path || \'Home\' }}</td>            <td>              <span                [ngClass]="{                  \'status-pending\': upload.status === \'Pending Review\',                  \'status-declined\': upload.status === \'Declined\',                  \'status-approved\': upload.status === \'Approved\'                }"              >                {{ upload.status }}              </span>            </td>          </tr>        }        @if (uploads.length === 0) {          <tr>            <td colspan="4" style="text-align: center; color: #5f6368; padding: 30px;">              You have not uploaded any files.            </td>          </tr>        }      </tbody>    </table>  </div></div></div>'
-    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'},{'name': 'UsefulLinksComponent', 'selector': 'app-useful-links'}];
+        var COMPONENT_TEMPLATE = '<div><div class="container">  <div class="header">    <h1>My Upload History</h1>    <a routerLink="/dashboard">Back to Files</a>  </div>  <div class="table-wrapper">    <table>      <thead>        <tr>          <th>Timestamp</th>          <th>Filename</th>          <th>Suggested Path</th>          <th style="width: 20%;">Status</th>        </tr>      </thead>      <tbody>        @for (upload of uploads; track upload.timestamp) {          <tr>            <td>{{ upload.timestamp }}</td>            <td>{{ upload.filename }}</td>            <td>/{{ upload.path || \'Home\' }}</td>            <td>              <span                [ngClass]="{                  \'status-pending\': upload.status === \'Pending Review\',                  \'status-declined\': upload.status === \'Declined\',                  \'status-approved\': upload.status === \'Approved\'                }"              >                {{ upload.status }}              </span>            </td>          </tr>        }        @if (uploads.length === 0) {          <tr>            <td colspan="4" style="text-align: center; color: #5f6368; padding: 30px;">              You have not uploaded any files.            </td>          </tr>        }      </tbody>    </table>  </div></div></div>'
+    var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'MyUploadsComponent'};
 </script>
