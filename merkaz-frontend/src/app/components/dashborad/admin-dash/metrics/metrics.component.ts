@@ -9,7 +9,10 @@ import { AdminDashboardService } from '../../../../services/admin-dashboard.serv
   standalone: true,
   imports: [CommonModule, RouterLink, RouterModule],
   templateUrl: './metrics.component.html',
-  styleUrls: ['./metrics.component.css']
+  styleUrls: [
+    '../admin-dash-shared.css',
+    './metrics.component.css'
+  ]
 })
 export class MetricsComponent {
   logs = [

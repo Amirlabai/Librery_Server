@@ -11,7 +11,10 @@ import { NotificationService } from '../../../../services/notifications/Notifica
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './admin-uploads.component.html',
-  styleUrls: ['./admin-uploads.component.css']
+  styleUrls: [
+    '../admin-dash-shared.css',
+    './admin-uploads.component.css'
+  ]
 })
 export class AdminUploadsComponent {
   

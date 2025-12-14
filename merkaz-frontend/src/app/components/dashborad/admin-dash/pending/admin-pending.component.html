@@ -15,43 +15,45 @@
   </div>
 
   <!-- Users Table -->
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>Email</th>
-          <th style="width: 25%; text-align: center;">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (user of users; track user.email) {
+   <div class="content-wrapper">
+    <div class="table-wrapper">
+      <table>
+        <thead>
           <tr>
-            <td>{{ user.email }}</td>
-            <td style="text-align: center;">
-              <button
-                class="action-btn approve-btn"
-                (click)="approveUser(user.email)"
-              >
-                Approve
-              </button>
-              <button
-                class="action-btn deny-btn"
-                (click)="denyUser(user.email)"
-              >
-                Deny
-              </button>
-            </td>
+            <th>Email</th>
+            <th style="width: 25%; text-align: center;">Action</th>
           </tr>
-        }
+        </thead>
+        <tbody>
+          @for (user of users; track user.email) {
+            <tr>
+              <td>{{ user.email }}</td>
+              <td style="text-align: center;">
+                <button
+                  class="action-btn approve-btn"
+                  (click)="approveUser(user.email)"
+                >
+                  Approve
+                </button>
+                <button
+                  class="action-btn deny-btn"
+                  (click)="denyUser(user.email)"
+                >
+                  Deny
+                </button>
+              </td>
+            </tr>
+          }
 
-        @if (users.length === 0) {
-          <tr>
-            <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
-              No users are pending approval.
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+          @if (users.length === 0) {
+            <tr>
+              <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">
+                No users are pending approval.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
