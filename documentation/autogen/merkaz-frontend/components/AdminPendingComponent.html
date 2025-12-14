@@ -182,7 +182,7 @@
 
             <tr>
                 <td class="col-md-3">styleUrls</td>
-                <td class="col-md-9"><code>./admin-pending.component.css</code></td>
+                <td class="col-md-9"><code>../admin-dash-shared.css,<br>./admin-pending.component.css</code></td>
             </tr>
 
 
@@ -265,7 +265,7 @@
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:19</a></div>
                             </td>
                         </tr>
 
@@ -344,8 +344,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="36"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:36</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="39"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:39</a></div>
                         </td>
                     </tr>
 
@@ -411,8 +411,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="51"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:51</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="54"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:54</a></div>
                         </td>
                     </tr>
 
@@ -478,8 +478,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="24"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:24</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:27</a></div>
                         </td>
                     </tr>
 
@@ -515,8 +515,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="20"
-                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:20</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="23"
+                                    class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:23</a></div>
                         </td>
                     </tr>
 
@@ -562,7 +562,7 @@
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="16" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:16</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="19" class="link-to-prism">merkaz-frontend/src/app/components/dashborad/admin-dash/pending/admin-pending.component.ts:19</a></div>
                         </td>
                     </tr>
 
@@ -587,7 +587,10 @@ import { NotificationService } from &#x27;../../../../services/notifications/Not
   standalone: true,
   imports: [RouterLink ,CommonModule],
   templateUrl: &#x27;./admin-pending.component.html&#x27;,
-  styleUrls: [&#x27;./admin-pending.component.css&#x27;]
+  styleUrls: [
+    &#x27;../admin-dash-shared.css&#x27;,
+    &#x27;./admin-pending.component.css&#x27;
+  ]
 })
 export class AdminPendingComponent {
   users: PendingUser[] &#x3D; [];
@@ -659,44 +662,46 @@ export class AdminPendingComponent {
   &lt;/div&gt;
 
   &lt;!-- Users Table --&gt;
-  &lt;div class&#x3D;&quot;table-wrapper&quot;&gt;
-    &lt;table&gt;
-      &lt;thead&gt;
-        &lt;tr&gt;
-          &lt;th&gt;Email&lt;/th&gt;
-          &lt;th style&#x3D;&quot;width: 25%; text-align: center;&quot;&gt;Action&lt;/th&gt;
-        &lt;/tr&gt;
-      &lt;/thead&gt;
-      &lt;tbody&gt;
-        @for (user of users; track user.email) {
+   &lt;div class&#x3D;&quot;content-wrapper&quot;&gt;
+    &lt;div class&#x3D;&quot;table-wrapper&quot;&gt;
+      &lt;table&gt;
+        &lt;thead&gt;
           &lt;tr&gt;
-            &lt;td&gt;{{ user.email }}&lt;/td&gt;
-            &lt;td style&#x3D;&quot;text-align: center;&quot;&gt;
-              &lt;button
-                class&#x3D;&quot;action-btn approve-btn&quot;
-                (click)&#x3D;&quot;approveUser(user.email)&quot;
-              &gt;
-                Approve
-              &lt;/button&gt;
-              &lt;button
-                class&#x3D;&quot;action-btn deny-btn&quot;
-                (click)&#x3D;&quot;denyUser(user.email)&quot;
-              &gt;
-                Deny
-              &lt;/button&gt;
-            &lt;/td&gt;
+            &lt;th&gt;Email&lt;/th&gt;
+            &lt;th style&#x3D;&quot;width: 25%; text-align: center;&quot;&gt;Action&lt;/th&gt;
           &lt;/tr&gt;
-        }
+        &lt;/thead&gt;
+        &lt;tbody&gt;
+          @for (user of users; track user.email) {
+            &lt;tr&gt;
+              &lt;td&gt;{{ user.email }}&lt;/td&gt;
+              &lt;td style&#x3D;&quot;text-align: center;&quot;&gt;
+                &lt;button
+                  class&#x3D;&quot;action-btn approve-btn&quot;
+                  (click)&#x3D;&quot;approveUser(user.email)&quot;
+                &gt;
+                  Approve
+                &lt;/button&gt;
+                &lt;button
+                  class&#x3D;&quot;action-btn deny-btn&quot;
+                  (click)&#x3D;&quot;denyUser(user.email)&quot;
+                &gt;
+                  Deny
+                &lt;/button&gt;
+              &lt;/td&gt;
+            &lt;/tr&gt;
+          }
 
-        @if (users.length &#x3D;&#x3D;&#x3D; 0) {
-          &lt;tr&gt;
-            &lt;td colspan&#x3D;&quot;2&quot; style&#x3D;&quot;text-align: center; color: #5f6368; padding: 30px;&quot;&gt;
-              No users are pending approval.
-            &lt;/td&gt;
-          &lt;/tr&gt;
-        }
-      &lt;/tbody&gt;
-    &lt;/table&gt;
+          @if (users.length &#x3D;&#x3D;&#x3D; 0) {
+            &lt;tr&gt;
+              &lt;td colspan&#x3D;&quot;2&quot; style&#x3D;&quot;text-align: center; color: #5f6368; padding: 30px;&quot;&gt;
+                No users are pending approval.
+              &lt;/td&gt;
+            &lt;/tr&gt;
+          }
+        &lt;/tbody&gt;
+      &lt;/table&gt;
+    &lt;/div&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 </code></pre>
@@ -704,7 +709,7 @@ export class AdminPendingComponent {
 
     <div class="tab-pane fade " id="styleData">
                 <p class="comment">
-                    <code>./admin-pending.component.css</code>
+                    <code>../admin-dash-shared.css</code>
                 </p>
                 <pre class="line-numbers"><code class="language-scss">:host {
     font-family: &#x27;Assistant&#x27;, &#x27;Roboto&#x27;, &#x27;Arial&#x27;, sans-serif;
@@ -714,10 +719,9 @@ export class AdminPendingComponent {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    height: 100vh;
     
 }
-
 .container {
   display: flex;
   flex-direction: column;
@@ -726,7 +730,7 @@ export class AdminPendingComponent {
   height: calc(100vh - 80px);
   background-color: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   padding: 20px 40px;
   box-sizing: border-box;
 }
@@ -734,16 +738,28 @@ export class AdminPendingComponent {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 60vh;
-  max-height: 60vh;
-  overflow-y: auto;
+  overflow: hidden;
+  min-height: 0;
+  border: 1px solid var(--th-td-border-color);
+  border-radius: 6px;
 }
-.table-wrapper {
-  overflow-y: auto;
+
+.scrollable-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  min-height: 0;
   border: 1px solid var(--table-border-color);
   border-radius: 6px;
+  margin-bottom: 20px;
 }
 
 .table-wrapper thead th {
@@ -753,139 +769,107 @@ export class AdminPendingComponent {
   z-index: 2;
 }
 
-.content-wrapper::-webkit-scrollbar,
 .table-wrapper::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
-.content-wrapper::-webkit-scrollbar-thumb,
 .table-wrapper::-webkit-scrollbar-thumb {
   background: var(--scroll-color);
   border-radius: 4px;
 }
 
-.content-wrapper::-webkit-scrollbar-thumb:hover,
 .table-wrapper::-webkit-scrollbar-thumb:hover {
   background: #999;
 }
-/* Header */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--table-border-color);
-  padding-bottom: 15px;
-  margin-bottom: 25px;
-}
 
-h1 {
-  font-size: 24px;
-  font-weight: 500;
-  color: var(--text-color);
-  margin: 0;
-}
-
-.back-link {
-  background-color: var(--buttons-color);
-  color: var(--text-color);
-  padding: 8px 16px;
-  border-radius: 4px;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.back-link:hover {
-  background-color: var(--buttons-hover-color);
-}
-
-/* Nav Tabs */
-.admin-nav {
-  display: flex;
-  gap: 5px;
-  border-bottom: 1px solid var(--table-border-color);
-  margin-bottom: 25px;
-}
-
-.nav-tab {
-  padding: 10px 15px;
-  text-decoration: none;
-  color: var(--placeholder-color);
-  border-radius: 6px 6px 0 0;
-  font-weight: 500;
-}
-
-.nav-tab.active {
-  color: var(--primary-buttons);
-  border-bottom: 3px solid var(--primary-buttons);
-}
-
-.nav-tab:not(.active):hover {
-  background-color: var(--selected-row-color);
-}
-
-.table-wrapper {
-  max-height: 400px; 
-  overflow-y: auto;
-  border: 1px solid var(--table-border-color);
-  border-radius: 6px;
-}
-
-.table-wrapper thead th {
-  position: sticky;
-  top: 0;
+.table-wrapper::-webkit-scrollbar-track {
   background: var(--card-bg);
-  z-index: 2;
-}
-
-.table-wrapper::-webkit-scrollbar {
-  width: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-  background: #ccc;
   border-radius: 4px;
 }
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #999;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--table-border-color);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
 }
-
-/* Table */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+h1 {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 0;
 }
-
-th, td {
-  padding: 12px 8px;
-  text-align: left;
-  border-bottom: var(--th-td-border-color);
-  vertical-align: middle;
-  font-size: 14px;
-  
+.header a {
+    background-color: var(--buttons-color);
+    color: var(--text-color);
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
 }
-
-th {
-  color: var(--placeholder-color);
-  font-weight: 500;
+.header a:hover {
+    background-color: var(--buttons-hover-color);
+}
+.admin-nav {
+    display: flex;
+    gap: 5px;
+    border-bottom: 1px solid var(--table-border-color);
+    margin-bottom: 25px;
+}
+.nav-tab {
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--placeholder-color);
+    border-radius: 6px 6px 0 0;
+    font-weight: 500;
+}
+.nav-tab.active {
+    color: var(--primary-buttons);
+    border-bottom: 3px solid var(--primary-buttons);
+}
+.nav-tab:not(.active):hover {
+    background-color: var(--selected-row-color);
+}
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 14px; 
+}
+thead tr {
+    border-bottom: 1px solid var(--th-td-border-color);
+}
+th, td { 
+    padding: 12px 8px; 
+    text-align: left; 
+    vertical-align: middle;
+    font-size: 14px;
+}
+tbody tr{
+    border-bottom: 1px solid var(--th-td-border-color);
+}
+th { 
+    color: var(--placeholder-color);
+    font-weight: 400;
 }
 tr:hover {
     background-color: var(--selected-row-color);
 }
-/* Buttons */
 .action-btn {
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: var(--buttons-border);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.approve-btn {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: var(--buttons-border);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+}</code></pre>
+                <p class="comment">
+                    <code>./admin-pending.component.css</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">.approve-btn {
   background-color: #e6f4ea;
   color: #1e8e3e;
 }
@@ -989,7 +973,7 @@ tr:hover {
 <script src="../js/libs/htmlparser.js"></script>
 <script src="../js/libs/deep-iterator.js"></script>
 <script>
-        var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab">Users</a>    <a routerLink="/pending" class="nav-tab active">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab">Uploads</a>  </div>  <!-- Users Table -->  <div class="table-wrapper">    <table>      <thead>        <tr>          <th>Email</th>          <th style="width: 25%; text-align: center;">Action</th>        </tr>      </thead>      <tbody>        @for (user of users; track user.email) {          <tr>            <td>{{ user.email }}</td>            <td style="text-align: center;">              <button                class="action-btn approve-btn"                (click)="approveUser(user.email)"              >                Approve              </button>              <button                class="action-btn deny-btn"                (click)="denyUser(user.email)"              >                Deny              </button>            </td>          </tr>        }        @if (users.length === 0) {          <tr>            <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">              No users are pending approval.            </td>          </tr>        }      </tbody>    </table>  </div></div></div>'
+        var COMPONENT_TEMPLATE = '<div><div class="container">  <!-- Header -->  <div class="header">    <h1>Admin Dashboard</h1>    <a routerLink="/dashboard" class="back-link">Back to Files</a>  </div>  <!-- Navigation Tabs -->  <div class="admin-nav">    <a routerLink="/metrics" class="nav-tab">Metrics</a>    <a routerLink="/users" class="nav-tab">Users</a>    <a routerLink="/pending" class="nav-tab active">Pending</a>    <a routerLink="/denied" class="nav-tab">Denied</a>    <a routerLink="/uploads" class="nav-tab">Uploads</a>  </div>  <!-- Users Table -->   <div class="content-wrapper">    <div class="table-wrapper">      <table>        <thead>          <tr>            <th>Email</th>            <th style="width: 25%; text-align: center;">Action</th>          </tr>        </thead>        <tbody>          @for (user of users; track user.email) {            <tr>              <td>{{ user.email }}</td>              <td style="text-align: center;">                <button                  class="action-btn approve-btn"                  (click)="approveUser(user.email)"                >                  Approve                </button>                <button                  class="action-btn deny-btn"                  (click)="denyUser(user.email)"                >                  Deny                </button>              </td>            </tr>          }          @if (users.length === 0) {            <tr>              <td colspan="2" style="text-align: center; color: #5f6368; padding: 30px;">                No users are pending approval.              </td>            </tr>          }        </tbody>      </table>    </div>  </div></div></div>'
     var COMPONENTS = [{'name': 'AdminDeniedComponent', 'selector': 'app-admin-denied'},{'name': 'AdminPendingComponent', 'selector': 'app-admin-pending'},{'name': 'AdminUploadsComponent', 'selector': 'app-admin-uploads'},{'name': 'AdminUsersComponent', 'selector': 'app-admin-users'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'ForgotPasswordComponent', 'selector': 'app-forgot-password'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MetricsComponent', 'selector': 'app-admin-dashboard'},{'name': 'MyUploadsComponent', 'selector': 'app-my-uploads'},{'name': 'RegisterComponent', 'selector': 'app-register'},{'name': 'ResetPassComponent', 'selector': 'app-reset'},{'name': 'UploadFileComponent', 'selector': 'app-upload-content'}];
     var DIRECTIVES = [];
     var ACTUAL_COMPONENT = {'name': 'AdminPendingComponent'};
