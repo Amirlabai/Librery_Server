@@ -93,6 +93,12 @@ export class DashboardService {
             withCredentials: true
         });
     }
+
+    getUsefulLinks(): Observable<any> {
+        return this.http.get(`${this.baseUrl}/useful_links`, {
+            withCredentials: true
+        });
+    }
         
 
 }
