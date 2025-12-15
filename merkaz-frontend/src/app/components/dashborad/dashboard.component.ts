@@ -51,6 +51,7 @@ export class DashboardComponent {
 
   showSuggestBox = false;
   showUsefulLinksModal = false;
+  usefulLinks: any[] = [];
   
   selectedFile: any = null;
 
@@ -410,9 +411,21 @@ export class DashboardComponent {
   }
   openUsefulLinksModal(){
     this.showUsefulLinksModal = true;
+    this.loadUsefulLinks();
   }
   closeUsefulLinksModal() {
     this.showUsefulLinksModal = false;
+  }
+  loadUsefulLinks() {
+    this.dashboardService.getUsefulLinks().subscribe({
+      next: (links: any) => {
+        this.usefulLinks = Array.isArray(links) ? links : [];
+      },
+      error: (err) => {
+        console.error('Failed to load useful links:', err);
+        this.usefulLinks = [];
+      }
+    });
   }
 
   formatSize(bytes: number): string {
