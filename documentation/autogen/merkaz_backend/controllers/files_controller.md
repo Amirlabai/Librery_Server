@@ -48,3 +48,7 @@ No description provided.
 ### `suggest()`
 
 No description provided.
+
+### `get_useful_links()`
+
+Get useful links from CSV file.

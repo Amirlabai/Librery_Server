@@ -172,6 +172,9 @@
                                 <a href="#getPreviewUrl" >getPreviewUrl</a>
                             </li>
                             <li>
+                                <a href="#getUsefulLinks" >getUsefulLinks</a>
+                            </li>
+                            <li>
                                 <a href="#loadFiles" >loadFiles</a>
                             </li>
                             <li>
@@ -721,6 +724,43 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
+                    <a name="getUsefulLinks"></a>
+                    <span class="name">
+                        <span ><b>getUsefulLinks</b></span>
+                        <a href="#getUsefulLinks"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>getUsefulLinks()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="97"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/dashboard.service.ts:97</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;any&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
                     <a name="loadFiles"></a>
                     <span class="name">
                         <span ><b>loadFiles</b></span>
@@ -1102,6 +1142,12 @@ export class DashboardService {
 
     searchFiles(query: string,folderPath: string &#x3D; &#x27;&#x27;): Observable&lt;any&gt; {
         return this.http.get(&#x60;${this.baseUrl}/search?q&#x3D;${query}&amp;folder_path&#x3D;${folderPath}&#x60;, {
+            withCredentials: true
+        });
+    }
+
+    getUsefulLinks(): Observable&lt;any&gt; {
+        return this.http.get(&#x60;${this.baseUrl}/useful_links&#x60;, {
             withCredentials: true
         });
     }
