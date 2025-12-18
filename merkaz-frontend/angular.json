@@ -32,6 +32,11 @@
               "glob": "humans.txt",
               "input": "src",
               "output": "/"
+            },
+            {
+                "glob": "**/*",
+                "input": "src/assets/se-##_0",
+                "output": "assets/se-##_0"
             }
         ],
             "styles": [

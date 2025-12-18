@@ -63,6 +63,7 @@ export class DashboardComponent {
   previewUrl: string = '';
 
   oldPath: string = '';
+  isActivated = false;
   
 
 
@@ -206,7 +207,10 @@ export class DashboardComponent {
     this.dashboardService.logout().subscribe({
       next: () => {
         localStorage.clear();
-        this.router.navigate(['/login']);
+        this.isActivated = false;
+        this.router.navigate(['/login']).then(()=> {
+          window.location.reload();
+        });
         this.notificationService.show('Logout successfuly',true);
       },
       error: (err) => {

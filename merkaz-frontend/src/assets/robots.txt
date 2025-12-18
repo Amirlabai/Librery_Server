@@ -1,0 +1,2 @@
+# If you made it this far, the security challenge is waiting.
+# Dashboard code: !!accept**challenge

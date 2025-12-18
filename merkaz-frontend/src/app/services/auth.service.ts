@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ApiConfigService } from './api-config.service';
 
 
@@ -20,6 +20,7 @@ export interface RegisterResponse {
 
 export class AuthService {
   private readonly tokenKey = 'token';
+  private loginState$ = new Subject<void>();
 
   constructor(
     private http: HttpClient,
@@ -64,5 +65,12 @@ export class AuthService {
   }
   refreshSession(): Observable<any> {
     return this.http.get(`${this.baseUrl}/refresh-session`, { withCredentials: true });
+  }
+  notifyLogin() {
+    this.loginState$.next();
+  }
+
+  onLogin() {
+    return this.loginState$.asObservable();
   }
 }

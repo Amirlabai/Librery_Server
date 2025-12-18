@@ -180,7 +180,7 @@ if __name__ == "__main__":
     # Create necessary CSV files with headers if they don't exist
     logger.debug("Initializing CSV log files")
     # User databases now include ID column
-    create_file_with_header(config.AUTH_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
+    create_file_with_header(config.AUTH_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name", "challenge"])
     create_file_with_header(config.NEW_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
     create_file_with_header(config.DENIED_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
     create_file_with_header(config.PASSWORD_RESET_DATABASE, ["email", "token", "timestamp"])
