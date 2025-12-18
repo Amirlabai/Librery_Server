@@ -25,42 +25,85 @@ def easter_egg():
 
 @easter_egg_bp.route("/activate-challenge", methods=["POST"])
 def activate_challenge():
-    user_email = session.get('email') 
+    """Activate the secret challenge for the currently logged-in user."""
+    user_email = session.get('email')
     if not user_email:
+        logger.warning("activate_challenge: No user in session")
         return jsonify({"message": "Unauthorized"}), 401
 
-    data = request.get_json()
-    user_code = data.get("code")
+    data = request.get_json(silent=True) or {}
+    user_code = (data.get("code") or "").strip()
 
-    if user_code == "753951":
+    if not user_code:
+        return jsonify({"message": "Missing activation code"}), 400
+
+    if user_code != "753951":
+        logger.info(f"activate_challenge: Wrong code attempt by {user_email}")
+        return jsonify({"message": "Wrong code. Try harder."}), 400
+
+    try:
+        if not os.path.exists(config.AUTH_USER_DATABASE):
+            logger.error(f"activate_challenge: Auth DB not found at {config.AUTH_USER_DATABASE}")
+            return jsonify({"message": "User database not found"}), 500
+
         users = []
-        updated = False
-        
+        fieldnames = None
+        user_found = False
+        already_activated = False
+
+        # Read all users
         with open(config.AUTH_USER_DATABASE, mode='r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             fieldnames = reader.fieldnames
+
+            # Ensure 'challenge' field exists in header
+            if fieldnames is None:
+                fieldnames = []
+            if 'challenge' not in fieldnames:
+                fieldnames.append('challenge')
+
             for row in reader:
-                if row['email'] == user_email:
-                    row['challenge'] = 'activated'
-                    updated = True
+                # Ensure every row has a 'challenge' key (default empty)
+                if 'challenge' not in row:
+                    row['challenge'] = ''
+
+                if row.get('email') == user_email:
+                    user_found = True
+                    if row.get('challenge') == 'activated':
+                        already_activated = True
+                    else:
+                        row['challenge'] = 'activated'
                 users.append(row)
 
-        if updated:
-            with open(config.AUTH_USER_DATABASE, mode='w', newline='', encoding='utf-8') as f:
-                writer = csv.DictWriter(f, fieldnames=fieldnames)
-                writer.writeheader()
-                writer.writerows(users)
-            
+        if not user_found:
+            logger.warning(f"activate_challenge: User {user_email} not found in auth DB")
+            return jsonify({"message": "User not found in database"}), 404
 
-            AuthService.refresh_session()
+        if already_activated:
+            logger.info(f"activate_challenge: User {user_email} already activated challenge")
             return jsonify({
-                "status": "success",
-                "message": "Challenge system activated! Welcome, agent."
+                "status": "already_activated",
+                "message": "Challenge is already activated."
             }), 200
-        
-        return jsonify({"message": "User not found in database"}), 404
 
-    return jsonify({"message": "Wrong code. Try harder."}), 400
+        # Write updated users back
+        # (fieldnames is guaranteed to include 'challenge' and not be None here)
+        with open(config.AUTH_USER_DATABASE, mode='w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(users)
+
+        # Refresh session so frontend sees updated challenge status
+        AuthService.refresh_session()
+        logger.info(f"activate_challenge: Challenge activated for {user_email}")
+        return jsonify({
+            "status": "success",
+            "message": "Challenge system activated! Welcome, agent."
+        }), 200
+
+    except Exception as e:
+        logger.error(f"activate_challenge: Error updating user challenge status: {e}")
+        return jsonify({"message": "Internal error while activating challenge"}), 500
 
 @easter_egg_bp.route("/get-puzzle/<puzzle_name>", methods=["GET"])
 def get_puzzle(puzzle_name):
