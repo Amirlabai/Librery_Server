@@ -22,6 +22,7 @@ from controllers.auth_controller import auth_bp
 from controllers.files_controller import files_bp
 from controllers.uploads_controller import uploads_bp
 from controllers.admin_controller import admin_bp
+from controllers.ee_controller import easter_egg_bp
 import dev_toolkit.run_ngrok as run_ngrok
 
 # Initialize logging
@@ -80,6 +81,7 @@ def create_app():
     app.register_blueprint(files_bp)
     app.register_blueprint(uploads_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(easter_egg_bp, url_prefix="/api")
     logger.info("All blueprints registered successfully")
     
     # Configure static file serving for Angular build (AFTER API routes)
