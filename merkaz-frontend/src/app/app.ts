@@ -45,6 +45,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.auth.onLogin().subscribe(() => this.init());
+    this.easter.sendEsterRequest();
     this.init();
   }
   private init() {
