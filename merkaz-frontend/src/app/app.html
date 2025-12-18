@@ -76,7 +76,9 @@
   <div class="Submit">
     <input type="number" [(ngModel)]="selectedPuzzleNum" placeholder="select puz number">
     <input type="text" [(ngModel)]="answerInput" placeholder="Submit your answer here">
-    <button (click)="submitAnswer()">Submit</button>
+    <button (click)="submitAnswer(selectedPuzzleNum, answerInput)">
+      Submit
+    </button>
   </div>
 </div>
 }

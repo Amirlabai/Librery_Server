@@ -1,0 +1,46 @@
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+
+@Injectable({ providedIn: 'root' })
+export class ChallengeService {
+
+  public challenges: any[] = [
+        { name: 'puzzle1', solved: false },
+        { name: 'puzzle2', solved: false },
+        { name: 'puzzle3', solved: false },
+        { name: 'puzzle4', solved: false },
+        { name: 'puzzle5', solved: false },
+        { name: 'puzzle6', solved: false },
+        { name: 'puzzle7', solved: false },
+        { name: 'puzzle8', solved: false },
+        { name: 'puzzle9', solved: false },
+        { name: 'puzzle10', solved: false }
+    ];
+
+  constructor(private http: HttpClient) {}
+
+  loadLeaderboard() {
+    return this.http.get<any>(
+      'http://localhost:8000/api/leaderboard-data',
+      { withCredentials: true }
+    );
+  }
+
+  submitAnswer(puzzleNum: number, answer: string) {
+    return this.http.post<any>(
+      'http://localhost:8000/api/submit-answer',
+      {
+        puzzle_name: `puzzle${puzzleNum}`,
+        answer
+      },
+      { withCredentials: true }
+    );
+  }
+
+  syncSolved(userSolved: string[]) {
+    const solved = userSolved.map(s => s.trim().toLowerCase());
+    this.challenges.forEach(c =>
+      c.solved = solved.includes(c.name)
+    );
+  }
+}

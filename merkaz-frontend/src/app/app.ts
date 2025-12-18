@@ -1,13 +1,13 @@
 import { Component, DOCUMENT, HostListener, Inject, input } from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { EasterService } from './services/easter';
+import { EasterService } from './services/spper/easter';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from './services/auth.service';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from './services/notifications/Notifications.service';
 import { CommonModule } from '@angular/common';
+import { ChallengeService } from './services/spper/cl.service';
 
 @Component({
   selector: 'app-root',
@@ -18,117 +18,65 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent {
   protected title = 'merkaz-frontend';
-  private pressedKeys: string = '';
-  private readonly secretCode: string = '753951';
-  public isActivated = false;
-  public selectedPuzzleNum: number | null = null;
-  public answerInput: string = '';
-  public members: any[] = [];
-  public challenges: any[] = [
-  { name: 'puzzle1', solved: false },
-  { name: 'puzzle2', solved: false },
-  { name: 'puzzle3', solved: false },
-  { name: 'puzzle4', solved: false },
-  { name: 'puzzle5', solved: false },
-  { name: 'puzzle6', solved: false },
-  { name: 'puzzle7', solved: false },
-  { name: 'puzzle8', solved: false },
-  { name: 'puzzle9', solved: false },
-  { name: 'puzzle10', solved: false }
-];
+  isDark = false;
+  isActivated = false;
+  members: any[] = [];
+  selectedPuzzleNum: number | 0 = 0;
+  answerInput = '';
+  
 
   
-  isDark = false;
-  constructor(private easter:EasterService,
-    @Inject(DOCUMENT) public document: Document,
-    private http:HttpClient,
-    private authService:AuthService,
-    private notificationService:NotificationService) {
-  }
+  constructor(
+    @Inject(DOCUMENT) private doc: Document,
+    private auth: AuthService,
+    private cl: ChallengeService,
+    private easter: EasterService,
+    private notify: NotificationService
+  ) {}
   toggleMode() {
     this.isDark = !this.isDark;
     
     if (this.isDark) {
-      this.document.body.classList.add('dark-mode');
+      this.doc.body.classList.add('dark-mode');
     } else {
-      this.document.body.classList.remove('dark-mode');
+      this.doc.body.classList.remove('dark-mode');
     }
   }
 
   ngOnInit() {
-    this.initChallengeState();
-
-    this.authService.onLogin().subscribe(() => {
-      this.initChallengeState();
-    });
+    this.auth.onLogin().subscribe(() => this.init());
+    this.init();
   }
-  private initChallengeState() {
-    this.isActivated = false;
-    this.members = [];
-    this.challenges.forEach(c => c.solved = false);
-
-    this.authService.refreshSession().subscribe({
-      next: (userData: any) => {
-        this.isActivated = userData.challenge === 'activated';
-        if (this.isActivated) {
-          this.loadGameData();
-        }
-      },
-      error: () => {
-        this.isActivated = false;
+  private init() {
+    this.auth.refreshSession().subscribe(user => {
+      this.isActivated = user.challenge === 'activated';
+      if (this.isActivated) {
+        this.loadGame();
       }
     });
   }
-  loadGameData() {
-    this.http.get('http://localhost:8000/api/leaderboard-data', { withCredentials: true })
-      .subscribe({
-        next: (res: any) => {
-          this.members = res.leaderboard;
-
-          // נרמול פתרונות שהגיעו מהשרת
-          const solved = res.user_solved.map((p: string) =>
-            p.trim().toLowerCase()
-          );
-
-          this.challenges.forEach(ch => {
-            ch.solved = solved.includes(ch.name.toLowerCase());
-          });
-        }
-      });
-  }
-  activateCr() {
-    if (this.isActivated) return;
-    
-    const body = {code:this.secretCode}
-
-    this.http.post('http://localhost:8000/api/activate-challenge', body, { withCredentials: true })
-    .subscribe({
-      next: () => {
-        this.isActivated = true;
-        this.loadGameData();
-      },
+  loadGame() {
+    this.cl.loadLeaderboard().subscribe(res => {
+      this.members = res.leaderboard;
+      this.cl.syncSolved(res.user_solved);
     });
   }
-  
+  submitAnswer(puzzleNum: number, answer: string) {
+    this.cl.submitAnswer(puzzleNum, answer).subscribe({
+      next: res => {
+        this.notify.show(res.message, true);
+        this.loadGame();
+      },
+      error: err => {
+        this.notify.show(err.error.message, false);
+      }
+    });
+  }
   @HostListener('document:keyup', ['$event'])
-  handleKeyboardEvent(event: KeyboardEvent) {
-    
-    if (event.key >= '0' && event.key <= '9') {
-      this.pressedKeys += event.key;
-    } else {
-      this.pressedKeys = '';
-      return;
-    }
-
-    if (this.pressedKeys.length > this.secretCode.length) {
-      this.pressedKeys = this.pressedKeys.slice(-this.secretCode.length);
-    }
-    
-    if (this.pressedKeys === this.secretCode) {
-      this.activateCr();
-      this.pressedKeys = ''; 
-    }
-    
+  onKey(e: KeyboardEvent) {
+    this.easter.handleKey(e.key, () => {
+      this.easter.activate().subscribe(() => this.loadGame());
+    });
   }
 
   getPuzzle(puz: string) {  
@@ -136,29 +84,10 @@ export class AppComponent {
     
     window.open(fullPath, '_blank');
   }
-  submitAnswer() {
-    if (!this.selectedPuzzleNum || !this.answerInput) return;
-
-    const body = {
-      puzzle_name: `puzzle${this.selectedPuzzleNum}`,
-      answer: this.answerInput
-    };
-
-    this.http.post('http://localhost:8000/api/submit-answer', body, { withCredentials: true })
-      .subscribe({
-        next: (res: any) => {
-          this.notificationService.show(res.message, true);
-          this.answerInput = ''; 
-          
-          
-          this.loadGameData(); 
-        },
-        error: (err) => {
-          this.notificationService.show(err.error.message || 'Error occurred', false); 
-        }
-      });
+  get challenges() {
+    return this.cl.challenges;
   }
-
+  
 }
 
 
