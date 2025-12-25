@@ -1,10 +1,15 @@
+
 <button mat-button class="dark-mode-button" (click)="toggleMode()">
   <mat-icon>
     {{ isDark ? 'light_mode' : 'dark_mode' }}
   </mat-icon>
 </button>
+  <button matButton="text" (click)="toggleChallenge()">
+    {{isHideChall ? 'Show' : 'Hide'}}
+  </button>
 
-@if (isActivated) {
+@if (isActivated && !isHideChall) {
+
   <div class="leader-container-left">
 
   <div class="header">

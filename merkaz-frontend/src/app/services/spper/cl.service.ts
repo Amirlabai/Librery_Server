@@ -10,11 +10,6 @@ export class ChallengeService {
         { name: 'puzzle3', solved: false },
         { name: 'puzzle4', solved: false },
         { name: 'puzzle5', solved: false },
-        { name: 'puzzle6', solved: false },
-        { name: 'puzzle7', solved: false },
-        { name: 'puzzle8', solved: false },
-        { name: 'puzzle9', solved: false },
-        { name: 'puzzle10', solved: false }
     ];
 
   constructor(private http: HttpClient) {}

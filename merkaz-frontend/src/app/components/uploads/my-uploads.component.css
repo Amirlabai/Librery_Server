@@ -1,18 +1,25 @@
-
+:host {
+    font-family: 'Assistant', 'Roboto', 'Arial', sans-serif;
+    margin: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+    
+}
 .container {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 1000px;
   height: calc(100vh - 80px);
   background-color: var(--card-bg);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   padding: 20px 40px;
-  margin: 0 auto;
-  margin-top: 40px;
-  display: flex;
-  flex-direction: column;
   box-sizing: border-box;
-  color: var(--text-color);
 }
 .header {
   display: flex;

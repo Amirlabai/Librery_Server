@@ -23,6 +23,7 @@ export class AppComponent {
   members: any[] = [];
   selectedPuzzleNum: number | 0 = 0;
   answerInput = '';
+  isHideChall = false;
   
 
   
@@ -87,6 +88,9 @@ export class AppComponent {
   }
   get challenges() {
     return this.cl.challenges;
+  }
+  toggleChallenge(){
+    this.isHideChall = !this.isHideChall;
   }
   
 }
