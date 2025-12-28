@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle 5 Challenge</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #f1f1f1;
+            font-family: monospace;
+            padding: 20px;
+            margin: 0;
+        }
+
+        a {
+            color: #4CAF50;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<pre>
+# Created by Yosef Nago
+# Do not copy!
+
+<h1>Part 5</h1>
+
+    You are given an input file containing N lines.
+
+    Each line consists of five comma-separated fields:
+
+        A, B, C, D, OP
+
+    Where:
+        A, B, C, D are 8-bit binary numbers (only 0 and 1).
+        OP is one of these arithmetic operators: + , - , * 
+
+    Each line represents a coordinate calculation.
+
+    Your task is to process every line and generate a 2D drawing according to the following rules:
+
+    For each line:
+
+        Convert A, B, C, D from binary to decimal.
+
+        Compute:
+            X = A OP B
+            Y = C OP D
+
+        The pair (X, Y) represents a point on a 2D grid.
+
+    After processing all lines:
+
+        Create a 20 X 20 grid initialized with zeros.
+
+        For every (X, Y) point, set grid[Y][X] = 1.
+
+        The grid will form a hidden symbol.
+
+    Your goal is to identify the symbol drawn in the grid.
+
+<h3>Example</h3>
+
+    Input:
+        00000101,00000011,00001000,00000010,+
+
+    Binary to decimal:
+        A = 5
+        B = 3
+        C = 8
+        D = 2
+
+    Operation:
+        X = 5 + 3 = 8
+        Y = 8 + 2 = 10
+
+    So the point (8, 10) is marked as 1 in the grid.
+
+    If another line produces:
+        (9,10) and (10,10)
+
+    Then row 10 would contain:
+        ...0111...
+
+<h3>Output</h3>
+
+    After drawing all points, a symbol (digit or letter) will appear.
+
+    Submit the detected symbol for Puzzle 5.
+
+INPUT METHOD:
+<a href="http://localhost:8000/api/get-input/5" target="_blank">
+Click here to view the input data (input5.txt)
+</a>
+
+GOOD LUCK!
+Can you decode the hidden symbol?
+
+SUBMIT the result at the challenge list with PUZZLE.number
+</pre>
+</body>
+</html>
