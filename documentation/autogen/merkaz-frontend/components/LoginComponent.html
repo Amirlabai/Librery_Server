@@ -626,7 +626,7 @@ export class LoginComponent {
           localStorage.setItem(&#x27;fullName&#x27;,res.full_name);
         }
         this.notificationService.show(&#x27;Login succsseful&#x27;,true);
-
+          this.authService.notifyLogin();
           this.router.navigate([&#x27;/dashboard&#x27;]);
         },
         error: () &#x3D;&gt; {
