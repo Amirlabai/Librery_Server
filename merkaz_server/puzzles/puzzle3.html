@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Puzzle 3 Challenge</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #f1f1f1;
+            font-family: monospace;
+            padding: 20px;
+            margin: 0;
+        }
+
+        a {
+            color: #4CAF50;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<pre>
+# Created by Yosef Nago 
+#Do not copy!
+
+<h1>Part 3</h1>
+
+You will receive a grid of numbers.
+
+Each line represents a row in a matrix.
+
+The numbers in each line are separated by commas.
+
+The matrix may contain any non-negative integers.
+
+Your task is to count how many numbers in the matrix are STRICTLY greater than all of their neighbors.
+
+A neighbor is any adjacent cell in one of the following directions:
+- Up
+- Down
+- Left
+- Right
+- Diagonal up-left
+- Diagonal up-right
+- Diagonal down-left
+- Diagonal down-right
+
+A number is considered valid only if it is greater than ALL of its existing neighbors.
+Cells on the edges or corners have fewer neighbors and should be evaluated accordingly.
+
+<h3>Example</h3>
+
+Input matrix:
+3,1,4
+2,9,5
+6,7,8
+
+Valid numbers:
+9 (greater than all its neighbors)
+
+So the result will be : 1.
+
+<h3>Output</h3>
+A single number - the count of values in the matrix that are strictly greater than all of their neighbors.
+
+INPUT METHOD:
+<a href="http://localhost:8000/api/get-input/3" target="_blank">
+Click here to view the input data (input3.txt)
+</a>
+
+
+GOOD LUCK!
+Can you get the result ?
+
+SUBMIT the result at the challenge list with PUZZLE.number
+
+</pre>
+</body>
+</html>

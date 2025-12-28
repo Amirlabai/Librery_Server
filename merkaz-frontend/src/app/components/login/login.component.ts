@@ -69,7 +69,7 @@ export class LoginComponent {
           localStorage.setItem('fullName',res.full_name);
         }
         this.notificationService.show('Login succsseful',true);
-
+          this.authService.notifyLogin();
           this.router.navigate(['/dashboard']);
         },
         error: () => {

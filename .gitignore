@@ -38,3 +38,12 @@ merkaz_backend/favicon.ico
 merkaz-frontend/src/assets/icons/to-be-logo.jpeg
 merkaz-frontend/src/assets/icons/to-be-logo-256x.png
 merkaz-frontend/src/assets/icons/to-be-logo.ico
+
+
+# but keep specific puzzle files
+!/data/puzzles.csv
+!/data/user_solutions.csv
+
+# if puzzles is a directory you want to track
+!/data/puzzles/
+!/data/puzzles/**
