@@ -109,7 +109,7 @@
 
 <ol class="breadcrumb">
   <li class="breadcrumb-item">Injectables</li>
-  <li class="breadcrumb-item" >EasterService</li>
+  <li class="breadcrumb-item" >ChallengeService</li>
 </ol>
 
 <ul class="nav nav-tabs" role="tablist">
@@ -133,7 +133,7 @@
             <h3>File</h3>
         </p>
         <p class="comment">
-            <code>merkaz-frontend/src/app/services/spper/easter.ts</code>
+            <code>merkaz-frontend/src/app/services/spper/cl.service.ts</code>
         </p>
 
 
@@ -153,17 +153,8 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                    <span class="modifier">Private</span>
-                                <a href="#buffer" >buffer</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Private</span>
-                                <a href="#http" >http</a>
-                            </li>
-                            <li>
-                                    <span class="modifier">Private</span>
-                                    <span class="modifier">Readonly</span>
-                                <a href="#secret" >secret</a>
+                                    <span class="modifier">Public</span>
+                                <a href="#challenges" >challenges</a>
                             </li>
                         </ul>
                     </td>
@@ -178,16 +169,13 @@
                     <td class="col-md-4">
                         <ul class="index-list">
                             <li>
-                                <a href="#activate" >activate</a>
+                                <a href="#loadLeaderboard" >loadLeaderboard</a>
                             </li>
                             <li>
-                                <a href="#draw" >draw</a>
+                                <a href="#submitAnswer" >submitAnswer</a>
                             </li>
                             <li>
-                                <a href="#handleKey" >handleKey</a>
-                            </li>
-                            <li>
-                                <a href="#sendEsterRequest" >sendEsterRequest</a>
+                                <a href="#syncSolved" >syncSolved</a>
                             </li>
                         </ul>
                     </td>
@@ -197,20 +185,6 @@
 
 
 
-                    <tr>
-                        <td class="col-md-4">
-                            <h6><b>Accessors</b></h6>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="col-md-4">
-                            <ul class="index-list">
-                                <li>
-                                    <a href="#baseUrl" >baseUrl</a>
-                                </li>
-                            </ul>
-                        </td>
-                    </tr>
         </tbody>
     </table>
 </section>
@@ -221,12 +195,12 @@
             <tbody>
                 <tr>
                     <td class="col-md-4">
-<code>constructor(http: HttpClient, apiConfig: <a href="../injectables/ApiConfigService.html" target="_self">ApiConfigService</a>)</code>
+<code>constructor(http: HttpClient)</code>
                     </td>
                 </tr>
                         <tr>
                             <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:13</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">merkaz-frontend/src/app/services/spper/cl.service.ts:13</a></div>
                             </td>
                         </tr>
 
@@ -255,18 +229,6 @@
                                                     </td>
                                                     
                                                 </tr>
-                                                <tr>
-                                                        <td>apiConfig</td>
-                                                  
-                                                        <td>
-                                                                        <code><a href="../injectables/ApiConfigService.html" target="_self" >ApiConfigService</a></code>
-                                                        </td>
-                                                  
-                                                    <td>
-                                                            No
-                                                    </td>
-                                                    
-                                                </tr>
                                         </tbody>
                                     </table>
                             </div>
@@ -285,24 +247,24 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="activate"></a>
+                    <a name="loadLeaderboard"></a>
                     <span class="name">
-                        <span ><b>activate</b></span>
-                        <a href="#activate"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>loadLeaderboard</b></span>
+                        <a href="#loadLeaderboard"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>activate()</code>
+<code>loadLeaderboard()</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="36"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:36</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="17"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/spper/cl.service.ts:17</a></div>
                         </td>
                     </tr>
 
@@ -322,61 +284,24 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="draw"></a>
+                    <a name="submitAnswer"></a>
                     <span class="name">
-                        <span ><b>draw</b></span>
-                        <a href="#draw"><span class="icon ion-ios-link"></span></a>
+                        <span ><b>submitAnswer</b></span>
+                        <a href="#submitAnswer"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
             <tr>
                 <td class="col-md-4">
-<code>draw()</code>
+<code>submitAnswer(puzzleNum: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>, answer: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
                 </td>
             </tr>
 
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="43"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:43</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="handleKey"></a>
-                    <span class="name">
-                        <span ><b>handleKey</b></span>
-                        <a href="#handleKey"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>handleKey(key: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, onMatch: () => void)</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="22"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:22</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="24"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/spper/cl.service.ts:24</a></div>
                         </td>
                     </tr>
 
@@ -397,7 +322,19 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                                <td>key</td>
+                                                <td>puzzleNum</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>answer</td>
                                             <td>
                                                             <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
                                             </td>
@@ -408,10 +345,65 @@
 
 
                                         </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="syncSolved"></a>
+                    <span class="name">
+                        <span ><b>syncSolved</b></span>
+                        <a href="#syncSolved"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>syncSolved(userSolved: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="35"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/spper/cl.service.ts:35</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
                                         <tr>
-                                                <td>onMatch</td>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userSolved</td>
                                             <td>
-                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/function" target="_blank" >function</a></code>
+                                                        <code>string[]</code>
                                             </td>
 
                                             <td>
@@ -434,43 +426,6 @@
             </tr>
         </tbody>
     </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="sendEsterRequest"></a>
-                    <span class="name">
-                        <span ><b>sendEsterRequest</b></span>
-                        <a href="#sendEsterRequest"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-            <tr>
-                <td class="col-md-4">
-<code>sendEsterRequest()</code>
-                </td>
-            </tr>
-
-
-                    <tr>
-                        <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="66"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:66</a></div>
-                        </td>
-                    </tr>
-
-
-            <tr>
-                <td class="col-md-4">
-
-                        <div class="io-description">
-                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
-
-                        </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 </section>
             <section data-compodoc="block-properties">
     
@@ -481,88 +436,34 @@
         <tbody>
             <tr>
                 <td class="col-md-4">
-                    <a name="buffer"></a>
+                    <a name="challenges"></a>
                     <span class="name">
-                            <span class="modifier">Private</span>
-                        <span ><b>buffer</b></span>
-                        <a href="#buffer"><span class="icon ion-ios-link"></span></a>
+                            <span class="modifier">Public</span>
+                        <span ><b>challenges</b></span>
+                        <a href="#challenges"><span class="icon ion-ios-link"></span></a>
                     </span>
                 </td>
             </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                        <i>Type : </i>    <code>any[]</code>
 
                     </td>
                 </tr>
                 <tr>
                     <td class="col-md-4">
-                        <i>Default value : </i><code>&#x27;&#x27;</code>
+                        <i>Default value : </i><code>[
+        { name: &#x27;puzzle1&#x27;, solved: false },
+        { name: &#x27;puzzle2&#x27;, solved: false },
+        { name: &#x27;puzzle3&#x27;, solved: false },
+        { name: &#x27;puzzle4&#x27;, solved: false },
+        { name: &#x27;puzzle5&#x27;, solved: false },
+    ]</code>
                     </td>
                 </tr>
                     <tr>
                         <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="11" class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:11</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="http"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                        <span ><b>http</b></span>
-                        <a href="#http"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>    <code>HttpClient</code>
-
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="13" class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:13</a></div>
-                        </td>
-                    </tr>
-
-
-        </tbody>
-    </table>
-    <table class="table table-sm table-bordered">
-        <tbody>
-            <tr>
-                <td class="col-md-4">
-                    <a name="secret"></a>
-                    <span class="name">
-                            <span class="modifier">Private</span>
-                            <span class="modifier">Readonly</span>
-                        <span ><b>secret</b></span>
-                        <a href="#secret"><span class="icon ion-ios-link"></span></a>
-                    </span>
-                </td>
-            </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Type : </i>        <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td class="col-md-4">
-                        <i>Default value : </i><code>&#x27;753951&#x27;</code>
-                    </td>
-                </tr>
-                    <tr>
-                        <td class="col-md-4">
-                                <div class="io-line">Defined in <a href="" data-line="12" class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:12</a></div>
+                                <div class="io-line">Defined in <a href="" data-line="7" class="link-to-prism">merkaz-frontend/src/app/services/spper/cl.service.ts:7</a></div>
                         </td>
                     </tr>
 
@@ -571,111 +472,50 @@
     </table>
 </section>
 
-            <section data-compodoc="block-accessors">
-    <h3 id="accessors">
-        Accessors
-    </h3>
-        <table class="table table-sm table-bordered">
-            <tbody>
-                <tr>
-                    <td class="col-md-4">
-                        <a name="baseUrl"></a>
-                        <span class="name"><b>baseUrl</b><a href="#baseUrl"><span class="icon ion-ios-link"></span></a></span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="col-md-4">
-                        <span class="accessor"><b>get</b><code>baseUrl()</code></span>
-                    </td>
-                </tr>
-                            <tr>
-                                <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="18" class="link-to-prism">merkaz-frontend/src/app/services/spper/easter.ts:18</a></div>
-                                </td>
-                            </tr>
-
-            </tbody>
-        </table>
-</section>
     </div>
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
         <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient } from &quot;@angular/common/http&quot;;
-import { ApiConfigService } from &quot;../api-config.service&quot;;
 import { Injectable } from &quot;@angular/core&quot;;
 
+@Injectable({ providedIn: &#x27;root&#x27; })
+export class ChallengeService {
 
-@Injectable({
-    providedIn: &#x27;root&#x27;
-})
-export class EasterService {
+  public challenges: any[] &#x3D; [
+        { name: &#x27;puzzle1&#x27;, solved: false },
+        { name: &#x27;puzzle2&#x27;, solved: false },
+        { name: &#x27;puzzle3&#x27;, solved: false },
+        { name: &#x27;puzzle4&#x27;, solved: false },
+        { name: &#x27;puzzle5&#x27;, solved: false },
+    ];
 
-    private buffer &#x3D; &#x27;&#x27;;
-    private readonly secret &#x3D; &#x27;753951&#x27;;
-    private http: HttpClient;
+  constructor(private http: HttpClient) {}
 
-    constructor(http: HttpClient,private apiConfig: ApiConfigService) {
-        this.http &#x3D; http;
-    }
-    private get baseUrl(): string {
-        return this.apiConfig.getBackendUrl();
-    }
+  loadLeaderboard() {
+    return this.http.get&lt;any&gt;(
+      &#x27;http://localhost:8000/api/leaderboard-data&#x27;,
+      { withCredentials: true }
+    );
+  }
 
-    handleKey(key: string, onMatch: () &#x3D;&gt; void) {
-        if (key &lt; &#x27;0&#x27; || key &gt; &#x27;9&#x27;) {
-        this.buffer &#x3D; &#x27;&#x27;;
-        return;
-        }
+  submitAnswer(puzzleNum: number, answer: string) {
+    return this.http.post&lt;any&gt;(
+      &#x27;http://localhost:8000/api/submit-answer&#x27;,
+      {
+        puzzle_name: &#x60;puzzle${puzzleNum}&#x60;,
+        answer
+      },
+      { withCredentials: true }
+    );
+  }
 
-        this.buffer +&#x3D; key;
-        this.buffer &#x3D; this.buffer.slice(-this.secret.length);
-
-        if (this.buffer &#x3D;&#x3D;&#x3D; this.secret) {
-        this.buffer &#x3D; &#x27;&#x27;;
-        onMatch();
-        }
-    }
-    activate() {
-        return this.http.post(
-        &#x60;${this.apiConfig.getBackendUrl()}/api/activate-challenge&#x60;,
-        { code: this.secret },
-        { withCredentials: true }
-        );
-    }
-    draw(){
-        console.log(&#x27;---&#x27;);
-        console.log(&#x27;%c🐰🥚 Happy Easter! You\&#x27;ve found the Easter egg! 🥚🐰&#x27;, &#x27;color: #ff69b4; font-size: 16px;&#x27;);
-        console.log(&#x27;In this developer console, you might find some hidden challenge!&#x27;);
-        console.log(&#x27;Keep exploring and have fun!&#x27;);
-     //   console.log(&#x27;-----------------------------------------------------------------------------&#x27;);
-     //   console.log(&#x27;-----------------------------------------------------------------------------&#x27;);
-     //   console.log(&#x27;-------------------------------------*---------------------------------------&#x27;);
-     //   console.log(&#x27;--------------------------*----------------------*---------------------------&#x27;);
-      //  console.log(&#x27;------------------*--------------------------------------*-------------------&#x27;);
-      //  console.log(&#x27;-------------------------------------*---------------------------------------&#x27;);
-        //console.log(&#x27;-------------*----------------*------^-------*----------------*--------------&#x27;);
-       // console.log(&#x27;---------------------------------^\\--|--/^-----------------------------------&#x27;);
-        //console.log(&#x27;---------*-------------------------\\-|-/-------------------------*-----------&#x27;);
-        //console.log(&#x27;------------------------------------\\|/--------------------------------------&#x27;);
-        //console.log(&#x27;-------------------------------------|---------------------------------------&#x27;);
-        //console.log(&#x27;------------------------------------/|\\--------------------------------------&#x27;);
-        //console.log(&#x27;-----------------------------------/-|-\\-------------------------------------&#x27;);
-        //console.log(&#x27;----------------------------------/--|--\\------------------------------------&#x27;);
-        //console.log(&#x27;-----------------------------------------------------------------------------&#x27;);
-        //console.log(&#x27;-----------------------------------------------------------------------------&#x27;);
-        
-    }
-    sendEsterRequest() {
-        this.http.get(&#x60;${this.baseUrl}/api/secret-clue&#x60;,{withCredentials:true}).subscribe({
-            next: (res:any) &#x3D;&gt;{
-
-            }
-        }
-            
-        );
-    }    
+  syncSolved(userSolved: string[]) {
+    const solved &#x3D; userSolved.map(s &#x3D;&gt; s.trim().toLowerCase());
+    this.challenges.forEach(c &#x3D;&gt;
+      c.solved &#x3D; solved.includes(c.name)
+    );
+  }
 }</code></pre>
     </div>
 
@@ -719,7 +559,7 @@ export class EasterService {
        <script>
             var COMPODOC_CURRENT_PAGE_DEPTH = 1;
             var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
-            var COMPODOC_CURRENT_PAGE_URL = 'EasterService.html';
+            var COMPODOC_CURRENT_PAGE_URL = 'ChallengeService.html';
        </script>
 
        <script>
