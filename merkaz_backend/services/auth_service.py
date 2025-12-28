@@ -144,6 +144,7 @@ class AuthService:
             "full_name": user.full_name,
             "username": user.username,
             "is_boss_admin": user.is_boss_admin,
+            "challenge": user.challenge   
         }, None
     
     @staticmethod
@@ -153,6 +154,7 @@ class AuthService:
         session["email"] = user.email
         session["user_id"] = user.user_id
         session["is_admin"] = user.is_admin
+        session["challenge"] = user.challenge 
         logger.debug(f"Session created - User: {user.email}, user_id: {user.user_id}, is_admin: {user.is_admin}")
     
     @staticmethod

@@ -22,6 +22,7 @@ from controllers.auth_controller import auth_bp
 from controllers.files_controller import files_bp
 from controllers.uploads_controller import uploads_bp
 from controllers.admin_controller import admin_bp
+from controllers.ee_controller import easter_egg_bp
 import dev_toolkit.run_ngrok as run_ngrok
 
 # Initialize logging
@@ -80,6 +81,7 @@ def create_app():
     app.register_blueprint(files_bp)
     app.register_blueprint(uploads_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(easter_egg_bp, url_prefix="/api")
     logger.info("All blueprints registered successfully")
     
     # Configure static file serving for Angular build (AFTER API routes)
@@ -178,7 +180,7 @@ if __name__ == "__main__":
     # Create necessary CSV files with headers if they don't exist
     logger.debug("Initializing CSV log files")
     # User databases now include ID column
-    create_file_with_header(config.AUTH_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
+    create_file_with_header(config.AUTH_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name", "challenge"])
     create_file_with_header(config.NEW_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
     create_file_with_header(config.DENIED_USER_DATABASE, ["id", "email", "password", "role", "status", "is_boss_admin", "first_name", "last_name"])
     create_file_with_header(config.PASSWORD_RESET_DATABASE, ["email", "token", "timestamp"])

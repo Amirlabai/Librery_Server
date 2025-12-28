@@ -1,0 +1,22 @@
+/* TEAM */
+Developer: Amir Labay | GitHub: https://github.com/Amirlabai
+Developer: Yosef Nago | GitHub: https://github.com/Yosefnago
+Role: Software Engineering & Research
+
+/* SITE */
+Standards: HTML5, CSS3, ECMAScript
+Frontend: Angular
+Backend: REST-based architecture
+Security: Standard industry practices
+Language: English
+
+/* METADATA */
+Last updated: 2025-12-14
+humans.txt version: 1.0
+
+/* NOTES */
+This website was built as a technical project demonstrating structured
+frontend development and a modular backend design. Emphasis was placed
+on clarity, maintainability, and adherence to web standards.
+
+/* END */
