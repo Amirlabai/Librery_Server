@@ -1,7 +1,7 @@
 ##########---TITLE---#############
 1. For changing title of the web go to index.html Line 6 [<title>"""WRITE_THE_TITLE_HERE"""</title>]
 
-2. For changing the title icon go to index.html linr 9 [href="assets/icons/to-be-logo.ico"]
+2. For changing the title icon go to index.html linr 9 [href="assets/icons/tab-logo.ico"]
 
 
 
