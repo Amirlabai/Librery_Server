@@ -99,6 +99,7 @@
 
 <h1>Merkaz_lib</h1>
 <p>An open library for file-sharing among students. A full-stack web application built with Flask (Python) backend and Angular frontend.</p>
+<p><strong>Current Version:</strong> 2.18.0 (as of 2025-12-14)</p>
 <h2>Authors</h2>
 <ul>
 <li><strong>Amir Labai</strong> - Backend Developer</li>
@@ -121,7 +122,7 @@
 <ul>
 <li>Browse and navigate folder structure</li>
 <li>Search files and folders</li>
-<li>Preview files (if supported)</li>
+<li>Preview files </li>
 <li>Upload files (with admin approval workflow)</li>
 <li>Download files and folders (folders as ZIP)</li>
 <li>Create folders</li>
@@ -214,8 +215,14 @@
 ├── src/
 │   ├── app/
 │   │   ├── components/                   # Main feature components
-│   │   │   ├── dashboard/
-│   │   │   │   ├── admin-dash/           # Admin dashboard page
+│   │   │   ├── dashborad/                # Dashboard (note: typo in folder name)
+│   │   │   │   ├── admin-dash/           # Admin dashboard components
+│   │   │   │   │   ├── users/           # User management
+│   │   │   │   │   ├── pending/         # Pending user approvals
+│   │   │   │   │   ├── denied/          # Denied user registrations
+│   │   │   │   │   ├── uploads/         # Upload management
+│   │   │   │   │   ├── metrics/         # System metrics
+│   │   │   │   │   └── admin-dash-shared.css
 │   │   │   │   ├── dashboard.component.css
 │   │   │   │   ├── dashboard.component.html
 │   │   │   │   └── dashboard.component.ts
@@ -235,6 +242,11 @@
 │   │   │   │   ├── register.component.html
 │   │   │   │   └── register.component.ts
 │   │   │   │
+│   │   │   ├── resetpass/                # Password reset page
+│   │   │   │   ├── reset-pass.component.css
+│   │   │   │   ├── reset-pass.component.html
+│   │   │   │   └── reset-pass.component.ts
+│   │   │   │
 │   │   │   └── uploads/                  # Uploads and user files
 │   │   │       ├── my-uploads.component.css
 │   │   │       ├── my-uploads.component.html
@@ -246,28 +258,32 @@
 │   │   ├── interceptors/
 │   │   │   └── auth.interceptor.ts       # HTTP interceptor for auth headers
 │   │   │
-│   │   ├── models/
-│   │   │   └── pending-user.model.ts     # Pending user data model
-│   │   │
 │   │   ├── services/
 │   │   │   ├── auth.guard.ts             # Route guard for authentication
 │   │   │   └── auth.service.ts           # Authentication and user session service
 │   │   │
 │   │   ├── app.config.ts                 # Global app configuration
+│   │   ├── app.routes.ts                 # Angular routing configuration
 │   │   ├── app.css                       # Global styling
 │   │   ├── app.html                      # Root template
-│   │   └── app.ts                        # Root component / bootstrap</code></pre></div><h2>Installation</h2>
+│   │   ├── app.ts                        # Root component / bootstrap
+│   │   └── version.ts                    # Application version (auto-generated)
+│   │
+│   ├── assets/                           # Static assets (icons, images)
+│   ├── custom.scss                       # Global SCSS styles
+│   ├── styles.css                        # Additional global styles
+│   └── index.html                        # Main HTML entry point</code></pre></div><h2>Installation</h2>
 <h3>Prerequisites</h3>
 <ul>
-<li>Python 3.7+ </li>
-<li>Node.js 14+ and npm</li>
-<li>Angular CLI (for frontend development)</li>
+<li><strong>Python 3.7+</strong> (Python 3.9+ recommended)</li>
+<li><strong>Node.js 14+</strong> and npm</li>
+<li><strong>Angular CLI</strong> (for frontend development) - Version 20.3.6+</li>
 </ul>
 <h3>Backend Setup</h3>
 <ol>
 <li><p><strong>Clone the repository</strong></p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">git clone &lt;repository-url&gt;
-cd NagoAmir_Server</code></pre></div></li>
+cd Librery_Server</code></pre></div></li>
 <li><p><strong>Create and activate virtual environment</strong></p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">python -m venv .venv</code></pre></div><p>On Windows (PowerShell):</p>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">.venv\Scripts\Activate.ps1</code></pre></div><p>If you encounter an execution policy error:</p>
@@ -277,10 +293,10 @@ cd NagoAmir_Server</code></pre></div></li>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">pip install -r requirements.txt</code></pre></div><p>Note: If you encounter encoding issues, you may need to install dependencies manually from <code>venv_prerequsites.txt</code></p>
 </li>
 <li><p><strong>Configure the application</strong></p>
-<p>The configuration file is located at <code>merkaz_backend/config/config.py</code>. A template file (<code>merkaz_backend/config/config_template.py</code>) is provided for reference.</p>
+<p>The configuration file should be created at <code>merkaz_backend/config/config.py</code>. A template file (<code>merkaz_backend/config/config_template.py</code>) is provided for reference.</p>
 <p>Edit <code>merkaz_backend/config/config.py</code> to set:</p>
 <ul>
-<li>Secret keys for sessions and tokens (automatically generated, but can be customized)</li>
+<li>Secret keys for sessions and tokens</li>
 <li>Mail server configuration (Gmail SMTP settings)</li>
 <li>File paths and folder names</li>
 <li>Allowed file extensions</li>
@@ -309,6 +325,27 @@ npm -v</code></pre></div></li>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">ng serve</code></pre></div><p>The frontend will be available at <code>http://localhost:4200</code></p>
 </li>
 </ol>
+<h2>Technology Stack</h2>
+<h3>Backend</h3>
+<ul>
+<li><strong>Framework</strong>: Flask 3.1.2 (Python)</li>
+<li><strong>Server</strong>: Waitress 3.0.2 (WSGI server)</li>
+<li><strong>Data Storage</strong>: CSV files (no database required)</li>
+<li><strong>Email</strong>: Flask-Mail 0.10.0 with Gmail SMTP</li>
+<li><strong>Security</strong>: Werkzeug 3.1.3 (password hashing, session management)</li>
+<li><strong>File Validation</strong>: python-magic-bin 0.4.14 (MIME type checking)</li>
+<li><strong>CORS</strong>: flask-cors 6.0.1</li>
+<li><strong>Rate Limiting</strong>: Flask-Limiter 3.8.0</li>
+<li><strong>Utilities</strong>: pandas 2.3.3, openpyxl 3.1.5</li>
+</ul>
+<h3>Frontend</h3>
+<ul>
+<li><strong>Framework</strong>: Angular 20.3.0</li>
+<li><strong>UI Components</strong>: Angular Material 20.2.14</li>
+<li><strong>Build Tool</strong>: Angular CLI 20.3.6</li>
+<li><strong>TypeScript</strong>: 5.9.2</li>
+<li><strong>RxJS</strong>: 7.8.0</li>
+</ul>
 <h2>Configuration</h2>
 <h3>Backend Configuration (<code>merkaz_backend/config/config.py</code>)</h3>
 <p>Key configuration options:</p>
@@ -368,6 +405,7 @@ ng build --configuration production</code></pre></div><p>This creates the produc
 <li>The backend serves static Angular files, so no separate frontend server is required</li>
 </ul>
 <h2>API Endpoints Overview</h2>
+<p>For detailed API documentation, see <a href="documentation/api-reference.md">documentation/api-reference.md</a>.</p>
 <h3>Authentication</h3>
 <ul>
 <li><code>POST /login</code> - User login</li>
@@ -470,6 +508,18 @@ ng build --configuration production</code></pre></div><p>This creates the produc
 <li><strong><code>set_boss_admin_gui.py</code></strong> - GUI tool to set boss admin status for users</li>
 <li><strong><code>dev_log_share_files.py</code></strong> - Development utilities for logging and file sharing</li>
 </ul>
+<h3>Documentation</h3>
+<p>Comprehensive documentation is available in the <code>documentation/</code> directory:</p>
+<ul>
+<li><strong>API Reference</strong>: <a href="documentation/api-reference.md">documentation/api-reference.md</a></li>
+<li><strong>Architecture</strong>: <a href="documentation/architecture.md">documentation/architecture.md</a></li>
+<li><strong>Setup Guide</strong>: <a href="documentation/setup.md">documentation/setup.md</a></li>
+<li><strong>Configuration</strong>: <a href="documentation/configuration.md">documentation/configuration.md</a></li>
+<li><strong>Development</strong>: <a href="documentation/development.md">documentation/development.md</a></li>
+<li><strong>Production Build</strong>: <a href="PRODUCTION_BUILD.md">PRODUCTION_BUILD.md</a></li>
+<li><strong>New Computer Setup</strong>: <a href="SETUP_NEW_COMPUTER.md">SETUP_NEW_COMPUTER.md</a></li>
+</ul>
+<p>Auto-generated documentation for backend modules is available in <code>documentation/autogen/merkaz_backend/</code>.</p>
 <h3>Generating Requirements File</h3>
 <b>Example :</b><div><pre class="line-numbers"><code class="language-bash">pip freeze &gt; requirements.txt</code></pre></div><h3>Database Files</h3>
 <p>User data and activity logs are stored in CSV format within the <code>merkaz_server/</code> directory:</p>
@@ -504,8 +554,27 @@ ng build --configuration production</code></pre></div><p>This creates the produc
 </ul>
 <h2>License</h2>
 <p>This project is licensed under the MIT License - see the <a href="LICENSE">LICENSE</a> file for details.</p>
+<h2>Project Structure</h2>
+<b>Example :</b><div><pre class="line-numbers"><code class="language-none">Server/
+├── merkaz_backend/          # Flask backend application
+├── merkaz-frontend/         # Angular frontend application
+├── merkaz_server/           # Runtime data (logs, files, CSV databases)
+│   ├── data/               # User data and sequences
+│   ├── logs/               # Activity logs
+│   └── server_files/       # Shared files, uploads, trash
+├── documentation/          # Project documentation
+├── scripts/                # Utility scripts (docs generation, versioning)
+├── requirements.txt        # Python dependencies
+├── package.json           # Root package.json (for semantic-release)
+└── README.md              # This file</code></pre></div><h2>Version Management</h2>
+<p>This project uses <strong>semantic-release</strong> for automated version management. Version information is automatically generated in:</p>
+<ul>
+<li><code>merkaz_backend/version.py</code> (Python)</li>
+<li><code>merkaz-frontend/src/app/version.ts</code> (TypeScript)</li>
+</ul>
+<p><strong>Current Version:</strong> 2.18.0</p>
 <h2>Support</h2>
-<p>For issues or questions, please [create an issue or contact information].</p>
+<p>For issues or questions, please create an issue in the repository or contact the project maintainers.</p>
 
 
 

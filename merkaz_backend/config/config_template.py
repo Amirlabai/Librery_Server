@@ -40,6 +40,9 @@ DECLINED_UPLOAD_LOG_FILE = os.path.join(SERVER_LOGS_DIR, "declined_log.csv").rep
 # --- chache files ---
 ROOT_SEARCH_CACHE_FILE = os.path.join(SERVER_CACHE_DIR, "cache").replace('\\', '/')
 
+# --- useful links ---
+USEFUL_LINKS_FILE = os.path.join(SERVER_DATA_DIR, "useful_links.csv").replace('\\', '/')
+
 # --- File Upload Settings ---
 # General file extensions
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'zip', 'rar', '7z', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'}
