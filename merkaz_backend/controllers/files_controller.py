@@ -7,6 +7,10 @@ from utils.log_utils import log_event
 from datetime import datetime
 from flask_cors import cross_origin
 from urllib.parse import quote
+import config.config as config
+import json
+import os
+import csv
 
 files_bp = Blueprint('files', __name__)
 logger = get_logger(__name__)
@@ -259,3 +263,41 @@ def suggest():
     
     logger.info(f"Suggestion submitted successfully - User: {user_email}")
     return jsonify({"message": "Thank you, your suggestion has been submitted!"}), 200
+
+@files_bp.route("/useful_links", methods=["GET"])
+def get_useful_links():
+    """Get useful links from CSV file."""
+    # Validate session and clear if invalidated
+    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
+    if not is_valid:
+        return jsonify({"error": error_msg}), 401
+    user_email = session.get("email", "unknown")
+    logger.debug(f"Useful links request - User: {user_email}")
+    if not session.get("logged_in"):
+        logger.warning("Useful links request failed - User not logged in")
+        return jsonify({"error": "Not logged in"}), 401
+    
+    try:
+        useful_links_list = []
+        useful_links_path = config.USEFUL_LINKS_FILE
+        with open(useful_links_path, 'r', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                if len(row) < 4 or row[0] == "url":
+                    logger.warning(f"Invalid row in useful links file: {row}")
+                    continue
+                useful_links_list.append({
+                    "url": row[0],
+                    "title": row[1],
+                    "description": row[2],
+                    "dir": row[3]
+                })
+        
+        logger.debug(f"Useful links retrieved successfully - Count: {len(useful_links_list) if isinstance(useful_links_list, list) else 0}, User: {user_email}")
+        return jsonify(useful_links_list), 200
+    except json.JSONDecodeError as e:
+        logger.error(f"Error parsing useful links JSON: {e}")
+        return jsonify({"error": "Invalid JSON format in useful links file"}), 500
+    except Exception as e:
+        logger.error(f"Error reading useful links file: {e}")
+        return jsonify({"error": "Failed to read useful links file"}), 500

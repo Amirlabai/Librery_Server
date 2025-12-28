@@ -282,42 +282,19 @@
           <div class="suggestion-box-header">
             <h2>Useful Links</h2>
             <div class="useful-links-list">
-              <div class="useful-link-item">
-                <a href="https://github.com/Amirlabai/Librery_Server/tree/main" target="_blank" class="useful-link">
-                  <span class="link-title" >Librery Server</span>
-                  <span class="link-description" >Server for the Librery project</span>
-                </a>
-              </div>
-              <div class="useful-link-item">
-                <a href="https://www.noteshare.live" target="_blank" class="useful-link">
-                  <span class="link-title">NoteShare</span>
-                  <span class="link-description">אתר רשמי לשיתוף סיכומים</span>
-                </a>
-              </div>
-              <div class="useful-link-item">
-                <a href="https://www.derivative-calculator.net/" target="_blank" class="useful-link">
-                  <span class="link-title" dir="rtl">Derivative Calculator</span>
-                  <span class="link-description" dir="rtl">מחשבון נגזרות מקוון עם פיתוח ושלבי חישוב</span>
-                </a>
-              </div>
-              <div class="useful-link-item">
-                <a href="https://www.integral-calculator.com/" target="_blank" class="useful-link">
-                  <span class="link-title" dir="rtl">Integral Calculator</span>
-                  <span class="link-description" dir="rtl">מחשבון אינטגרלים מקוון עם פיתוח ושלבי חישוב</span>
-                </a>
-              </div>
-              <div class="useful-link-item">
-                <a href="https://www.sci-hub.st/" target="_blank" class="useful-link">
-                  <span class="link-title" dir="rtl">Sci-Hub</span>
-                  <span class="link-description" dir="rtl">מאגר מחקרים מקוון</span>
-                </a>
-              </div>
-              <div class="useful-link-item">
-                <a href="https://notebooklm.google.com/" target="_blank" class="useful-link">
-                  <span class="link-title" dir="rtl">NotebookLM</span>
-                  <span class="link-description" dir="rtl">אתר לשילוב בינה מלאכותית עם סיכומים</span>
-                </a>
-              </div>
+              @for (link of usefulLinks; track link.url) {
+                <div class="useful-link-item">
+                  <a [href]="link.url" target="_blank" class="useful-link">
+                    <span class="link-title" [attr.dir]="link.dir || null">{{ link.title }}</span>
+                    <span class="link-description" [attr.dir]="link.dir || null">{{ link.description }}</span>
+                  </a>
+                </div>
+              }
+              @if (usefulLinks.length === 0) {
+                <div style="text-align: center; padding: 20px; color: #777;">
+                  Loading links...
+                </div>
+              }
             </div>
             <button type="button" (click)="closeUsefulLinksModal()" class="close-links-btn">Close</button>
           </div>
