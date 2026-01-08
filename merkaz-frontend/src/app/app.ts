@@ -24,6 +24,7 @@ export class AppComponent {
   selectedPuzzleNum: number | 0 = 0;
   answerInput = '';
   isHideChall = false;
+  isDeviceSupported = true;
   
 
   
@@ -45,15 +46,33 @@ export class AppComponent {
   }
 
   ngOnInit() {
+
+    this.isDeviceSupported = !this.isMobile();
+
+    if (!this.isDeviceSupported) {
+      return; 
+    }
+
     this.auth.onLogin().subscribe(() => this.init());
     this.easter.sendEsterRequest();
     this.init();
   }
+
   private init() {
-    this.auth.refreshSession().subscribe(user => {
-      this.isActivated = user.challenge === 'activated';
-      if (this.isActivated) {
-        this.loadGame();
+
+    if (!this.isDeviceSupported) {
+      return;
+    }
+
+    this.auth.refreshSession().subscribe({
+      next: user => {
+        this.isActivated = user.challenge === 'activated';
+        if (this.isActivated) {
+          this.loadGame();
+        }
+      },
+      error: () => {
+        this.isActivated = false;
       }
     });
   }
@@ -91,6 +110,9 @@ export class AppComponent {
   }
   toggleChallenge(){
     this.isHideChall = !this.isHideChall;
+  }
+  isMobile(): boolean {
+    return /android|iphone|ipad|mobile/i.test(navigator.userAgent);
   }
   
 }

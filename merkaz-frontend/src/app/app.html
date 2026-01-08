@@ -4,88 +4,91 @@
     {{ isDark ? 'light_mode' : 'dark_mode' }}
   </mat-icon>
 </button>
+
+@if (isDeviceSupported) {
   <button matButton="text" (click)="toggleChallenge()">
     {{isHideChall ? 'Show' : 'Hide'}}
   </button>
 
-@if (isActivated && !isHideChall) {
+  @if (isActivated && !isHideChall) {
 
-  <div class="leader-container-left">
+    <div class="leader-container-left">
 
-  <div class="header">
-    
-  </div>
-      <div class="content-wrapper">
-        <div class="scrollable-content">
-
-          <div class="table-wrapper">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Points</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          @for (member of members; track member.rank) {
-            <tr>
-              <td>{{member.rank}}</td>
-              <td>{{member.name}}</td>
-              <td>{{member.points}}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-      </div>
-
-    </div>
-  </div>
-  
-</div>
-<div class="leader-container-right">
     <div class="header">
-   
-  </div>
-  
-  <div class="content-wrapper">
-      <div class="table-wrapper">
+      
+    </div>
+        <div class="content-wrapper">
+          <div class="scrollable-content">
+
+            <div class="table-wrapper">
         <table class="table">
           <thead>
             <tr>
-              <th>Challenge</th> <th>Action</th>   </tr>
+              <th>Rank</th>
+              <th>Name</th>
+              <th>Points</th>
+            </tr>
           </thead>
 
           <tbody>
-            @for (challenge of challenges; track challenge.name) { 
+            @for (member of members; track member.rank) {
               <tr>
-                <td>
-                  <button (click)="getPuzzle(challenge.name)" color="primary" class="challenge-button">
-                    {{ challenge.name }} 
-                  </button>
-                </td>
-                
-                  @if(challenge.solved){
-                    <td>✅</td>
-                  }@else{
-                    <td>❌</td>
-                  }
-                
+                <td>{{member.rank}}</td>
+                <td>{{member.name}}</td>
+                <td>{{member.points}}</td>
               </tr>
             }
           </tbody>
         </table>
+        </div>
+
       </div>
+    </div>
+    
   </div>
-  <div class="Submit">
-    <input type="number" [(ngModel)]="selectedPuzzleNum" placeholder="select puz number">
-    <input type="text" [(ngModel)]="answerInput" placeholder="Submit your answer here">
-    <button (click)="submitAnswer(selectedPuzzleNum, answerInput)">
-      Submit
-    </button>
+  <div class="leader-container-right">
+      <div class="header">
+    
+    </div>
+    
+    <div class="content-wrapper">
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Challenge</th> <th>Action</th>   </tr>
+            </thead>
+
+            <tbody>
+              @for (challenge of challenges; track challenge.name) { 
+                <tr>
+                  <td>
+                    <button (click)="getPuzzle(challenge.name)" color="primary" class="challenge-button">
+                      {{ challenge.name }} 
+                    </button>
+                  </td>
+                  
+                    @if(challenge.solved){
+                      <td>✅</td>
+                    }@else{
+                      <td>❌</td>
+                    }
+                  
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+    </div>
+    <div class="Submit">
+      <input type="number" [(ngModel)]="selectedPuzzleNum" placeholder="select puz number">
+      <input type="text" [(ngModel)]="answerInput" placeholder="Submit your answer here">
+      <button (click)="submitAnswer(selectedPuzzleNum, answerInput)">
+        Submit
+      </button>
+    </div>
   </div>
-</div>
+  }
 }
 
 <router-outlet></router-outlet>

@@ -206,6 +206,11 @@ if __name__ == "__main__":
         logger.error(f"Error initializing root search cache: {e}")
 
     app = create_app()
+
+    app.config.update(
+        SESSION_COOKIE_SAMESITE='None',
+        SESSION_COOKIE_SECURE=True
+    )
     
     logger.info("Starting server with Waitress on 0.0.0.0:8000")
     serve(app, host="0.0.0.0", port=8000)

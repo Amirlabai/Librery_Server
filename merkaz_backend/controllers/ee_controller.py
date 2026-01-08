@@ -123,6 +123,10 @@ def get_input(puzzle_num):
 
 @easter_egg_bp.route('/submit-answer', methods=['POST'])
 def submit_answer():
+
+    if is_mobile_request():
+        return jsonify({"error": "Mobile devices not supported"}), 403
+
     data = request.get_json()
     puzzle_name = data.get('puzzle_name')
     user_answer = str(data.get('answer')).strip()
@@ -172,6 +176,10 @@ def submit_answer():
 
 @easter_egg_bp.route("/leaderboard-data", methods=["GET"])
 def get_leaderboard_data():
+
+    if is_mobile_request():
+        return jsonify({"error": "Mobile devices not supported"}), 403
+
     current_user_email = session.get('email')
     if not current_user_email:
         return jsonify({"error": "Unauthorized"}), 401
@@ -214,3 +222,12 @@ def get_leaderboard_data():
         "leaderboard": sorted_leaderboard,
         "user_solved": solved_puzzles
     }), 200
+
+
+def is_mobile_request():
+    ua = request.headers.get('User-Agent', '').lower()
+    mobile_indicators = [
+        'android', 'iphone', 'ipad', 'ipod',
+        'mobile', 'opera mini', 'windows phone'
+    ]
+    return any(m in ua for m in mobile_indicators)    
