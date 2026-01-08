@@ -43,6 +43,10 @@ ROOT_SEARCH_CACHE_FILE = os.path.join(SERVER_CACHE_DIR, "cache").replace('\\', '
 # --- useful links ---
 USEFUL_LINKS_FILE = os.path.join(SERVER_DATA_DIR, "useful_links.csv").replace('\\', '/')
 
+# --- easter egg ---
+PUZZLES_DIR = os.path.join(SERVER_ROOT_DIR, 'puzzles').replace('\\', '/')
+BASE_DATA_DIR = os.path.join(SERVER_ROOT_DIR, 'data').replace('\\', '/')
+
 # --- File Upload Settings ---
 # General file extensions
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'zip', 'rar', '7z', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'}

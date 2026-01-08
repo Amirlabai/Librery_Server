@@ -9,8 +9,8 @@ from services.auth_service import AuthService
 
 easter_egg_bp = Blueprint('api', __name__)
 logger = get_logger(__name__)
-PUZZLES_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'merkaz_server', 'puzzles')
-BASE_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'merkaz_server', 'data')
+PUZZLES_DIR = config.PUZZLES_DIR
+BASE_DATA_DIR = config.BASE_DATA_DIR
 
 
 def get_csv_path(filename):
@@ -94,7 +94,11 @@ def activate_challenge():
             writer.writerows(users)
 
         # Refresh session so frontend sees updated challenge status
-        AuthService.refresh_session()
+        refresh_session = AuthService.refresh_session()
+        if refresh_session is None:
+            logger.error(f"activate_challenge: Error refreshing session: {refresh_session}")
+            return jsonify({"message": "Error refreshing session"}), 500
+
         logger.info(f"activate_challenge: Challenge activated for {user_email}")
         return jsonify({
             "status": "success",
@@ -123,56 +127,69 @@ def get_input(puzzle_num):
 
 @easter_egg_bp.route('/submit-answer', methods=['POST'])
 def submit_answer():
-
     if is_mobile_request():
         return jsonify({"error": "Mobile devices not supported"}), 403
 
-    data = request.get_json()
-    puzzle_name = data.get('puzzle_name')
-    user_answer = str(data.get('answer')).strip()
-    user_email = session.get('email')
+    try:
+        data = request.get_json()
+        puzzle_name = data.get('puzzle_name')
+        if puzzle_name is None:
+            return jsonify({"message": "error"}), 400
+        user_answer = data.get('answer')
+        if user_answer is None:
+            return jsonify({"message": "Answer is required"}), 400
+        elif not isinstance(user_answer, str):
+            user_answer = str(user_answer)
+        user_answer = user_answer.strip()
+        user_email = session.get('email')
 
-    if not user_email:
-        return jsonify({"message": "Session expired, please login again"}), 401
-
-    puzzle_data = None
-    puzzles_path = get_csv_path('puzzles.csv')
-    
-    with open(puzzles_path, mode='r', encoding='utf-8') as f:
-        reader = csv.DictReader(f, skipinitialspace=True)
-        for row in reader:
-            if row['name'] == puzzle_name:
-                puzzle_data = row
-                break
-
-    if not puzzle_data:
-        return jsonify({"message": "Puzzle not found"}), 404
-
-    if user_answer == puzzle_data['correct_answer']:
-        solutions_path = get_csv_path('user_solutions.csv')
+        if not user_email:
+            return jsonify({"message": "Session expired, please login again"}), 401
+        else:
+        # check user activated puzzle
+            user = User.find_by_email(user_email)
+            if not user or user.challenge != 'activated':
+                return jsonify({"message": "Unauthorized: You have not activated the puzzle challenge"}), 403
+        puzzle_data = None
+        puzzles_path = get_csv_path('puzzles.csv')
         
-        if not os.path.exists(solutions_path):
-            with open(solutions_path, mode='w', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow(['email', 'puzzle_name', 'points', 'timestamp'])
-
-        already_solved = False
-        with open(solutions_path, mode='r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
+        with open(puzzles_path, mode='r', encoding='utf-8') as f:
+            reader = csv.DictReader(f, skipinitialspace=True)
             for row in reader:
-                if row['email'] == user_email and row['puzzle_name'] == puzzle_name:
-                    already_solved = True
+                if row['name'] == puzzle_name:
+                    puzzle_data = row
                     break
+
+        if not puzzle_data:
+            return jsonify({"message": "Puzzle not found"}), 404
+
+        if user_answer == puzzle_data['correct_answer']:
+            solutions_path = get_csv_path('user_solutions.csv')
+            
+            if not os.path.exists(solutions_path):
+                with open(solutions_path, mode='w', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    writer.writerow(['email', 'puzzle_name', 'points', 'timestamp'])
+
+            already_solved = False
+            with open(solutions_path, mode='r', encoding='utf-8') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if row['email'] == user_email and row['puzzle_name'] == puzzle_name:
+                        already_solved = True
+                        break
+            
+            if not already_solved:
+                with open(solutions_path, mode='a', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f)
+                    writer.writerow([user_email, puzzle_name, puzzle_data['points'], datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
+
+            return jsonify({"message": "Correct! Puzzle solved 🎉", "success": True}), 200
         
-        if not already_solved:
-            with open(solutions_path, mode='a', newline='', encoding='utf-8') as f:
-                writer = csv.writer(f)
-                writer.writerow([user_email, puzzle_name, puzzle_data['points'], datetime.now().strftime("%Y-%m-%d %H:%M:%S")])
-
-        return jsonify({"message": "Correct! Puzzle solved 🎉", "success": True}), 200
-    
-    return jsonify({"message": "Wrong answer, try again!", "success": False}), 400
-
+        return jsonify({"message": "Wrong answer, try again!", "success": False}), 400
+    except Exception as e:
+        logger.error(f"submit_answer: Error submitting answer: {e}")
+        return jsonify({"message": "Internal error while submitting answer"}), 500
 
 @easter_egg_bp.route("/leaderboard-data", methods=["GET"])
 def get_leaderboard_data():
