@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { ApiConfigService } from "../api-config.service";
 
 @Injectable({ providedIn: 'root' })
 export class ChallengeService {
@@ -12,18 +13,24 @@ export class ChallengeService {
         { name: 'puzzle5', solved: false },
     ];
 
-  constructor(private http: HttpClient) {}
+  constructor(
+  private http: HttpClient,
+  private apiConfig: ApiConfigService
+) {}
 
+  private get baseUrl(): string {
+    return this.apiConfig.getBackendUrl();
+  }
   loadLeaderboard() {
     return this.http.get<any>(
-      'http://localhost:8000/api/leaderboard-data',
+      `${this.baseUrl}/api/leaderboard-data`,
       { withCredentials: true }
     );
   }
 
   submitAnswer(puzzleNum: number, answer: string) {
     return this.http.post<any>(
-      'http://localhost:8000/api/submit-answer',
+      `${this.baseUrl}/api/submit-answer`,
       {
         puzzle_name: `puzzle${puzzleNum}`,
         answer
