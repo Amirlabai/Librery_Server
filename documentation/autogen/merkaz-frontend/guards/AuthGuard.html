@@ -292,18 +292,10 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): Observable&lt;boolean&gt; {
 
-    const token &#x3D; this.auth.getToken();
-
-    if (!token) {
-      this.router.navigate([&#x27;/login&#x27;]);
-      return of(false);
-    }
-
     return this.auth.refreshSession().pipe(
       map(() &#x3D;&gt; true), 
       catchError(() &#x3D;&gt; {
         
-        this.auth.clearToken();
         sessionStorage.clear();
         this.router.navigate([&#x27;/login&#x27;]);
         return of(false);
