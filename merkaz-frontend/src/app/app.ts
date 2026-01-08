@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { NotificationService } from './services/notifications/Notifications.service';
 import { CommonModule } from '@angular/common';
 import { ChallengeService } from './services/spper/cl.service';
+import { ApiConfigService } from './services/api-config.service';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +34,8 @@ export class AppComponent {
     private auth: AuthService,
     private cl: ChallengeService,
     private easter: EasterService,
-    private notify: NotificationService
+    private notify: NotificationService,
+    private apiConfig: ApiConfigService
   ) {}
   toggleMode() {
     this.isDark = !this.isDark;
@@ -100,10 +102,31 @@ export class AppComponent {
     });
   }
 
-  getPuzzle(puz: string) {  
-    const fullPath = `http://localhost:8000/api/get-puzzle/${puz}`; 
-    
-    window.open(fullPath, '_blank');
+  getPuzzle(puz: string) {
+    // Validate input
+    if (!puz || typeof puz !== 'string' || puz.trim().length === 0) {
+      this.notify.show('Invalid puzzle name', false);
+      return;
+    }
+
+    try {
+      // Use ApiConfigService to get the correct backend URL (works in all environments)
+      const baseUrl = this.apiConfig.getBackendUrl();
+      // URL encode the puzzle name to handle special characters
+      const encodedPuz = encodeURIComponent(puz.trim());
+      const fullPath = `${baseUrl}/api/get-puzzle/${encodedPuz}`;
+      
+      // Attempt to open the puzzle in a new window
+      const newWindow = window.open(fullPath, '_blank');
+      
+      // Check if popup was blocked
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        this.notify.show('Popup blocked. Please allow popups for this site.', false);
+      }
+    } catch (error) {
+      console.error('Error opening puzzle:', error);
+      this.notify.show('Failed to open puzzle. Please try again.', false);
+    }
   }
   get challenges() {
     return this.cl.challenges;
