@@ -9,6 +9,6 @@ export interface VersionInfo {
 }
 
 export const versionInfo: VersionInfo = {
-  version: '2.20.2',
-  releaseDate: '2026-01-08T09:43:24Z',
+  version: '2.20.3',
+  releaseDate: '2026-01-08T10:07:01Z',
 };
