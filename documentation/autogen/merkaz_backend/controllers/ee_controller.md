@@ -38,3 +38,7 @@ No description provided.
 ### `get_leaderboard_data()`
 
 No description provided.
+
+### `is_mobile_request()`
+
+No description provided.
