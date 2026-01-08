@@ -107,23 +107,18 @@ export class AppComponent {
   }
 
   getPuzzle(puz: string) {
-    // Validate input
     if (!puz || typeof puz !== 'string' || puz.trim().length === 0) {
       this.notify.show('Invalid puzzle name', false);
       return;
     }
 
     try {
-      // Use ApiConfigService to get the correct backend URL (works in all environments)
       const baseUrl = this.apiConfig.getBackendUrl();
-      // URL encode the puzzle name to handle special characters
       const encodedPuz = encodeURIComponent(puz.trim());
       const fullPath = `${baseUrl}/api/get-puzzle/${encodedPuz}`;
       
-      // Attempt to open the puzzle in a new window
       const newWindow = window.open(fullPath, '_blank');
       
-      // Check if popup was blocked
       if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
         this.notify.show('Popup blocked. Please allow popups for this site.', false);
       }
