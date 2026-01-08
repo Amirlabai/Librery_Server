@@ -611,7 +611,7 @@ export class LoginComponent {
       next: (res: any) &#x3D;&gt; {
 
         if (res.token) {
-          this.authService.saveToken(res.token);
+          this.authService.saveToken(res.token.hash);
         }
         if (res.role) {
           localStorage.setItem(&#x27;role&#x27;, res.role);
