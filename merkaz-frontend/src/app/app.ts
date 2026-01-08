@@ -88,6 +88,10 @@ export class AppComponent {
     this.cl.submitAnswer(puzzleNum, answer).subscribe({
       next: res => {
         this.notify.show(res.message, true);
+        if(res.message.startsWith('Correct')) {
+          this.answerInput = '';
+          this.selectedPuzzleNum = 0;
+        }
         this.loadGame();
       },
       error: err => {

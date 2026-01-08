@@ -54,7 +54,7 @@ export class LoginComponent {
       next: (res: any) => {
 
         if (res.token) {
-          this.authService.saveToken(res.token);
+          this.authService.saveToken(res.token.hash);
         }
         if (res.role) {
           localStorage.setItem('role', res.role);
