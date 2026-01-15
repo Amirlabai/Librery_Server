@@ -1,53 +1,253 @@
 <!-- upload-content.component.html -->
-<div class="container">
-  <h1>Upload Content</h1>
-
-  <p>
-    Your upload will be submitted for admin review. If approved, it will be placed in:
-    <strong>
-      @if (subpath) {
-        /{{ subpath }}
-      } @else {
-        /Home
-      }
-    </strong>
-  </p>
-
-  <div class="upload-section">
-    <h2>Upload Files</h2>
-    <div class="info">
-      You can select multiple files at once. Hold down the Ctrl (or Cmd on Mac) key while clicking to select more than one.
+<div class="upload-page">
+  <div class="upload-container">
+    
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-content">
+        <h1>Upload Content</h1>
+        <a routerLink="/dashboard" class="back-button">
+          <span class="back-icon">←</span>
+          Back to Files
+        </a>
+      </div>
+      <div class="destination-badge">
+        <span class="badge-label">Destination:</span>
+        <span class="badge-path">
+          @if (subpath) {
+            /{{ subpath }}
+          } @else {
+            /Home
+          }
+        </span>
+      </div>
     </div>
-    <form (ngSubmit)="onSubmitFiles()" #filesForm="ngForm">
-      <input type="file" id="fileInput" (change)="onFileChange($event)" multiple required [disabled]="isUploadingFile"/>
-      <br />
-      <button type="submit" [disabled]="isUploadingFile">
-      Upload Files for Review
 
-      @if (isUploadingFile) {
-        <span class="spinner"></span>
-      }
-      </button>
-    </form>
-  </div>
+    <!-- Main Content Grid -->
+    <div class="upload-grid">
+      
+      <!-- Files Upload Card -->
+      <div class="upload-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">📁</span>
+            <h2>Upload Files</h2>
+          </div>
+          @if (selectedFiles.length > 0 && !isUploadingFile) {
+            <span class="badge badge-files">{{ selectedFiles.length }} selected</span>
+          }
+        </div>
 
-  <div class="upload-section">
-    <h2>Upload a Folder</h2>
-    <div class="info">
-      Select a folder to upload all of its contents, including sub-folders.
+        <div class="card-body">
+          @if (!isUploadingFile && selectedFiles.length === 0) {
+            <!-- Empty State -->
+            <div class="empty-state">
+              <div class="empty-icon">📄</div>
+              <p class="empty-text">Select multiple files to upload</p>
+              <p class="empty-hint">Hold Ctrl (or Cmd on Mac) to select multiple</p>
+            </div>
+          }
+
+          @if (selectedFiles.length > 0 && !isUploadingFile) {
+            <!-- Files Preview -->
+            <div class="preview-card">
+              <div class="preview-summary">
+                <span class="summary-count">{{ selectedFiles.length }} files</span>
+                <span class="summary-size">{{ getTotalFileSize(selectedFiles) }}</span>
+              </div>
+              <div class="preview-list">
+                @for (file of selectedFiles.slice(0, 3); track file.name) {
+                  <div class="preview-item">
+                    <span class="item-icon">📄</span>
+                    <span class="item-name">{{ file.name }}</span>
+                    <span class="item-size">{{ getFileSize(file.size) }}</span>
+                  </div>
+                }
+                @if (selectedFiles.length > 3) {
+                  <div class="preview-more">
+                    +{{ selectedFiles.length - 3 }} more files
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          @if (isUploadingFile) {
+            <!-- Upload Progress -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <span class="progress-status">Uploading...</span>
+                <span class="progress-percent">{{ uploadFileProgress }}%</span>
+              </div>
+              
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="uploadFileProgress"></div>
+              </div>
+              
+              <div class="progress-stats">
+                <div class="stat">
+                  <span class="stat-label">Uploaded</span>
+                  <span class="stat-value">{{ getUploadedFilesCount() }} / {{ selectedFiles.length }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Remaining</span>
+                  <span class="stat-value">{{ selectedFiles.length - getUploadedFilesCount() }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Speed</span>
+                  <span class="stat-value">{{ uploadSpeed || '...' }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Time Left</span>
+                  <span class="stat-value">{{ getEstimatedTimeRemaining() || '...' }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="card-footer">
+          <form (ngSubmit)="onSubmitFiles()" #filesForm="ngForm">
+            <input 
+              type="file" 
+              id="fileInput" 
+              (change)="onFileChange($event)" 
+              multiple 
+              [disabled]="isUploadingFile"
+            />
+            <label for="fileInput" class="select-button" [class.disabled]="isUploadingFile">
+              <span class="button-icon">📁</span>
+              Choose Files
+            </label>
+            
+            <button 
+              type="submit" 
+              class="submit-button" 
+              [disabled]="isUploadingFile || selectedFiles.length === 0"
+            >
+              @if (isUploadingFile) {
+                <span class="spinner"></span>
+                <span>Uploading...</span>
+              } @else {
+                <span class="button-icon">⬆️</span>
+                <span>Upload for Review</span>
+              }
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Folder Upload Card -->
+      <div class="upload-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span class="card-icon">📂</span>
+            <h2>Upload Folder</h2>
+          </div>
+          @if (selectedFolderFiles.length > 0 && !isUploadingFolder) {
+            <span class="badge badge-folder">{{ selectedFolderFiles.length }} files</span>
+          }
+        </div>
+
+        <div class="card-body">
+          @if (!isUploadingFolder && selectedFolderFiles.length === 0) {
+            <!-- Empty State -->
+            <div class="empty-state">
+              <div class="empty-icon">📂</div>
+              <p class="empty-text">Select a folder to upload</p>
+              <p class="empty-hint">All contents and sub-folders will be included</p>
+            </div>
+          }
+
+          @if (selectedFolderFiles.length > 0 && !isUploadingFolder) {
+            <!-- Folder Preview -->
+            <div class="preview-card">
+              <div class="preview-summary">
+                <span class="summary-count">{{ selectedFolderFiles.length }} files</span>
+                <span class="summary-size">{{ getTotalFileSize(selectedFolderFiles) }}</span>
+              </div>
+              <div class="preview-list">
+                @for (file of selectedFolderFiles.slice(0, 3); track file.name) {
+                  <div class="preview-item">
+                    <span class="item-icon">📄</span>
+                    <span class="item-name">{{ file.webkitRelativePath || file.name }}</span>
+                    <span class="item-size">{{ getFileSize(file.size) }}</span>
+                  </div>
+                }
+                @if (selectedFolderFiles.length > 3) {
+                  <div class="preview-more">
+                    +{{ selectedFolderFiles.length - 3 }} more files
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          @if (isUploadingFolder) {
+            <!-- Upload Progress -->
+            <div class="progress-card">
+              <div class="progress-header">
+                <span class="progress-status">Uploading...</span>
+                <span class="progress-percent">{{ uploadFolderProgress }}%</span>
+              </div>
+              
+              <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="uploadFolderProgress"></div>
+              </div>
+              
+              <div class="progress-stats">
+                <div class="stat">
+                  <span class="stat-label">Uploaded</span>
+                  <span class="stat-value">{{ getUploadedFilesCount() }} / {{ selectedFolderFiles.length }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Remaining</span>
+                  <span class="stat-value">{{ selectedFolderFiles.length - getUploadedFilesCount() }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Speed</span>
+                  <span class="stat-value">{{ uploadSpeed || '...' }}</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-label">Time Left</span>
+                  <span class="stat-value">{{ getEstimatedTimeRemaining() || '...' }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="card-footer">
+          <form (ngSubmit)="onSubmitFolder()" #folderForm="ngForm">
+            <input 
+              type="file" 
+              id="folderInput" 
+              (change)="onFolderChange($event)" 
+              webkitdirectory 
+              [disabled]="isUploadingFolder"
+            />
+            <label for="folderInput" class="select-button" [class.disabled]="isUploadingFolder">
+              <span class="button-icon">📂</span>
+              Choose Folder
+            </label>
+            
+            <button 
+              type="submit" 
+              class="submit-button" 
+              [disabled]="isUploadingFolder || selectedFolderFiles.length === 0"
+            >
+              @if (isUploadingFolder) {
+                <span class="spinner"></span>
+                <span>Uploading...</span>
+              } @else {
+                <span class="button-icon">⬆️</span>
+                <span>Upload for Review</span>
+              }
+            </button>
+          </form>
+        </div>
+      </div>
+
     </div>
-    <form (ngSubmit)="onSubmitFolder()" #folderForm="ngForm">
-      <input type="file" id="folderInput" (change)="onFolderChange($event)" webkitdirectory required [disabled]="isUploadingFolder" />
-      <br />
-      <button type="submit" [disabled]="isUploadingFolder">
-      Upload Folders for Review
-
-      @if (isUploadingFolder) {
-        <span class="spinner"></span>
-      }
-      </button>
-    </form>
   </div>
-
-  <a routerLink="/dashboard" class="back-link">Back to Files</a>
 </div>
