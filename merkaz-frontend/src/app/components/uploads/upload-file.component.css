@@ -17,7 +17,7 @@
         var(--card-bg) 50%, 
         var(--bg-color) 100%
     );
-    padding: 80px 20px 80px 20px; /* Top 80px, Side 20px (shows leaderboards), Bottom 80px for gap */
+    padding: 80px 20px 80px 20px; 
     display: flex;
     align-items: flex-start;
     justify-content: center;
