@@ -330,9 +330,10 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient } from &quot;@angular/common/http&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient, HttpEvent, HttpEventType, HttpRequest } from &quot;@angular/common/http&quot;;
 import { Injectable } from &quot;@angular/core&quot;;
 import { Observable } from &quot;rxjs&quot;;
+import { map } from &quot;rxjs/operators&quot;;
 import { ApiConfigService } from &quot;./api-config.service&quot;;
 
 export interface UploadHistory {
@@ -361,23 +362,75 @@ export class UserService {
     return this.http.get&lt;UploadHistory[]&gt;(&#x60;${this.baseUrl}/my_uploads&#x60;, { withCredentials: true });
   }
 
-  uploadFiles(files: File[], subpath: string): Observable&lt;any&gt; {
+  uploadFiles(files: File[], subpath: string): Observable&lt;number | any&gt; {
     const formData &#x3D; new FormData();
     files.forEach(file &#x3D;&gt; formData.append(&#x27;file&#x27;, file));
     formData.append(&#x27;subpath&#x27;, subpath);
 
-    return this.http.post&lt;any&gt;(&#x60;${this.baseUrl}/upload&#x60;, formData, { withCredentials: true });
+    // Create request with progress tracking enabled
+    const req &#x3D; new HttpRequest(&#x27;POST&#x27;, &#x60;${this.baseUrl}/upload&#x60;, formData, {
+      reportProgress: true,
+      withCredentials: true
+    });
+
+    // Transform HTTP events into progress percentages or response
+    return this.http.request(req).pipe(
+      map((event: HttpEvent&lt;any&gt;) &#x3D;&gt; {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            // Calculate and return upload percentage
+            if (event.total) {
+              const percentDone &#x3D; Math.round((100 * event.loaded) / event.total);
+              return percentDone;
+            }
+            return 0;
+
+          case HttpEventType.Response:
+            // Upload complete, return the response body
+            return event.body;
+
+          default:
+            return 0;
+        }
+      })
+    );
   }
 
-  uploadFolder(files: File[], subpath: string): Observable&lt;any&gt; {
+  uploadFolder(files: File[], subpath: string): Observable&lt;number | any&gt; {
     const formData &#x3D; new FormData();
     files.forEach(file &#x3D;&gt; formData.append(&#x27;file&#x27;, file));
     formData.append(&#x27;subpath&#x27;, subpath);
 
-    return this.http.post&lt;any&gt;(&#x60;${this.baseUrl}/upload&#x60;, formData, { withCredentials: true });
+    // Create request with progress tracking enabled
+    const req &#x3D; new HttpRequest(&#x27;POST&#x27;, &#x60;${this.baseUrl}/upload&#x60;, formData, {
+      reportProgress: true,
+      withCredentials: true
+    });
+
+    // Transform HTTP events into progress percentages or response
+    return this.http.request(req).pipe(
+      map((event: HttpEvent&lt;any&gt;) &#x3D;&gt; {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            // Calculate and return upload percentage
+            if (event.total) {
+              const percentDone &#x3D; Math.round((100 * event.loaded) / event.total);
+              return percentDone;
+            }
+            return 0;
+
+          case HttpEventType.Response:
+            // Upload complete, return the response body
+            return event.body;
+
+          default:
+            return 0;
+        }
+      })
+    );
   }
 
-}  </code></pre>
+}</code></pre>
     </div>
 </div>
 
