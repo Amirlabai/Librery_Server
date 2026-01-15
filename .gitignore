@@ -6,6 +6,9 @@
 /data
 /logs
 *.pyc
+merkaz_backend/merkaz_server/server_files/uploads/*.mp4
+bash
+Copy code
 
 
 /merkaz_backend/__pycache__/
