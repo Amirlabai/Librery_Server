@@ -9,7 +9,7 @@
 merkaz_backend/merkaz_server/server_files/uploads/*.mp4
 bash
 Copy code
-
+merkaz_backend/merkaz_server/
 
 /merkaz_backend/__pycache__/
 /merkaz_backend/routes/__pycache__/
