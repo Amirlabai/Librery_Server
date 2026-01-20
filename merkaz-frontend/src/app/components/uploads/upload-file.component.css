@@ -12,11 +12,7 @@
 }
 .upload-page {
     min-height: 100vh;
-    background: linear-gradient(135deg, 
-        var(--bg-color) 0%, 
-        var(--card-bg) 50%, 
-        var(--bg-color) 100%
-    );
+    background: white;
     padding: 80px 20px 80px 20px; 
     display: flex;
     align-items: flex-start;
@@ -77,10 +73,7 @@ h1 {
     align-items: center;
     gap: 8px;
     padding: 12px 20px;
-    background: linear-gradient(135deg, 
-        rgba(26, 115, 232, 0.1) 0%, 
-        rgba(26, 115, 232, 0.05) 100%
-    );
+    background: rgba(26, 115, 232, 0.1);
     border: 1px solid rgba(26, 115, 232, 0.2);
     border-radius: 10px;
     backdrop-filter: blur(10px);
@@ -136,10 +129,7 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(to bottom, 
-        var(--buttons-color) 0%, 
-        transparent 100%
-    );
+    background: var(--buttons-color);
 }
 
 .card-title {
@@ -170,12 +160,12 @@ h2 {
 }
 
 .badge-files {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-buttons);
     color: white;
 }
 
 .badge-folder {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: var(--primary-buttons);
     color: white;
 }
 
@@ -217,10 +207,7 @@ h2 {
 
 /* Preview Card */
 .preview-card {
-    background: linear-gradient(135deg, 
-        rgba(26, 115, 232, 0.05) 0%, 
-        rgba(26, 115, 232, 0.02) 100%
-    );
+    background: rgba(26, 115, 232, 0.05);
     border: 1px solid rgba(26, 115, 232, 0.1);
     border-radius: 12px;
     padding: 16px;
@@ -297,10 +284,7 @@ h2 {
 
 /* Progress Card */
 .progress-card {
-    background: linear-gradient(135deg, 
-        rgba(26, 115, 232, 0.08) 0%, 
-        rgba(26, 115, 232, 0.04) 100%
-    );
+    background: rgba(26, 115, 232, 0.08);
     border: 2px solid var(--primary-buttons);
     border-radius: 12px;
     padding: 20px;
@@ -322,10 +306,7 @@ h2 {
 .progress-percent {
     font-size: 24px;
     font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--primary-buttons);
 }
 
 .progress-track {
@@ -339,21 +320,10 @@ h2 {
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, 
-        #667eea 0%, 
-        #764ba2 50%, 
-        #f093fb 100%
-    );
-    background-size: 200% 100%;
+    background: var(--primary-buttons);
     border-radius: 10px;
     transition: width 0.3s ease;
-    animation: shimmer 2s infinite;
     box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
-}
-
-@keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
 }
 
 .progress-stats {
@@ -388,10 +358,7 @@ h2 {
 /* Card Footer */
 .card-footer {
     padding: 20px 24px 24px;
-    background: linear-gradient(to top, 
-        var(--buttons-color) 0%, 
-        transparent 100%
-    );
+    background: 'white';
 }
 
 .card-footer form {
@@ -421,12 +388,9 @@ input[type="file"] {
 }
 
 .select-button:hover:not(.disabled) {
-    background: linear-gradient(135deg, 
-        rgba(26, 115, 232, 0.1) 0%, 
-        rgba(26, 115, 232, 0.05) 100%
-    );
+    background: var(--primary-buttons);
     border-color: var(--primary-buttons);
-    color: var(--primary-buttons);
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(26, 115, 232, 0.2);
 }
@@ -443,10 +407,7 @@ input[type="file"] {
     justify-content: center;
     gap: 8px;
     padding: 14px 20px;
-    background: linear-gradient(135deg, 
-        var(--primary-buttons) 0%, 
-        #185abc 100%
-    );
+    background: var(--primary-buttons);
     color: white;
     border: none;
     border-radius: 10px;

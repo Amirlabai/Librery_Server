@@ -28,6 +28,9 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   uploadSpeed: string = '';
   displayedFilesCount: number = 0;
   displayedFoldersCount: number = 0;
+  currentUploadingFile: string = '';
+  failedFiles: Array<{ fileName: string, error: any }> = [];
+  successfulFiles: string[] = [];
 
   private uploadStartTime: number = 0;
   private uploadInterval: any;
@@ -236,19 +239,28 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   /**
    * Reset upload state after completion or error
    */
-  private resetUploadState(isFolder: boolean = false): void {
+  private resetUploadState(isFolder: boolean = false, keepResults: boolean = false): void {
     if (isFolder) {
       this.isUploadingFolder = false;
-      this.uploadFolderProgress = 0;
-      this.displayedFoldersCount = 0;
+      if (!keepResults) {
+        this.uploadFolderProgress = 0;
+        this.displayedFoldersCount = 0;
+      }
     } else {
       this.isUploadingFile = false;
-      this.uploadFileProgress = 0;
-      this.displayedFilesCount = 0;
+      if (!keepResults) {
+        this.uploadFileProgress = 0;
+        this.displayedFilesCount = 0;
+      }
     }
     
-    this.uploadSpeed = '';
-    this.uploadStartTime = 0;
+    if (!keepResults) {
+      this.uploadSpeed = '';
+      this.uploadStartTime = 0;
+      this.currentUploadingFile = '';
+      this.failedFiles = [];
+      this.successfulFiles = [];
+    }
     
     if (this.progressUpdateInterval) {
       clearInterval(this.progressUpdateInterval);
@@ -264,67 +276,128 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   onSubmitFiles() {
     const input = document.getElementById('fileInput') as HTMLInputElement;
     
+    if (this.selectedFiles.length === 0) {
+      return;
+    }
+    
     this.isUploadingFile = true;
     this.uploadFileProgress = 0;
     this.displayedFilesCount = 0;
     this.uploadStartTime = Date.now();
     this.uploadSpeed = '';
+    this.currentUploadingFile = '';
+    this.failedFiles = [];
+    this.successfulFiles = [];
 
     console.log('Starting file upload with', this.selectedFiles.length, 'files');
 
-    // Start simulated progress since Flask doesn't support real-time progress
-    this.simulateProgress();
-
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
-      next: (progress) => {
-        console.log('Progress event received:', progress, 'type:', typeof progress);
-        
-        // Check if it's a progress number or the final response
-        if (typeof progress === 'number') {
-          console.log('Progress percentage:', progress);
-          this.uploadFileProgress = Math.min(progress, 100); // Cap at 100%
+      next: (event) => {
+        if (event.type === 'progress') {
+          const data = event.data;
           
-          // Calculate expected file count and update it
-          const expectedCount = Math.floor((this.selectedFiles.length * progress) / 100);
-          console.log('Expected count:', expectedCount, 'out of', this.selectedFiles.length);
-          this.animateFilesCount(expectedCount, false);
+          // Update current file being uploaded
+          this.currentUploadingFile = data.currentFile || '';
           
-          // Calculate total bytes uploaded based on progress percentage
-          const totalBytes = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
-          const loadedBytes = (totalBytes * progress) / 100;
-          this.updateUploadSpeed(loadedBytes);
-        } else {
-          // This is the final response, upload is complete
-          console.log('Upload complete!');
+          // Update progress based on actual file completion
+          this.uploadFileProgress = data.progress || 0;
+          this.displayedFilesCount = data.successfulFiles || 0;
           
-          // Jump to 100% before resetting
+          // Update successful and failed file lists
+          if (data.fileSuccess !== undefined) {
+            if (data.fileSuccess) {
+              // File succeeded - already counted in successfulFiles
+            } else {
+              // File failed - track it
+              if (data.error) {
+                const existingIndex = this.failedFiles.findIndex(f => f.fileName === data.currentFile);
+                if (existingIndex === -1) {
+                  this.failedFiles.push({ fileName: data.currentFile, error: data.error });
+                }
+              }
+            }
+          }
+          
+          // Calculate upload speed based on completed files
+          if (this.uploadStartTime > 0 && data.completedFiles > 0) {
+            const elapsedSeconds = (Date.now() - this.uploadStartTime) / 1000;
+            const totalBytes = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
+            const avgBytesPerFile = totalBytes / this.selectedFiles.length;
+            const uploadedBytes = avgBytesPerFile * data.completedFiles;
+            if (elapsedSeconds > 0.5) {
+              const bytesPerSecond = uploadedBytes / elapsedSeconds;
+              this.uploadSpeed = this.getFileSize(bytesPerSecond) + '/s';
+            }
+          }
+          
+          console.log(`Upload progress: ${data.completedFiles}/${data.totalFiles} files, ${data.progress}%`);
+        } else if (event.type === 'complete') {
+          const data = event.data;
+          
+          // Update final state
           this.uploadFileProgress = 100;
-          this.animateFilesCount(this.selectedFiles.length, false);
+          this.displayedFilesCount = data.successfulCount || 0;
+          this.successfulFiles = data.successful || [];
+          this.failedFiles = data.failed || [];
           
-          // Clear simulation interval
+          // Clear intervals
           if (this.uploadInterval) {
             clearInterval(this.uploadInterval);
+          }
+          
+          // Show completion message
+          let message = '';
+          if (data.successfulCount > 0 && data.failedCount === 0) {
+            message = `Successfully uploaded ${data.successfulCount} file(s)`;
+            this.notificationService.show(message, true);
+          } else if (data.successfulCount > 0 && data.failedCount > 0) {
+            message = `Uploaded ${data.successfulCount} file(s), ${data.failedCount} failed`;
+            this.notificationService.show(message, false);
+            console.warn('Failed files:', this.failedFiles);
+          } else {
+            message = 'Failed to upload files';
+            this.notificationService.show(message, false);
+            console.error('All files failed:', this.failedFiles);
           }
           
           // Wait a moment to show 100%, then reset
           setTimeout(() => {
             this.resetUploadState(false);
-            this.notificationService.show('Files uploaded successfully', true);  
             
             // Reset file input
             input.value = '';
             this.selectedFiles = [];
-          }, 500);
+          }, 2000);
         }
       },
       error: (err) => {
         console.error('Upload error:', err);
-        this.resetUploadState(false);
-        this.notificationService.show('Failed to upload files', false);
         
-        // Reset file input
-        input.value = '';
-        this.selectedFiles = [];
+        // Log error for monitoring
+        const errorInfo = {
+          timestamp: new Date().toISOString(),
+          filesCount: this.selectedFiles.length,
+          successfulCount: this.successfulFiles.length,
+          error: err
+        };
+        console.error('Upload error details:', errorInfo);
+        
+        // Show error message
+        if (this.successfulFiles.length > 0) {
+          this.notificationService.show(
+            `Upload interrupted: ${this.successfulFiles.length} file(s) uploaded, ${this.selectedFiles.length - this.successfulFiles.length} failed`,
+            false
+          );
+        } else {
+          this.notificationService.show('Failed to upload files', false);
+        }
+        
+        // Reset state but keep failed files info for potential retry
+        setTimeout(() => {
+          this.resetUploadState(false);
+          input.value = '';
+          this.selectedFiles = [];
+        }, 2000);
       }
     });
   }
@@ -335,63 +408,128 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   onSubmitFolder() {
     const input = document.getElementById('folderInput') as HTMLInputElement;
     
+    if (this.selectedFolderFiles.length === 0) {
+      return;
+    }
+    
     this.isUploadingFolder = true;
     this.uploadFolderProgress = 0;
     this.displayedFoldersCount = 0;
     this.uploadStartTime = Date.now();
     this.uploadSpeed = '';
+    this.currentUploadingFile = '';
+    this.failedFiles = [];
+    this.successfulFiles = [];
 
     console.log('Starting folder upload with', this.selectedFolderFiles.length, 'files');
 
-    // Start simulated progress since Flask doesn't support real-time progress
-    this.simulateProgress(true);
-
     this.userService.uploadFiles(this.selectedFolderFiles, this.subpath).subscribe({
-      next: (progress) => {
-        // Check if it's a progress number or the final response
-        if (typeof progress === 'number') {
-          this.uploadFolderProgress = Math.min(progress, 100); // Cap at 100%
+      next: (event) => {
+        if (event.type === 'progress') {
+          const data = event.data;
           
-          // Calculate expected file count and update it
-          const expectedCount = Math.floor((this.selectedFolderFiles.length * progress) / 100);
-          this.animateFilesCount(expectedCount, true);
+          // Update current file being uploaded
+          this.currentUploadingFile = data.currentFile || '';
           
-          // Calculate total bytes uploaded based on progress percentage
-          const totalBytes = this.selectedFolderFiles.reduce((sum, file) => sum + file.size, 0);
-          const loadedBytes = (totalBytes * progress) / 100;
-          this.updateUploadSpeed(loadedBytes);
-        } else {
-          // This is the final response, upload is complete
-          console.log('Folder upload complete!');
+          // Update progress based on actual file completion
+          this.uploadFolderProgress = data.progress || 0;
+          this.displayedFoldersCount = data.successfulFiles || 0;
           
-          // Jump to 100% before resetting
+          // Update successful and failed file lists
+          if (data.fileSuccess !== undefined) {
+            if (data.fileSuccess) {
+              // File succeeded
+            } else {
+              // File failed - track it
+              if (data.error) {
+                const existingIndex = this.failedFiles.findIndex(f => f.fileName === data.currentFile);
+                if (existingIndex === -1) {
+                  this.failedFiles.push({ fileName: data.currentFile, error: data.error });
+                }
+              }
+            }
+          }
+          
+          // Calculate upload speed
+          if (this.uploadStartTime > 0 && data.completedFiles > 0) {
+            const elapsedSeconds = (Date.now() - this.uploadStartTime) / 1000;
+            const totalBytes = this.selectedFolderFiles.reduce((sum, file) => sum + file.size, 0);
+            const avgBytesPerFile = totalBytes / this.selectedFolderFiles.length;
+            const uploadedBytes = avgBytesPerFile * data.completedFiles;
+            if (elapsedSeconds > 0.5) {
+              const bytesPerSecond = uploadedBytes / elapsedSeconds;
+              this.uploadSpeed = this.getFileSize(bytesPerSecond) + '/s';
+            }
+          }
+          
+          console.log(`Folder upload progress: ${data.completedFiles}/${data.totalFiles} files, ${data.progress}%`);
+        } else if (event.type === 'complete') {
+          const data = event.data;
+          
+          // Update final state
           this.uploadFolderProgress = 100;
-          this.animateFilesCount(this.selectedFolderFiles.length, true);
+          this.displayedFoldersCount = data.successfulCount || 0;
+          this.successfulFiles = data.successful || [];
+          this.failedFiles = data.failed || [];
           
-          // Clear simulation interval
+          // Clear intervals
           if (this.uploadInterval) {
             clearInterval(this.uploadInterval);
+          }
+          
+          // Show completion message
+          let message = '';
+          if (data.successfulCount > 0 && data.failedCount === 0) {
+            message = `Successfully uploaded ${data.successfulCount} file(s)`;
+            this.notificationService.show(message, true);
+          } else if (data.successfulCount > 0 && data.failedCount > 0) {
+            message = `Uploaded ${data.successfulCount} file(s), ${data.failedCount} failed`;
+            this.notificationService.show(message, false);
+            console.warn('Failed files:', this.failedFiles);
+          } else {
+            message = 'Failed to upload folder';
+            this.notificationService.show(message, false);
+            console.error('All files failed:', this.failedFiles);
           }
           
           // Wait a moment to show 100%, then reset
           setTimeout(() => {
             this.resetUploadState(true);
-            this.notificationService.show('Folder uploaded successfully', true);
             
             // Reset folder input
             input.value = '';
             this.selectedFolderFiles = [];
-          }, 500);
+          }, 2000);
         }
       },
       error: (err) => {
         console.error('Folder upload error:', err);
-        this.resetUploadState(true);
-        this.notificationService.show('Failed to upload folder', false);
         
-        // Reset folder input
-        input.value = '';
-        this.selectedFolderFiles = [];
+        // Log error for monitoring
+        const errorInfo = {
+          timestamp: new Date().toISOString(),
+          filesCount: this.selectedFolderFiles.length,
+          successfulCount: this.successfulFiles.length,
+          error: err
+        };
+        console.error('Folder upload error details:', errorInfo);
+        
+        // Show error message
+        if (this.successfulFiles.length > 0) {
+          this.notificationService.show(
+            `Upload interrupted: ${this.successfulFiles.length} file(s) uploaded, ${this.selectedFolderFiles.length - this.successfulFiles.length} failed`,
+            false
+          );
+        } else {
+          this.notificationService.show('Failed to upload folder', false);
+        }
+        
+        // Reset state
+        setTimeout(() => {
+          this.resetUploadState(true);
+          input.value = '';
+          this.selectedFolderFiles = [];
+        }, 2000);
       }
     });
   }

@@ -488,9 +488,9 @@ class FileService:
         
         try:
             # Ensure cache directory exists
-            if not os.path.exists(config.ROOT_SEARCH_CACHE_FILE):
-                os.makedirs(config.ROOT_SEARCH_CACHE_FILE)
-                logger.info(f"Created cache directory: {config.ROOT_SEARCH_CACHE_FILE}")
+            if not os.path.isdir(config.ROOT_SEARCH_CACHE_FILE):
+                os.makedirs(config.ROOT_SEARCH_CACHE_FILE, exist_ok=True)
+                logger.info(f"Created cache directory as a folder: {config.ROOT_SEARCH_CACHE_FILE}")
             
             # Read the upload completed log
             df = pd.read_csv(config.UPLOAD_COMPLETED_LOG_FILE, encoding='utf-8')

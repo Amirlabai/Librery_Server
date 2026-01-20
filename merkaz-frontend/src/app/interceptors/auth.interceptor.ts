@@ -21,8 +21,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(cloned).pipe(
     catchError(err => {
-      if (err.status === 0 || err.status === undefined) {
-        
+      // Only log out on actual authentication errors (401), not network errors
+      // Network errors (status 0/undefined) can occur during large uploads and shouldn't cause logout
+      if (err.status === 401) {
         auth.clearToken();
         sessionStorage.clear();
         router.navigate(['/login']);
