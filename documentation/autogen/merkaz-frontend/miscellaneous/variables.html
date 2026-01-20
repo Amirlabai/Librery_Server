@@ -226,8 +226,9 @@
 
   return next(cloned).pipe(
     catchError(err &#x3D;&gt; {
-      if (err.status &#x3D;&#x3D;&#x3D; 0 || err.status &#x3D;&#x3D;&#x3D; undefined) {
-        
+      // Only log out on actual authentication errors (401), not network errors
+      // Network errors (status 0/undefined) can occur during large uploads and shouldn&#x27;t cause logout
+      if (err.status &#x3D;&#x3D;&#x3D; 401) {
         auth.clearToken();
         sessionStorage.clear();
         router.navigate([&#x27;/login&#x27;]);
@@ -319,8 +320,8 @@
                 <tr>
                     <td class="col-md-4">
                         <i>Default value : </i><code>{
-  version: &#x27;2.21.0&#x27;,
-  releaseDate: &#x27;2026-01-20T18:17:17Z&#x27;,
+  version: &#x27;2.22.0&#x27;,
+  releaseDate: &#x27;2026-01-20T19:03:19Z&#x27;,
 }</code>
                     </td>
                 </tr>

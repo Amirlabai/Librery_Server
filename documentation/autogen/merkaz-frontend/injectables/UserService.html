@@ -162,6 +162,10 @@
                             <li>
                                 <a href="#uploadFolder" >uploadFolder</a>
                             </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                <a href="#uploadSingleFile" >uploadSingleFile</a>
+                            </li>
                         </ul>
                     </td>
                 </tr>
@@ -311,14 +315,17 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="33"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/user.service.ts:33</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="79"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/user.service.ts:79</a></div>
                         </td>
                     </tr>
 
 
             <tr>
                 <td class="col-md-4">
+                        <div class="io-description"><p>Upload files individually with progress tracking and retry logic
+Returns an observable that emits progress updates for each file</p>
+</div>
 
                             <div class="io-description">
                                 <b>Parameters :</b>
@@ -360,7 +367,7 @@
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Observable&lt;number | any&gt;</code>
+                            <b>Returns : </b>    <code>Observable&lt;literal type&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -390,8 +397,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="67"
-                                    class="link-to-prism">merkaz-frontend/src/app/services/user.service.ts:67</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="197"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/user.service.ts:197</a></div>
                         </td>
                     </tr>
 
@@ -439,7 +446,110 @@
                                 </table>
                             </div>
                         <div class="io-description">
-                            <b>Returns : </b>    <code>Observable&lt;number | any&gt;</code>
+                            <b>Returns : </b>    <code>Observable&lt;literal type&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="uploadSingleFile"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                        <span ><b>uploadSingleFile</b></span>
+                        <a href="#uploadSingleFile"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>uploadSingleFile(file: File, subpath: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, retryCount: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="36"
+                                    class="link-to-prism">merkaz-frontend/src/app/services/user.service.ts:36</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+                        <div class="io-description"><p>Upload a single file with retry logic</p>
+</div>
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                                <td>Default value</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>file</td>
+                                            <td>
+                                                        <code>File</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>subpath</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                                <td>retryCount</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+                                            <td>
+                                                    <code>3</code>
+                                            </td>
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Observable&lt;any&gt;</code>
 
                         </div>
                             <div class="io-description">
@@ -482,10 +592,10 @@
 
 
     <div class="tab-pane fade  tab-source-code" id="source">
-        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient, HttpEvent, HttpEventType, HttpRequest } from &quot;@angular/common/http&quot;;
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from &quot;@angular/common/http&quot;;
 import { Injectable } from &quot;@angular/core&quot;;
-import { Observable } from &quot;rxjs&quot;;
-import { map } from &quot;rxjs/operators&quot;;
+import { Observable, of, throwError } from &quot;rxjs&quot;;
+import { map, catchError, delay, filter, first } from &quot;rxjs/operators&quot;;
 import { ApiConfigService } from &quot;./api-config.service&quot;;
 
 export interface UploadHistory {
@@ -514,72 +624,172 @@ export class UserService {
     return this.http.get&lt;UploadHistory[]&gt;(&#x60;${this.baseUrl}/my_uploads&#x60;, { withCredentials: true });
   }
 
-  uploadFiles(files: File[], subpath: string): Observable&lt;number | any&gt; {
+  /**
+   * Upload a single file with retry logic
+   */
+  private uploadSingleFile(file: File, subpath: string, retryCount: number &#x3D; 3): Observable&lt;any&gt; {
     const formData &#x3D; new FormData();
-    files.forEach(file &#x3D;&gt; formData.append(&#x27;file&#x27;, file));
+    formData.append(&#x27;file&#x27;, file);
     formData.append(&#x27;subpath&#x27;, subpath);
 
-    // Create request with progress tracking enabled
     const req &#x3D; new HttpRequest(&#x27;POST&#x27;, &#x60;${this.baseUrl}/upload&#x60;, formData, {
       reportProgress: true,
       withCredentials: true
     });
 
-    // Transform HTTP events into progress percentages or response
     return this.http.request(req).pipe(
-      map((event: HttpEvent&lt;any&gt;) &#x3D;&gt; {
-        switch (event.type) {
-          case HttpEventType.UploadProgress:
-            // Calculate and return upload percentage
-            if (event.total) {
-              const percentDone &#x3D; Math.round((100 * event.loaded) / event.total);
-              return percentDone;
-            }
-            return 0;
-
-          case HttpEventType.Response:
-            // Upload complete, return the response body
-            return event.body;
-
-          default:
-            return 0;
+      // Filter to only get the final response event
+      filter((event: HttpEvent&lt;any&gt;): event is HttpResponse&lt;any&gt; &#x3D;&gt; event.type &#x3D;&#x3D;&#x3D; HttpEventType.Response),
+      map((event: HttpResponse&lt;any&gt;) &#x3D;&gt; event.body),
+      first(), // Take only the first (and only) response
+      catchError((error) &#x3D;&gt; {
+        // Log the error for monitoring
+        console.error(&#x60;Upload failed for file: ${file.name}&#x60;, error);
+        
+        // Retry on network errors (status 0/undefined) or 500 errors
+        const isRetryable &#x3D; !error.status || error.status &#x3D;&#x3D;&#x3D; 0 || error.status &gt;&#x3D; 500;
+        
+        if (retryCount &gt; 0 &amp;&amp; isRetryable) {
+          console.log(&#x60;Retrying upload for ${file.name}, attempts remaining: ${retryCount}&#x60;);
+          return this.uploadSingleFile(file, subpath, retryCount - 1).pipe(
+            delay(1000 * (4 - retryCount)) // Exponential backoff
+          );
         }
+        
+        // Return error with file info for handling
+        return throwError(() &#x3D;&gt; ({
+          error,
+          fileName: file.name,
+          fileSize: file.size
+        }));
       })
     );
   }
 
-  uploadFolder(files: File[], subpath: string): Observable&lt;number | any&gt; {
-    const formData &#x3D; new FormData();
-    files.forEach(file &#x3D;&gt; formData.append(&#x27;file&#x27;, file));
-    formData.append(&#x27;subpath&#x27;, subpath);
-
-    // Create request with progress tracking enabled
-    const req &#x3D; new HttpRequest(&#x27;POST&#x27;, &#x60;${this.baseUrl}/upload&#x60;, formData, {
-      reportProgress: true,
-      withCredentials: true
-    });
-
-    // Transform HTTP events into progress percentages or response
-    return this.http.request(req).pipe(
-      map((event: HttpEvent&lt;any&gt;) &#x3D;&gt; {
-        switch (event.type) {
-          case HttpEventType.UploadProgress:
-            // Calculate and return upload percentage
-            if (event.total) {
-              const percentDone &#x3D; Math.round((100 * event.loaded) / event.total);
-              return percentDone;
+  /**
+   * Upload files individually with progress tracking and retry logic
+   * Returns an observable that emits progress updates for each file
+   */
+  uploadFiles(files: File[], subpath: string): Observable&lt;{ type: &#x27;progress&#x27; | &#x27;complete&#x27; | &#x27;error&#x27;, data: any }&gt; {
+    return new Observable(observer &#x3D;&gt; {
+      const totalFiles &#x3D; files.length;
+      let completedFiles &#x3D; 0;
+      let successfulFiles: string[] &#x3D; [];
+      let failedFiles: Array&lt;{ fileName: string, error: any }&gt; &#x3D; [];
+      
+      // Upload files sequentially to avoid overwhelming the server
+      const uploadNext &#x3D; (index: number) &#x3D;&gt; {
+        if (index &gt;&#x3D; totalFiles) {
+          // All files processed
+          observer.next({
+            type: &#x27;complete&#x27;,
+            data: {
+              successful: successfulFiles,
+              failed: failedFiles,
+              total: totalFiles,
+              successfulCount: successfulFiles.length,
+              failedCount: failedFiles.length
             }
-            return 0;
-
-          case HttpEventType.Response:
-            // Upload complete, return the response body
-            return event.body;
-
-          default:
-            return 0;
+          });
+          observer.complete();
+          return;
         }
-      })
-    );
+
+        const file &#x3D; files[index];
+        
+        // Emit progress update
+        observer.next({
+          type: &#x27;progress&#x27;,
+          data: {
+            currentFile: file.name,
+            currentFileIndex: index + 1,
+            totalFiles: totalFiles,
+            completedFiles: completedFiles,
+            successfulFiles: successfulFiles.length,
+            failedFiles: failedFiles.length,
+            progress: Math.round((completedFiles / totalFiles) * 100)
+          }
+        });
+
+        this.uploadSingleFile(file, subpath).subscribe({
+          next: (response) &#x3D;&gt; {
+            completedFiles++;
+            
+            if (response &amp;&amp; response.successful_uploads &amp;&amp; response.successful_uploads.length &gt; 0) {
+              // File uploaded successfully
+              successfulFiles.push(...response.successful_uploads);
+              
+              observer.next({
+                type: &#x27;progress&#x27;,
+                data: {
+                  currentFile: file.name,
+                  currentFileIndex: index + 1,
+                  totalFiles: totalFiles,
+                  completedFiles: completedFiles,
+                  successfulFiles: successfulFiles.length,
+                  failedFiles: failedFiles.length,
+                  progress: Math.round((completedFiles / totalFiles) * 100),
+                  fileSuccess: true
+                }
+              });
+            } else {
+              // File failed but request completed
+              failedFiles.push({ fileName: file.name, error: response?.error || &#x27;Upload failed&#x27; });
+              
+              observer.next({
+                type: &#x27;progress&#x27;,
+                data: {
+                  currentFile: file.name,
+                  currentFileIndex: index + 1,
+                  totalFiles: totalFiles,
+                  completedFiles: completedFiles,
+                  successfulFiles: successfulFiles.length,
+                  failedFiles: failedFiles.length,
+                  progress: Math.round((completedFiles / totalFiles) * 100),
+                  fileSuccess: false
+                }
+              });
+            }
+            
+            // Continue with next file
+            uploadNext(index + 1);
+          },
+          error: (error) &#x3D;&gt; {
+            completedFiles++;
+            failedFiles.push({ 
+              fileName: file.name, 
+              error: error.error || error.message || &#x27;Network error&#x27; 
+            });
+            
+            observer.next({
+              type: &#x27;progress&#x27;,
+              data: {
+                currentFile: file.name,
+                currentFileIndex: index + 1,
+                totalFiles: totalFiles,
+                completedFiles: completedFiles,
+                successfulFiles: successfulFiles.length,
+                failedFiles: failedFiles.length,
+                progress: Math.round((completedFiles / totalFiles) * 100),
+                fileSuccess: false,
+                error: error.error || error.message
+              }
+            });
+            
+            // Continue with next file even if this one failed
+            uploadNext(index + 1);
+          }
+        });
+      };
+
+      // Start uploading from first file
+      uploadNext(0);
+    });
+  }
+
+  // uploadFolder is now handled by uploadFiles - kept for backward compatibility if needed
+  uploadFolder(files: File[], subpath: string): Observable&lt;{ type: &#x27;progress&#x27; | &#x27;complete&#x27; | &#x27;error&#x27;, data: any }&gt; {
+    return this.uploadFiles(files, subpath);
   }
 
 }
