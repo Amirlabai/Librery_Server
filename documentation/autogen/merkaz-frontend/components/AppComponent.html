@@ -462,8 +462,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="103"
+                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:103</a></div>
                         </td>
                     </tr>
 
@@ -496,8 +496,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="105"
-                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:105</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="109"
+                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:109</a></div>
                         </td>
                     </tr>
 
@@ -602,8 +602,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="137"
-                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:137</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="136"
+                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:136</a></div>
                         </td>
                     </tr>
 
@@ -722,8 +722,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="99"
-                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:99</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="103"
+                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:103</a></div>
                         </td>
                     </tr>
 
@@ -868,8 +868,8 @@
 
                     <tr>
                         <td class="col-md-4">
-                            <div class="io-line">Defined in <a href="" data-line="134"
-                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:134</a></div>
+                            <div class="io-line">Defined in <a href="" data-line="133"
+                                    class="link-to-prism">merkaz-frontend/src/app/app.ts:133</a></div>
                         </td>
                     </tr>
 
@@ -1199,7 +1199,7 @@
                 </tr>
                             <tr>
                                 <td class="col-md-4">
-                                    <div class="io-line">Defined in <a href="" data-line="131" class="link-to-prism">merkaz-frontend/src/app/app.ts:131</a></div>
+                                    <div class="io-line">Defined in <a href="" data-line="130" class="link-to-prism">merkaz-frontend/src/app/app.ts:130</a></div>
                                 </td>
                             </tr>
 
@@ -1300,6 +1300,10 @@ export class AppComponent {
     this.cl.submitAnswer(puzzleNum, answer).subscribe({
       next: res &#x3D;&gt; {
         this.notify.show(res.message, true);
+        if(res.message.startsWith(&#x27;Correct&#x27;)) {
+          this.answerInput &#x3D; &#x27;&#x27;;
+          this.selectedPuzzleNum &#x3D; 0;
+        }
         this.loadGame();
       },
       error: err &#x3D;&gt; {
@@ -1315,23 +1319,18 @@ export class AppComponent {
   }
 
   getPuzzle(puz: string) {
-    // Validate input
     if (!puz || typeof puz !&#x3D;&#x3D; &#x27;string&#x27; || puz.trim().length &#x3D;&#x3D;&#x3D; 0) {
       this.notify.show(&#x27;Invalid puzzle name&#x27;, false);
       return;
     }
 
     try {
-      // Use ApiConfigService to get the correct backend URL (works in all environments)
       const baseUrl &#x3D; this.apiConfig.getBackendUrl();
-      // URL encode the puzzle name to handle special characters
       const encodedPuz &#x3D; encodeURIComponent(puz.trim());
       const fullPath &#x3D; &#x60;${baseUrl}/api/get-puzzle/${encodedPuz}&#x60;;
       
-      // Attempt to open the puzzle in a new window
       const newWindow &#x3D; window.open(fullPath, &#x27;_blank&#x27;);
       
-      // Check if popup was blocked
       if (!newWindow || newWindow.closed || typeof newWindow.closed &#x3D;&#x3D;&#x3D; &#x27;undefined&#x27;) {
         this.notify.show(&#x27;Popup blocked. Please allow popups for this site.&#x27;, false);
       }
