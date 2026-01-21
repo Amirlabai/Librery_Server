@@ -17,9 +17,11 @@ logger = get_logger(__name__)
 
 @auth_bp.before_request
 def before_request():
-    """Reset the session timer with each request."""
+    """Mark user as online and reset the session timer with each request."""
     session.permanent = True
-    logger.debug("Session timer reset")
+    if session.get("logged_in"):
+        mark_user_online()
+    logger.debug("Session timer reset for auth blueprint")
 
 @auth_bp.route("/login", methods=["POST"])
 def api_login():

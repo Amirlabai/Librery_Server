@@ -12,6 +12,13 @@ from services.admin_service import AdminService
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 logger = get_logger(__name__)
 
+@admin_bp.before_request
+def before_request():
+    """Mark user as online and reset session timer with each request."""
+    session.permanent = True
+    if session.get("logged_in"):
+        mark_user_online()
+    logger.debug("Session timer reset for admin blueprint")
 
 # ========== METRICS ==========
 @admin_bp.route("/metrics", methods=["GET"])
@@ -25,7 +32,6 @@ def admin_metrics():
         logger.warning(f"Access denied to metrics - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
 
-    mark_user_online()    
     logger.debug(f"Metrics requested by admin: {session.get('email')}")
 
     log_files = [
@@ -49,8 +55,6 @@ def admin_users():
     if not session.get("is_admin"):
         logger.warning(f"Access denied to users list - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
-
-    mark_user_online()
 
     all_users = UserRepository.get_all()
     users_list = []
@@ -316,6 +320,5 @@ def heartbeat():
     if "email" not in session:
         logger.warning("Heartbeat failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
-    mark_user_online()
     logger.debug(f"Heartbeat processed for user: {session.get('email')}")
     return jsonify({"message": "Heartbeat received"}), 200

@@ -19,6 +19,7 @@ active_sessions = {}
 # Invalidated sessions - emails whose sessions should be terminated
 invalidated_sessions = set()
 
+session_timeout_minutes = config.SESSION_TIMEOUT_MINUTES
 class AuthService:
     """Service for authentication operations."""
     
@@ -273,8 +274,29 @@ def mark_user_offline():
     else:
         logger.debug(f"mark_user_offline called but user {email} not in active sessions")
 
+def cleanup_expired_sessions():
+    """Remove expired sessions from active_sessions based on session timeout."""
+    if not active_sessions:
+        return
+    
+    now = datetime.utcnow()
+    timeout_threshold = timedelta(minutes=session_timeout_minutes)
+    expired_users = []
+    
+    # Find expired sessions
+    for email, last_activity in list(active_sessions.items()):
+        if now - last_activity > timeout_threshold:
+            expired_users.append(email)
+            del active_sessions[email]
+    
+    if expired_users:
+        logger.debug(f"Cleaned up {len(expired_users)} expired session(s): {expired_users}")
+
 def get_active_users():
-    """Get list of currently active users."""
+    """Get list of currently active users, automatically cleaning up expired sessions."""
+    # Clean up expired sessions before returning active users
+    cleanup_expired_sessions()
+    
     active_count = len(active_sessions)
     logger.debug(f"Retrieved active users list, count: {active_count}")
     return list(active_sessions.keys())

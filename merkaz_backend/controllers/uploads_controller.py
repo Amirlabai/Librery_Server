@@ -1,11 +1,19 @@
 from flask import Blueprint, session, jsonify, request
 from utils.logger_config import get_logger
 from services.upload_service import UploadService
-from services.auth_service import AuthService
+from services.auth_service import AuthService, mark_user_online
 from repositories.user_repository import UserRepository
 
 uploads_bp = Blueprint('uploads', __name__)
 logger = get_logger(__name__)
+
+@uploads_bp.before_request
+def before_request():
+    """Mark user as online and reset session timer with each request."""
+    session.permanent = True
+    if session.get("logged_in"):
+        mark_user_online()
+    logger.debug("Session timer reset for uploads blueprint")
 
 
 @uploads_bp.route("/upload", methods=["POST"])

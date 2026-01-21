@@ -37,7 +37,7 @@ def create_app():
     logger.info("Creating Flask application")
     app = Flask(__name__)
     app.secret_key = config.SUPER_SECRET_KEY
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=config.SESSION_TIMEOUT_MINUTES)
     logger.debug(f"Session lifetime set to {app.config['PERMANENT_SESSION_LIFETIME']}")
 
     # --- Mail Configuration ---

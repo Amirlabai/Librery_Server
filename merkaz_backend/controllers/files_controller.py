@@ -1,7 +1,7 @@
 from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
 from utils.logger_config import get_logger
 from services.file_service import FileService
-from services.auth_service import AuthService
+from services.auth_service import AuthService, mark_user_online
 from repositories.download_repository import DownloadRepository
 from utils.log_utils import log_event
 from datetime import datetime
@@ -14,6 +14,14 @@ import csv
 
 files_bp = Blueprint('files', __name__)
 logger = get_logger(__name__)
+
+@files_bp.before_request
+def before_request():
+    """Mark user as online and reset session timer with each request."""
+    session.permanent = True
+    if session.get("logged_in"):
+        mark_user_online()
+    logger.debug("Session timer reset for files blueprint")
 
 @files_bp.route('/browse', defaults={'subpath': ''}, methods=["GET"])
 @files_bp.route('/browse/<path:subpath>', methods=["GET"])
