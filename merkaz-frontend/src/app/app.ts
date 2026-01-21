@@ -1,5 +1,5 @@
 import { Component, DOCUMENT, HostListener, Inject, input } from '@angular/core';
-import {RouterOutlet} from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { EasterService } from './services/spper/easter';
 import { MatButtonModule } from '@angular/material/button';
@@ -35,7 +35,8 @@ export class AppComponent {
     private cl: ChallengeService,
     private easter: EasterService,
     private notify: NotificationService,
-    private apiConfig: ApiConfigService
+    private apiConfig: ApiConfigService,
+    private router: Router
   ) {}
   toggleMode() {
     this.isDark = !this.isDark;
@@ -48,6 +49,10 @@ export class AppComponent {
   }
 
   ngOnInit() {
+
+    if(!this.auth.isLoggedIn){
+      this.router.navigate(['/login']);
+    }
 
     this.isDeviceSupported = !this.isMobile();
 
@@ -123,7 +128,6 @@ export class AppComponent {
         this.notify.show('Popup blocked. Please allow popups for this site.', false);
       }
     } catch (error) {
-      console.error('Error opening puzzle:', error);
       this.notify.show('Failed to open puzzle. Please try again.', false);
     }
   }

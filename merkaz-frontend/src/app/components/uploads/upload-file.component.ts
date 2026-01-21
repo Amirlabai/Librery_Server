@@ -1,9 +1,11 @@
+// upload-file.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { NotificationService } from '../../services/notifications/Notifications.service';
+import { UploadProgressService } from '../../services/upload.service';
 
 @Component({
   selector: 'app-upload-content',
@@ -39,7 +41,8 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   constructor(
     private userService: UserService, 
     private route: ActivatedRoute,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private uploadProgressService: UploadProgressService
   ) {}
 
   ngOnInit() {
@@ -51,7 +54,6 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Clean up intervals when component is destroyed
     if (this.uploadInterval) {
       clearInterval(this.uploadInterval);
     }
@@ -62,18 +64,12 @@ export class UploadFileComponent implements OnInit, OnDestroy {
 
   onFileChange(event: any) {
     this.selectedFiles = Array.from(event.target.files);
-    console.log('Files selected:', this.selectedFiles.length);
   }
 
   onFolderChange(event: any) {
     this.selectedFolderFiles = Array.from(event.target.files);
-    console.log('Folder files selected:', this.selectedFolderFiles.length);
   }
 
-  /**
-   * Helper method to format file size in human readable format
-   * Converts bytes to appropriate unit (Bytes, KB, MB, GB)
-   */
   getFileSize(bytes: number): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -82,31 +78,21 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   }
 
-  /**
-   * Helper method to calculate total size of all selected files
-   */
   getTotalFileSize(files: File[]): string {
     const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
     return this.getFileSize(totalBytes);
   }
 
-  /**
-   * Calculate upload speed based on progress
-   * Updates the uploadSpeed property with current transfer rate
-   */
   private updateUploadSpeed(loadedBytes: number): void {
     if (this.uploadStartTime === 0) return;
 
     const elapsedSeconds = (Date.now() - this.uploadStartTime) / 1000;
-    if (elapsedSeconds < 0.5) return; // Wait at least 0.5 seconds before calculating speed
+    if (elapsedSeconds < 0.5) return;
 
     const bytesPerSecond = loadedBytes / elapsedSeconds;
     this.uploadSpeed = this.getFileSize(bytesPerSecond) + '/s';
   }
 
-  /**
-   * Calculate how many files have been uploaded based on progress percentage
-   */
   getUploadedFilesCount(): number {
     if (this.isUploadingFile) {
       return this.displayedFilesCount;
@@ -116,9 +102,6 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  /**
-   * Calculate estimated time remaining based on current upload speed and progress
-   */
   getEstimatedTimeRemaining(): string {
     if (!this.uploadStartTime || !this.uploadSpeed || 
         (this.uploadFileProgress >= 100 && this.uploadFolderProgress >= 100)) {
@@ -132,7 +115,6 @@ export class UploadFileComponent implements OnInit, OnDestroy {
       return '';
     }
 
-    // Calculate average speed and estimate remaining time
     const totalBytes = this.isUploadingFile 
       ? this.selectedFiles.reduce((sum, file) => sum + file.size, 0)
       : this.selectedFolderFiles.reduce((sum, file) => sum + file.size, 0);
@@ -158,25 +140,17 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Update the displayed files count to match the target count
-   * This provides real-time feedback on how many files have been processed
-   */
   private animateFilesCount(targetCount: number, isFolder: boolean = false): void {
-    // Clear any existing interval
     if (this.progressUpdateInterval) {
       clearInterval(this.progressUpdateInterval);
     }
 
-    // Get current count
     const currentCount = isFolder ? this.displayedFoldersCount : this.displayedFilesCount;
     
-    // If target is same as current, no need to animate
     if (currentCount === targetCount) {
       return;
     }
     
-    // Update immediately to target count
     if (isFolder) {
       this.displayedFoldersCount = targetCount;
     } else {
@@ -184,61 +158,46 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Simulate upload progress since Flask doesn't report real-time progress
-   * Shows gradual progress to give user feedback that upload is active
-   */
   private simulateProgress(isFolder: boolean = false): void {
-    // Calculate total size to estimate upload time
     const files = isFolder ? this.selectedFolderFiles : this.selectedFiles;
     const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
     const totalMB = totalBytes / (1024 * 1024);
     
-    // Estimate time based on file size (assume ~5 MB/s upload speed)
     const estimatedSeconds = Math.max(2, totalMB / 5);
-    const updateInterval = 100; // Update every 100ms
-    const incrementPerUpdate = (95 / (estimatedSeconds * 1000)) * updateInterval; // Stop at 95%
+    const updateInterval = 100;
+    const incrementPerUpdate = (95 / (estimatedSeconds * 1000)) * updateInterval;
     
-    // Clear any existing interval
     if (this.uploadInterval) {
       clearInterval(this.uploadInterval);
     }
     
-    // Start progress simulation
     this.uploadInterval = setInterval(() => {
       const currentProgress = isFolder ? this.uploadFolderProgress : this.uploadFileProgress;
       
-      // Stop at 95% - the rest will complete when server responds
       if (currentProgress < 95) {
         const newProgress = Math.min(95, currentProgress + incrementPerUpdate);
         
         if (isFolder) {
-          this.uploadFolderProgress = Math.round(newProgress); // Round to integer
+          this.uploadFolderProgress = Math.round(newProgress);
         } else {
-          this.uploadFileProgress = Math.round(newProgress); // Round to integer
+          this.uploadFileProgress = Math.round(newProgress);
         }
         
-        // Update file count based on progress (at least 1 file if progress > 0)
         const roundedProgress = Math.round(newProgress);
         let expectedCount = Math.floor((files.length * roundedProgress) / 100);
         
-        // Show at least 1 file uploaded once we're past 5%
         if (roundedProgress > 5 && expectedCount === 0) {
           expectedCount = 1;
         }
         
         this.animateFilesCount(expectedCount, isFolder);
         
-        // Calculate simulated speed
         const loadedBytes = (totalBytes * newProgress) / 100;
         this.updateUploadSpeed(loadedBytes);
       }
     }, updateInterval);
   }
 
-  /**
-   * Reset upload state after completion or error
-   */
   private resetUploadState(isFolder: boolean = false, keepResults: boolean = false): void {
     if (isFolder) {
       this.isUploadingFolder = false;
@@ -270,9 +229,6 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Handle file upload submission
-   */
   onSubmitFiles() {
     const input = document.getElementById('fileInput') as HTMLInputElement;
     
@@ -289,36 +245,39 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     this.failedFiles = [];
     this.successfulFiles = [];
 
-    console.log('Starting file upload with', this.selectedFiles.length, 'files');
+    this.uploadProgressService.startUpload('file', this.selectedFiles.length);
+    this.notificationService.show(`Uploading 0 / ${this.selectedFiles.length} files...`, true, true);
 
     this.userService.uploadFiles(this.selectedFiles, this.subpath).subscribe({
       next: (event) => {
         if (event.type === 'progress') {
           const data = event.data;
           
-          // Update current file being uploaded
           this.currentUploadingFile = data.currentFile || '';
-          
-          // Update progress based on actual file completion
           this.uploadFileProgress = data.progress || 0;
           this.displayedFilesCount = data.successfulFiles || 0;
           
-          // Update successful and failed file lists
+          this.notificationService.updateMessage(
+            `Uploading ${this.displayedFilesCount} / ${this.selectedFiles.length} files... ${this.uploadFileProgress}%`
+          );
+          
+          this.uploadProgressService.updateProgress({
+            progress: this.uploadFileProgress,
+            uploadedCount: this.displayedFilesCount,
+            currentFile: this.currentUploadingFile,
+            speed: this.uploadSpeed,
+            timeRemaining: this.getEstimatedTimeRemaining()
+          });
+          
           if (data.fileSuccess !== undefined) {
-            if (data.fileSuccess) {
-              // File succeeded - already counted in successfulFiles
-            } else {
-              // File failed - track it
-              if (data.error) {
-                const existingIndex = this.failedFiles.findIndex(f => f.fileName === data.currentFile);
-                if (existingIndex === -1) {
-                  this.failedFiles.push({ fileName: data.currentFile, error: data.error });
-                }
+            if (!data.fileSuccess && data.error) {
+              const existingIndex = this.failedFiles.findIndex(f => f.fileName === data.currentFile);
+              if (existingIndex === -1) {
+                this.failedFiles.push({ fileName: data.currentFile, error: data.error });
               }
             }
           }
           
-          // Calculate upload speed based on completed files
           if (this.uploadStartTime > 0 && data.completedFiles > 0) {
             const elapsedSeconds = (Date.now() - this.uploadStartTime) / 1000;
             const totalBytes = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
@@ -330,69 +289,59 @@ export class UploadFileComponent implements OnInit, OnDestroy {
             }
           }
           
-          console.log(`Upload progress: ${data.completedFiles}/${data.totalFiles} files, ${data.progress}%`);
         } else if (event.type === 'complete') {
           const data = event.data;
           
-          // Update final state
           this.uploadFileProgress = 100;
           this.displayedFilesCount = data.successfulCount || 0;
           this.successfulFiles = data.successful || [];
           this.failedFiles = data.failed || [];
           
-          // Clear intervals
+          this.uploadProgressService.completeUpload();
+          
           if (this.uploadInterval) {
             clearInterval(this.uploadInterval);
           }
           
-          // Show completion message
           let message = '';
+          let isSuccess = true;
+          
           if (data.successfulCount > 0 && data.failedCount === 0) {
-            message = `Successfully uploaded ${data.successfulCount} file(s)`;
-            this.notificationService.show(message, true);
+            message = `✓ Successfully uploaded ${data.successfulCount} file(s)`;
+            isSuccess = true;
           } else if (data.successfulCount > 0 && data.failedCount > 0) {
-            message = `Uploaded ${data.successfulCount} file(s), ${data.failedCount} failed`;
-            this.notificationService.show(message, false);
-            console.warn('Failed files:', this.failedFiles);
+            message = `⚠ Uploaded ${data.successfulCount} file(s), ${data.failedCount} failed`;
+            isSuccess = false;
           } else {
-            message = 'Failed to upload files';
-            this.notificationService.show(message, false);
-            console.error('All files failed:', this.failedFiles);
+            message = '✗ Failed to upload files';
+            isSuccess = false;
           }
           
-          // Wait a moment to show 100%, then reset
+          this.notificationService.updateType(isSuccess);
+          this.notificationService.updateMessage(message);
+          this.notificationService.clear(1000);
+          
           setTimeout(() => {
             this.resetUploadState(false);
-            
-            // Reset file input
             input.value = '';
             this.selectedFiles = [];
           }, 2000);
         }
       },
       error: (err) => {
-        console.error('Upload error:', err);
+        this.uploadProgressService.cancelUpload();
         
-        // Log error for monitoring
-        const errorInfo = {
-          timestamp: new Date().toISOString(),
-          filesCount: this.selectedFiles.length,
-          successfulCount: this.successfulFiles.length,
-          error: err
-        };
-        console.error('Upload error details:', errorInfo);
-        
-        // Show error message
+        let errorMessage = '';
         if (this.successfulFiles.length > 0) {
-          this.notificationService.show(
-            `Upload interrupted: ${this.successfulFiles.length} file(s) uploaded, ${this.selectedFiles.length - this.successfulFiles.length} failed`,
-            false
-          );
+          errorMessage = `⚠ Upload interrupted: ${this.successfulFiles.length} file(s) uploaded, ${this.selectedFiles.length - this.successfulFiles.length} failed`;
         } else {
-          this.notificationService.show('Failed to upload files', false);
+          errorMessage = '✗ Failed to upload files';
         }
         
-        // Reset state but keep failed files info for potential retry
+        this.notificationService.updateType(false);
+        this.notificationService.updateMessage(errorMessage);
+        this.notificationService.clear(1000);
+        
         setTimeout(() => {
           this.resetUploadState(false);
           input.value = '';
@@ -402,9 +351,6 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Handle folder upload submission
-   */
   onSubmitFolder() {
     const input = document.getElementById('folderInput') as HTMLInputElement;
     
@@ -421,36 +367,39 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     this.failedFiles = [];
     this.successfulFiles = [];
 
-    console.log('Starting folder upload with', this.selectedFolderFiles.length, 'files');
+    this.uploadProgressService.startUpload('folder', this.selectedFolderFiles.length);
+    this.notificationService.show(`Uploading 0 / ${this.selectedFolderFiles.length} files...`, true, true);
 
     this.userService.uploadFiles(this.selectedFolderFiles, this.subpath).subscribe({
       next: (event) => {
         if (event.type === 'progress') {
           const data = event.data;
           
-          // Update current file being uploaded
           this.currentUploadingFile = data.currentFile || '';
-          
-          // Update progress based on actual file completion
           this.uploadFolderProgress = data.progress || 0;
           this.displayedFoldersCount = data.successfulFiles || 0;
           
-          // Update successful and failed file lists
+          this.notificationService.updateMessage(
+            `Uploading ${this.displayedFoldersCount} / ${this.selectedFolderFiles.length} files... ${this.uploadFolderProgress}%`
+          );
+          
+          this.uploadProgressService.updateProgress({
+            progress: this.uploadFolderProgress,
+            uploadedCount: this.displayedFoldersCount,
+            currentFile: this.currentUploadingFile,
+            speed: this.uploadSpeed,
+            timeRemaining: this.getEstimatedTimeRemaining()
+          });
+          
           if (data.fileSuccess !== undefined) {
-            if (data.fileSuccess) {
-              // File succeeded
-            } else {
-              // File failed - track it
-              if (data.error) {
-                const existingIndex = this.failedFiles.findIndex(f => f.fileName === data.currentFile);
-                if (existingIndex === -1) {
-                  this.failedFiles.push({ fileName: data.currentFile, error: data.error });
-                }
+            if (!data.fileSuccess && data.error) {
+              const existingIndex = this.failedFiles.findIndex(f => f.fileName === data.currentFile);
+              if (existingIndex === -1) {
+                this.failedFiles.push({ fileName: data.currentFile, error: data.error });
               }
             }
           }
           
-          // Calculate upload speed
           if (this.uploadStartTime > 0 && data.completedFiles > 0) {
             const elapsedSeconds = (Date.now() - this.uploadStartTime) / 1000;
             const totalBytes = this.selectedFolderFiles.reduce((sum, file) => sum + file.size, 0);
@@ -462,69 +411,59 @@ export class UploadFileComponent implements OnInit, OnDestroy {
             }
           }
           
-          console.log(`Folder upload progress: ${data.completedFiles}/${data.totalFiles} files, ${data.progress}%`);
         } else if (event.type === 'complete') {
           const data = event.data;
           
-          // Update final state
           this.uploadFolderProgress = 100;
           this.displayedFoldersCount = data.successfulCount || 0;
           this.successfulFiles = data.successful || [];
           this.failedFiles = data.failed || [];
           
-          // Clear intervals
+          this.uploadProgressService.completeUpload();
+          
           if (this.uploadInterval) {
             clearInterval(this.uploadInterval);
           }
           
-          // Show completion message
           let message = '';
+          let isSuccess = true;
+          
           if (data.successfulCount > 0 && data.failedCount === 0) {
-            message = `Successfully uploaded ${data.successfulCount} file(s)`;
-            this.notificationService.show(message, true);
+            message = `✓ Successfully uploaded ${data.successfulCount} file(s)`;
+            isSuccess = true;
           } else if (data.successfulCount > 0 && data.failedCount > 0) {
-            message = `Uploaded ${data.successfulCount} file(s), ${data.failedCount} failed`;
-            this.notificationService.show(message, false);
-            console.warn('Failed files:', this.failedFiles);
+            message = `⚠ Uploaded ${data.successfulCount} file(s), ${data.failedCount} failed`;
+            isSuccess = false;
           } else {
-            message = 'Failed to upload folder';
-            this.notificationService.show(message, false);
-            console.error('All files failed:', this.failedFiles);
+            message = '✗ Failed to upload folder';
+            isSuccess = false;
           }
           
-          // Wait a moment to show 100%, then reset
+          this.notificationService.updateType(isSuccess);
+          this.notificationService.updateMessage(message);
+          this.notificationService.clear(1000);
+          
           setTimeout(() => {
             this.resetUploadState(true);
-            
-            // Reset folder input
             input.value = '';
             this.selectedFolderFiles = [];
           }, 2000);
         }
       },
       error: (err) => {
-        console.error('Folder upload error:', err);
+        this.uploadProgressService.cancelUpload();
         
-        // Log error for monitoring
-        const errorInfo = {
-          timestamp: new Date().toISOString(),
-          filesCount: this.selectedFolderFiles.length,
-          successfulCount: this.successfulFiles.length,
-          error: err
-        };
-        console.error('Folder upload error details:', errorInfo);
-        
-        // Show error message
+        let errorMessage = '';
         if (this.successfulFiles.length > 0) {
-          this.notificationService.show(
-            `Upload interrupted: ${this.successfulFiles.length} file(s) uploaded, ${this.selectedFolderFiles.length - this.successfulFiles.length} failed`,
-            false
-          );
+          errorMessage = `⚠ Upload interrupted: ${this.successfulFiles.length} file(s) uploaded, ${this.selectedFolderFiles.length - this.successfulFiles.length} failed`;
         } else {
-          this.notificationService.show('Failed to upload folder', false);
+          errorMessage = '✗ Failed to upload folder';
         }
         
-        // Reset state
+        this.notificationService.updateType(false);
+        this.notificationService.updateMessage(errorMessage);
+        this.notificationService.clear(1000);
+        
         setTimeout(() => {
           this.resetUploadState(true);
           input.value = '';

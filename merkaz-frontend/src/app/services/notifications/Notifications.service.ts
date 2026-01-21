@@ -1,3 +1,4 @@
+// notification.service.ts - WITH DEBUG LOGGING
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -9,10 +10,21 @@ export class NotificationService {
   private timeoutId: any;
   private readonly DEFAULT_DURATION = 4000; 
 
-  show(message: string, success: boolean = true) {
+  show(message: string, success: boolean = true, persistent: boolean = false, duration?: number) {
+    
+    // Clear any existing timeout FIRST
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
 
-    this.clear();
+    // Remove old notification if exists
+    if (this.notificationElement) {
+      this.notificationElement.remove();
+      this.notificationElement = null;
+    }
 
+    // Create new notification
     const div = document.createElement('div');
     div.textContent = message;
     div.className = 'app-notification';  
@@ -21,16 +33,48 @@ export class NotificationService {
     document.body.appendChild(div);
     this.notificationElement = div;
 
-    this.timeoutId = setTimeout(() => this.clear(), this.DEFAULT_DURATION);
+    if (!persistent) {
+      const autoDismissTime = duration || this.DEFAULT_DURATION;
+      this.timeoutId = setTimeout(() => {
+        this.clear();
+      }, autoDismissTime);
+    } else {
+    }
   }
 
-  clear() {
+  updateMessage(message: string) {
     if (this.notificationElement) {
-      this.notificationElement.remove();
-      this.notificationElement = null;
+      this.notificationElement.textContent = message;
     }
+  }
+
+  updateType(success: boolean) {
+    if (this.notificationElement) {
+      this.notificationElement.classList.remove('success', 'error');
+      this.notificationElement.classList.add(success ? 'success' : 'error');
+    }
+  }
+
+  clear(delay: number = 0) {
+    
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+
+    if (delay > 0) {
+      this.timeoutId = setTimeout(() => {
+        if (this.notificationElement) {
+          this.notificationElement.remove();
+          this.notificationElement = null;
+        }
+        this.timeoutId = null;
+      }, delay);
+    } else {
+      if (this.notificationElement) {
+        this.notificationElement.remove();
+        this.notificationElement = null;
+      }
     }
   }
 }
