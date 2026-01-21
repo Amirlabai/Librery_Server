@@ -116,7 +116,7 @@ def get_puzzle(puzzle_name):
     
     if not user or user.challenge != 'activated':
         return jsonify({"error": "Unauthorized"}), 403
-
+    logger.info(f"get_puzzle: Serving puzzle {puzzle_name} to user {email}")
     return send_from_directory(PUZZLES_DIR, f"{puzzle_name}.html")
 
 @easter_egg_bp.route('/get-input/<int:puzzle_num>', methods=['GET'])
