@@ -1,7 +1,7 @@
 import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of, throwError } from "rxjs";
-import { map, catchError, delay, filter, first } from "rxjs/operators";
+import { map, catchError, delay, filter, first, tap } from "rxjs/operators";
 import { ApiConfigService } from "./api-config.service";
 
 export interface UploadHistory {
@@ -31,9 +31,10 @@ export class UserService {
   }
 
   /**
-   * Upload a single file with retry logic
+   * Upload a single file with retry logic and progress tracking
+   * Returns an observable that emits progress updates and final response
    */
-  private uploadSingleFile(file: File, subpath: string, retryCount: number = 3): Observable<any> {
+  private uploadSingleFile(file: File, subpath: string, retryCount: number = 3, progressCallback?: (loaded: number, total: number) => void): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('subpath', subpath);
@@ -44,9 +45,20 @@ export class UserService {
     });
 
     return this.http.request(req).pipe(
-      // Filter to only get the final response event
-      filter((event: HttpEvent<any>): event is HttpResponse<any> => event.type === HttpEventType.Response),
-      map((event: HttpResponse<any>) => event.body),
+      map((event: HttpEvent<any>) => {
+        if (event.type === HttpEventType.UploadProgress && event.total) {
+          // Emit progress update via callback
+          if (progressCallback) {
+            progressCallback(event.loaded, event.total);
+          }
+          return null; // Return null for progress events
+        } else if (event.type === HttpEventType.Response) {
+          return event.body; // Return response body for completion
+        }
+        return null;
+      }),
+      // Filter out null values (progress events) and only pass through the final response
+      filter((result: any) => result !== null),
       first(), // Take only the first (and only) response
       catchError((error) => {
         // Log the error for monitoring
@@ -57,7 +69,7 @@ export class UserService {
         
         if (retryCount > 0 && isRetryable) {
           console.log(`Retrying upload for ${file.name}, attempts remaining: ${retryCount}`);
-          return this.uploadSingleFile(file, subpath, retryCount - 1).pipe(
+          return this.uploadSingleFile(file, subpath, retryCount - 1, progressCallback).pipe(
             delay(1000 * (4 - retryCount)) // Exponential backoff
           );
         }
@@ -83,6 +95,11 @@ export class UserService {
       let successfulFiles: string[] = [];
       let failedFiles: Array<{ fileName: string, error: any }> = [];
       
+      // Track total bytes uploaded across all files
+      let totalBytesUploaded = 0;
+      const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+      const uploadStartTime = Date.now();
+      
       // Upload files sequentially to avoid overwhelming the server
       const uploadNext = (index: number) => {
         if (index >= totalFiles) {
@@ -102,6 +119,7 @@ export class UserService {
         }
 
         const file = files[index];
+        let currentFileBytesUploaded = 0;
         
         // Emit progress update
         observer.next({
@@ -113,13 +131,51 @@ export class UserService {
             completedFiles: completedFiles,
             successfulFiles: successfulFiles.length,
             failedFiles: failedFiles.length,
-            progress: Math.round((completedFiles / totalFiles) * 100)
+            progress: Math.round((completedFiles / totalFiles) * 100),
+            bytesUploaded: totalBytesUploaded,
+            totalBytes: totalBytes
           }
         });
 
-        this.uploadSingleFile(file, subpath).subscribe({
+        // Progress callback to track HTTP upload progress for current file
+        const progressCallback = (loaded: number, total: number) => {
+          // Calculate bytes uploaded for this file
+          const fileBytesUploaded = loaded;
+          const previousBytes = currentFileBytesUploaded;
+          currentFileBytesUploaded = fileBytesUploaded;
+          
+          // Update total bytes uploaded (subtract previous, add new)
+          totalBytesUploaded = totalBytesUploaded - previousBytes + fileBytesUploaded;
+          
+          // Calculate overall progress including current file
+          const overallProgress = totalBytes > 0 
+            ? Math.round((totalBytesUploaded / totalBytes) * 100)
+            : Math.round((completedFiles / totalFiles) * 100);
+          
+          // Emit progress update with real-time bytes
+          observer.next({
+            type: 'progress',
+            data: {
+              currentFile: file.name,
+              currentFileIndex: index + 1,
+              totalFiles: totalFiles,
+              completedFiles: completedFiles,
+              successfulFiles: successfulFiles.length,
+              failedFiles: failedFiles.length,
+              progress: overallProgress,
+              bytesUploaded: totalBytesUploaded,
+              totalBytes: totalBytes,
+              currentFileProgress: total > 0 ? Math.round((loaded / total) * 100) : 0,
+              isUploading: true // Flag to indicate file is actively uploading
+            }
+          });
+        };
+
+        this.uploadSingleFile(file, subpath, 3, progressCallback).subscribe({
           next: (response) => {
             completedFiles++;
+            // Mark this file's bytes as fully uploaded
+            totalBytesUploaded = totalBytesUploaded - currentFileBytesUploaded + file.size;
             
             if (response && response.successful_uploads && response.successful_uploads.length > 0) {
               // File uploaded successfully
@@ -134,7 +190,11 @@ export class UserService {
                   completedFiles: completedFiles,
                   successfulFiles: successfulFiles.length,
                   failedFiles: failedFiles.length,
-                  progress: Math.round((completedFiles / totalFiles) * 100),
+                  progress: totalBytes > 0 
+                    ? Math.round((totalBytesUploaded / totalBytes) * 100)
+                    : Math.round((completedFiles / totalFiles) * 100),
+                  bytesUploaded: totalBytesUploaded,
+                  totalBytes: totalBytes,
                   fileSuccess: true
                 }
               });
@@ -151,7 +211,11 @@ export class UserService {
                   completedFiles: completedFiles,
                   successfulFiles: successfulFiles.length,
                   failedFiles: failedFiles.length,
-                  progress: Math.round((completedFiles / totalFiles) * 100),
+                  progress: totalBytes > 0 
+                    ? Math.round((totalBytesUploaded / totalBytes) * 100)
+                    : Math.round((completedFiles / totalFiles) * 100),
+                  bytesUploaded: totalBytesUploaded,
+                  totalBytes: totalBytes,
                   fileSuccess: false
                 }
               });
@@ -162,6 +226,9 @@ export class UserService {
           },
           error: (error) => {
             completedFiles++;
+            // Remove partial upload bytes if file failed
+            totalBytesUploaded -= currentFileBytesUploaded;
+            
             failedFiles.push({ 
               fileName: file.name, 
               error: error.error || error.message || 'Network error' 
@@ -176,7 +243,11 @@ export class UserService {
                 completedFiles: completedFiles,
                 successfulFiles: successfulFiles.length,
                 failedFiles: failedFiles.length,
-                progress: Math.round((completedFiles / totalFiles) * 100),
+                progress: totalBytes > 0 
+                  ? Math.round((totalBytesUploaded / totalBytes) * 100)
+                  : Math.round((completedFiles / totalFiles) * 100),
+                bytesUploaded: totalBytesUploaded,
+                totalBytes: totalBytes,
                 fileSuccess: false,
                 error: error.error || error.message
               }

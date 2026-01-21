@@ -278,13 +278,11 @@ export class UploadFileComponent implements OnInit, OnDestroy {
             }
           }
           
-          if (this.uploadStartTime > 0 && data.completedFiles > 0) {
+          // Calculate upload speed based on actual bytes uploaded (available immediately)
+          if (this.uploadStartTime > 0 && data.bytesUploaded !== undefined && data.bytesUploaded > 0) {
             const elapsedSeconds = (Date.now() - this.uploadStartTime) / 1000;
-            const totalBytes = this.selectedFiles.reduce((sum, file) => sum + file.size, 0);
-            const avgBytesPerFile = totalBytes / this.selectedFiles.length;
-            const uploadedBytes = avgBytesPerFile * data.completedFiles;
             if (elapsedSeconds > 0.5) {
-              const bytesPerSecond = uploadedBytes / elapsedSeconds;
+              const bytesPerSecond = data.bytesUploaded / elapsedSeconds;
               this.uploadSpeed = this.getFileSize(bytesPerSecond) + '/s';
             }
           }
@@ -400,13 +398,11 @@ export class UploadFileComponent implements OnInit, OnDestroy {
             }
           }
           
-          if (this.uploadStartTime > 0 && data.completedFiles > 0) {
+          // Calculate upload speed based on actual bytes uploaded (available immediately)
+          if (this.uploadStartTime > 0 && data.bytesUploaded !== undefined && data.bytesUploaded > 0) {
             const elapsedSeconds = (Date.now() - this.uploadStartTime) / 1000;
-            const totalBytes = this.selectedFolderFiles.reduce((sum, file) => sum + file.size, 0);
-            const avgBytesPerFile = totalBytes / this.selectedFolderFiles.length;
-            const uploadedBytes = avgBytesPerFile * data.completedFiles;
             if (elapsedSeconds > 0.5) {
-              const bytesPerSecond = uploadedBytes / elapsedSeconds;
+              const bytesPerSecond = data.bytesUploaded / elapsedSeconds;
               this.uploadSpeed = this.getFileSize(bytesPerSecond) + '/s';
             }
           }
