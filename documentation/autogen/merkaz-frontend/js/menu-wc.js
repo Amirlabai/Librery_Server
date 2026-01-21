@@ -78,6 +78,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                 <a href="components/ForgotPasswordComponent.html" data-type="entity-link" >ForgotPasswordComponent</a>
                             </li>
                             <li class="link">
+                                <a href="components/GlobalUploadProgressComponent.html" data-type="entity-link" >GlobalUploadProgressComponent</a>
+                            </li>
+                            <li class="link">
                                 <a href="components/LoginComponent.html" data-type="entity-link" >LoginComponent</a>
                             </li>
                             <li class="link">
@@ -130,6 +133,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                                     <a href="injectables/NotificationService.html" data-type="entity-link" >NotificationService</a>
                                 </li>
                                 <li class="link">
+                                    <a href="injectables/UploadProgressService.html" data-type="entity-link" >UploadProgressService</a>
+                                </li>
+                                <li class="link">
                                     <a href="injectables/UserService.html" data-type="entity-link" >UserService</a>
                                 </li>
                             </ul>
@@ -178,6 +184,9 @@ customElements.define('compodoc-menu', class extends HTMLElement {
                             </li>
                             <li class="link">
                                 <a href="interfaces/UploadItem.html" data-type="entity-link" >UploadItem</a>
+                            </li>
+                            <li class="link">
+                                <a href="interfaces/UploadProgress.html" data-type="entity-link" >UploadProgress</a>
                             </li>
                             <li class="link">
                                 <a href="interfaces/User.html" data-type="entity-link" >User</a>
