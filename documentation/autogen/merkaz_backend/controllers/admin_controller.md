@@ -2,6 +2,10 @@
 
 ## Functions
 
+### `before_request()`
+
+Mark user as online and reset session timer with each request.
+
 ### `admin_metrics()`
 
 No description provided.

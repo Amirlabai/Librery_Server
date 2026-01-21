@@ -12,9 +12,13 @@ Mark the current user as online.
 
 Mark the current user as offline.
 
+### `cleanup_expired_sessions()`
+
+Remove expired sessions from active_sessions based on session timeout.
+
 ### `get_active_users()`
 
-Get list of currently active users.
+Get list of currently active users, automatically cleaning up expired sessions.
 
 ### `is_user_authenticated()`
 

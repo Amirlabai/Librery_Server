@@ -4,7 +4,7 @@
 
 ### `before_request()`
 
-Reset the session timer with each request.
+Mark user as online and reset the session timer with each request.
 
 ### `api_login()`
 
