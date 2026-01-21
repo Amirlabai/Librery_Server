@@ -5,6 +5,8 @@ SUPER_SECRET_KEY = os.urandom(32).hex()
 TOKEN_SECRET_KEY = os.urandom(32).hex()
 ICON_PATH = "change_this_to_the_path_of_the_icon"
 
+# --- Session Timeout ---
+SESSION_TIMEOUT_MINUTES = 15
 
 SERVER_ROOT_DIR = "change_this_to_the_root_directory_of_the_project"
 SERVER_DATA_DIR = os.path.join(SERVER_ROOT_DIR, "data").replace('\\', '/')
