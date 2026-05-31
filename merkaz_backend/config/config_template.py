@@ -7,9 +7,22 @@ ICON_PATH = "change_this_to_the_path_of_the_icon"
 
 # --- Session Timeout ---
 SESSION_TIMEOUT_MINUTES = 15
+DEBUG = False
+SESSION_COOKIE_SECURE = False  # Set True in production behind HTTPS
+
+# --- JWT ---
+JWT_SECRET_KEY = TOKEN_SECRET_KEY
+JWT_ACCESS_EXPIRES_MINUTES = SESSION_TIMEOUT_MINUTES
+
+# --- Easter egg challenge ---
+CHALLENGE_ACTIVATION_CODE = "753951"
+
+# --- Public URLs (emails) ---
+PUBLIC_BASE_URL = "https://change_this_to_the_ngrok_link"
 
 SERVER_ROOT_DIR = "change_this_to_the_root_directory_of_the_project"
 SERVER_DATA_DIR = os.path.join(SERVER_ROOT_DIR, "data").replace('\\', '/')
+SESSION_STATE_FILE = os.path.join(SERVER_DATA_DIR, "session_state.json").replace('\\', '/')
 SERVER_LOGS_DIR = os.path.join(SERVER_ROOT_DIR, "logs").replace('\\', '/')
 SERVER_FILES_DIR = os.path.join(SERVER_ROOT_DIR, "server_files").replace('\\', '/')
 SERVER_CACHE_DIR = os.path.join(SERVER_ROOT_DIR, "cache").replace('\\', '/')
@@ -39,8 +52,8 @@ UPLOAD_PENDING_LOG_FILE = os.path.join(SERVER_LOGS_DIR, "upload_pending_log.csv"
 UPLOAD_COMPLETED_LOG_FILE = os.path.join(SERVER_LOGS_DIR, "upload_completed_log.csv").replace('\\', '/')  # Approved/moved uploads
 DECLINED_UPLOAD_LOG_FILE = os.path.join(SERVER_LOGS_DIR, "declined_log.csv").replace('\\', '/')
 
-# --- chache files ---
-ROOT_SEARCH_CACHE_FILE = os.path.join(SERVER_CACHE_DIR, "cache").replace('\\', '/')
+# --- cache files ---
+ROOT_SEARCH_CACHE_DIR = os.path.join(SERVER_CACHE_DIR, "cache").replace('\\', '/')
 
 # --- useful links ---
 USEFUL_LINKS_FILE = os.path.join(SERVER_DATA_DIR, "useful_links.csv").replace('\\', '/')

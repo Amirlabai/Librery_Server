@@ -8,6 +8,7 @@ import sys, os
 import logging
 
 from flask import Flask, jsonify, send_from_directory, send_file
+from werkzeug.exceptions import NotFound
 from waitress import serve
 from datetime import datetime, timedelta
 
@@ -26,11 +27,9 @@ from controllers.ee_controller import easter_egg_bp
 import dev_toolkit.run_ngrok as run_ngrok
 
 # Initialize logging
-setup_logging(logging.DEBUG)
-#setup_logging(logging.INFO)
+_debug = getattr(config, 'DEBUG', False)
+setup_logging(logging.DEBUG if _debug else logging.INFO)
 logger = get_logger(__name__)
-
-#lessgoo
 
 def create_app():
     """Create and configure the Flask application."""
@@ -110,15 +109,13 @@ def create_app():
             # If it matches an API route prefix, it should have been handled by blueprints
             # If we reach here, it's likely an Angular route or static file
             if any(filename.startswith(prefix) for prefix in api_prefixes):
-                # This shouldn't happen if API routes are working, but serve index.html as fallback
-                return send_file(os.path.join(frontend_dist_path, 'index.html'))
+                return jsonify({"error": "Not found"}), 404
             
             # Check if it's a static file (has extension)
             if '.' in filename:
                 try:
                     return send_from_directory(frontend_dist_path, filename)
-                except:
-                    # File not found, serve index.html for Angular routes
+                except NotFound:
                     pass
             
             # For Angular routes (SPA), serve index.html
@@ -193,23 +190,12 @@ if __name__ == "__main__":
     create_file_with_header(config.DECLINED_UPLOAD_LOG_FILE, ["timestamp", "email", "user_id", "filename"])
     logger.info("All CSV log files initialized")
 
-    # Save the return json from FileService.browse_directory("") into the cache file
-    try:
-        from services.file_service import FileService
-        import json
-
-        root_browse_json, _ = FileService.browse_directory("")
-        with open(config.ROOT_SEARCH_CACHE_FILE, "w", encoding="utf-8") as f:
-            json.dump(root_browse_json, f, ensure_ascii=False, indent=2)
-        logger.info(f"Root search cache file created at {config.ROOT_SEARCH_CACHE_FILE}")
-    except Exception as e:
-        logger.error(f"Error initializing root search cache: {e}")
-
     app = create_app()
 
+    _secure = getattr(config, 'SESSION_COOKIE_SECURE', False)
     app.config.update(
-        SESSION_COOKIE_SAMESITE='None',
-        SESSION_COOKIE_SECURE=True
+        SESSION_COOKIE_SAMESITE='None' if _secure else 'Lax',
+        SESSION_COOKIE_SECURE=_secure
     )
     
     logger.info("Starting server with Waitress on 0.0.0.0:8000")

@@ -11,6 +11,7 @@ from services.auth_service import AuthService, mark_user_online, mark_user_offli
 from repositories.session_repository import SessionRepository
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadTimeSignature
 from services.admin_service import AdminService
+from repositories import password_reset_repository
 
 auth_bp = Blueprint('auth', __name__)
 logger = get_logger(__name__)
@@ -45,7 +46,7 @@ def api_login():
     log_event(SessionRepository.get_session_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), email, "LOGIN_SUCCESS"])
     logger.info(f"Login successful for user: {email}, role: {'admin' if user.is_admin else 'user'}")
 
-    return user.login_response(user), 200
+    return jsonify(AuthService.build_login_response(user)), 200
 
 @auth_bp.route("/register", methods=["POST"])
 def api_register():
@@ -95,22 +96,21 @@ def logout():
 @auth_bp.route("/forgot-password", methods=["POST"])
 def api_forgot_password():
     logger.info("Password reset request received")
-    data = request.get_json()
-    email = data.get("email")
+    data = request.get_json(silent=True) or {}
+    email = (data.get("email") or "").strip()
     logger.debug(f"Password reset requested for email: {email}")
-    user = AuthService.find_user_by_email(email)
 
-    if not user:
-        logger.warning(f"Password reset failed - Email not found: {email}")
-        return jsonify({"error": "Email not found"}), 404
+    user = AuthService.find_user_by_email(email) if email else None
+    if user:
+        s = URLSafeTimedSerializer(config.TOKEN_SECRET_KEY)
+        token = s.dumps(email, salt='password-reset-salt')
+        password_reset_repository.save_token(email, token)
+        send_password_reset_email(current_app._get_current_object(), email, token)
+        logger.info(f"Password reset email sent to: {email}")
+    else:
+        logger.warning(f"Password reset requested for unknown email: {email}")
 
-    s = URLSafeTimedSerializer(config.TOKEN_SECRET_KEY)
-    token = s.dumps(email, salt='password-reset-salt')
-    logger.debug(f"Password reset token generated for email: {email}")
-    send_password_reset_email(current_app._get_current_object(), email, token)
-    logger.info(f"Password reset email sent to: {email}")
-
-    return jsonify({"message": "Password reset link sent"}), 200
+    return jsonify({"message": "If that email is registered, a password reset link has been sent."}), 200
 
 
 @auth_bp.route("/reset-password/<token>", methods=["POST"])
@@ -122,6 +122,10 @@ def reset_password(token):
         logger.debug(f"Password reset token validated for email: {email}")
     except (SignatureExpired, BadTimeSignature) as e:
         logger.warning(f"Password reset failed - Invalid or expired token: {str(e)}")
+        return jsonify({"error": "The password reset link is invalid or has expired."}), 400
+
+    if not password_reset_repository.token_exists(email, token):
+        logger.warning(f"Password reset failed - Token not in database for: {email}")
         return jsonify({"error": "The password reset link is invalid or has expired."}), 400
 
     data = request.get_json()
@@ -141,6 +145,7 @@ def reset_password(token):
         logger.warning(f"Password reset failed - {error} for email: {email}")
         return jsonify({"error": error}), status_code
     
+    password_reset_repository.delete_token(email, token)
     logger.info(f"Password reset successful for user: {email}")
     return jsonify({"message": "Your password has been updated successfully."}), 200
 
@@ -149,7 +154,7 @@ def reset_password(token):
 def refresh_session():
     """Refreshes the current user's session with latest data from database."""
     logger.debug("Session refresh request received")
-    if not session.get("logged_in"):
+    if not session.get("logged_in") and not AuthService.get_current_email():
         logger.warning("Session refresh failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
     
@@ -162,8 +167,6 @@ def refresh_session():
         return jsonify({"error": error}), status_code
     
     logger.info(f"Session refreshed successfully - Email: {user_data['email']}")
-    return jsonify({
-        "message": "Session refreshed",
-        **user_data
-    }), 200
+    payload = {"message": "Session refreshed", **user_data}
+    return jsonify(payload), 200
 

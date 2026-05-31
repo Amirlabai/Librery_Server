@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'; // Import OnInit
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { AdminDashboardService } from '../../../../services/admin-dashboard.service';
@@ -23,7 +23,7 @@ interface User {
     './admin-user.component.css'
   ]
 })
-export class AdminUsersComponent implements OnInit { 
+export class AdminUsersComponent implements OnInit, OnDestroy {
   users: User[] = [];
   flashMessages: { type: 'success' | 'error'; text: string }[] = [];
   currentUserEmail = localStorage.getItem('email') || '';
@@ -32,8 +32,12 @@ export class AdminUsersComponent implements OnInit {
   constructor(private adminDashboardService: AdminDashboardService,private notificationService:NotificationService ) {}
 
   ngOnInit() {
-    this.loadUsers(); 
+    this.loadUsers();
     this.adminDashboardService.startHeartbeat();
+  }
+
+  ngOnDestroy() {
+    this.adminDashboardService.stopHeartbeat();
   }
 
   loadUsers() {

@@ -10,8 +10,11 @@ import { AdminUploadsComponent } from './components/dashborad/admin-dash/uploads
 import { AdminDeniedComponent } from './components/dashborad/admin-dash/denied/admin-denied.component';
 import { MyUploadsComponent } from './components/uploads/my-uploads.component';
 import { UploadFileComponent } from './components/uploads/upload-file.component';
-import { AuthGuard } from './services/auth.guard'; 
+import { AuthGuard } from './services/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 import { ResetPassComponent } from './components/resetpass/reset-pass.component';
+
+const adminGuards = [AuthGuard, AdminGuard];
 
 
 export const routes: Routes = [
@@ -33,10 +36,10 @@ export const routes: Routes = [
   },
 
   // ------------------- ADMIN -------------------
-  { path: 'metrics', component: MetricsComponent, canActivate: [AuthGuard] },
-  { path: 'users', component: AdminUsersComponent, canActivate: [AuthGuard] },
-  { path: 'pending', component: AdminPendingComponent, canActivate: [AuthGuard] },
-  { path: 'denied', component: AdminDeniedComponent, canActivate: [AuthGuard] },
-  { path: 'uploads', component: AdminUploadsComponent, canActivate: [AuthGuard] },
+  { path: 'metrics', component: MetricsComponent, canActivate: adminGuards },
+  { path: 'users', component: AdminUsersComponent, canActivate: adminGuards },
+  { path: 'pending', component: AdminPendingComponent, canActivate: adminGuards },
+  { path: 'denied', component: AdminDeniedComponent, canActivate: adminGuards },
+  { path: 'uploads', component: AdminUploadsComponent, canActivate: adminGuards },
   { path: '**', redirectTo: 'login' }
 ];

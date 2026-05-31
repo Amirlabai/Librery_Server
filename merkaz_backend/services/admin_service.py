@@ -92,8 +92,8 @@ class AdminService:
     def toggle_user_status(email):
         """Toggle a user's status between active and inactive. Uses User.toggle_status()."""
         if AuthService.is_user_boss_admin(email):
-            logger.warning(f"cant toggle role for user: {email} because they are a boss admin")
-            return None, "cant toggle role for user: {email} because they are a boss admin"
+            logger.warning(f"Cannot toggle status for boss admin user: {email}")
+            return None, f"Cannot toggle status for user: {email} because they are a boss admin"
         logger.info(f"Toggling status for user: {email}")
         try:
             updated_user = UserRepository.toggle_status(email)

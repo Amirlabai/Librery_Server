@@ -59,7 +59,7 @@ class UploadService:
         """Log a pending upload to the pending log."""
         logger.debug(f"Logging pending upload - ID: {upload_id}, File: {filename}, User: {email}")
         with _log_lock:
-            log_event(config.UPLOAD_PENDING_LOG_FILE, [
+            log_event(UploadRepository.get_pending_log_path(), [
                 upload_id,
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 email,
@@ -76,7 +76,7 @@ class UploadService:
         """Log a completed upload to the completed log."""
         logger.debug(f"Logging completed upload - ID: {upload_id}, File: {filename}, User: {email}")
         with _log_lock:
-            log_event(config.UPLOAD_COMPLETED_LOG_FILE, [
+            log_event(UploadRepository.get_completed_log_path(), [
                 upload_id,
                 original_timestamp,
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -92,7 +92,7 @@ class UploadService:
         """Log a declined upload."""
         logger.debug(f"Logging declined upload - File: {filename}, User: {email}")
         with _log_lock:
-            log_event(config.DECLINED_UPLOAD_LOG_FILE, [
+            log_event(UploadRepository.get_declined_log_path(), [
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 email,
                 user_id if user_id else '',
@@ -566,36 +566,71 @@ class UploadService:
             logger.warning(f"Move failed - Invalid target path: {target_path_str}")
             return False, "Invalid target path"
         
+        logged = False
+        entry_upload_id = original_timestamp = row_email = row_user_id = None
+        if pending_entry and upload_id:
+            entry_upload_id, original_timestamp, row_email, row_user_id, _, _ = pending_entry
+            with _log_lock:
+                removed = UploadRepository.remove_from_pending(upload_id)
+                if removed:
+                    UploadService.log_completed_upload(
+                        entry_upload_id,
+                        original_timestamp,
+                        row_email,
+                        row_user_id,
+                        flat_filename,
+                        target_path_str
+                    )
+                    logged = True
+
         try:
             shutil.move(source_item, destination_path)
-            
-            if pending_entry and upload_id:
-                entry_upload_id, original_timestamp, row_email, user_id, _, _ = pending_entry
-                UploadRepository.remove_from_pending(upload_id)
-                UploadService.log_completed_upload(
-                    entry_upload_id,
-                    original_timestamp,
-                    row_email,
-                    user_id,
-                    flat_filename,
-                    target_path_str
-                )
-            
             logger.info(f"Upload moved successfully - ID: {upload_id}, Target: {target_path_str}")
             # Monitor pending log changes for cache priming
             FileService.monitor_pending_log_changes()
             return True, None
         except FileNotFoundError:
+            if logged and pending_entry:
+                UploadService._rollback_move_logs(
+                    entry_upload_id, original_timestamp, row_email, row_user_id,
+                    flat_filename, target_path_str, pending_entry
+                )
             logger.error(f"Move failed - Source not found: {flat_filename}")
             return False, f'Source item "{flat_filename}" not found'
         except Exception as e:
+            if logged and pending_entry:
+                UploadService._rollback_move_logs(
+                    entry_upload_id, original_timestamp, row_email, row_user_id,
+                    flat_filename, target_path_str, pending_entry
+                )
             logger.error(f"Move failed - Error: {str(e)}")
             return False, f"An error occurred while moving the item: {e}"
+
+    @staticmethod
+    def _rollback_move_logs(upload_id, original_timestamp, email, user_id, filename, path, pending_entry):
+        """Re-add pending row and remove completed row after a failed file move."""
+        with _log_lock:
+            log_event(UploadRepository.get_pending_log_path(), pending_entry)
+            completed_path = UploadRepository.get_completed_log_path()
+            if not os.path.exists(completed_path):
+                return
+            rows = []
+            with open(completed_path, 'r', newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                header = next(reader, None)
+                rows = [header] if header else []
+                for row in reader:
+                    if not (len(row) >= 1 and row[0] == str(upload_id)):
+                        rows.append(row)
+            with open(completed_path, 'w', newline='', encoding='utf-8') as f:
+                writer = csv.writer(f)
+                writer.writerows(rows)
+        logger.warning(f"Rolled back upload logs after failed move - ID: {upload_id}")
     
     @staticmethod
-    def decline_upload(upload_id, filename, email, user_id):
+    def decline_upload(upload_id, filename, admin_email, user_id):
         """Decline an upload and remove it."""
-        logger.info(f"Declining upload - ID: {upload_id}, File: {filename}, Admin: {email}")
+        logger.info(f"Declining upload - ID: {upload_id}, File: {filename}, Admin: {admin_email}")
         project_root = get_project_root()
         upload_dir = os.path.join(project_root, config.UPLOAD_FOLDER)
         
@@ -639,14 +674,15 @@ class UploadService:
         item_to_delete = os.path.join(upload_dir, flat_filename)
         
         # Get email and user_id from pending entry if available
+        uploader_email = admin_email
         if pending_entry:
             _, _, email_from_entry, user_id_from_entry, _, _ = pending_entry
-            email = email_from_entry
+            uploader_email = email_from_entry
             user_id = user_id_from_entry if user_id_from_entry else user_id
         
         # Get user_id if not provided
         if not user_id:
-            user = UserRepository.find_by_email(email)
+            user = UserRepository.find_by_email(uploader_email)
             user_id = user.user_id if user else None
         
         # Remove from pending log
@@ -654,7 +690,7 @@ class UploadService:
             UploadRepository.remove_from_pending(upload_id)
         
         # Log to declined log
-        UploadService.log_declined_upload(email, user_id, flat_filename)
+        UploadService.log_declined_upload(uploader_email, user_id, flat_filename)
         
         # Monitor pending log changes for cache priming
         FileService.monitor_pending_log_changes()

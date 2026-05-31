@@ -1,4 +1,3 @@
-// notification.service.ts - WITH DEBUG LOGGING
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -38,7 +37,6 @@ export class NotificationService {
       this.timeoutId = setTimeout(() => {
         this.clear();
       }, autoDismissTime);
-    } else {
     }
   }
 

@@ -1,6 +1,7 @@
 // upload-file.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
@@ -37,6 +38,7 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   private uploadStartTime: number = 0;
   private uploadInterval: any;
   private progressUpdateInterval: any;
+  private queryParamsSub?: Subscription;
 
   constructor(
     private userService: UserService, 
@@ -46,7 +48,7 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.queryParamsSub = this.route.queryParams.subscribe(params => {
       if (params['path']) {
         this.subpath = params['path'];
       }
@@ -54,6 +56,7 @@ export class UploadFileComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.queryParamsSub?.unsubscribe();
     if (this.uploadInterval) {
       clearInterval(this.uploadInterval);
     }
@@ -156,46 +159,6 @@ export class UploadFileComponent implements OnInit, OnDestroy {
     } else {
       this.displayedFilesCount = targetCount;
     }
-  }
-
-  private simulateProgress(isFolder: boolean = false): void {
-    const files = isFolder ? this.selectedFolderFiles : this.selectedFiles;
-    const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
-    const totalMB = totalBytes / (1024 * 1024);
-    
-    const estimatedSeconds = Math.max(2, totalMB / 5);
-    const updateInterval = 100;
-    const incrementPerUpdate = (95 / (estimatedSeconds * 1000)) * updateInterval;
-    
-    if (this.uploadInterval) {
-      clearInterval(this.uploadInterval);
-    }
-    
-    this.uploadInterval = setInterval(() => {
-      const currentProgress = isFolder ? this.uploadFolderProgress : this.uploadFileProgress;
-      
-      if (currentProgress < 95) {
-        const newProgress = Math.min(95, currentProgress + incrementPerUpdate);
-        
-        if (isFolder) {
-          this.uploadFolderProgress = Math.round(newProgress);
-        } else {
-          this.uploadFileProgress = Math.round(newProgress);
-        }
-        
-        const roundedProgress = Math.round(newProgress);
-        let expectedCount = Math.floor((files.length * roundedProgress) / 100);
-        
-        if (roundedProgress > 5 && expectedCount === 0) {
-          expectedCount = 1;
-        }
-        
-        this.animateFilesCount(expectedCount, isFolder);
-        
-        const loadedBytes = (totalBytes * newProgress) / 100;
-        this.updateUploadSpeed(loadedBytes);
-      }
-    }, updateInterval);
   }
 
   private resetUploadState(isFolder: boolean = false, keepResults: boolean = false): void {

@@ -42,7 +42,7 @@ def downloads(subpath=''):
         logger.warning(f"Browse failed - {error} for path: {subpath}")
         return jsonify({"error": error}), status_code
     
-    cooldown_level = session.get("cooldown_index", 0) + 1
+    cooldown_level = session.get("cooldown_index", 0)
     logger.info(f"Browse completed - Path: {subpath}, Files: {len(browse_data['files'])}, Folders: {len(browse_data['folders'])}, User: {session.get('email', 'unknown')}")
     
     return jsonify({
@@ -227,8 +227,8 @@ def search():
         return jsonify({"error": error}), 404
 
     logger.info(f"Search completed - Query: {search_query}, Results: {len(search_results)}, User: {user_email}")
-    cooldown_level = session.get("cooldown_index", 0) + 1
-    
+    cooldown_level = session.get("cooldown_index", 0)
+
     return jsonify({**search_results,
         "is_admin": session.get('is_admin', False),
         "cooldown_level": cooldown_level
@@ -303,9 +303,6 @@ def get_useful_links():
         
         logger.debug(f"Useful links retrieved successfully - Count: {len(useful_links_list) if isinstance(useful_links_list, list) else 0}, User: {user_email}")
         return jsonify(useful_links_list), 200
-    except json.JSONDecodeError as e:
-        logger.error(f"Error parsing useful links JSON: {e}")
-        return jsonify({"error": "Invalid JSON format in useful links file"}), 500
     except Exception as e:
         logger.error(f"Error reading useful links file: {e}")
         return jsonify({"error": "Failed to read useful links file"}), 500

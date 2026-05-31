@@ -1,11 +1,15 @@
 """
 User repository - Data access layer for user data (CSV or DB).
 """
+import threading
+
 import config.config as config
 from models.user_entity import User
 from utils.logger_config import get_logger
+from utils.path_utils import resolve_config_path
 
 logger = get_logger(__name__)
+_auth_db_lock = threading.Lock()
 
 class UserRepository:
     """Repository for user data operations."""
@@ -38,8 +42,35 @@ class UserRepository:
     def save_all(users):
         """Save all authenticated users."""
         logger.debug(f"Saving {len(users)} authenticated users")
-        User.save_all(users)
+        with _auth_db_lock:
+            User.save_all(users)
         logger.info(f"Saved {len(users)} authenticated users")
+
+    @staticmethod
+    def set_challenge(email: str, challenge_value: str):
+        """
+        Set challenge field for a user. Returns (status, error).
+        status: 'success' | 'already_activated' | 'not_found'
+        """
+        auth_path = resolve_config_path(config.AUTH_USER_DATABASE)
+        with _auth_db_lock:
+            users = User.get_all()
+            user_found = False
+            already_activated = False
+            for user in users:
+                if user.email == email:
+                    user_found = True
+                    if user.challenge == 'activated' and challenge_value == 'activated':
+                        already_activated = True
+                    else:
+                        user.challenge = challenge_value
+                    break
+            if not user_found:
+                return 'not_found', "User not found"
+            if already_activated:
+                return 'already_activated', None
+            User.save_all(users)
+        return 'success', None
     
     @staticmethod
     def get_pending():
@@ -101,4 +132,4 @@ class UserRepository:
     def is_user_boss_admin(email):
         """Check if a user is a boss admin."""
         user = User.find_by_email(email)
-        return user.is_boss_admin
+        return bool(user and user.is_boss_admin)

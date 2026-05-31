@@ -46,8 +46,8 @@ export class RegisterComponent{
 
     if (!this.validateForm()) return;
 
-    this.first_name.toLowerCase();
-    this.last_name.toLocaleLowerCase();
+    this.first_name = this.first_name.trim().toLowerCase();
+    this.last_name = this.last_name.trim().toLowerCase();
 
     
 

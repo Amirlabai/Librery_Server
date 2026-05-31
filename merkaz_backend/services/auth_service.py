@@ -1,142 +1,110 @@
 """
 Auth service - Authentication and session handling.
 """
-from flask import session
-from datetime import datetime, timedelta
+from flask import session, g
+from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash
+
 from repositories.user_repository import UserRepository
 from utils.logger_config import get_logger
 from utils import get_next_user_id
+from services import jwt_service, session_state_store
 import config.config as config
-import csv
-import os
 
 logger = get_logger(__name__)
 
-# Active sessions tracking
-active_sessions = {}
-
-# Invalidated sessions - emails whose sessions should be terminated
-invalidated_sessions = set()
-
 session_timeout_minutes = config.SESSION_TIMEOUT_MINUTES
+
+
 class AuthService:
     """Service for authentication operations."""
-    
+
     @staticmethod
     def login(email, password):
         """Authenticate a user and create session."""
         logger.info(f"Login attempt for email: {email}")
         user = UserRepository.find_by_email(email)
-        
+
         if not user or not user.check_password(password):
             logger.warning(f"Login failed - Invalid credentials for email: {email}")
             return None, "Invalid credentials"
-        
+
         if not user.is_active:
             logger.warning(f"Login failed - Account inactive for email: {email}")
             return None, "Account inactive"
-        
-        # Clear any previous invalidated session status for this user
-        if email in invalidated_sessions:
-            invalidated_sessions.discard(email)
-            logger.debug(f"Cleared invalidated session status for user: {email}")
-        
-        # Create session
+
+        session_state_store.clear_invalidation(email)
         AuthService.create_session(user)
-        # Mark user online
-        active_sessions[user.email] = datetime.utcnow()
-        logger.debug(f"User marked online: {user.email}")
+        session_state_store.mark_online(email)
         logger.info(f"Login successful - User: {email}, Role: {'admin' if user.is_admin else 'user'}")
-        
         return user, None
-    
+
     @staticmethod
     def register(email, password, first_name, last_name):
         """Register a new user."""
         logger.info(f"Registration attempt for email: {email}")
-        
-        # Check if email exists
+
         if AuthService.email_exists(email):
             logger.warning(f"Registration failed - Email already exists: {email}")
             return None, "Email already registered or pending"
-        
-        # Validate password
+
         if len(password) < 8:
             logger.warning(f"Registration failed - Password too short for email: {email}")
             return None, "Password must be at least 8 characters long"
-        
-        # Create new user
+
         hashed_password = generate_password_hash(password)
         user_id = get_next_user_id()
-        logger.debug(f"Generated user_id: {user_id} for new user: {email}")
-        
-        new_user = UserRepository.create_user(email=email, password=hashed_password, role='user', status='pending', user_id=user_id, first_name=first_name, last_name=last_name)
-        
-        # Save to pending
+        new_user = UserRepository.create_user(
+            email=email, password=hashed_password, role='user', status='pending',
+            user_id=user_id, first_name=first_name, last_name=last_name
+        )
+
         pending_users = UserRepository.get_pending()
         pending_users.append(new_user)
         UserRepository.save_pending(pending_users)
-        logger.info(f"User registered successfully - Email: {email}, user_id: {user_id}, status: pending")
-        
+        logger.info(f"User registered successfully - Email: {email}, user_id: {user_id}")
         return new_user, None
-    
+
     @staticmethod
     def reset_password(email, new_password):
         """Reset a user's password."""
         logger.info(f"Password reset attempt for email: {email}")
-        
+
         if len(new_password) < 8:
-            logger.warning(f"Password reset failed - Password too short for email: {email}")
             return False, "Password must be at least 8 characters long"
-        
+
         users = UserRepository.get_all()
         user_found = False
         for user in users:
             if user.email == email:
                 user.password = generate_password_hash(new_password)
                 user_found = True
-                logger.debug(f"Password hash generated for user: {email}")
                 break
-        
+
         if not user_found:
-            logger.error(f"Password reset failed - User not found: {email}")
             return False, "User not found"
-        
+
         UserRepository.save_all(users)
+        session_state_store.bump_token_version(email)
         logger.info(f"Password reset successful for user: {email}")
         return True, None
-    
+
     @staticmethod
     def refresh_session():
         """Refresh the current user's session with latest data from database."""
-        logger.debug("Refreshing session")
-        email = session.get("email")
-        
+        email = AuthService.get_current_email()
         if not email:
-            logger.warning("Session refresh failed - No email in session")
             return None, "Session invalid"
-        
-        # Check if session has been invalidated
+
         if not AuthService.is_session_valid():
-            logger.warning(f"Session refresh failed - Session invalidated for user: {email}")
             AuthService.clear_session()
             return None, "Session has been terminated. Please log in again."
-        
+
         user = UserRepository.find_by_email(email)
         if not user:
-            logger.error(f"Session refresh failed - User not found: {email}")
             return None, "User not found"
-        
-        # Update session
-        old_is_admin = session.get("is_admin", False)
+
         AuthService.create_session(user)
-        
-        if old_is_admin != user.is_admin:
-            logger.info(f"Session refreshed - Role changed for user: {email}, new role: {'admin' if user.is_admin else 'user'}")
-        else:
-            logger.debug(f"Session refreshed for user: {email}, role: {'admin' if user.is_admin else 'user'}")
-        
         return {
             "email": user.email,
             "role": "admin" if user.is_admin else "user",
@@ -145,9 +113,10 @@ class AuthService:
             "full_name": user.full_name,
             "username": user.username,
             "is_boss_admin": user.is_boss_admin,
-            "challenge": user.challenge   
+            "challenge": user.challenge,
+            "token": jwt_service.issue_token(user),
         }, None
-    
+
     @staticmethod
     def create_session(user):
         """Create a session for the given user."""
@@ -155,172 +124,163 @@ class AuthService:
         session["email"] = user.email
         session["user_id"] = user.user_id
         session["is_admin"] = user.is_admin
-        session["challenge"] = user.challenge 
-        logger.debug(f"Session created - User: {user.email}, user_id: {user.user_id}, is_admin: {user.is_admin}")
-    
+        session["challenge"] = user.challenge
+
     @staticmethod
     def clear_session():
         """Clear the current session."""
         email = session.get("email", "unknown")
         session.clear()
-        # Remove from active sessions and invalidated sessions
-        if email in active_sessions:
-            del active_sessions[email]
-        if email in invalidated_sessions:
-            invalidated_sessions.discard(email)
-        logger.debug(f"Session cleared for user: {email}")
-    
+        if email and email != "unknown":
+            session_state_store.mark_offline(email)
+
     @staticmethod
     def invalidate_user_session(email):
         """Invalidate all sessions for a specific user by email."""
         logger.info(f"Invalidating sessions for user: {email}")
-        invalidated_sessions.add(email)
-        # Remove from active sessions
-        if email in active_sessions:
-            del active_sessions[email]
-            logger.debug(f"Removed user {email} from active sessions")
-        logger.info(f"Sessions invalidated for user: {email}")
-    
+        session_state_store.bump_token_version(email)
+        session_state_store.mark_offline(email)
+
     @staticmethod
     def is_session_valid():
         """Check if the current session is valid (not invalidated)."""
-        email = session.get("email")
+        email = AuthService.get_current_email()
         if not email:
             return False
-        is_invalidated = email in invalidated_sessions
-        if is_invalidated:
-            logger.debug(f"Session invalidated for user: {email}")
-        return not is_invalidated
-    
+        if session_state_store.is_invalidated(email):
+            return False
+        token = jwt_service.get_bearer_token()
+        if token:
+            return jwt_service.validate_token(token) is not None
+        return bool(session.get("logged_in", False))
+
     @staticmethod
     def validate_and_clear_if_invalidated():
-        """Validate the current session and clear it if it has been invalidated.
-        Returns (is_valid, error_message) tuple."""
-        if not session.get("logged_in"):
-            return True, None  # Not logged in, let the route handle it
-        
+        """Validate session; clear if invalidated."""
+        if not session.get("logged_in") and not jwt_service.get_bearer_token():
+            return True, None
+
         if not AuthService.is_session_valid():
             email = session.get("email", "unknown")
-            logger.warning(f"Session terminated for user: {email} - clearing session")
+            logger.warning(f"Session terminated for user: {email}")
             AuthService.clear_session()
             return False, "Session has been terminated. Please log in again."
-        
+
         return True, None
-    
+
+    @staticmethod
+    def get_current_email():
+        """Resolve current user email from JWT or Flask session."""
+        token = jwt_service.get_bearer_token()
+        if token:
+            claims = jwt_service.validate_token(token)
+            if claims:
+                return claims.get("sub")
+        return session.get("email")
+
+    @staticmethod
+    def require_auth():
+        """Populate g.current_user_email or return (False, error)."""
+        email = AuthService.get_current_email()
+        if not email:
+            return False, "Not logged in"
+        is_valid, err = AuthService.validate_and_clear_if_invalidated()
+        if not is_valid:
+            return False, err
+        g.current_user_email = email
+        return True, None
+
     @staticmethod
     def find_user_by_email(email):
-        """Find a user by email in authenticated users."""
-        user = UserRepository.find_by_email(email)
-        logger.debug(f"User lookup - Email: {email}, Found: {user is not None}")
-        return user
-    
+        return UserRepository.find_by_email(email)
+
     @staticmethod
     def email_exists(email):
-        """Check if an email exists in auth, pending, or denied users."""
-        exists = UserRepository.find_by_email(email) or UserRepository.find_pending_by_email(email) or UserRepository.find_denied_by_email(email)
-        logger.debug(f"Email existence check - Email: {email}, Exists: {exists}")
-        return exists
-        
+        return (
+            UserRepository.find_by_email(email)
+            or UserRepository.find_pending_by_email(email)
+            or UserRepository.find_denied_by_email(email)
+        )
+
     @staticmethod
     def is_user_boss_admin(email):
-        """Check if a user is a boss admin."""
-        user = UserRepository.find_by_email(email)
-        return user.is_boss_admin
+        return UserRepository.is_user_boss_admin(email)
 
     @staticmethod
     def is_outside_user(email):
-        """Check if a user is an outside user (comparing username only, case-insensitive)."""
+        """Check if a user is an outside user (username part, case-insensitive)."""
+        import csv
+        import os
         try:
-            # Pre-process the input: get part before '@' and lowercase it
             target_user = email.split('@')[0].lower()
-            
-            if not os.path.isfile(config.OUTSIDE_USERS_DATABASE_SOURCE):
-                logger.warning(f"Outside users database file not found: {config.OUTSIDE_USERS_DATABASE_SOURCE}")
+            source = config.OUTSIDE_USERS_DATABASE_SOURCE
+            if not source or not os.path.isfile(source):
                 return False
-            with open(config.OUTSIDE_USERS_DATABASE_SOURCE, 'r', newline='', encoding='utf-8') as f:
+            with open(source, 'r', newline='', encoding='utf-8') as f:
                 reader = csv.reader(f)
-                
-                # Optional: Skip the header row
-                next(reader, None) 
-                
+                next(reader, None)
                 for row in reader:
-                    # Ensure the row has data before processing
                     if row:
-                        # Process CSV entry: get part before '@' and lowercase it
                         csv_user = row[0].split('@')[0].lower()
-                        
                         if csv_user == target_user:
                             return True
             return False
         except FileNotFoundError:
             return False
 
-# Legacy functions for backward compatibility
+    @staticmethod
+    def build_login_response(user):
+        """Build login JSON payload including JWT."""
+        token = jwt_service.issue_token(user)
+        return {
+            "message": "Login successful",
+            "email": user.email,
+            "role": "admin" if user.is_admin else "user",
+            "full_name": user.full_name,
+            "challenge": user.challenge,
+            "username": user.username,
+            "token": token,
+        }
+
+
 def mark_user_online():
-    """Mark the current user as online."""
-    email = session.get("email")
-    if not email:
-        logger.debug("mark_user_online called but no email in session")
-        return
-    active_sessions[email] = datetime.utcnow()
-    logger.debug(f"User marked online: {email}")
+    email = AuthService.get_current_email()
+    if email:
+        session_state_store.mark_online(email)
+
 
 def mark_user_offline():
-    """Mark the current user as offline."""
     email = session.get("email")
-    if email in active_sessions:
-        del active_sessions[email]
-        logger.debug(f"User marked offline: {email}")
-    else:
-        logger.debug(f"mark_user_offline called but user {email} not in active sessions")
+    if email:
+        session_state_store.mark_offline(email)
+
 
 def cleanup_expired_sessions():
-    """Remove expired sessions from active_sessions based on session timeout."""
-    if not active_sessions:
-        return
-    
-    now = datetime.utcnow()
-    timeout_threshold = timedelta(minutes=session_timeout_minutes)
-    expired_users = []
-    
-    # Find expired sessions
-    for email, last_activity in list(active_sessions.items()):
-        if now - last_activity > timeout_threshold:
-            expired_users.append(email)
-            del active_sessions[email]
-    
-    if expired_users:
-        logger.debug(f"Cleaned up {len(expired_users)} expired session(s): {expired_users}")
+    session_state_store.cleanup_expired(session_timeout_minutes)
+
 
 def get_active_users():
-    """Get list of currently active users, automatically cleaning up expired sessions."""
-    # Clean up expired sessions before returning active users
     cleanup_expired_sessions()
-    
-    active_count = len(active_sessions)
-    logger.debug(f"Retrieved active users list, count: {active_count}")
-    return list(active_sessions.keys())
+    return session_state_store.list_active()
+
 
 def is_user_authenticated():
-    """Check if the current user is authenticated."""
-    is_authenticated = session.get("logged_in", False)
-    logger.debug(f"Authentication check: {is_authenticated}")
-    return is_authenticated
+    return AuthService.get_current_email() is not None
+
 
 def is_user_admin():
-    """Check if the current user is an admin."""
-    is_admin = session.get("is_admin", False)
-    logger.debug(f"Admin check: {is_admin}")
-    return is_admin
+    if session.get("is_admin"):
+        return True
+    token = jwt_service.get_bearer_token()
+    if token:
+        claims = jwt_service.validate_token(token)
+        return claims and claims.get("role") == "admin"
+    return False
+
 
 def get_current_user_email():
-    """Get the email of the current user."""
-    email = session.get("email")
-    logger.debug(f"Retrieved current user email: {email}")
-    return email
+    return AuthService.get_current_email()
+
 
 def get_current_user_id():
-    """Get the user ID of the current user."""
-    user_id = session.get("user_id")
-    logger.debug(f"Retrieved current user ID: {user_id}")
-    return user_id
+    return session.get("user_id")

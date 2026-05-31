@@ -6,9 +6,11 @@ import { Injectable } from "@angular/core";
 @Injectable({
     providedIn: 'root'
 })
+/** Client-side easter-egg matcher; enforcement is server-side (CHALLENGE_ACTIVATION_CODE). */
 export class EasterService {
 
     private buffer = '';
+    /** Cosmetic keyboard shortcut only — not a security boundary. */
     private readonly secret = '753951';
     private http: HttpClient;
 

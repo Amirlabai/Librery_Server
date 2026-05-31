@@ -101,14 +101,23 @@ export class AdminDashboardService {
     return this.http.post(`${this.baseUrl}/toggle-status/${email}`, {}, { withCredentials: true });
   }
   
-  startHeartbeat(): void {
+  private heartbeatIntervalId: ReturnType<typeof setInterval> | null = null;
 
-    setInterval(() => {
+  startHeartbeat(): void {
+    this.stopHeartbeat();
+    this.heartbeatIntervalId = setInterval(() => {
       this.http.post(`${this.baseUrl}/heartbeat`, {}, { withCredentials: true })
         .subscribe({
-          next: res => console.log('✅ Heartbeat OK', res),
-          error: err => console.error('❌ Heartbeat failed', err)
+          next: res => console.log('Heartbeat OK', res),
+          error: err => console.error('Heartbeat failed', err)
         });
-    }, 900000); 
+    }, 900000);
+  }
+
+  stopHeartbeat(): void {
+    if (this.heartbeatIntervalId !== null) {
+      clearInterval(this.heartbeatIntervalId);
+      this.heartbeatIntervalId = null;
+    }
   }
 }

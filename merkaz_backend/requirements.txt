@@ -1,0 +1,8 @@
+flask
+flask-cors
+flask-mail
+waitress
+werkzeug
+PyJWT
+pandas
+python-magic

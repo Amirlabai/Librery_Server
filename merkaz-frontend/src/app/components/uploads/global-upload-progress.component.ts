@@ -370,6 +370,6 @@ export class GlobalUploadProgressComponent implements OnInit, OnDestroy {
   }
 
   navigateToUpload(): void {
-    this.router.navigate(['/upload-content']);
+    this.router.navigate(['/dashboard/upload']);
   }
 }

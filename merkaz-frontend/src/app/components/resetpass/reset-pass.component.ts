@@ -26,10 +26,6 @@ export class ResetPassComponent implements OnInit {
     private passwordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[{\]};:'",.<>/?]).{8,}$/;
 
-  private emailPattern =
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    
-
     constructor(private route: ActivatedRoute,private router: Router,private notificationsService:NotificationService,private authService: AuthService) {}
 
     ngOnInit(): void {

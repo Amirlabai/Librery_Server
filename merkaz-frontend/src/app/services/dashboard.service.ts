@@ -88,8 +88,10 @@ export class DashboardService {
         return this.http.get(url, { withCredentials: true });
     }
 
-    searchFiles(query: string,folderPath: string = ''): Observable<any> {
-        return this.http.get(`${this.baseUrl}/search?q=${query}&folder_path=${folderPath}`, {
+    searchFiles(query: string, folderPath: string = ''): Observable<any> {
+        const q = encodeURIComponent(query);
+        const fp = encodeURIComponent(folderPath);
+        return this.http.get(`${this.baseUrl}/search?q=${q}&folder_path=${fp}`, {
             withCredentials: true
         });
     }

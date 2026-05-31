@@ -9,6 +9,11 @@ import threading
 
 mail = Mail()
 
+
+def _public_base_url() -> str:
+    base = getattr(config, 'PUBLIC_BASE_URL', None) or f"https://{config.NGROK_LINK}"
+    return base.rstrip('/')
+
 def _send_new_user_notification_sync(app, user_email, pending_url):
     """Internal function that actually sends the email (runs in background thread)."""
     with app.app_context():
@@ -38,7 +43,7 @@ def _send_new_user_notification_sync(app, user_email, pending_url):
 def send_new_user_notification(app, user_email):
     """Notifies all admins that a new user has registered (asynchronously)."""
     # Generate URL in the request context before starting the thread
-    pending_url = f"http://{config.NGROK_LINK}/pending"
+    pending_url = f"{_public_base_url()}/pending"
     thread = threading.Thread(target=_send_new_user_notification_sync, args=(app, user_email, pending_url))
     thread.daemon = True
     thread.start()
@@ -67,7 +72,7 @@ def _send_approval_email_sync(app, user_email, login_url):
 def send_approval_email(app, user_email):
     """Sends an email to the user when their account is approved (asynchronously)."""
     # Generate URL in the request context before starting the thread
-    login_url = f"http://{config.NGROK_LINK}/login"
+    login_url = f"{_public_base_url()}/login"
     thread = threading.Thread(target=_send_approval_email_sync, args=(app, user_email, login_url))
     thread.daemon = True
     thread.start()
@@ -121,7 +126,7 @@ def _send_password_reset_email_sync(app, user_email, token, reset_url):
 def send_password_reset_email(app, user_email, token):
     """Sends a password reset email to the user (asynchronously)."""
     # Generate URL in the request context before starting the thread
-    reset_url = f"http://{config.NGROK_LINK}/reset-password?token={token}"
+    reset_url = f"{_public_base_url()}/reset-password?token={token}"
     thread = threading.Thread(target=_send_password_reset_email_sync, args=(app, user_email, token, reset_url))
     thread.daemon = True
     thread.start()

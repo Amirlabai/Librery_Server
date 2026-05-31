@@ -155,36 +155,52 @@ def _get_upload_id_sequence_file_path():
     project_root = _get_project_root()
     return os.path.join(project_root, config.UPLOAD_ID_SEQUENCE_FILE)
 
+def _max_upload_id_from_logs():
+    """Scan pending and completed upload logs for the highest upload_id."""
+    from repositories.upload_repository import UploadRepository
+    max_id = 0
+    for path in (
+        UploadRepository.get_pending_log_path(),
+        UploadRepository.get_completed_log_path(),
+    ):
+        try:
+            with open(path, mode='r', newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                next(reader, None)
+                for row in reader:
+                    if row and row[0]:
+                        try:
+                            max_id = max(max_id, int(row[0]))
+                        except ValueError:
+                            continue
+        except FileNotFoundError:
+            continue
+    return max_id
+
 def get_next_upload_id():
     """
     Generates and returns the next unique upload ID.
-    Uses a sequence file to ensure uniqueness across restarts.
+    Uses max of sequence file and log scan for consistency.
     """
-    project_root = _get_project_root()
     sequence_file_path = _get_upload_id_sequence_file_path()
-    
-    # Ensure data directory exists
     os.makedirs(os.path.dirname(sequence_file_path), exist_ok=True)
-    
-    # Read current sequence or start at 1
-    next_id = 1
+
+    max_id = _max_upload_id_from_logs()
+    next_id = max_id + 1
     try:
         if os.path.exists(sequence_file_path):
             with open(sequence_file_path, mode='r', encoding='utf-8') as f:
                 stored_id = int(f.read().strip())
-                next_id = stored_id
+                next_id = max(stored_id, max_id + 1)
     except (FileNotFoundError, ValueError, IOError):
-        # If file doesn't exist or is invalid, start at 1
         pass
-    
-    # Update sequence file with the next ID to assign
+
     next_id_to_store = next_id + 1
     try:
         with open(sequence_file_path, mode='w', encoding='utf-8') as f:
             f.write(str(next_id_to_store))
     except IOError as e:
-        # Log warning but don't fail - we can still return the ID
         print(f"Warning: Could not update upload sequence file: {e}")
-    
+
     return next_id
 

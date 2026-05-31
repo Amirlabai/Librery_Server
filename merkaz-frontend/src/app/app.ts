@@ -9,11 +9,12 @@ import { NotificationService } from './services/notifications/Notifications.serv
 import { CommonModule } from '@angular/common';
 import { ChallengeService } from './services/spper/cl.service';
 import { ApiConfigService } from './services/api-config.service';
+import { GlobalUploadProgressComponent } from './components/uploads/global-upload-progress.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatIconModule,MatButtonModule,FormsModule,CommonModule],
+  imports: [RouterOutlet, MatIconModule, MatButtonModule, FormsModule, CommonModule, GlobalUploadProgressComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
@@ -50,8 +51,9 @@ export class AppComponent {
 
   ngOnInit() {
 
-    if(!this.auth.isLoggedIn){
+    if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/login']);
+      return;
     }
 
     this.isDeviceSupported = !this.isMobile();
@@ -72,7 +74,10 @@ export class AppComponent {
     }
 
     this.auth.refreshSession().subscribe({
-      next: user => {
+      next: (user: { challenge?: string; token?: string }) => {
+        if (user?.token) {
+          this.auth.saveToken(user.token);
+        }
         this.isActivated = user.challenge === 'activated';
         if (this.isActivated) {
           this.loadGame();

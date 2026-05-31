@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import {CommonModule} from '@angular/common';
-import {AuthService} from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notifications/Notifications.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,7 +24,6 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    FormsModule
   ]
 })
 export class LoginComponent {
@@ -32,49 +31,39 @@ export class LoginComponent {
   email = '';
   password = '';
   showPassword = false;
-  auto: any;
 
-  constructor(private router: Router, private authService: AuthService,private notificationService:NotificationService) {}
-
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private notificationService: NotificationService
+  ) {}
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
   }
 
-  /**
-   * Triggered on form submission.
-   * Sends a POST request to Flask endpoint /login with JSON payload.
-   * Backend should respond with a JSON object (see API Contract above).
-   */
   onSubmit() {
-
-    
     this.authService.login(this.email, this.password).subscribe({
-
-      next: (res: any) => {
-
-        if (res.token) {
-          this.authService.saveToken(res.token.hash);
+      next: (res: { token?: string; role?: string; full_name?: string }) => {
+        if (!res?.token) {
+          this.notificationService.show('Login failed: no token received', false);
+          return;
         }
+        this.authService.saveToken(res.token);
         if (res.role) {
           localStorage.setItem('role', res.role);
         }
-        if(res.email){
-          localStorage.setItem('email',this.email);
+        localStorage.setItem('email', this.email);
+        if (res.full_name) {
+          localStorage.setItem('fullName', res.full_name);
         }
-        if(res){
-          this.authService.saveToken(res.token);
-          localStorage.setItem('role', res.role);
-          localStorage.setItem('email',this.email);
-          localStorage.setItem('fullName',res.full_name);
-        }
-        this.notificationService.show('Login succsseful',true);
-          this.authService.notifyLogin();
-          this.router.navigate(['/dashboard']);
-        },
-        error: () => {
-          this.notificationService.show('Invalid credentials or server error',false);
-        }
+        this.notificationService.show('Login successful', true);
+        this.authService.notifyLogin();
+        this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        this.notificationService.show('Invalid credentials or server error', false);
+      }
     });
   }
 }

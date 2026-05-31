@@ -9,7 +9,7 @@ import csv
 from io import BytesIO
 from datetime import datetime
 from utils.file_utils import allowed_file, is_file_malicious
-from utils.path_utils import get_project_root
+from utils.path_utils import get_project_root, is_path_under, get_root_search_cache_dir, resolve_config_path
 from utils.log_utils import log_event
 from utils.logger_config import get_logger
 from repositories.download_repository import DownloadRepository
@@ -232,7 +232,7 @@ class FileService:
         
         source_path = os.path.join(share_dir, item_path)
         
-        if not os.path.exists(source_path) or not source_path.startswith(share_dir):
+        if not os.path.exists(source_path) or not is_path_under(source_path, share_dir):
             logger.warning(f"Delete failed - File/folder not found: {item_path}")
             return False, "File or folder not found"
         
@@ -307,11 +307,12 @@ class FileService:
         
         directory, filename = os.path.split(file_path)
         safe_dir = os.path.join(share_dir, directory)
-        
-        if not safe_dir.startswith(share_dir) or not os.path.isdir(safe_dir):
+        full_path = os.path.join(safe_dir, filename)
+
+        if not is_path_under(full_path, share_dir) or not os.path.isfile(full_path):
             logger.warning(f"File download access denied - Path: {file_path}")
             return None, None, "Access denied"
-        
+
         return safe_dir, filename, None
     
     @staticmethod
@@ -390,7 +391,7 @@ class FileService:
         
         absolute_folder_path = os.path.join(share_dir, folder_path)
         
-        if not os.path.isdir(absolute_folder_path) or not absolute_folder_path.startswith(share_dir):
+        if not os.path.isdir(absolute_folder_path) or not is_path_under(absolute_folder_path, share_dir):
             logger.warning(f"Folder download failed - Folder not found: {folder_path}")
             return None, "Folder not found"
         
@@ -400,9 +401,10 @@ class FileService:
     def _get_pending_log_row_count():
         """Get the current row count of upload_pending_log.csv (excluding header)."""
         try:
-            if not os.path.exists(config.UPLOAD_PENDING_LOG_FILE):
+            pending_path = UploadRepository.get_pending_log_path()
+            if not os.path.exists(pending_path):
                 return 0
-            with open(config.UPLOAD_PENDING_LOG_FILE, 'r', encoding='utf-8') as f:
+            with open(pending_path, 'r', encoding='utf-8') as f:
                 reader = csv.reader(f)
                 header = next(reader, None)  # Skip header
                 return sum(1 for _ in reader)
@@ -488,12 +490,13 @@ class FileService:
         
         try:
             # Ensure cache directory exists
-            if not os.path.isdir(config.ROOT_SEARCH_CACHE_FILE):
-                os.makedirs(config.ROOT_SEARCH_CACHE_FILE, exist_ok=True)
-                logger.info(f"Created cache directory as a folder: {config.ROOT_SEARCH_CACHE_FILE}")
-            
-            # Read the upload completed log
-            df = pd.read_csv(config.UPLOAD_COMPLETED_LOG_FILE, encoding='utf-8')
+            cache_dir = get_root_search_cache_dir()
+            if not os.path.isdir(cache_dir):
+                os.makedirs(cache_dir, exist_ok=True)
+                logger.info(f"Created cache directory: {cache_dir}")
+
+            completed_log = UploadRepository.get_completed_log_path()
+            df = pd.read_csv(completed_log, encoding='utf-8')
             logger.debug(f"Loaded {len(df)} rows from upload_completed_log.csv")
             
             # Dictionary to store rows grouped by first letter
@@ -522,14 +525,14 @@ class FileService:
             
             # Save each letter's cache file (without headers to match search_uploaded_files reading format)
             for letter, rows in cache_dict.items():
-                cache_file_path = os.path.join(config.ROOT_SEARCH_CACHE_FILE, f"{letter}.csv")
+                cache_file_path = os.path.join(cache_dir, f"{letter}.csv")
                 letter_df = pd.DataFrame(rows)
                 letter_df.to_csv(cache_file_path, index=False, header=False, encoding='utf-8')
                 logger.debug(f"Saved {len(rows)} rows to {letter}.csv")
             
             # Save misc file for non-a-z files
             if misc_rows:
-                misc_file_path = os.path.join(config.ROOT_SEARCH_CACHE_FILE, "misc.csv")
+                misc_file_path = os.path.join(cache_dir, "misc.csv")
                 misc_df = pd.DataFrame(misc_rows)
                 misc_df.to_csv(misc_file_path, index=False, header=False, encoding='utf-8')
                 logger.debug(f"Saved {len(misc_rows)} rows to misc.csv")
@@ -573,10 +576,11 @@ class FileService:
             first_char = query[0].lower()
             
             # Determine cache file: a-z use letter.csv, others use misc.csv
+            cache_dir = get_root_search_cache_dir()
             if first_char.isalpha() and 'a' <= first_char <= 'z':
-                cache_file_path = os.path.join(config.ROOT_SEARCH_CACHE_FILE, f"{first_char}.csv")
+                cache_file_path = os.path.join(cache_dir, f"{first_char}.csv")
             else:
-                cache_file_path = os.path.join(config.ROOT_SEARCH_CACHE_FILE, "misc.csv")
+                cache_file_path = os.path.join(cache_dir, "misc.csv")
             
             # Load the cache CSV file into DataFrame
             df = pd.read_csv(cache_file_path, header=None, encoding='utf-8')

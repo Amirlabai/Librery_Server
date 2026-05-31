@@ -1,4 +1,5 @@
-import { Component, Inject, DOCUMENT } from '@angular/core';
+import { Component, Inject, DOCUMENT, OnDestroy, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
@@ -9,6 +10,15 @@ import { NotificationService } from '../../services/notifications/Notifications.
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { MatIcon } from "@angular/material/icon";
+
+export interface BrowseItem {
+  name: string;
+  path: string;
+  is_folder?: boolean;
+  isFolder?: boolean;
+  upload_id?: string;
+  size?: number;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -23,9 +33,7 @@ import { MatIcon } from "@angular/material/icon";
 ],
   styleUrls: ['./dashboard.component.css']
 })
-
-
-export class DashboardComponent {
+export class DashboardComponent implements OnInit, OnDestroy {
   items: any[] = [];
   folders: any[] = [];
   allItems: any[] = [];
@@ -47,7 +55,7 @@ export class DashboardComponent {
   editedFilePath = '';
 
   showDonwloadWarningModal = false;
-  downloadItem = '';
+  downloadItem: BrowseItem | null = null;
 
   showSuggestBox = false;
   showUsefulLinksModal = false;
@@ -73,7 +81,15 @@ export class DashboardComponent {
     private router: Router,
     private notificationService: NotificationService,
     @Inject(DOCUMENT) private document: Document
-  ) {}
+  ) {
+    this.searchSubject.pipe(
+      debounceTime(100),
+      distinctUntilChanged(),
+      takeUntilDestroyed()
+    ).subscribe(value => {
+      this.executeSearch(value);
+    });
+  }
 
   get isDarkMode(): boolean {
     return this.document.body.classList.contains('dark-mode');
@@ -84,18 +100,9 @@ export class DashboardComponent {
     this.isAdmin = this.userRole === 'admin';
     this.loadFiles();
     this.getUserFullName();
-
-
-    this.searchSubject
-    .pipe(
-      debounceTime(100),
-      distinctUntilChanged()
-    )
-    .subscribe(value => {
-      this.executeSearch(value);   
-    });
-
   }
+
+  ngOnDestroy() {}
   getFolderCount(path: string) {
     return this.dashboardService.loadFiles(path).pipe(
       map(res => (res.files?.length || 0) + (res.folders?.length || 0))

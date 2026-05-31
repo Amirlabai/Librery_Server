@@ -90,6 +90,8 @@ export class UserService {
    */
   uploadFiles(files: File[], subpath: string): Observable<{ type: 'progress' | 'complete' | 'error', data: any }> {
     return new Observable(observer => {
+      let aborted = false;
+      let currentSub: { unsubscribe: () => void } | null = null;
       const totalFiles = files.length;
       let completedFiles = 0;
       let successfulFiles: string[] = [];
@@ -102,6 +104,9 @@ export class UserService {
       
       // Upload files sequentially to avoid overwhelming the server
       const uploadNext = (index: number) => {
+        if (aborted) {
+          return;
+        }
         if (index >= totalFiles) {
           // All files processed
           observer.next({
@@ -171,8 +176,9 @@ export class UserService {
           });
         };
 
-        this.uploadSingleFile(file, subpath, 3, progressCallback).subscribe({
+        currentSub = this.uploadSingleFile(file, subpath, 3, progressCallback).subscribe({
           next: (response) => {
+            if (aborted) return;
             completedFiles++;
             // Mark this file's bytes as fully uploaded
             totalBytesUploaded = totalBytesUploaded - currentFileBytesUploaded + file.size;
@@ -259,8 +265,14 @@ export class UserService {
         });
       };
 
-      // Start uploading from first file
       uploadNext(0);
+
+      return () => {
+        aborted = true;
+        if (currentSub) {
+          currentSub.unsubscribe();
+        }
+      };
     });
   }
 
