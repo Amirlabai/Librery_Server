@@ -3,6 +3,7 @@ import './auth.css';
 import { Link } from 'react-router-dom';
 import { toastError, toastSuccess } from '../toast';
 import { useDarkMode } from '../useDarkMode';
+import { apiHeaders, apiUrl } from '../api';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -14,10 +15,10 @@ export default function ForgotPasswordPage() {
     if (busy) return;
     setBusy(true);
     try {
-      const res = await fetch('/forgot-password', {
+      const res = await fetch(apiUrl('/forgot-password'), {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: apiHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ email: email.trim() }),
       });
       const body = await res.json().catch(() => ({}));

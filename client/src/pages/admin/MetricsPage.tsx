@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AdminLayout from './AdminLayout';
+import { downloadAuthenticated } from '../../api';
+import { toastError } from '../../toast';
 
 const logs = [
   {
@@ -30,6 +32,20 @@ const logs = [
 ];
 
 export default function MetricsPage() {
+  const [busyType, setBusyType] = useState<string | null>(null);
+
+  async function onDownload(type: string) {
+    if (busyType) return;
+    setBusyType(type);
+    try {
+      await downloadAuthenticated(`/admin/metrics/download/${type}`, `${type}_log.xlsx`);
+    } catch (err: any) {
+      toastError(err?.message || 'Download failed');
+    } finally {
+      setBusyType(null);
+    }
+  }
+
   return (
     <AdminLayout activeTab="metrics">
       <div className="content-wrapper">
@@ -42,9 +58,10 @@ export default function MetricsPage() {
             <button
               type="button"
               className="download-btn"
-              onClick={() => window.open(`/admin/metrics/download/${log.type}`, '_blank')}
+              disabled={busyType === log.type}
+              onClick={() => onDownload(log.type)}
             >
-              Download as Excel
+              {busyType === log.type ? 'Downloading…' : 'Download as Excel'}
             </button>
           </div>
         ))}

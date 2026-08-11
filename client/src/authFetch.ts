@@ -1,15 +1,10 @@
-const TOKEN_KEY = 'token';
-
-function authHeaders(): Record<string, string> {
-  const token = localStorage.getItem(TOKEN_KEY);
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
+import { apiHeaders, apiUrl } from './api';
 
 export async function authGetJson<T>(path: string): Promise<T> {
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     method: 'GET',
     credentials: 'include',
-    headers: { ...authHeaders() },
+    headers: apiHeaders(),
   });
 
   if (!res.ok) {
@@ -26,13 +21,10 @@ export async function authGetJson<T>(path: string): Promise<T> {
 }
 
 export async function authPostJson<T>(path: string, body: any): Promise<T> {
-  const res = await fetch(path, {
+  const res = await fetch(apiUrl(path), {
     method: 'POST',
     credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...authHeaders(),
-    },
+    headers: apiHeaders({ 'Content-Type': 'application/json' }),
     body: JSON.stringify(body ?? {}),
   });
 
@@ -48,4 +40,3 @@ export async function authPostJson<T>(path: string, body: any): Promise<T> {
 
   return (await res.json()) as T;
 }
-

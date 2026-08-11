@@ -1,7 +1,7 @@
 from flask import Blueprint, session, jsonify, request
 from utils.logger_config import get_logger
 from services.upload_service import UploadService
-from services.auth_service import AuthService, mark_user_online
+from services.auth_service import AuthService, mark_user_online, is_user_admin
 from repositories.user_repository import UserRepository
 
 uploads_bp = Blueprint('uploads', __name__)
@@ -11,7 +11,7 @@ logger = get_logger(__name__)
 def before_request():
     """Mark user as online and reset session timer with each request."""
     session.permanent = True
-    if session.get("logged_in"):
+    if AuthService.get_current_email():
         mark_user_online()
     logger.debug("Session timer reset for uploads blueprint")
 
@@ -19,13 +19,9 @@ def before_request():
 @uploads_bp.route("/upload", methods=["POST"])
 def upload_file():
     logger.info("Upload request received")
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    if not session.get("logged_in"):
-        logger.warning("Upload failed - User not logged in")
-        return jsonify({"error": "Not logged in"}), 401
     
     uploaded_files = request.files.getlist("file")
     if not uploaded_files or (len(uploaded_files) == 1 and uploaded_files[0].filename == ''):
@@ -33,10 +29,10 @@ def upload_file():
         return jsonify({"error": "No files selected"}), 400
     
     upload_subpath = request.form.get('subpath', '')
-    email = session.get("email")
+    email = AuthService.get_current_email()
     user_id = session.get("user_id")
     
-    if user_id is None:
+    if user_id is None and email:
         user = UserRepository.find_by_email(email)
         user_id = user.user_id if user else None
     
@@ -73,18 +69,14 @@ def upload_file():
 @uploads_bp.route('/my_uploads')
 def my_uploads():
     logger.debug("My uploads request received")
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    if not session.get('logged_in'):
-        logger.warning("My uploads failed - User not logged in")
-        return jsonify({"error": "Not logged in"}), 401
     
-    user_email = session.get('email')
+    user_email = AuthService.get_current_email()
     user_id = session.get('user_id')
     
-    if user_id is None:
+    if user_id is None and user_email:
         user = UserRepository.find_by_email(user_email)
         user_id = user.user_id if user else None
     
@@ -95,11 +87,10 @@ def my_uploads():
 @uploads_bp.route("/admin/uploads")
 def admin_uploads():
     logger.debug("Admin uploads request received")
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning("Admin uploads failed - Access denied")
         return jsonify({"error": "Access denied"}), 403
     
@@ -109,13 +100,12 @@ def admin_uploads():
 
 @uploads_bp.route("/admin/move_upload/<path:filename>", methods=["POST"])
 def move_upload(filename):
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    admin_email = session.get("email", "unknown")
+    admin_email = AuthService.get_current_email() or "unknown"
     logger.info(f"Move upload request - File: {filename}, Admin: {admin_email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Move upload failed - Access denied, User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
     
@@ -143,13 +133,12 @@ def move_upload(filename):
 
 @uploads_bp.route("/admin/decline_upload/<path:filename>", methods=["POST"])
 def decline_upload(filename):
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    admin_email = session.get("email", "unknown")
+    admin_email = AuthService.get_current_email() or "unknown"
     logger.info(f"Decline upload request - File: {filename}, Admin: {admin_email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Decline upload failed - Access denied, User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
     
@@ -170,13 +159,12 @@ def decline_upload(filename):
 
 @uploads_bp.route("/admin/edit_upload_path/", methods=["POST"])
 def edit_upload_path():
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    admin_email = session.get("email", "unknown")
+    admin_email = AuthService.get_current_email() or "unknown"
     logger.info(f"Edit upload path request - Admin: {admin_email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Edit upload path failed - Access denied, User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
     

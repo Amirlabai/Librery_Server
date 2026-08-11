@@ -6,7 +6,7 @@ from repositories.user_repository import UserRepository
 from utils import csv_to_xlsx_in_memory
 from utils.logger_config import get_logger
 from services.mail_service import send_approval_email, send_denial_email
-from services.auth_service import AuthService, mark_user_online, mark_user_offline, get_active_users
+from services.auth_service import AuthService, mark_user_online, mark_user_offline, get_active_users, is_user_admin
 from services.admin_service import AdminService
 from utils.path_utils import resolve_config_path
 
@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 def before_request():
     """Mark user as online and reset session timer with each request."""
     session.permanent = True
-    if session.get("logged_in"):
+    if AuthService.get_current_email():
         mark_user_online()
     logger.debug("Session timer reset for admin blueprint")
 
@@ -29,7 +29,7 @@ def admin_metrics():
     is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
     if not is_valid:
         return jsonify({"error": error_msg}), 401
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to metrics - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
 
@@ -53,7 +53,7 @@ def admin_users():
     is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
     if not is_valid:
         return jsonify({"error": error_msg}), 401
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to users list - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
 
@@ -78,7 +78,7 @@ def admin_users():
 
     logger.info(f"Users list retrieved by admin: {session.get('email')}, total users: {len(users_list)}")
     return jsonify({
-        "current_admin": session.get('email'),
+        "current_admin": AuthService.get_current_email(),
         "users": users_list
     }), 200
 
@@ -93,7 +93,7 @@ def admin_pending():
     is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
     if not is_valid:
         return jsonify({"error": error_msg}), 401
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to pending users - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
 
@@ -112,7 +112,7 @@ def admin_denied():
     is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
     if not is_valid:
         return jsonify({"error": error_msg}), 401
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to denied users - User: {session.get('email', 'unknown')}")
         return jsonify({"error": "Access denied"}), 403
 
@@ -132,7 +132,7 @@ def approve_user(email):
         return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"User approval request received - Admin: {admin_email}, User to approve: {email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to approve user - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
 
@@ -157,7 +157,7 @@ def deny_user(email):
         return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"User denial request received - Admin: {admin_email}, User to deny: {email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to deny user - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
 
@@ -182,7 +182,7 @@ def re_pend_user(email):
         return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Re-pend user request received - Admin: {admin_email}, User: {email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to re-pend user - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
 
@@ -205,11 +205,11 @@ def toggle_role(email):
         return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Toggle role request received - Admin: {admin_email}, User: {email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to toggle role - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
 
-    if email == session.get('email'):
+    if email == AuthService.get_current_email():
         logger.warning(f"Toggle role failed - Admin {admin_email} attempted to change own role")
         return jsonify({"error": "You cannot change your own admin status"}), 403
 
@@ -240,11 +240,11 @@ def toggle_status(email):
         return jsonify({"error": error_msg}), 401
     admin_email = session.get('email', 'unknown')
     logger.info(f"Toggle status request received - Admin: {admin_email}, User: {email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to toggle status - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
 
-    if email == session.get('email'):
+    if email == AuthService.get_current_email():
         logger.warning(f"Toggle status failed - Admin {admin_email} attempted to change own status")
         return jsonify({"error": "You cannot change your own status"}), 403
 
@@ -261,13 +261,12 @@ def toggle_status(email):
 # ========== DOWNLOAD METRICS XLSX ==========
 @admin_bp.route("/metrics/download/<log_type>", methods=["GET"])
 def download_metrics_xlsx(log_type):
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    admin_email = session.get('email', 'unknown')
+    admin_email = AuthService.get_current_email() or "unknown"
     logger.info(f"Metrics download request received - Admin: {admin_email}, Log type: {log_type}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to download metrics - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
 

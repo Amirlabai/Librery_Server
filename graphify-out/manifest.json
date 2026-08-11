@@ -1,0 +1,377 @@
+{
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\requirements.txt": {
+    "mtime": 1780228270.3537395,
+    "ast_hash": "2f6907616035e91805e2c9fb3912667f",
+    "semantic_hash": "2f6907616035e91805e2c9fb3912667f"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\README.md": {
+    "mtime": 1786441180.3028667,
+    "ast_hash": "4ebbfa6a35f55994b05bc78d27eae4fb",
+    "semantic_hash": "4ebbfa6a35f55994b05bc78d27eae4fb"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\index.html": {
+    "mtime": 1786443327.8194919,
+    "ast_hash": "ccc22feb9d2af5e810f1ce93729c6164",
+    "semantic_hash": "ccc22feb9d2af5e810f1ce93729c6164"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\assets\\humans.txt": {
+    "mtime": 1766931030.2147121,
+    "ast_hash": "e38f51d8e47f70fea2865d5e6096231c",
+    "semantic_hash": "e38f51d8e47f70fea2865d5e6096231c"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\assets\\robots.txt": {
+    "mtime": 1766931030.2154834,
+    "ast_hash": "6f8a193661d839bd16d6ce6f7e912bdd",
+    "semantic_hash": "6f8a193661d839bd16d6ce6f7e912bdd"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\enviroments\\logos.template.txt": {
+    "mtime": 1766932813.056836,
+    "ast_hash": "90d6cda8723c66aa6f85014517b5c3ff",
+    "semantic_hash": "90d6cda8723c66aa6f85014517b5c3ff"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\__init__.py": {
+    "mtime": 1762936188.8668828,
+    "ast_hash": "0a6eed5783638f9bab572915cadef5bb",
+    "semantic_hash": "0a6eed5783638f9bab572915cadef5bb"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\app.py": {
+    "mtime": 1786442574.2444682,
+    "ast_hash": "4d18a047b6f177c11fbadd3af049e4a0",
+    "semantic_hash": "4d18a047b6f177c11fbadd3af049e4a0"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\config\\config_template.py": {
+    "mtime": 1780227833.1470175,
+    "ast_hash": "5b6da95c80186e66329ca83e706d736c",
+    "semantic_hash": "5b6da95c80186e66329ca83e706d736c"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\controllers\\admin_controller.py": {
+    "mtime": 1786438481.1363952,
+    "ast_hash": "219d1cc6f267967bed2e30c23992be4f",
+    "semantic_hash": "219d1cc6f267967bed2e30c23992be4f"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\controllers\\auth_controller.py": {
+    "mtime": 1786438475.337476,
+    "ast_hash": "60a28506cdd5b5dd7ef8057423aa5b12",
+    "semantic_hash": "60a28506cdd5b5dd7ef8057423aa5b12"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\controllers\\files_controller.py": {
+    "mtime": 1786438469.0124948,
+    "ast_hash": "73776fbc06adf478d17b214885b76e2b",
+    "semantic_hash": "73776fbc06adf478d17b214885b76e2b"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\controllers\\uploads_controller.py": {
+    "mtime": 1768983563.2557974,
+    "ast_hash": "cecd1ef0f688c04f2453aac77be47bef",
+    "semantic_hash": "cecd1ef0f688c04f2453aac77be47bef"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\dev_toolkit\\dev_log_share_files.py": {
+    "mtime": 1764163617.5640683,
+    "ast_hash": "a3d98404a7acb56c9f9bd08c8c0f8241",
+    "semantic_hash": "a3d98404a7acb56c9f9bd08c8c0f8241"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\dev_toolkit\\migrate_user_ids.py": {
+    "mtime": 1763904251.9610813,
+    "ast_hash": "74bf3f6e696425831a6c72f753fb77b8",
+    "semantic_hash": "74bf3f6e696425831a6c72f753fb77b8"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\dev_toolkit\\run_ngrok.py": {
+    "mtime": 1763904251.9610813,
+    "ast_hash": "1c966a3c0652ffe4c62243d82f98679b",
+    "semantic_hash": "1c966a3c0652ffe4c62243d82f98679b"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\dev_toolkit\\set_boss_admin.py": {
+    "mtime": 1763904251.9610813,
+    "ast_hash": "d1890249ce97fdbadc4c1bc4272cf791",
+    "semantic_hash": "d1890249ce97fdbadc4c1bc4272cf791"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\dev_toolkit\\set_boss_admin_gui.py": {
+    "mtime": 1786437769.5961297,
+    "ast_hash": "0c5e008deb86f08c1f17204fae38de03",
+    "semantic_hash": "0c5e008deb86f08c1f17204fae38de03"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\models\\__init__.py": {
+    "mtime": 1786438554.8897946,
+    "ast_hash": "10df8a71081e8eeb89f046fd7cace219",
+    "semantic_hash": "10df8a71081e8eeb89f046fd7cace219"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\models\\user_entity.py": {
+    "mtime": 1786444803.6163476,
+    "ast_hash": "0a83bee37daeb0238257cf85431cc864",
+    "semantic_hash": "0a83bee37daeb0238257cf85431cc864"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\repositories\\__init__.py": {
+    "mtime": 1786438611.843876,
+    "ast_hash": "c9eda62c822b3e580c9e84880e65ee1e",
+    "semantic_hash": "c9eda62c822b3e580c9e84880e65ee1e"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\repositories\\password_reset_repository.py": {
+    "mtime": 1780227843.239233,
+    "ast_hash": "0ef8baf8df8399e99b0b67b3932351c2",
+    "semantic_hash": "0ef8baf8df8399e99b0b67b3932351c2"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\repositories\\upload_repository.py": {
+    "mtime": 1764163617.5658805,
+    "ast_hash": "0446f8de392dc312596f5dfd39dbc978",
+    "semantic_hash": "0446f8de392dc312596f5dfd39dbc978"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\repositories\\user_repository.py": {
+    "mtime": 1786444810.341259,
+    "ast_hash": "3e6c27df118fc474142243fb84cb9730",
+    "semantic_hash": "3e6c27df118fc474142243fb84cb9730"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\services\\__init__.py": {
+    "mtime": 1786438603.6053922,
+    "ast_hash": "f93f7ccbd2b0f73000f06ca4b559f84f",
+    "semantic_hash": "f93f7ccbd2b0f73000f06ca4b559f84f"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\services\\admin_service.py": {
+    "mtime": 1786444837.3378768,
+    "ast_hash": "877e57413930e722916d343904fd987e",
+    "semantic_hash": "877e57413930e722916d343904fd987e"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\services\\auth_service.py": {
+    "mtime": 1786444823.2074952,
+    "ast_hash": "c7c863adb68376463afef4e933d966d7",
+    "semantic_hash": "c7c863adb68376463afef4e933d966d7"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\services\\file_service.py": {
+    "mtime": 1786438462.360342,
+    "ast_hash": "a4cf30c4e7a0c516e26233ffb3bee9c1",
+    "semantic_hash": "a4cf30c4e7a0c516e26233ffb3bee9c1"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\services\\jwt_service.py": {
+    "mtime": 1780227986.3142643,
+    "ast_hash": "b6455663da585e387a59d05e7a930416",
+    "semantic_hash": "b6455663da585e387a59d05e7a930416"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\services\\mail_service.py": {
+    "mtime": 1780227917.9719467,
+    "ast_hash": "3de38362788236f718edd415c2d7a61b",
+    "semantic_hash": "3de38362788236f718edd415c2d7a61b"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\services\\session_state_store.py": {
+    "mtime": 1780227838.8078911,
+    "ast_hash": "605dbcba553af82932f34c9e3b5b41a9",
+    "semantic_hash": "605dbcba553af82932f34c9e3b5b41a9"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\services\\upload_service.py": {
+    "mtime": 1780227918.3849826,
+    "ast_hash": "c53c580a565e1ad1c01e33f667b39782",
+    "semantic_hash": "c53c580a565e1ad1c01e33f667b39782"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\utils\\__init__.py": {
+    "mtime": 1762936188.8668828,
+    "ast_hash": "af621fee6b3cbab932d0a76ceb92b7ba",
+    "semantic_hash": "af621fee6b3cbab932d0a76ceb92b7ba"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\utils\\csv_utils.py": {
+    "mtime": 1780227900.279761,
+    "ast_hash": "ed8619530de1337f9668c8e119c3a610",
+    "semantic_hash": "ed8619530de1337f9668c8e119c3a610"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\utils\\file_utils.py": {
+    "mtime": 1780228271.7292502,
+    "ast_hash": "fc372768de06be24d4608bf8c55a0ac7",
+    "semantic_hash": "fc372768de06be24d4608bf8c55a0ac7"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\utils\\log_utils.py": {
+    "mtime": 1780227891.649787,
+    "ast_hash": "a2ec194c238cdc6cd1e54523b8d8b4ba",
+    "semantic_hash": "a2ec194c238cdc6cd1e54523b8d8b4ba"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\utils\\logger_config.py": {
+    "mtime": 1763025689.5856452,
+    "ast_hash": "7fb18c6d764873c726b501b90231af92",
+    "semantic_hash": "7fb18c6d764873c726b501b90231af92"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\utils\\path_utils.py": {
+    "mtime": 1786437768.2744963,
+    "ast_hash": "5d0756f84f527c2ee388c6a5f809ab0f",
+    "semantic_hash": "5d0756f84f527c2ee388c6a5f809ab0f"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\server\\version.py": {
+    "mtime": 1768985033.5875945,
+    "ast_hash": "ee67b39ede08e5a91701f430e3729d3e",
+    "semantic_hash": "ee67b39ede08e5a91701f430e3729d3e"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\.vscode\\extensions.json": {
+    "mtime": 1761733046.34677,
+    "ast_hash": "66fd9e60d4633b6099fe02e06a7075ea",
+    "semantic_hash": "66fd9e60d4633b6099fe02e06a7075ea"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\.vscode\\launch.json": {
+    "mtime": 1786441251.1155944,
+    "ast_hash": "43e78187341e499c2b14b7d060d8c9dd",
+    "semantic_hash": "43e78187341e499c2b14b7d060d8c9dd"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\.vscode\\tasks.json": {
+    "mtime": 1761733046.34677,
+    "ast_hash": "d2fc2624d783980be281b4cf0acc2455",
+    "semantic_hash": "d2fc2624d783980be281b4cf0acc2455"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\package.json": {
+    "mtime": 1786439827.7600868,
+    "ast_hash": "c42820bc859f46ccfc30c4ec4161f9b2",
+    "semantic_hash": "c42820bc859f46ccfc30c4ec4161f9b2"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\App.tsx": {
+    "mtime": 1786441933.238036,
+    "ast_hash": "f89b23c76d28bdaf7bd7fa754c72d4a5",
+    "semantic_hash": "f89b23c76d28bdaf7bd7fa754c72d4a5"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\UploadProgressWidget.tsx": {
+    "mtime": 1786442902.7960942,
+    "ast_hash": "3bbcdd95730692bc0a6885a0d68da036",
+    "semantic_hash": "3bbcdd95730692bc0a6885a0d68da036"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\api.ts": {
+    "mtime": 1786440105.4499524,
+    "ast_hash": "be9e86561acd709a7c6dd4e5edeae385",
+    "semantic_hash": "be9e86561acd709a7c6dd4e5edeae385"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\auth.tsx": {
+    "mtime": 1786440121.167251,
+    "ast_hash": "e4f936bcd269a5e70f3d02ac50c27437",
+    "semantic_hash": "e4f936bcd269a5e70f3d02ac50c27437"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\authFetch.ts": {
+    "mtime": 1786440289.7206101,
+    "ast_hash": "1184b74b292d90cc872fd11fff6ba825",
+    "semantic_hash": "1184b74b292d90cc872fd11fff6ba825"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\components\\Icons.tsx": {
+    "mtime": 1786443046.2049646,
+    "ast_hash": "4fef5e83d5498e1dc602b49ef2675b5c",
+    "semantic_hash": "4fef5e83d5498e1dc602b49ef2675b5c"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\main.tsx": {
+    "mtime": 1786439883.4023056,
+    "ast_hash": "d584c7b5f0ce480f0aa28f29e1e145e3",
+    "semantic_hash": "d584c7b5f0ce480f0aa28f29e1e145e3"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\DashboardPage.tsx": {
+    "mtime": 1786443359.84231,
+    "ast_hash": "77f260bd16b1a9660b456bcc8c5566a2",
+    "semantic_hash": "77f260bd16b1a9660b456bcc8c5566a2"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\ForgotPasswordPage.tsx": {
+    "mtime": 1786442767.7991302,
+    "ast_hash": "9032d10fef178721cc8f6902853ca798",
+    "semantic_hash": "9032d10fef178721cc8f6902853ca798"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\LoginPage.tsx": {
+    "mtime": 1786442754.916932,
+    "ast_hash": "fc356a216d3742e7c3298ff274d8e445",
+    "semantic_hash": "fc356a216d3742e7c3298ff274d8e445"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\MyUploadsPage.tsx": {
+    "mtime": 1786443361.5698688,
+    "ast_hash": "3ddf98753190136c0433a42577ae7b39",
+    "semantic_hash": "3ddf98753190136c0433a42577ae7b39"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\RegisterPage.tsx": {
+    "mtime": 1786442760.9818609,
+    "ast_hash": "9fdccfa86ca9fadee0436c5718de952d",
+    "semantic_hash": "9fdccfa86ca9fadee0436c5718de952d"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\ResetPasswordPage.tsx": {
+    "mtime": 1786442767.9436839,
+    "ast_hash": "600b4c84d48ee75793cc778285b794cf",
+    "semantic_hash": "600b4c84d48ee75793cc778285b794cf"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\UploadFilePage.tsx": {
+    "mtime": 1786443383.2904947,
+    "ast_hash": "b0c5aff8ad3340008e106750d115f36d",
+    "semantic_hash": "b0c5aff8ad3340008e106750d115f36d"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\admin\\AdminLayout.tsx": {
+    "mtime": 1786442300.36422,
+    "ast_hash": "f8878b72d8491e8bf29bd91a6460ac6c",
+    "semantic_hash": "f8878b72d8491e8bf29bd91a6460ac6c"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\admin\\DeniedPage.tsx": {
+    "mtime": 1786443432.401727,
+    "ast_hash": "0796657f155943419f2137c77f7a1483",
+    "semantic_hash": "0796657f155943419f2137c77f7a1483"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\admin\\MetricsPage.tsx": {
+    "mtime": 1786442311.5115683,
+    "ast_hash": "03015d1544de4f8ac59c0d1d7b494185",
+    "semantic_hash": "03015d1544de4f8ac59c0d1d7b494185"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\admin\\PendingPage.tsx": {
+    "mtime": 1786443421.870918,
+    "ast_hash": "659f92ef350378f668b132902e075767",
+    "semantic_hash": "659f92ef350378f668b132902e075767"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\admin\\UploadsPage.tsx": {
+    "mtime": 1786443421.7974305,
+    "ast_hash": "62b7863c885bd7e0c1ea48e9c6a6d7d3",
+    "semantic_hash": "62b7863c885bd7e0c1ea48e9c6a6d7d3"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\pages\\admin\\UsersPage.tsx": {
+    "mtime": 1786443416.5440032,
+    "ast_hash": "8807a1d9da7dfab043e8d3b5cb01be2a",
+    "semantic_hash": "8807a1d9da7dfab043e8d3b5cb01be2a"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\toast.ts": {
+    "mtime": 1786440062.7584553,
+    "ast_hash": "6e99e9531661e05ec29defd0bf20fa3d",
+    "semantic_hash": "6e99e9531661e05ec29defd0bf20fa3d"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\uploadProgress.tsx": {
+    "mtime": 1786440072.0387561,
+    "ast_hash": "bb0ed8521db4898f408fd05fb1b29254",
+    "semantic_hash": "bb0ed8521db4898f408fd05fb1b29254"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\useDarkMode.ts": {
+    "mtime": 1786442008.4553769,
+    "ast_hash": "24120d3c2e36891b868a629d2cc0e199",
+    "semantic_hash": "24120d3c2e36891b868a629d2cc0e199"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\version.ts": {
+    "mtime": 1786440639.9572845,
+    "ast_hash": "cc60b2fb27f63f5d149c4f0b18108573",
+    "semantic_hash": "cc60b2fb27f63f5d149c4f0b18108573"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\vite-env.d.ts": {
+    "mtime": 1786439877.4240663,
+    "ast_hash": "66619cba9e7ca1a919b140c2bab7a41c",
+    "semantic_hash": "66619cba9e7ca1a919b140c2bab7a41c"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\tsconfig.json": {
+    "mtime": 1786441052.863268,
+    "ast_hash": "30caa508361157d353735311965556fe",
+    "semantic_hash": "30caa508361157d353735311965556fe"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\public\\assets\\icons\\banner-logo-dark-mode.webp": {
+    "mtime": 1786441876.7268887,
+    "ast_hash": "3d25d5a22c03d545d03944c60cc887c5",
+    "semantic_hash": "3d25d5a22c03d545d03944c60cc887c5"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\public\\assets\\icons\\banner-logo.webp": {
+    "mtime": 1786441876.6775773,
+    "ast_hash": "1f6da1568c2feddf6f54f8abc76c7d4c",
+    "semantic_hash": "1f6da1568c2feddf6f54f8abc76c7d4c"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\assets\\icons\\banner-logo-dark-mode.webp": {
+    "mtime": 1766931485.108222,
+    "ast_hash": "3d25d5a22c03d545d03944c60cc887c5",
+    "semantic_hash": "3d25d5a22c03d545d03944c60cc887c5"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\assets\\icons\\banner-logo.webp": {
+    "mtime": 1766931498.731605,
+    "ast_hash": "1f6da1568c2feddf6f54f8abc76c7d4c",
+    "semantic_hash": "1f6da1568c2feddf6f54f8abc76c7d4c"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\assets\\icons\\eye-crossed.webp": {
+    "mtime": 1764940305.301,
+    "ast_hash": "fb4036f433242d7a4b88375b7e82e75b",
+    "semantic_hash": "fb4036f433242d7a4b88375b7e82e75b"
+  },
+  "C:\\Users\\amirl\\OneDrive\\Documents\\GitHub\\NagoAmir_Server\\client\\src\\assets\\icons\\eye.webp": {
+    "mtime": 1764940340.22,
+    "ast_hash": "854e09ee41c20417836cda2019b9b2e4",
+    "semantic_hash": "854e09ee41c20417836cda2019b9b2e4"
+  }
+}

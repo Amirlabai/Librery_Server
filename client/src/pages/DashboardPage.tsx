@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './dashboard.css';
 import { toastError, toastSuccess } from '../toast';
 import { authGetJson, authPostJson } from '../authFetch';
+import { downloadAuthenticated, previewAuthenticated } from '../api';
 import { useAuth } from '../auth';
 import { IconFile, IconFolder, IconHome, IconLightbulb, IconLink, IconMenu } from '../components/Icons';
 import { useDarkMode } from '../useDarkMode';
@@ -183,7 +184,9 @@ export default function DashboardPage() {
   function previewItem(item: BrowseItem, event: React.MouseEvent) {
     event.stopPropagation();
     if (isFolderItem(item)) return;
-    window.open(`/preview/${item.path}`, '_blank');
+    previewAuthenticated(`/preview/${item.path}`).catch((err: any) => {
+      toastError(err?.message || 'Preview failed');
+    });
   }
 
   function openDownloadWarning(item: BrowseItem, event: React.MouseEvent) {
@@ -196,7 +199,10 @@ export default function DashboardPage() {
     event.stopPropagation();
     if (!downloadItem) return;
     const kind = isFolderItem(downloadItem) ? 'folder' : 'file';
-    window.open(`/download/${kind}/${downloadItem.path}`, '_blank');
+    const fallback = isFolderItem(downloadItem) ? `${downloadItem.name}.zip` : downloadItem.name;
+    downloadAuthenticated(`/download/${kind}/${downloadItem.path}`, fallback).catch((err: any) => {
+      toastError(err?.message || 'Download failed');
+    });
     setShowDownloadWarning(false);
     setDownloadItem(null);
   }

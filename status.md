@@ -30,6 +30,16 @@
 - [ ] Open PR: `audit/integration` → `main`
 - [ ] `pip install -r server/requirements.txt` on server (adds PyJWT)
 - [ ] Restart Flask after email case-insensitive login fix and verify `amirlabay@Gmail.com` logs in
+- [ ] Deploy Vercel (`client/` root) with `VITE_API_BASE_URL` = stable ngrok URL; set `PUBLIC_BASE_URL` + `SESSION_COOKIE_SECURE=True` in `config.py`
+
+## Completed (Vercel + ngrok split)
+
+- [x] `client/.env.example` + `VITE_API_BASE_URL` / `apiUrl` / ngrok skip header
+- [x] Authenticated blob download/preview (dashboard + metrics)
+- [x] JWT `require_auth` / `is_user_admin` on file, upload, and admin API gates
+- [x] CORS `*.vercel.app` + expose `Content-Disposition`
+- [x] `client/vercel.json` SPA rewrites; notes in `PRODUCTION_BUILD.md`
+- [x] `app.py` API-only (removed `client/dist` SPA hosting)
 
 ## Completed (auth email case)
 
@@ -67,4 +77,9 @@ During the Angular → React port, follow this deletion checklist (ponytail rule
 
 - React build succeeds: `cd client && npm run build`.
 - Flask end-to-end smoke test could not be executed here because Python dependencies are not installed (`ModuleNotFoundError: No module named 'flask'`). After running `pip install -r server/requirements.txt`, the next check is:
-  - `python server/app.py` and confirm `/` serves `client/dist/index.html`.
+  - `python server/app.py` and confirm `GET /` returns API JSON (UI is Vite/Vercel, not Flask).
+
+## Completed (graphify)
+
+- [x] Knowledge graph for `server/` + `client/` → `graphify-out/` (`graph.html`, `GRAPH_REPORT.md`, `graph.json`)
+- Graph: 768 nodes, 1,448 edges, 58 communities (~11.8x token reduction per query)

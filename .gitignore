@@ -17,6 +17,11 @@ server/merkaz_server/
 
 /node_modules/
 
+# Vite local env (keep .env.example tracked)
+client/.env
+client/.env.local
+client/.env.*.local
+
 /merkaz-frontend/.angular/
 /merkaz-frontend/node_modules/
 /merkaz-frontend/.cache/

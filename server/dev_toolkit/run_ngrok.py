@@ -10,7 +10,7 @@ import threading
 #!/usr/bin/env python3
 # File: run_ngrok.py
 # Usage: python run_ngrok.py [PORT]
-# Launches ngrok tunnel for Flask server (serves both frontend and backend on single port).
+# Launches ngrok tunnel for Flask API (backend only; UI is Vite/Vercel).
 
 
 def main():
@@ -77,9 +77,9 @@ def main():
                     print("\n" + "=" * 70)
                     print("SETUP INSTRUCTIONS:")
                     print("=" * 70)
-                    print("1. Access your application at:", app_url)
-                    print("2. Flask serves both frontend and backend on the same port")
-                    print("3. API calls use relative URLs (same origin) - no configuration needed!")
+                    print("1. API at:", app_url)
+                    print("2. Point Vercel/Vite VITE_API_BASE_URL at this URL")
+                    print("3. UI is not served by Flask")
                     print("=" * 70)
                 else:
                     print("\n⚠️  Warning: Could not fetch tunnel URL. Check ngrok console.")
@@ -92,7 +92,7 @@ def main():
     cmd = [ngrok_path, "start", "--config", config_path, "app"]
     print("Running:", " ".join(cmd))
     print(f"Application tunnel: http://localhost:{port} -> https://*.ngrok-free.app")
-    print(f"Note: Flask serves both frontend (Angular build) and backend (API) on port {port}")
+    print(f"Note: Flask is API-only on port {port}; UI is Vite or Vercel")
     
     # Start a thread to fetch URLs after ngrok starts
     url_thread = threading.Thread(target=fetch_tunnel_urls, daemon=True)

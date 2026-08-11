@@ -1,7 +1,7 @@
 from flask import Blueprint, session, send_from_directory, send_file, jsonify, request
 from utils.logger_config import get_logger
 from services.file_service import FileService
-from services.auth_service import AuthService, mark_user_online
+from services.auth_service import AuthService, mark_user_online, is_user_admin
 from utils.log_utils import log_event
 from datetime import datetime
 from flask_cors import cross_origin
@@ -19,22 +19,19 @@ logger = get_logger(__name__)
 def before_request():
     """Mark user as online and reset session timer with each request."""
     session.permanent = True
-    if session.get("logged_in"):
+    if AuthService.get_current_email():
         mark_user_online()
     logger.debug("Session timer reset for files blueprint")
 
 @files_bp.route('/browse', defaults={'subpath': ''}, methods=["GET"])
 @files_bp.route('/browse/<path:subpath>', methods=["GET"])
 def downloads(subpath=''):
-    logger.debug(f"Browse request received, User: {session.get('email', 'unknown')}")
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    if not session.get("logged_in"):
-        logger.warning("Browse request failed - User not logged in")
-        return jsonify({"error": "Not logged in"}), 401
-    
+    user_email = AuthService.get_current_email() or "unknown"
+    logger.debug(f"Browse request received, User: {user_email}")
+
     browse_data, error = FileService.browse_directory(subpath)
     
     if error:
@@ -43,28 +40,26 @@ def downloads(subpath=''):
         return jsonify({"error": error}), status_code
     
     cooldown_level = session.get("cooldown_index", 0)
-    logger.info(f"Browse completed - Path: {subpath}, Files: {len(browse_data['files'])}, Folders: {len(browse_data['folders'])}, User: {session.get('email', 'unknown')}")
+    logger.info(f"Browse completed - Path: {subpath}, Files: {len(browse_data['files'])}, Folders: {len(browse_data['folders'])}, User: {user_email}")
     
     return jsonify({
         **browse_data,
-        "is_admin": session.get('is_admin', False),
+        "is_admin": is_user_admin(),
         "cooldown_level": cooldown_level
     }), 200
 
 
 @files_bp.route("/delete/<path:item_path>", methods=["POST"])
 def delete_item(item_path):
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    admin_email = session.get('email', 'unknown')
+    admin_email = AuthService.get_current_email() or "unknown"
     logger.info(f"Delete request received - Path: {item_path}, Admin: {admin_email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to delete - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
     
-    import os
     base_name = os.path.basename(item_path)
     success, error = FileService.delete_item(item_path, admin_email)
     
@@ -78,13 +73,12 @@ def delete_item(item_path):
 
 @files_bp.route("/create_folder", methods=["POST"])
 def create_folder():
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    admin_email = session.get('email', 'unknown')
+    admin_email = AuthService.get_current_email() or "unknown"
     logger.info(f"Create folder request received - Admin: {admin_email}")
-    if not session.get("is_admin"):
+    if not is_user_admin():
         logger.warning(f"Access denied to create folder - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
     
@@ -109,16 +103,12 @@ def create_folder():
 
 @files_bp.route("/download/file/<path:file_path>")
 def download_file(file_path):
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    user_email = session.get("email", "unknown")
+    user_email = AuthService.get_current_email() or "unknown"
     logger.info(f"File download request - Path: {file_path}, User: {user_email}")
-    if not session.get("logged_in"):
-        logger.warning("File download failed - User not logged in")
-        return jsonify({"error": "Not logged in"}), 401
-    
+
     log_event(resolve_config_path(config.DOWNLOAD_LOG_FILE), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FILE", file_path])
     
     safe_dir, filename, error = FileService.get_download_file_path(file_path)
@@ -132,17 +122,12 @@ def download_file(file_path):
 
 @files_bp.route("/download/folder/<path:folder_path>")
 def download_folder(folder_path):
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    user_email = session.get("email", "unknown")
+    user_email = AuthService.get_current_email() or "unknown"
     logger.info(f"Folder download request - Path: {folder_path}, User: {user_email}")
-    if not session.get("logged_in"):
-        logger.warning("Folder download failed - User not logged in")
-        return jsonify({"error": "Not logged in"}), 401
-    
-    import os
+
     log_event(resolve_config_path(config.DOWNLOAD_LOG_FILE), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FOLDER", folder_path])
     
     absolute_folder_path, error = FileService.get_download_folder_path(folder_path)
@@ -158,15 +143,11 @@ def download_folder(folder_path):
 @files_bp.route("/preview/<path:file_path>")
 def preview_file(file_path):
     """Preview a file in the browser (without forcing download)."""
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    user_email = session.get("email", "unknown")
+    user_email = AuthService.get_current_email() or "unknown"
     logger.info(f"File preview request - Path: {file_path}, User: {user_email}")
-    if not session.get("logged_in"):
-        logger.warning("File preview failed - User not logged in")
-        return jsonify({"error": "Not logged in"}), 401
     
     safe_dir, filename, mime_type, error = FileService.get_preview_file_path(file_path)
     
@@ -211,12 +192,11 @@ def preview_file(file_path):
 
 @files_bp.route("/search", methods=["GET"])
 def search():
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
 
-    user_email = session.get("email", "unknown")
+    user_email = AuthService.get_current_email() or "unknown"
     logger.info(f"Search request received - User: {user_email}")
     search_query = request.args.get("q", "")
     folder_path = request.args.get("folder_path", "")
@@ -230,21 +210,17 @@ def search():
     cooldown_level = session.get("cooldown_index", 0)
 
     return jsonify({**search_results,
-        "is_admin": session.get('is_admin', False),
+        "is_admin": is_user_admin(),
         "cooldown_level": cooldown_level
     }), 200
 
 @files_bp.route("/suggest", methods=["POST"])
 def suggest():
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    user_email = session.get("email", "unknown")
+    user_email = AuthService.get_current_email() or "unknown"
     logger.debug(f"Suggestion submission request - User: {user_email}")
-    if not session.get("logged_in"):
-        logger.warning("Suggestion submission failed - User not logged in")
-        return jsonify({"error": "Not logged in"}), 401
     
     data = request.get_json()
     if not data:
@@ -275,15 +251,11 @@ def suggest():
 @files_bp.route("/useful_links", methods=["GET"])
 def get_useful_links():
     """Get useful links from CSV file."""
-    # Validate session and clear if invalidated
-    is_valid, error_msg = AuthService.validate_and_clear_if_invalidated()
-    if not is_valid:
+    ok, error_msg = AuthService.require_auth()
+    if not ok:
         return jsonify({"error": error_msg}), 401
-    user_email = session.get("email", "unknown")
+    user_email = AuthService.get_current_email() or "unknown"
     logger.debug(f"Useful links request - User: {user_email}")
-    if not session.get("logged_in"):
-        logger.warning("Useful links request failed - User not logged in")
-        return jsonify({"error": "Not logged in"}), 401
     
     try:
         useful_links_list = []

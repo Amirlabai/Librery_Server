@@ -8,7 +8,8 @@ ICON_PATH = "change_this_to_the_path_of_the_icon"
 # --- Session Timeout ---
 SESSION_TIMEOUT_MINUTES = 15
 DEBUG = False
-SESSION_COOKIE_SECURE = False  # Set True in production behind HTTPS
+# True when UI/API are reached over HTTPS (ngrok). Enables SameSite=None cookies for Vercel → ngrok.
+SESSION_COOKIE_SECURE = True
 
 # --- JWT ---
 JWT_SECRET_KEY = TOKEN_SECRET_KEY
@@ -17,7 +18,7 @@ JWT_ACCESS_EXPIRES_MINUTES = SESSION_TIMEOUT_MINUTES
 # --- Easter egg challenge ---
 CHALLENGE_ACTIVATION_CODE = "753951"
 
-# --- Public URLs (emails) ---
+# --- Public URLs (emails / password reset links). Use your stable ngrok HTTPS URL.
 PUBLIC_BASE_URL = "https://change_this_to_the_ngrok_link"
 
 SERVER_ROOT_DIR = "change_this_to_the_root_directory_of_the_project"

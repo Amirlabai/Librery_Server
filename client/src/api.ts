@@ -6,20 +6,15 @@ function hasWindow(): boolean {
 }
 
 export function getBackendUrl(): string {
+  const fromEnv = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
+  if (fromEnv) return fromEnv.replace(/\/+$/, '');
+
   if (!hasWindow()) return 'http://localhost:8000';
 
   const storedUrl = localStorage.getItem(BACKEND_URL_KEY);
-  if (storedUrl) return storedUrl;
+  if (storedUrl) return storedUrl.replace(/\/+$/, '');
 
-  // When running in dev (Vite) we rely on the dev-server proxy for same-origin calls.
-  // So we prefer relative URLs (base URL = "") unless explicitly configured.
-  const hostname = window.location.hostname;
-  const port = window.location.port;
-
-  // If we are directly on Flask (port 8000), keep relative URLs.
-  if (port === '8000' || (hostname === 'localhost' && port === '')) return '';
-
-  // Default: use relative URLs and let Vite proxy forward to Flask.
+  // Relative URLs: Vite proxy (dev) or Flask serving client/dist.
   return '';
 }
 
@@ -36,20 +31,33 @@ function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
-function buildUrl(path: string): string {
+/** Build absolute or relative API URL from a path. */
+export function apiUrl(path: string): string {
   const base = getBackendUrl();
-  if (!base) return path.startsWith('/') ? path : `/${path}`;
-  return `${base}${path.startsWith('/') ? '' : '/'}${path}`;
+  const p = path.startsWith('/') ? path : `/${path}`;
+  return base ? `${base}${p}` : p;
+}
+
+export function apiHeaders(extra?: HeadersInit): Record<string, string> {
+  const headers: Record<string, string> = {
+    'ngrok-skip-browser-warning': 'true',
+  };
+  if (extra) {
+    const h = new Headers(extra);
+    h.forEach((v, k) => {
+      headers[k] = v;
+    });
+  }
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
 }
 
 async function requestJson<T>(path: string, init: RequestInit): Promise<T> {
-  const res = await fetch(buildUrl(path), {
+  const res = await fetch(apiUrl(path), {
     credentials: 'include',
     ...init,
-    headers: {
-      ...(init.headers || {}),
-      ...(getToken() ? { Authorization: `Bearer ${getToken()}` } : {}),
-    },
+    headers: apiHeaders(init.headers),
   });
 
   if (!res.ok) {
@@ -148,11 +156,11 @@ function uploadSingleFileXHR(
     formData.append('subpath', subpath);
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', buildUrl('/upload'), true);
+    xhr.open('POST', apiUrl('/upload'), true);
     xhr.withCredentials = true;
 
-    const token = getToken();
-    if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    const headers = apiHeaders();
+    Object.entries(headers).forEach(([k, v]) => xhr.setRequestHeader(k, v));
 
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
@@ -311,5 +319,69 @@ export async function uploadFiles(
   }
 
   return { successful: successfulFiles, failed: failedFiles };
+}
+
+function filenameFromDisposition(header: string | null, fallback: string): string {
+  if (!header) return fallback;
+  const utf = /filename\*=UTF-8''([^;]+)/i.exec(header);
+  if (utf?.[1]) {
+    try {
+      return decodeURIComponent(utf[1]);
+    } catch {
+      /* ignore */
+    }
+  }
+  const plain = /filename="?([^";]+)"?/i.exec(header);
+  return plain?.[1]?.trim() || fallback;
+}
+
+/** Authenticated GET → trigger browser download (Vercel → ngrok safe). */
+export async function downloadAuthenticated(path: string, fallbackName: string): Promise<void> {
+  const res = await fetch(apiUrl(path), {
+    method: 'GET',
+    credentials: 'include',
+    headers: apiHeaders(),
+  });
+  if (!res.ok) {
+    let body: any = null;
+    try {
+      body = await res.json();
+    } catch {
+      /* ignore */
+    }
+    throw new Error(body?.error || `Download failed (${res.status})`);
+  }
+  const blob = await res.blob();
+  const name = filenameFromDisposition(res.headers.get('Content-Disposition'), fallbackName);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/** Authenticated GET → open blob in a new tab for preview. */
+export async function previewAuthenticated(path: string): Promise<void> {
+  const res = await fetch(apiUrl(path), {
+    method: 'GET',
+    credentials: 'include',
+    headers: apiHeaders(),
+  });
+  if (!res.ok) {
+    let body: any = null;
+    try {
+      body = await res.json();
+    } catch {
+      /* ignore */
+    }
+    throw new Error(body?.error || `Preview failed (${res.status})`);
+  }
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
