@@ -77,9 +77,9 @@ def main():
                     print("\n" + "=" * 70)
                     print("SETUP INSTRUCTIONS:")
                     print("=" * 70)
-                    print("1. API at:", app_url)
-                    print("2. Point Vercel/Vite VITE_API_BASE_URL at this URL")
-                    print("3. UI is not served by Flask")
+                    print("1. Open the app at:", app_url)
+                    print("2. UI and API are same origin on this tunnel")
+                    print("3. Copy server/ngrok.yml from your local ngrok config if missing")
                     print("=" * 70)
                 else:
                     print("\n⚠️  Warning: Could not fetch tunnel URL. Check ngrok console.")
@@ -92,7 +92,7 @@ def main():
     cmd = [ngrok_path, "start", "--config", config_path, "app"]
     print("Running:", " ".join(cmd))
     print(f"Application tunnel: http://localhost:{port} -> https://*.ngrok-free.app")
-    print(f"Note: Flask is API-only on port {port}; UI is Vite or Vercel")
+    print(f"Note: Flask serves API + UI on port {port} (client/dist)")
     
     # Start a thread to fetch URLs after ngrok starts
     url_thread = threading.Thread(target=fetch_tunnel_urls, daemon=True)

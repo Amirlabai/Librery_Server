@@ -3,9 +3,9 @@
 ## Purpose
 
 Flask backend (`server`) + React frontend (`client`) for shared file library and admin approval.
-`python app.py` is **API only** (no SPA static hosting).
+Local prod: `python app.py` serves API + `client/dist` on port 8000 (same origin).
 Dev UI: Vite on `http://localhost:5173` (API proxied to Flask).
-Prod UI: Vercel; Flask behind stable ngrok (`VITE_API_BASE_URL`).
+Build without `VITE_API_BASE_URL` so the SPA uses relative API paths.
 
 ## Auth (post-audit)
 

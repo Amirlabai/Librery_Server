@@ -8,9 +8,10 @@ import os
 import logging
 from urllib.parse import urlparse
 
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, make_response, send_from_directory, send_file
 from waitress import serve
 from datetime import timedelta
+from werkzeug.exceptions import NotFound
 
 import config.config as config
 from utils import create_file_with_header, get_project_root
@@ -77,7 +78,7 @@ def _apply_cors_headers(response):
 
 
 def create_app():
-    """Create and configure the Flask API (no client static hosting)."""
+    """Create Flask app: API blueprints + optional client/dist SPA."""
     logger.info("Creating Flask application")
     app = Flask(__name__)
     app.secret_key = config.SUPER_SECRET_KEY
@@ -99,7 +100,7 @@ def create_app():
     def _cors_preflight():
         origin = request.headers.get("Origin")
         if origin:
-            logger.info(f"CORS Origin: {origin} {request.method} {request.path}")
+            logger.debug(f"CORS Origin: {origin} {request.method} {request.path}")
         if request.method == "OPTIONS":
             return _apply_cors_headers(make_response(("", 204)))
 
@@ -107,7 +108,7 @@ def create_app():
     def _cors_after(response):
         return _apply_cors_headers(response)
 
-    logger.info("CORS configured (manual Origin echo for Vercel/ngrok/localhost)")
+    logger.info("CORS configured (localhost / ngrok / optional Vercel)")
 
     logger.debug("Registering blueprints")
     app.register_blueprint(auth_bp)
@@ -116,25 +117,66 @@ def create_app():
     app.register_blueprint(admin_bp)
     logger.info("All blueprints registered successfully")
 
-    @app.route("/", methods=["GET"])
-    def root():
-        """API health / endpoint index. UI is Vite or Vercel, not this process."""
-        return jsonify({
-            "message": "Merkaz Server API",
-            "status": "running",
-            "endpoints": {
-                "auth": "/login, /register, /logout, /forgot-password, /reset-password",
-                "files": "/browse, /download/file, /download/folder, /delete, /create_folder",
-                "uploads": "/upload, /my_uploads",
-                "admin": "/admin/metrics, /admin/users, /admin/pending"
+    project_root = get_project_root()
+    frontend_dist_path = os.path.join(project_root, "client", "dist")
+
+    if os.path.exists(frontend_dist_path):
+        logger.info(f"Client build found at: {frontend_dist_path}")
+
+        @app.route('/assets/<path:filename>')
+        def serve_assets(filename):
+            return send_from_directory(os.path.join(frontend_dist_path, 'assets'), filename)
+
+        @app.route('/<path:filename>')
+        def serve_static(filename):
+            spa_routes = {
+                'login', 'register', 'forgot-password', 'reset-password',
+                'dashboard', 'metrics', 'users', 'pending', 'denied', 'uploads',
             }
-        }), 200
+            first_segment = filename.split('/', 1)[0]
+
+            if '.' in first_segment or '.' in filename.rsplit('/', 1)[-1]:
+                try:
+                    return send_from_directory(frontend_dist_path, filename)
+                except NotFound:
+                    if first_segment in spa_routes or filename.startswith('dashboard/'):
+                        return send_file(os.path.join(frontend_dist_path, 'index.html'))
+                    return jsonify({"error": "Not found"}), 404
+
+            if first_segment in spa_routes or filename.startswith('dashboard/'):
+                return send_file(os.path.join(frontend_dist_path, 'index.html'))
+
+            if request.accept_mimetypes.accept_html and request.method == 'GET':
+                return send_file(os.path.join(frontend_dist_path, 'index.html'))
+
+            return jsonify({"error": "Not found"}), 404
+
+        @app.route("/", methods=["GET"])
+        def serve_index():
+            return send_file(os.path.join(frontend_dist_path, 'index.html'))
+    else:
+        logger.warning(f"Client build not found at: {frontend_dist_path}")
+        logger.warning("Run 'npm run build' in client/ (no VITE_API_BASE_URL) then restart")
+
+        @app.route("/", methods=["GET"])
+        def root():
+            return jsonify({
+                "message": "Merkaz Server API",
+                "status": "running",
+                "note": "Client build not found. Run npm run build in client/ first.",
+                "endpoints": {
+                    "auth": "/login, /register, /logout, /forgot-password, /reset-password",
+                    "files": "/browse, /download/file, /download/folder, /delete, /create_folder",
+                    "uploads": "/upload, /my_uploads",
+                    "admin": "/admin/metrics, /admin/users, /admin/pending"
+                }
+            }), 200
 
     return app
 
 if __name__ == "__main__":
     logger.info("=" * 60)
-    logger.info("Starting Merkaz Server API")
+    logger.info("Starting Merkaz Server (API + UI)")
     logger.info("=" * 60)
 
     run_ngrok.main()
@@ -178,5 +220,5 @@ if __name__ == "__main__":
         SESSION_COOKIE_SECURE=_secure
     )
 
-    logger.info("Starting API with Waitress on 0.0.0.0:8000 (backend only)")
+    logger.info("Starting Waitress on 0.0.0.0:8000 (API + client/dist)")
     serve(app, host="0.0.0.0", port=8000)
