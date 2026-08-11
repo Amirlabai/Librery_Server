@@ -16,10 +16,17 @@ class User(ABC):
         if not name:
             return None
         return name.lower().capitalize()
+
+    @staticmethod
+    def _normalize_email(email):
+        """Normalize email for storage and case-insensitive lookup."""
+        if not email or not isinstance(email, str):
+            return email
+        return email.strip().lower()
     
     def __init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None,challenge=''):
         self.user_id = user_id  # Unique user ID
-        self.email = email
+        self.email = User._normalize_email(email)
         self.password = password  # This will now be a hashed password
         self.role = role
         self.status = status
@@ -27,7 +34,7 @@ class User(ABC):
         self.first_name = User._format_name(first_name)
         self.last_name = User._format_name(last_name)
         self.challenge = challenge
-        self.username = self.email.split("@")[0]
+        self.username = self.email.split("@")[0] if self.email else ""
         self.__full_name = f"{self.first_name} {self.last_name}" if self.first_name and self.last_name else self.username
 
     @property
@@ -90,7 +97,8 @@ class User(ABC):
     # --- Methods for Authenticated Users (auth_users.csv) ---
     @staticmethod
     def find_by_email(email):
-        """Finds a user by email in the authentication database."""
+        """Finds a user by email in the authentication database (case-insensitive)."""
+        email = User._normalize_email(email)
         return next((user for user in User.get_all() if user.email == email), None)
 
     @staticmethod
@@ -111,7 +119,8 @@ class User(ABC):
     # --- Methods for Pending Users (new_users.csv) ---
     @staticmethod
     def find_pending_by_email(email):
-        """Finds a user by email in the pending database."""
+        """Finds a user by email in the pending database (case-insensitive)."""
+        email = User._normalize_email(email)
         return next((user for user in User.get_pending() if user.email == email), None)
 
     @staticmethod
@@ -127,7 +136,8 @@ class User(ABC):
     # --- Methods for Denied Users (denied_users.csv) ---
     @staticmethod
     def find_denied_by_email(email):
-        """Finds a user by email in the denied database."""
+        """Finds a user by email in the denied database (case-insensitive)."""
+        email = User._normalize_email(email)
         return next((user for user in User.get_denied() if user.email == email), None)
 
     @staticmethod
@@ -144,6 +154,7 @@ class User(ABC):
     @staticmethod
     def toggle_role(email):
         """Toggles the role of a user between 'admin' and 'user'. Uses polymorphism to change instance type."""
+        email = User._normalize_email(email)
         users = User.get_all()
         for i, user in enumerate(users):
             if user.email == email:
@@ -167,6 +178,7 @@ class User(ABC):
     @staticmethod
     def toggle_status(email):
         """Toggles the status of a user between 'active' and 'inactive'."""
+        email = User._normalize_email(email)
         users = User.get_all()
         for user in users:
             if user.email == email:

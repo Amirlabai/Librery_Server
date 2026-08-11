@@ -57,6 +57,7 @@ class UserRepository:
             users = User.get_all()
             user_found = False
             already_activated = False
+            email = User._normalize_email(email)
             for user in users:
                 if user.email == email:
                     user_found = True

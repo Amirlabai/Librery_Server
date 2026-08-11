@@ -6,6 +6,7 @@ from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash
 
 from repositories.user_repository import UserRepository
+from models.user_entity import User
 from utils.logger_config import get_logger
 from utils import get_next_user_id
 from services import jwt_service, session_state_store
@@ -22,6 +23,7 @@ class AuthService:
     @staticmethod
     def login(email, password):
         """Authenticate a user and create session."""
+        email = User._normalize_email(email)
         logger.info(f"Login attempt for email: {email}")
         user = UserRepository.find_by_email(email)
 
@@ -42,6 +44,7 @@ class AuthService:
     @staticmethod
     def register(email, password, first_name, last_name):
         """Register a new user."""
+        email = User._normalize_email(email)
         logger.info(f"Registration attempt for email: {email}")
 
         if AuthService.email_exists(email):
@@ -68,6 +71,7 @@ class AuthService:
     @staticmethod
     def reset_password(email, new_password):
         """Reset a user's password."""
+        email = User._normalize_email(email)
         logger.info(f"Password reset attempt for email: {email}")
 
         if len(new_password) < 8:

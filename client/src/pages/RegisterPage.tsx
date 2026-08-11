@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import './auth.css';
+import { Link, useNavigate } from 'react-router-dom';
 import * as api from '../api';
 import { toastError, toastSuccess } from '../toast';
+import { useDarkMode } from '../useDarkMode';
 
 export default function RegisterPage() {
   const [firstName, setFirstName] = useState('');
@@ -10,6 +12,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const nav = useNavigate();
+  const isDark = useDarkMode();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,40 +30,92 @@ export default function RegisterPage() {
   }
 
   return (
-    <div style={{ maxWidth: 520, margin: '40px auto', padding: 16 }}>
-      <h2>Register</h2>
-      <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <input
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          placeholder="First name"
-          required
-        />
-        <input
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          placeholder="Last name"
-          required
-        />
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          type="email"
-          required
-        />
-        <input
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          type="password"
-          required
-        />
-        <button disabled={busy} type="submit">
-          {busy ? 'Registering...' : 'Register'}
-        </button>
-      </form>
+    <div className="page-root">
+      <div className="login-container">
+        <div className="auth-brand">
+          <img
+            src={isDark ? '/assets/icons/banner-logo-dark-mode.webp' : '/assets/icons/banner-logo.webp'}
+            alt="Merkaz"
+          />
+        </div>
+        <header className="auth-header">
+          <h1 className="auth-title">Create account</h1>
+          <p className="auth-subtitle">Join the Merkaz file library</p>
+        </header>
+
+        <form onSubmit={onSubmit} className="login-form">
+          <div>
+            <label className="field-label" htmlFor="firstName">
+              First name
+            </label>
+            <input
+              id="firstName"
+              className="full-width"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              autoComplete="given-name"
+            />
+          </div>
+
+          <div>
+            <label className="field-label" htmlFor="lastName">
+              Last name
+            </label>
+            <input
+              id="lastName"
+              className="full-width"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              autoComplete="family-name"
+            />
+          </div>
+
+          <div>
+            <label className="field-label" htmlFor="email">
+              Email
+            </label>
+            <input
+              id="email"
+              className="full-width"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              required
+              autoComplete="email"
+            />
+          </div>
+
+          <div>
+            <label className="field-label" htmlFor="password">
+              Password
+            </label>
+            <input
+              id="password"
+              className="full-width"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              required
+              autoComplete="new-password"
+            />
+          </div>
+
+          <button disabled={busy} type="submit" className="button">
+            {busy ? 'Creating account...' : 'Create account'}
+          </button>
+        </form>
+
+        <div className="auth-links">
+          <p className="have-account">
+            Already have an account?
+            <Link className="create" to="/login">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
-

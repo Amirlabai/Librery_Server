@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import './dashboard.css';
 import { toastError } from '../toast';
 import { authGetJson } from '../authFetch';
 
@@ -8,6 +10,13 @@ type UploadHistory = {
   path: string | null;
   status: string;
 };
+
+function statusClass(status: string): string {
+  if (status === 'Pending Review') return 'status-pending';
+  if (status === 'Declined') return 'status-declined';
+  if (status === 'Approved') return 'status-approved';
+  return '';
+}
 
 export default function MyUploadsPage() {
   const [uploads, setUploads] = useState<UploadHistory[]>([]);
@@ -27,35 +36,60 @@ export default function MyUploadsPage() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div style={{ padding: 16 }}>
-      <h2>My uploads</h2>
-      {busy && <div>Loading...</div>}
-      {!busy && uploads.length === 0 && <div>No uploads.</div>}
-      {!busy && uploads.length > 0 && (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>File</th>
-              <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>Status</th>
-              <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {uploads.map((u, idx) => (
-              <tr key={u.filename + idx}>
-                <td style={{ padding: '8px 0' }}>{u.filename}</td>
-                <td style={{ padding: '8px 0' }}>{u.status}</td>
-                <td style={{ padding: '8px 0' }}>{u.timestamp}</td>
+    <div className="page-root">
+      <div className="container">
+        <header className="header">
+          <h1>My Upload History</h1>
+          <Link to="/dashboard" className="my-uploads-btn">
+            Back to Files
+          </Link>
+        </header>
+
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Filename</th>
+                <th>Suggested Path</th>
+                <th style={{ width: '20%' }}>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {busy && (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: 'center', padding: 20 }}>
+                    Loading...
+                  </td>
+                </tr>
+              )}
+
+              {!busy &&
+                uploads.map((upload) => (
+                  <tr key={`${upload.timestamp}-${upload.filename}`}>
+                    <td data-label="Timestamp">{upload.timestamp}</td>
+                    <td data-label="Filename">{upload.filename}</td>
+                    <td data-label="Suggested Path">/{upload.path || 'Home'}</td>
+                    <td data-label="Status">
+                      <span className={statusClass(upload.status)}>{upload.status}</span>
+                    </td>
+                  </tr>
+                ))}
+
+              {!busy && uploads.length === 0 && (
+                <tr>
+                  <td colSpan={4} style={{ textAlign: 'center', color: 'var(--placeholder-color)', padding: 30 }}>
+                    You have not uploaded any files.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
-

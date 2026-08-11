@@ -8,24 +8,14 @@ export default function UploadProgressWidget() {
   if (!isActive) return null;
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        right: 16,
-        bottom: 16,
-        width: 360,
-        background: 'rgba(17, 24, 39, 0.92)',
-        color: '#fff',
-        borderRadius: 12,
-        padding: 14,
-        boxShadow: '0 12px 30px rgba(0,0,0,0.2)',
-      }}
-    >
-      <div style={{ fontWeight: 600, marginBottom: 8 }}>
-        Upload {type === 'folder' ? 'folder' : 'files'}: {pct}%
+    <div className="upload-progress-widget" role="status" aria-live="polite">
+      <div className="upload-progress-widget__title">
+        Uploading {type === 'folder' ? 'folder' : 'files'}: {pct}%
       </div>
-      <div style={{ fontSize: 12, opacity: 0.85, wordBreak: 'break-word' }}>{currentFile}</div>
+      <div className="upload-progress-widget__file">{currentFile || 'Preparing...'}</div>
+      <div className="upload-progress-widget__bar" aria-hidden="true">
+        <div className="upload-progress-widget__fill" style={{ transform: `scaleX(${Math.max(0, Math.min(100, pct)) / 100})` }} />
+      </div>
     </div>
   );
 }
-

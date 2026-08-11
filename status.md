@@ -29,6 +29,18 @@
 - [ ] Run full manual smoke test (login, browse, upload progress, admin, puzzles) — use `cd server` then `python app.py`
 - [ ] Open PR: `audit/integration` → `main`
 - [ ] `pip install -r server/requirements.txt` on server (adds PyJWT)
+- [ ] Restart Flask after email case-insensitive login fix and verify `amirlabay@Gmail.com` logs in
+
+## Completed (auth email case)
+
+- [x] Case-insensitive email login/lookup (`User._normalize_email`); capital letters in domain no longer block auth
+
+## Completed (mobile adapt)
+
+- [x] Desktop-aware mobile adapt ≤768px across `styles.css`, `dashboard.css`, `auth.css`, `admin.css`
+- [x] Table → stacked row-cards with `data-label` (no page horizontal scroll)
+- [x] Viewport-fit, safe-area, coarse-pointer targets; auth breakpoint unified to 768
+- [x] Verified 375 and 1280 layouts; `detect.mjs` clean; client build OK
 
 ## Completed (React cleanup)
 
@@ -43,7 +55,13 @@ During the Angular → React port, follow this deletion checklist (ponytail rule
 - Delete Angular build/doc tooling as React replaces it: Compodoc output generation (`scripts/generate_frontend_docs.py` + `documentation/autogen/**`) when we remove the Angular app.
 - Delete Angular “.component.ts + .html + .css triplets” by porting each page into one or two React files: `pages/*.tsx` plus optional co-located CSS.
 - Keep the business logic that actually matters: upload sequencing/retry and progress aggregation; port it into `client/src/api.ts` (or a small `upload.ts` module) with behavior parity.
-- Keep the hidden challenge UI as a lightweight React layer: keyboard activation + leaderboard shell; server remains the authority for activation and scoring.
+- [x] Modern Merkaz UI system: brand yellow + ink tokens, auth/upload/dashboard/admin shells
+- [x] SPA routing fix for `/uploads` and related Flask/Vite conflicts
+- [x] React dashboard UI restored from Angular Material layout (header, table browse, modals, footer)
+- [x] Auth pages use modern card layout; challenge UI removed from shell
+- [x] Logo assets restored under `client/public/assets/icons/`
+- [x] Wrote `PRODUCT.md`, `DESIGN.md`, and `.impeccable/design.json` for Impeccable memory
+- [x] Admin row overflow: Edit/Delete in vertical 3-dot menu
 
 ## Verification (best effort in this environment)
 

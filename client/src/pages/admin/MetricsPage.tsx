@@ -1,26 +1,54 @@
 import React from 'react';
-import './admin.css';
+import AdminLayout from './AdminLayout';
 
 const logs = [
-  { type: 'session', name: 'Session Log (Login/Logout)' },
-  { type: 'download', name: 'Download Log (File/Folder/Delete)' },
-  { type: 'suggestion', name: 'Suggestion Log (User Feedback)' },
-  { type: 'upload', name: 'Upload Log (Uploads traffic)' },
-  { type: 'declined', name: 'Declined Log (Declined Files)' },
+  {
+    type: 'session',
+    name: 'Session Log (Login/Logout)',
+    description: 'Track user login and failure events.',
+  },
+  {
+    type: 'download',
+    name: 'Download Log (File/Folder/Delete)',
+    description: 'Track all file, folder, and delete events.',
+  },
+  {
+    type: 'suggestion',
+    name: 'Suggestion Log (User Feedback)',
+    description: 'Records all user suggestions.',
+  },
+  {
+    type: 'upload',
+    name: 'Upload Log (Uploads traffic)',
+    description: 'Records all uploads.',
+  },
+  {
+    type: 'declined',
+    name: 'Declined Log (Declined Files)',
+    description: 'Records all declined files.',
+  },
 ];
 
 export default function MetricsPage() {
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Admin metrics</h2>
-      <div style={{ display: 'grid', gap: 10, maxWidth: 720 }}>
-        {logs.map((l) => (
-          <button key={l.type} onClick={() => window.open(`/admin/metrics/download/${l.type}`, '_blank')}>
-            Download {l.name}
-          </button>
+    <AdminLayout activeTab="metrics">
+      <div className="content-wrapper">
+        {logs.map((log) => (
+          <div key={log.type} className="log-item">
+            <div className="log-details">
+              <h2>{log.name}</h2>
+              <p>{log.description}</p>
+            </div>
+            <button
+              type="button"
+              className="download-btn"
+              onClick={() => window.open(`/admin/metrics/download/${log.type}`, '_blank')}
+            >
+              Download as Excel
+            </button>
+          </div>
         ))}
       </div>
-    </div>
+    </AdminLayout>
   );
 }
-

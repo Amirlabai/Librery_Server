@@ -1,77 +1,152 @@
-/* You can add global styles to this file, and also import other style files */
 :root {
-  
-  --bg-color: #d6e0e6;
-  --text-color: #000000;
-  --primary-color: #3f51b5; 
+  --bg-color: #e8eef2;
+  --bg-accent: #f3f0e6;
+  --text-color: #14181f;
+  --text-muted: #5a6470;
+  --primary-color: #1c2430;
 
-  --card-bg: #fdfdfd; 
-  --search-box-color: #f1f3f4; 
-  --suggestion-box-color: #ffffff; 
+  --card-bg: #ffffff;
+  --search-box-color: #f4f6f8;
+  --suggestion-box-color: #ffffff;
 
-  --primary-buttons: #1a73e8; 
-  --buttons-color: #dadee2; 
-  --buttons-hover-color: #d2d5d9; 
-  --download-edit-buttons: #e8f0fe; 
-  --buttons-text-color: #1967d2; 
+  --brand: #e6b422;
+  --brand-strong: #d4a41a;
+  --brand-soft: #fff6d6;
 
-  --placeholder-color: #5f6368; 
+  --primary-buttons: #1c2430;
+  --primary-buttons-hover: #2a3444;
+  --buttons-color: #eef1f4;
+  --buttons-hover-color: #e2e7ec;
+  --download-edit-buttons: #eef1f4;
+  --buttons-text-color: #1c2430;
 
-  --scroll-color: #c5c5c5; 
-  --selected-row-color: #f1f3f4; 
+  --placeholder-color: #5a6470;
+  --scroll-color: #c5ced6;
+  --selected-row-color: #f3f6f8;
 
-  --modal-card-color:white;
+  --modal-card-color: #ffffff;
 
-  --delete-button-bg: #fce8e6;
-  --delete-button-text: #c5221f;
+  --delete-button-bg: #fceceb;
+  --delete-button-text: #b42318;
 
-  --buttons-border:1px solid #ccc;
-  --search-box-color: #ffffff;
+  --buttons-border: 1px solid transparent;
+  --th-td-border-color: #dce3e8;
 
-  --th-td-border-color:rgb(175, 167, 167);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow-soft: 0 10px 30px rgba(20, 24, 31, 0.08);
+  --shadow-panel: 0 18px 48px rgba(20, 24, 31, 0.1);
+  --focus-ring: 0 0 0 3px rgba(230, 180, 34, 0.35);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --font: 'Assistant', 'Segoe UI', sans-serif;
 }
-html, body {
+
+html,
+body {
   height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
-  font-family: 'Roboto', 'Arial', sans-serif;
-  overflow: hidden; 
-}
-
-body.dark-mode {
-  --bg-color: #121212; 
-  --text-color: #ffffff; 
-  --primary-color: #0d47a1; 
-
-  --card-bg: #1e1e1e; 
-  --search-box-color: #1e1e1e; 
-  --suggestion-box-color: #2c2c2c; 
-
-  --primary-buttons: #1a73e8; 
-  --buttons-color: #333333; 
-  --buttons-hover-color: #4a4a4a; 
-  --download-edit-buttons: #1a73e8; 
-  --buttons-text-color: #ffffff; 
-
-  --placeholder-color: #b0b0b0; 
-  
-  --scroll-color: #444444; 
-  --selected-row-color: #2a2a2a; 
-
-  --modal-card-color:#2c2c2c;
-
-  --delete-button-bg: #CC3333;
-  --delete-button-text: #ffffff;
-  --buttons-border: none;
-
-  --search-box-color: #2c2c2c;
-  --th-td-border-color: rgb(75, 75, 75);
+  font-family: var(--font);
+  overflow: hidden;
+  overflow-x: clip;
 }
 
 body {
-  background-color: var(--bg-color);
+  background:
+    radial-gradient(1200px 600px at 12% -10%, rgba(230, 180, 34, 0.18), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgba(28, 36, 48, 0.06), transparent 50%),
+    var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.3s, color 0.3s; 
+  transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
+}
+
+body.dark-mode {
+  --bg-color: #0f1217;
+  --bg-accent: #171b22;
+  --text-color: #f3f5f7;
+  --text-muted: #a7b0ba;
+  --primary-color: #f3f5f7;
+
+  --card-bg: #171b22;
+  --search-box-color: #1f2530;
+  --suggestion-box-color: #1f2530;
+
+  --brand: #e6b422;
+  --brand-strong: #f0c43a;
+  --brand-soft: #3a3218;
+
+  --primary-buttons: #e6b422;
+  --primary-buttons-hover: #f0c43a;
+  --buttons-color: #242a35;
+  --buttons-hover-color: #2e3644;
+  --download-edit-buttons: #242a35;
+  --buttons-text-color: #f3f5f7;
+
+  --placeholder-color: #a7b0ba;
+  --scroll-color: #3a4352;
+  --selected-row-color: #222833;
+
+  --modal-card-color: #1f2530;
+
+  --delete-button-bg: #4a1d1a;
+  --delete-button-text: #ffb4a9;
+  --buttons-border: none;
+  --th-td-border-color: #2c3440;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-panel: 0 18px 48px rgba(0, 0, 0, 0.45);
+  --focus-ring: 0 0 0 3px rgba(230, 180, 34, 0.4);
+
+  background:
+    radial-gradient(1000px 500px at 10% -10%, rgba(230, 180, 34, 0.12), transparent 55%),
+    radial-gradient(800px 400px at 100% 0%, rgba(255, 255, 255, 0.03), transparent 45%),
+    var(--bg-color);
+}
+
+#root {
+  width: 100%;
+  min-height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+.dark-mode-button {
+  position: fixed;
+  top: max(14px, env(safe-area-inset-top, 0px));
+  right: max(14px, env(safe-area-inset-right, 0px));
+  z-index: 100;
+  border: none;
+  background: var(--card-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 8px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+
+.dark-mode-button:hover {
+  transform: translateY(-1px);
+  background: var(--buttons-hover-color);
+}
+
+.dark-mode-button:active {
+  transform: translateY(1px);
+}
+
+.dark-mode-button:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
 .app-notification {
@@ -79,43 +154,131 @@ body {
   bottom: 20px;
   left: 20px;
   color: white;
-  padding: 14px 22px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  font-size: 15px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  font-size: 14px;
   z-index: 1000;
-  animation: fadeIn 0.3s ease forwards; 
-  max-width: 300px;
+  animation: fadeIn 0.28s var(--ease) forwards;
+  max-width: 320px;
   font-weight: 500;
 }
 
 .app-notification.success {
-  background-color: #2e7d32; 
+  background-color: #1f7a3f;
 }
 
 .app-notification.error {
-  background-color: #d32f2f; 
+  background-color: #c0352b;
+}
+
+.upload-progress-widget {
+  position: fixed;
+  right: max(18px, env(safe-area-inset-right, 0px));
+  bottom: max(18px, env(safe-area-inset-bottom, 0px));
+  width: min(360px, calc(100vw - 32px));
+  background: var(--card-bg);
+  color: var(--text-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-panel);
+  border: 1px solid var(--th-td-border-color);
+  z-index: 1100;
+}
+
+.upload-progress-widget__title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.upload-progress-widget__file {
+  font-size: 12px;
+  color: var(--text-muted);
+  word-break: break-word;
+  margin-bottom: 10px;
+}
+
+.upload-progress-widget__bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--search-box-color);
+  overflow: hidden;
+}
+
+.upload-progress-widget__fill {
+  height: 100%;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--brand);
+  border-radius: inherit;
+  transition: transform 0.2s var(--ease);
 }
 
 @keyframes fadeIn {
-  0% { 
-    opacity: 0; 
-    transform: translateY(20px); 
+  from {
+    opacity: 0;
+    transform: translateY(12px);
   }
-  100% { 
-    opacity: 1; 
-    transform: translateY(0); 
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (pointer: coarse) {
+  .dark-mode-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+  }
+
+  .button,
+  .upload-btn,
+  .logout-btn,
+  .my-uploads-btn,
+  .admin-dashboard-btn,
+  .create-folder-btn,
+  .action-btn,
+  .row-menu-trigger,
+  .download-btn,
+  .approve-btn,
+  .deny-btn {
+    min-height: 44px;
   }
 }
 
 @media (max-width: 768px) {
+  .dark-mode-button {
+    top: max(12px, env(safe-area-inset-top, 0px));
+    right: max(12px, env(safe-area-inset-right, 0px));
+  }
+
   .app-notification {
-    top: 20px !important;
+    top: max(20px, calc(env(safe-area-inset-top, 0px) + 52px)) !important;
     bottom: auto !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    max-width: 90vw !important;
+    max-width: min(90vw, 320px) !important;
     text-align: center !important;
     width: max-content !important;
+  }
+
+  .upload-progress-widget {
+    left: max(16px, env(safe-area-inset-left, 0px));
+    right: max(16px, env(safe-area-inset-right, 0px));
+    width: auto;
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
   }
 }

@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import './admin.css';
+import AdminLayout from './AdminLayout';
 import { toastError, toastSuccess } from '../../toast';
 import { authGetJson, authPostJson } from '../../authFetch';
+import { useAuth } from '../../auth';
 
 type AdminUser = {
   email: string;
-  role: string;
-  status: string;
+  role?: string;
+  status?: string;
+  is_admin?: boolean;
+  is_active?: boolean;
   online_status?: boolean;
 };
 
 export default function UsersPage() {
+  const { user } = useAuth();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -28,7 +32,6 @@ export default function UsersPage() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function toggleRole(email: string) {
@@ -51,36 +54,93 @@ export default function UsersPage() {
     }
   }
 
+  const currentEmail = user?.email || '';
+
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Admin users</h2>
-      {busy && <div>Loading...</div>}
-      {!busy && (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>Email</th>
-              <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>Role</th>
-              <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>Status</th>
-              <th style={{ textAlign: 'left', borderBottom: '1px solid #ddd' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((u) => (
-              <tr key={u.email}>
-                <td style={{ padding: '8px 0' }}>{u.email}</td>
-                <td style={{ padding: '8px 0' }}>{u.role}</td>
-                <td style={{ padding: '8px 0' }}>{u.status}</td>
-                <td style={{ padding: '8px 0' }}>
-                  <button onClick={() => toggleRole(u.email)}>Toggle role</button>{' '}
-                  <button onClick={() => toggleStatus(u.email)}>Toggle status</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+    <AdminLayout activeTab="users">
+      <div className="content-wrapper">
+        <div className="scrollable-content">
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th style={{ width: '15%', textAlign: 'center' }}>Role</th>
+                  <th style={{ width: '15%', textAlign: 'center' }}>Status</th>
+                  <th style={{ width: '15%', textAlign: 'center' }}>Online Status</th>
+                  <th style={{ width: '30%', textAlign: 'center' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {busy && (
+                  <tr>
+                    <td colSpan={5} className="empty-cell">
+                      Loading...
+                    </td>
+                  </tr>
+                )}
+
+                {!busy &&
+                  users.map((u) => {
+                    const isAdmin = u.is_admin ?? u.role === 'admin';
+                    const isActive = u.is_active ?? u.status === 'active';
+                    const isOnline = !!u.online_status;
+
+                    return (
+                      <tr key={u.email}>
+                        <td data-label="Email">{u.email}</td>
+                        <td data-label="Role" style={{ textAlign: 'center' }}>
+                          <span className={`badge ${isAdmin ? 'role-admin' : 'role-user'}`}>
+                            {isAdmin ? 'Admin' : 'User'}
+                          </span>
+                        </td>
+                        <td data-label="Status" style={{ textAlign: 'center' }}>
+                          <span className={`badge ${isActive ? 'status-active' : 'status-inactive'}`}>
+                            {isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                        <td data-label="Online Status" style={{ textAlign: 'center' }}>
+                          <span className={`online-status ${isOnline ? 'online' : 'offline'}`} />
+                          {isOnline ? 'Online' : 'Offline'}
+                        </td>
+                        <td className="actions-cell" data-label="Actions">
+                          {u.email !== currentEmail ? (
+                            <>
+                              <button
+                                type="button"
+                                className={`action-btn ${isAdmin ? 'remove-admin' : 'make-admin'}`}
+                                onClick={() => toggleRole(u.email)}
+                              >
+                                {isAdmin ? 'Remove Admin' : 'Make Admin'}
+                              </button>
+                              <button
+                                type="button"
+                                className={`action-btn ${isActive ? 'deactivate-user' : 'activate-user'}`}
+                                onClick={() => toggleStatus(u.email)}
+                              >
+                                {isActive ? 'Deactivate' : 'Activate'}
+                              </button>
+                            </>
+                          ) : (
+                            <span>(You)</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+
+                {!busy && users.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="empty-cell">
+                      No users found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </AdminLayout>
   );
 }
-

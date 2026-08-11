@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './admin.css';
+import AdminLayout from './AdminLayout';
 import { toastError, toastSuccess } from '../../toast';
 import { authGetJson, authPostJson } from '../../authFetch';
 
@@ -26,7 +26,6 @@ export default function PendingPage() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function approve(email: string) {
@@ -50,30 +49,51 @@ export default function PendingPage() {
   }
 
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Pending users</h2>
-      {busy && <div>Loading...</div>}
-      {!busy && users.length === 0 && <div>No pending users.</div>}
-      {!busy && users.length > 0 && (
-        <div style={{ display: 'grid', gap: 10 }}>
-          {users.map((u) => (
-            <div
-              key={u.email}
-              style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: 12, background: 'rgba(0,0,0,0.03)', borderRadius: 12 }}
-            >
-              <div>
-                <div style={{ fontWeight: 600 }}>{u.email}</div>
-                <div style={{ fontSize: 12, opacity: 0.75 }}>{u.status || ''}</div>
-              </div>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <button onClick={() => approve(u.email)}>Approve</button>
-                <button onClick={() => deny(u.email)}>Deny</button>
-              </div>
-            </div>
-          ))}
+    <AdminLayout activeTab="pending">
+      <div className="content-wrapper">
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th style={{ width: '25%', textAlign: 'center' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {busy && (
+                <tr>
+                  <td colSpan={2} className="empty-cell">
+                    Loading...
+                  </td>
+                </tr>
+              )}
+
+              {!busy &&
+                users.map((u) => (
+                  <tr key={u.email}>
+                    <td data-label="Email">{u.email}</td>
+                    <td data-label="Action" style={{ textAlign: 'center' }}>
+                      <button type="button" className="action-btn approve-btn" onClick={() => approve(u.email)}>
+                        Approve
+                      </button>
+                      <button type="button" className="action-btn deny-btn" onClick={() => deny(u.email)}>
+                        Deny
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
+              {!busy && users.length === 0 && (
+                <tr>
+                  <td colSpan={2} className="empty-cell">
+                    No users are pending approval.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
-

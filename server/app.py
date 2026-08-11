@@ -7,7 +7,7 @@ frontend made by Yosef Nago
 import os
 import logging
 
-from flask import Flask, jsonify, send_from_directory, send_file
+from flask import Flask, jsonify, request, send_from_directory, send_file
 from werkzeug.exceptions import NotFound
 from waitress import serve
 from datetime import timedelta
@@ -93,30 +93,36 @@ def create_app():
             """Serve Angular assets."""
             return send_from_directory(os.path.join(frontend_dist_path, 'assets'), filename)
         
-        # Serve other static files (JS, CSS, etc.) - catch-all for Angular SPA routes
-        # This route is registered AFTER blueprints, so API routes take precedence
+        # Catch-all for SPA routes / static files. Registered AFTER blueprints so
+        # real API handlers win when they match. Do not 404 SPA paths that share
+        # prefixes with APIs (e.g. /uploads vs /upload, /login page vs POST /login).
         @app.route('/<path:filename>')
         def serve_static(filename):
-            """Serve static files from Angular build or fallback to index.html for SPA routes."""
-            # List of API route prefixes to avoid serving as static files
-            api_prefixes = ['login', 'register', 'browse', 'upload', 'admin', 'download', 
-                           'delete', 'create_folder', 'suggest', 'my_uploads', 
-                           'forgot-password', 'reset-password', 'logout', 'refresh-session']
-            
-            # If it matches an API route prefix, it should have been handled by blueprints
-            # If we reach here, it's likely an Angular route or static file
-            if any(filename.startswith(prefix) for prefix in api_prefixes):
-                return jsonify({"error": "Not found"}), 404
-            
-            # Check if it's a static file (has extension)
-            if '.' in filename:
+            """Serve static files from client build or fallback to index.html for SPA routes."""
+            spa_routes = {
+                'login', 'register', 'forgot-password', 'reset-password',
+                'dashboard', 'metrics', 'users', 'pending', 'denied', 'uploads',
+            }
+            first_segment = filename.split('/', 1)[0]
+
+            # Prefer static assets when the path looks like a file.
+            if '.' in first_segment or '.' in filename.rsplit('/', 1)[-1]:
                 try:
                     return send_from_directory(frontend_dist_path, filename)
                 except NotFound:
-                    pass
-            
-            # For Angular routes (SPA), serve index.html
-            return send_file(os.path.join(frontend_dist_path, 'index.html'))
+                    if first_segment in spa_routes or filename.startswith('dashboard/'):
+                        return send_file(os.path.join(frontend_dist_path, 'index.html'))
+                    return jsonify({"error": "Not found"}), 404
+
+            # Client-side routes always get the SPA shell.
+            if first_segment in spa_routes or filename.startswith('dashboard/'):
+                return send_file(os.path.join(frontend_dist_path, 'index.html'))
+
+            # Browser navigations that miss both API and SPA: still serve SPA.
+            if request.accept_mimetypes.accept_html and request.method == 'GET':
+                return send_file(os.path.join(frontend_dist_path, 'index.html'))
+
+            return jsonify({"error": "Not found"}), 404
         
         # Root route - serve Angular index.html
         @app.route("/", methods=["GET"])

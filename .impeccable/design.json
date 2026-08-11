@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-11T13:11:00+03:00",
+  "title": "Design System: Merkaz",
+  "extensions": {
+    "colorMeta": {
+      "brand": { "role": "primary", "displayName": "Mustard Brand", "canonical": "#e6b422" },
+      "ink": { "role": "primary", "displayName": "Desk Ink", "canonical": "#1c2430" },
+      "mist-bg": { "role": "neutral", "displayName": "Cool Mist", "canonical": "#e8eef2" },
+      "surface": { "role": "neutral", "displayName": "Paper Surface", "canonical": "#ffffff" },
+      "text": { "role": "neutral", "displayName": "Ink Text", "canonical": "#14181f" },
+      "text-muted": { "role": "neutral", "displayName": "Muted Text", "canonical": "#5a6470" },
+      "danger-text": { "role": "semantic", "displayName": "Danger", "canonical": "#b42318" }
+    },
+    "typographyMeta": {
+      "title": { "displayName": "Title", "purpose": "Auth page titles." },
+      "headline": { "displayName": "Headline", "purpose": "Panel headers." },
+      "body": { "displayName": "Body", "purpose": "Forms, tables, descriptions." },
+      "label": { "displayName": "Label", "purpose": "Field labels and table headers." }
+    },
+    "shadows": [
+      { "name": "soft", "value": "0 10px 30px rgba(20, 24, 31, 0.08)", "purpose": "Small chrome and menus." },
+      { "name": "panel", "value": "0 18px 48px rgba(20, 24, 31, 0.1)", "purpose": "Page panels, auth cards, modals." },
+      { "name": "focus", "value": "0 0 0 3px rgba(230, 180, 34, 0.35)", "purpose": "Keyboard focus ring." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "Default state and panel entrance easing." },
+      { "name": "panelIn", "value": "opacity/transform 0.35s", "purpose": "Single authored panel entrance." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "768px" },
+      { "name": "auth-mobile", "value": "600px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ink CTA for submit and high-commitment actions.",
+      "html": "<button class=\"ds-btn-primary\">Sign in</button>",
+      "css": ".ds-btn-primary{background:#1c2430;color:#fff;padding:12px 16px;border:none;border-radius:8px;font:600 0.95rem Assistant,Segoe UI,sans-serif;cursor:pointer;transition:background-color .2s cubic-bezier(.22,1,.36,1),transform .15s cubic-bezier(.22,1,.36,1)}.ds-btn-primary:hover{background:#2a3444}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(230,180,34,.35)}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Quiet actions like Back to files and Logout.",
+      "html": "<button class=\"ds-btn-secondary\">Back to files</button>",
+      "css": ".ds-btn-secondary{background:#eef1f4;color:#14181f;padding:8px 14px;border:none;border-radius:8px;font:600 0.86rem Assistant,Segoe UI,sans-serif;cursor:pointer}.ds-btn-secondary:hover{background:#e2e7ec}"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Auth and modal fields on subtle wells.",
+      "html": "<label class=\"ds-label\">Email</label><input class=\"ds-input\" type=\"email\" placeholder=\"name@example.com\" />",
+      "css": ".ds-label{display:block;font:600 0.82rem Assistant,Segoe UI,sans-serif;color:#5a6470;margin-bottom:4px}.ds-input{width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #dce3e8;border-radius:8px;background:#f4f6f8;color:#14181f;font:400 0.95rem Assistant,Segoe UI,sans-serif}.ds-input:focus{outline:none;border-color:#e6b422;box-shadow:0 0 0 3px rgba(230,180,34,.35);background:#fff}"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Centered operate panel for dashboard, admin, upload.",
+      "html": "<div class=\"ds-panel\"><h1 class=\"ds-headline\">Admin Dashboard</h1><p class=\"ds-body\">Manage users, uploads, and logs.</p></div>",
+      "css": ".ds-panel{background:#fff;border:1px solid #dce3e8;border-radius:18px;box-shadow:0 18px 48px rgba(20,24,31,.1);padding:22px 28px;max-width:1080px}.ds-headline{margin:0 0 8px;font:700 1.35rem Assistant,Segoe UI,sans-serif;letter-spacing:-0.02em;color:#14181f}.ds-body{margin:0;color:#5a6470;font:400 0.95rem Assistant,Segoe UI,sans-serif}"
+    },
+    {
+      "name": "Admin Tab",
+      "kind": "nav",
+      "refersTo": "nav-tab",
+      "description": "Admin section tabs with brand underline when active.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-tab\">Users</a><a class=\"ds-tab ds-tab-active\">Metrics</a></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;border-bottom:1px solid #dce3e8}.ds-tab{padding:10px 14px;color:#5a6470;text-decoration:none;font:600 0.9rem Assistant,Segoe UI,sans-serif;border-radius:8px 8px 0 0}.ds-tab:hover{background:#f3f6f8}.ds-tab-active{color:#14181f;border-bottom:3px solid #e6b422}"
+    },
+    {
+      "name": "Row Menu Trigger",
+      "kind": "custom",
+      "refersTo": "row-menu",
+      "description": "Vertical 3-dot overflow for Edit/Delete on file rows.",
+      "html": "<button class=\"ds-row-menu\" aria-label=\"More actions\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"currentColor\"><circle cx=\"12\" cy=\"5\" r=\"2\"/><circle cx=\"12\" cy=\"12\" r=\"2\"/><circle cx=\"12\" cy=\"19\" r=\"2\"/></svg></button>",
+      "css": ".ds-row-menu{width:34px;height:32px;display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:7px;background:#eef1f4;color:#14181f;cursor:pointer}.ds-row-menu:hover{background:#e2e7ec}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Mustard Brush Desk",
+    "overview": "Merkaz is an Operate-mode file library. The visual world comes from the community brand mark (mustard brushstroke). The UI should feel like a calm community desk: warm, clear, competent. Brand yellow is rare; ink handles commitment; soft mist and white panels carry the work.",
+    "keyCharacteristics": [
+      "Mustard brand accent on focus, active tabs, and soft action fills",
+      "Ink primary buttons in light mode; brand yellow primary in dark mode",
+      "Centered panels on mist with soft panel shadows",
+      "Assistant typeface throughout",
+      "Overflow admin actions in a vertical 3-dot menu"
+    ],
+    "rules": [
+      { "name": "The One Brush Rule", "body": "Brand yellow appears as accent or soft fill, never as large decorative gradients or purple-tinted AI skins.", "section": "colors" },
+      { "name": "The Sentence Case Rule", "body": "UI headings use sentence case, not Title Case Everywhere.", "section": "typography" },
+      { "name": "The Resting Flat Rule", "body": "Rows and list items are flat. Lift belongs to the page panel and open menus/modals.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep brand yellow rare and meaningful (focus, active, soft fills).",
+      "Do center Operate panels on mist; keep #root filling the viewport.",
+      "Do collapse overflowing row actions into the 3-dot menu.",
+      "Do use Assistant and sentence-case headings.",
+      "Do preserve logo assets at /assets/icons/banner-logo.webp and dark variant."
+    ],
+    "donts": [
+      "Don't reintroduce Material purple, Inter, or generic AI gradient heroes.",
+      "Don't wrap four action buttons into multi-line table cells.",
+      "Don't use emoji as icons; use the SVG set in client/src/components/Icons.tsx.",
+      "Don't treat SPA routes like /uploads as API 404s.",
+      "Don't bring back the challenge/puzzle shell unless product asks for it."
+    ]
+  }
+}

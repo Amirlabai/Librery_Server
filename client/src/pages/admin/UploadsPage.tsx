@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './admin.css';
+import AdminLayout from './AdminLayout';
 import { toastError, toastSuccess } from '../../toast';
 import { authGetJson, authPostJson } from '../../authFetch';
 
@@ -28,8 +28,11 @@ export default function UploadsPage() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  function updatePath(index: number, path: string) {
+    setUploads((prev) => prev.map((item, i) => (i === index ? { ...item, path } : item)));
+  }
 
   async function approve(item: UploadItem) {
     try {
@@ -53,36 +56,69 @@ export default function UploadsPage() {
   }
 
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Admin uploads</h2>
-      {busy && <div>Loading...</div>}
-      {!busy && uploads.length === 0 && <div>No pending uploads.</div>}
-      {!busy && uploads.length > 0 && (
-        <div style={{ display: 'grid', gap: 10 }}>
-          {uploads.map((u) => (
-            <div
-              key={u.filename + u.timestamp}
-              style={{
-                display: 'grid',
-                gap: 6,
-                padding: 12,
-                borderRadius: 12,
-                background: 'rgba(0,0,0,0.03)',
-              }}
-            >
-              <div style={{ fontWeight: 600 }}>{u.filename}</div>
-              <div style={{ fontSize: 12, opacity: 0.8 }}>Uploader: {u.email}</div>
-              <div style={{ fontSize: 12, opacity: 0.8 }}>Target: {u.path}</div>
-              <div style={{ fontSize: 12, opacity: 0.8 }}>Time: {u.timestamp}</div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => approve(u)}>Approve</button>
-                <button onClick={() => decline(u)}>Decline</button>
-              </div>
-            </div>
-          ))}
+    <AdminLayout activeTab="uploads">
+      <div className="content-wrapper">
+        <div className="scrollable-content">
+          <div className="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>User Email</th>
+                  <th>Uploaded Item</th>
+                  <th style={{ width: '40%' }}>Approve Location</th>
+                  <th style={{ width: '15%', textAlign: 'center' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {busy && (
+                  <tr>
+                    <td colSpan={5} className="empty-cell">
+                      Loading...
+                    </td>
+                  </tr>
+                )}
+
+                {!busy &&
+                  uploads.map((upload, index) => (
+                    <tr key={`${upload.timestamp}-${upload.filename}`}>
+                      <td data-label="Timestamp">{upload.timestamp}</td>
+                      <td data-label="User Email">{upload.email}</td>
+                      <td data-label="Uploaded Item">{upload.filename}</td>
+                      <td data-label="Approve Location">
+                        <input
+                          type="text"
+                          value={upload.path}
+                          onChange={(e) => updatePath(index, e.target.value)}
+                          placeholder="Enter destination path"
+                          className="path-input"
+                        />
+                      </td>
+                      <td data-label="Actions" style={{ textAlign: 'center' }}>
+                        <div className="actions-cell">
+                          <button type="button" className="action-btn approve-btn" onClick={() => approve(upload)}>
+                            Approve
+                          </button>
+                          <button type="button" className="action-btn decline-btn" onClick={() => decline(upload)}>
+                            Decline
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+
+                {!busy && uploads.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="empty-cell">
+                      No files are pending review.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      )}
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
-

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './admin.css';
+import AdminLayout from './AdminLayout';
 import { toastError, toastSuccess } from '../../toast';
 import { authGetJson, authPostJson } from '../../authFetch';
 
@@ -25,7 +25,6 @@ export default function DeniedPage() {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function rePend(email: string) {
@@ -34,26 +33,53 @@ export default function DeniedPage() {
       toastSuccess('Moved back to pending');
       await load();
     } catch (err: any) {
-      toastError(err?.message || 'Failed to re-pen user');
+      toastError(err?.message || 'Failed to re-pend user');
     }
   }
 
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Denied users</h2>
-      {busy && <div>Loading...</div>}
-      {!busy && users.length === 0 && <div>No denied users.</div>}
-      {!busy && users.length > 0 && (
-        <div style={{ display: 'grid', gap: 10 }}>
-          {users.map((u) => (
-            <div key={u.email} style={{ display: 'flex', justifyContent: 'space-between', gap: 12, padding: 12, background: 'rgba(0,0,0,0.03)', borderRadius: 12 }}>
-              <div style={{ fontWeight: 600 }}>{u.email}</div>
-              <button onClick={() => rePend(u.email)}>Re-pend</button>
-            </div>
-          ))}
+    <AdminLayout activeTab="denied">
+      <div className="content-wrapper">
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th style={{ width: '25%', textAlign: 'center' }}>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {busy && (
+                <tr>
+                  <td colSpan={2} className="empty-cell">
+                    Loading...
+                  </td>
+                </tr>
+              )}
+
+              {!busy &&
+                users.map((u) => (
+                  <tr key={u.email}>
+                    <td data-label="Email">{u.email}</td>
+                    <td data-label="Action" style={{ textAlign: 'center' }}>
+                      <button type="button" className="action-btn" onClick={() => rePend(u.email)}>
+                        Move to Pending
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
+              {!busy && users.length === 0 && (
+                <tr>
+                  <td colSpan={2} className="empty-cell">
+                    No users have been denied.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-      )}
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
-

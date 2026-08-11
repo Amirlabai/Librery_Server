@@ -2,6 +2,7 @@
 Admin service - Admin operations, approvals, and reports.
 """
 from repositories.user_repository import UserRepository
+from models.user_entity import User
 from utils.csv_utils import get_next_user_id
 from utils.logger_config import get_logger
 from services.auth_service import AuthService
@@ -14,6 +15,7 @@ class AdminService:
     @staticmethod
     def approve_user(email):
         """Approve a pending user registration."""
+        email = User._normalize_email(email)
         logger.info(f"Approving user: {email}")
         pending_users = UserRepository.get_pending()
         user_to_approve = next((user for user in pending_users if user.email == email), None)
@@ -43,6 +45,7 @@ class AdminService:
     @staticmethod
     def deny_user(email):
         """Deny a pending user registration."""
+        email = User._normalize_email(email)
         logger.info(f"Denying user: {email}")
         pending_users = UserRepository.get_pending()
         user_to_deny = next((user for user in pending_users if user.email == email), None)
@@ -108,6 +111,7 @@ class AdminService:
     @staticmethod
     def re_pend_user(email):
         """Move a denied user back to pending."""
+        email = User._normalize_email(email)
         logger.info(f"Re-pending user: {email}")
         denied_users = UserRepository.get_denied()
         user_to_re_pend = next((user for user in denied_users if user.email == email), None)
