@@ -20,6 +20,8 @@ CHALLENGE_ACTIVATION_CODE = "753951"
 
 # --- Public URLs (emails / password reset links). Use your stable ngrok HTTPS URL.
 PUBLIC_BASE_URL = "https://change_this_to_the_ngrok_link"
+# Optional exact Vercel origins if regex is not enough: ["https://your-app.vercel.app"]
+CORS_EXTRA_ORIGINS = []
 
 SERVER_ROOT_DIR = "change_this_to_the_root_directory_of_the_project"
 SERVER_DATA_DIR = os.path.join(SERVER_ROOT_DIR, "data").replace('\\', '/')

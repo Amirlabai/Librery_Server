@@ -6,8 +6,9 @@ frontend made by Yosef Nago
 
 import os
 import logging
+import re
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from waitress import serve
 from datetime import timedelta
 
@@ -22,6 +23,7 @@ from controllers.auth_controller import auth_bp
 from controllers.files_controller import files_bp
 from controllers.uploads_controller import uploads_bp
 from controllers.admin_controller import admin_bp
+from dev_toolkit import run_ngrok
 
 # Initialize logging
 _debug = getattr(config, 'DEBUG', False)
@@ -48,18 +50,23 @@ def create_app():
     logger.info("Mail service initialized")
 
     logger.debug("Configuring CORS")
-    # Localhost Vite + ngrok + Vercel SPA
+    # Exact hosts + compiled regex (Vercel / ngrok). Credentials need a concrete Allow-Origin echo.
     allowed_origins = [
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "http://localhost:8000",
         "http://127.0.0.1:8000",
-        r"https://.*\.ngrok-free\.dev",
-        r"https://.*\.ngrok-free\.app",
-        r"https://.*\.ngrok\.dev",
-        r"https://.*\.ngrok\.app",
-        r"https://.*\.vercel\.app",
+        re.compile(r"^https://[\w.-]+\.ngrok-free\.dev$"),
+        re.compile(r"^https://[\w.-]+\.ngrok-free\.app$"),
+        re.compile(r"^https://[\w.-]+\.ngrok\.dev$"),
+        re.compile(r"^https://[\w.-]+\.ngrok\.app$"),
+        re.compile(r"^https://[\w.-]+\.vercel\.app$"),
     ]
+    # Optional exact UI origins, e.g. ["https://my-app.vercel.app"]
+    for extra in getattr(config, "CORS_EXTRA_ORIGINS", []) or []:
+        if extra:
+            allowed_origins.append(extra.rstrip("/"))
+
     CORS(
         app,
         resources={r"/*": {
@@ -68,9 +75,16 @@ def create_app():
             "expose_headers": ["Content-Disposition"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         }},
-        supports_credentials=True
+        supports_credentials=True,
+        always_send=True,
     )
     logger.info("CORS configured")
+
+    @app.before_request
+    def _log_cors_origin():
+        origin = request.headers.get("Origin")
+        if origin:
+            logger.debug(f"CORS request Origin: {origin} {request.method} {request.path}")
 
     logger.debug("Registering blueprints")
     app.register_blueprint(auth_bp)
@@ -100,7 +114,7 @@ if __name__ == "__main__":
     logger.info("Starting Merkaz Server API")
     logger.info("=" * 60)
 
-    #run_ngrok.main()
+    run_ngrok.main()
     project_root = get_project_root()
     logger.debug(f"Project root: {project_root}")
 
