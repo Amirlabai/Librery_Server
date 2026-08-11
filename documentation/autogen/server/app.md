@@ -8,4 +8,4 @@ frontend made by Yosef Nago
 
 ### `create_app()`
 
-Create and configure the Flask application.
+Create and configure the Flask API (no client static hosting).

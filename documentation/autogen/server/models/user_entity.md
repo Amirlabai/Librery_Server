@@ -13,6 +13,11 @@ Base class for all user types. Implements common functionality.
   - Arguments:
     - `name`
 
+- `_normalize_email(email)`
+  - Normalize email for storage and case-insensitive lookup.
+  - Arguments:
+    - `email`
+
 - `__init__(self, email, password, role='user', status='active', user_id=None, is_boss_admin=False, first_name=None, last_name=None, challenge='')`
   - No description provided.
   - Arguments:
@@ -82,7 +87,7 @@ Base class for all user types. Implements common functionality.
     - `challenge` (default: `''`)
 
 - `find_by_email(email)`
-  - Finds a user by email in the authentication database.
+  - Finds a user by email in the authentication database (case-insensitive).
   - Arguments:
     - `email`
 
@@ -98,7 +103,7 @@ Base class for all user types. Implements common functionality.
   - Returns a list of all admin email addresses.
 
 - `find_pending_by_email(email)`
-  - Finds a user by email in the pending database.
+  - Finds a user by email in the pending database (case-insensitive).
   - Arguments:
     - `email`
 
@@ -111,7 +116,7 @@ Base class for all user types. Implements common functionality.
     - `users`
 
 - `find_denied_by_email(email)`
-  - Finds a user by email in the denied database.
+  - Finds a user by email in the denied database (case-insensitive).
   - Arguments:
     - `email`
 
