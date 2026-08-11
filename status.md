@@ -40,6 +40,7 @@
 - [x] CORS `*.vercel.app` + expose `Content-Disposition`
 - [x] `client/vercel.json` SPA rewrites; notes in `PRODUCTION_BUILD.md`
 - [x] `app.py` API-only (removed `client/dist` SPA hosting)
+- [x] Repo hygiene: stop tracking `client/node_modules`, `client/dist`, `graphify-out`, `.idea`; tighten `.gitignore`; track `client/vite.config.ts`
 
 ## Completed (auth email case)
 
