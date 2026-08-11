@@ -2,7 +2,8 @@
 
 ## Purpose
 
-Flask backend (`server`) + Angular frontend (`merkaz-frontend`) for shared file library and admin approval.
+Flask backend (`server`) + React frontend (`client`) for shared file library and admin approval.
+Dev server: Vite on `http://localhost:5173` (API proxied to Flask).
 
 ## Auth (post-audit)
 

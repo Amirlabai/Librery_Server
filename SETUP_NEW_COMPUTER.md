@@ -160,45 +160,25 @@ Press `Ctrl+C` to stop the server.
 
 ## Frontend Setup
 
-### Step 1: Install Angular CLI
+### Step 1: Navigate to Frontend Directory
 
 ```bash
-npm install -g @angular/cli
+cd client
 ```
 
-Verify installation:
-```bash
-ng version
-```
-
-### Step 2: Navigate to Frontend Directory
-
-```bash
-cd merkaz-frontend
-```
-
-### Step 3: Install Frontend Dependencies
+### Step 2: Install Frontend Dependencies
 
 ```bash
 npm install
 ```
 
-This may take a few minutes. Wait for it to complete.
-
-### Step 4: Test Frontend
+### Step 3: Test Frontend
 
 ```bash
-ng serve
+npm run dev
 ```
 
-You should see:
-- Compilation messages
-- "Application bundle generation complete"
-- "Local: http://localhost:4200/"
-
-Open browser: `http://localhost:4200/` - You should see the login page.
-
-Press `Ctrl+C` to stop the dev server.
+Open browser: `http://localhost:5173/` - You should see the login page.
 
 ---
 
@@ -217,14 +197,9 @@ Key settings:
 
 ### Frontend Configuration
 
-**API URL Configuration:**
-- Default: `http://localhost:8000` (for local development)
-- The frontend uses `ApiConfigService` to manage backend URL
-- For ngrok: Set via browser console (see Ngrok Setup section)
+**API URL:** Vite dev server proxies API calls to `http://localhost:8000`. In production, Flask serves the built app from the same origin.
 
-**File:** `merkaz-frontend/src/app/services/api-config.service.ts`
-- Automatically detects localhost vs ngrok
-- Can be manually configured via localStorage
+**Override backend URL:** set `localStorage.api_backend_url` in the browser console (useful for ngrok).
 
 ---
 
@@ -246,12 +221,12 @@ python app.py
 
 **Terminal 2 - Frontend:**
 ```bash
-cd merkaz-frontend
-ng serve
+cd client
+npm run dev
 ```
 
 **Access the application:**
-- Frontend: http://localhost:4200
+- Frontend: http://localhost:5173
 - Backend API: http://localhost:8000
 
 ### Creating First Admin User
@@ -469,7 +444,7 @@ NagoAmir_Server/
 │   ├── utils/                # Utilities
 │   ├── app.py               # Main entry point
 │   └── ngrok.yml            # Ngrok config
-├── merkaz-frontend/          # Frontend code
+├── client/          # Frontend code
 │   ├── src/
 │   │   └── app/
 │   │       └── services/    # API services
@@ -492,7 +467,7 @@ cd server
 python app.py
 
 # Frontend
-cd merkaz-frontend
+cd client
 ng serve
 
 # Ngrok

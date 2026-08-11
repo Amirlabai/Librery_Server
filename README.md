@@ -1,6 +1,6 @@
 # Merkaz_lib
 
-An open library for file-sharing among students. A full-stack web application built with Flask (Python) backend and Angular frontend.
+An open library for file-sharing among students. A full-stack web application built with Flask (Python) backend and React frontend.
 
 **Current Version:** 2.18.0 (as of 2025-12-14)
 
@@ -53,7 +53,7 @@ An open library for file-sharing among students. A full-stack web application bu
   - Activity logging (downloads, sessions, suggestions)
   - Email notifications for user approvals/denials
   - Trash folder for deleted files
-  - Responsive Angular frontend
+  - Responsive React frontend
 
 ## Backend structure
 
@@ -109,68 +109,17 @@ server/
 ```
 ## Frontend structure
 ```
-merkaz-frontend/
+client/
 ├── src/
-│   ├── app/
-│   │   ├── components/                   # Main feature components
-│   │   │   ├── dashborad/                # Dashboard (note: typo in folder name)
-│   │   │   │   ├── admin-dash/           # Admin dashboard components
-│   │   │   │   │   ├── users/           # User management
-│   │   │   │   │   ├── pending/         # Pending user approvals
-│   │   │   │   │   ├── denied/          # Denied user registrations
-│   │   │   │   │   ├── uploads/         # Upload management
-│   │   │   │   │   ├── metrics/         # System metrics
-│   │   │   │   │   └── admin-dash-shared.css
-│   │   │   │   ├── dashboard.component.css
-│   │   │   │   ├── dashboard.component.html
-│   │   │   │   └── dashboard.component.ts
-│   │   │   │
-│   │   │   ├── forgotpass/               # Forgot password page
-│   │   │   │   ├── forgotpass.component.css
-│   │   │   │   ├── forgotpass.component.html
-│   │   │   │   └── forgotpass.component.ts
-│   │   │   │
-│   │   │   ├── login/                    # Login page
-│   │   │   │   ├── login.component.css
-│   │   │   │   ├── login.component.html
-│   │   │   │   └── login.component.ts
-│   │   │   │
-│   │   │   ├── register/                 # User registration page
-│   │   │   │   ├── register.component.css
-│   │   │   │   ├── register.component.html
-│   │   │   │   └── register.component.ts
-│   │   │   │
-│   │   │   ├── resetpass/                # Password reset page
-│   │   │   │   ├── reset-pass.component.css
-│   │   │   │   ├── reset-pass.component.html
-│   │   │   │   └── reset-pass.component.ts
-│   │   │   │
-│   │   │   └── uploads/                  # Uploads and user files
-│   │   │       ├── my-uploads.component.css
-│   │   │       ├── my-uploads.component.html
-│   │   │       ├── my-uploads.component.ts
-│   │   │       ├── upload-file.component.css
-│   │   │       ├── upload-file.component.html
-│   │   │       └── upload-file.component.ts
-│   │   │
-│   │   ├── interceptors/
-│   │   │   └── auth.interceptor.ts       # HTTP interceptor for auth headers
-│   │   │
-│   │   ├── services/
-│   │   │   ├── auth.guard.ts             # Route guard for authentication
-│   │   │   └── auth.service.ts           # Authentication and user session service
-│   │   │
-│   │   ├── app.config.ts                 # Global app configuration
-│   │   ├── app.routes.ts                 # Angular routing configuration
-│   │   ├── app.css                       # Global styling
-│   │   ├── app.html                      # Root template
-│   │   ├── app.ts                        # Root component / bootstrap
-│   │   └── version.ts                    # Application version (auto-generated)
-│   │
-│   ├── assets/                           # Static assets (icons, images)
-│   ├── custom.scss                       # Global SCSS styles
-│   ├── styles.css                        # Additional global styles
-│   └── index.html                        # Main HTML entry point
+│   ├── App.tsx              # Shell + routing
+│   ├── api.ts               # HTTP + uploads
+│   ├── auth.tsx             # Auth context + guards
+│   ├── pages/               # Route components
+│   ├── styles.css           # Global theme
+│   └── main.tsx             # Entry point
+├── index.html
+├── vite.config.ts
+└── package.json
 ```
 
 ## Installation
@@ -178,8 +127,7 @@ merkaz-frontend/
 ### Prerequisites
 
 - **Python 3.7+** (Python 3.9+ recommended)
-- **Node.js 14+** and npm
-- **Angular CLI** (for frontend development) - Version 20.3.6+
+- **Node.js 18+** and npm
 
 ### Backend Setup
 
@@ -248,27 +196,22 @@ merkaz-frontend/
    npm -v
    ```
 
-2. **Install Angular CLI globally**
+2. **Navigate to frontend directory**
    ```bash
-   npm install -g @angular/cli
+   cd client
    ```
 
-3. **Navigate to frontend directory**
-   ```bash
-   cd merkaz-frontend
-   ```
-
-4. **Install frontend dependencies**
+3. **Install frontend dependencies**
    ```bash
    npm install
    ```
 
-5. **Run the development server**
+4. **Run the development server**
    ```bash
-   ng serve
+   npm run dev
    ```
    
-   The frontend will be available at `http://localhost:4200`
+   The frontend will be available at `http://localhost:5173`
 
 ## Technology Stack
 
@@ -284,11 +227,9 @@ merkaz-frontend/
 - **Utilities**: pandas 2.3.3, openpyxl 3.1.5
 
 ### Frontend
-- **Framework**: Angular 20.3.0
-- **UI Components**: Angular Material 20.2.14
-- **Build Tool**: Angular CLI 20.3.6
-- **TypeScript**: 5.9.2
-- **RxJS**: 7.8.0
+- **Framework**: React 18 + TypeScript
+- **Router**: react-router-dom 6
+- **Build**: Vite 5
 
 ## Configuration
 
@@ -317,29 +258,29 @@ The frontend is configured to connect to `http://localhost:8000` by default. Upd
    python app.py
    ```
 
-2. **Start the frontend** (from `merkaz-frontend/`):
+2. **Start the frontend** (from `client/`):
    ```bash
-   ng serve
+   npm run dev
    ```
 
 3. **Access the application**:
-   - Frontend (Angular dev server): http://localhost:4200
+   - Frontend (Vite dev server): http://localhost:5173
    - Backend API: http://localhost:8000
 
-**Note**: In development, the frontend runs separately on port 4200. In production, the backend serves the Angular build from the same port (8000).
+**Note**: In development, the frontend runs on port 5173. In production, Flask serves the React build from port 8000.
 
 ### Production Deployment
 
-**Important**: In production, the Flask backend serves both the API and the Angular frontend from the same port. The backend automatically detects and serves the Angular build from `merkaz-frontend/dist/angular/browser/` if it exists.
+**Important**: In production, Flask serves both the API and the React frontend from the same port. The backend serves the build from `client/dist/` if it exists.
 
 **Production Setup Steps:**
 
-1. **Build the Angular frontend**:
+1. **Build the frontend**:
    ```bash
-   cd merkaz-frontend
-   ng build --configuration production
+   cd client
+   npm run build
    ```
-   This creates the production build in `merkaz-frontend/dist/angular/browser/`
+   Output: `client/dist/`
 
 2. **Start the backend server** (from `server/`):
    ```bash
@@ -347,7 +288,7 @@ The frontend is configured to connect to `http://localhost:8000` by default. Upd
    ```
    The server will automatically serve:
    - API endpoints (e.g., `/login`, `/browse`, `/admin/*`)
-   - Angular frontend (all other routes serve the Angular SPA)
+   - React frontend (all other routes serve the SPA)
 
 3. **Access the application**:
    - Both frontend and API are available at: `http://localhost:8000`
@@ -358,7 +299,7 @@ The frontend is configured to connect to `http://localhost:8000` by default. Upd
 - Setting up proper HTTPS
 - Configuring environment variables for sensitive data
 - Using a reverse proxy (nginx, Apache) if needed
-- The backend serves static Angular files, so no separate frontend server is required
+- The backend serves static React files from `client/dist/`, so no separate frontend server is required
 
 ## API Endpoints Overview
 
@@ -537,7 +478,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ```
 Server/
 ├── server/          # Flask backend application
-├── merkaz-frontend/         # Angular frontend application
+├── client/         # React frontend application
 ├── merkaz_server/           # Runtime data (logs, files, CSV databases)
 │   ├── data/               # User data and sequences
 │   ├── logs/               # Activity logs
@@ -553,7 +494,7 @@ Server/
 
 This project uses **semantic-release** for automated version management. Version information is automatically generated in:
 - `server/version.py` (Python)
-- `merkaz-frontend/src/app/version.ts` (TypeScript)
+- `client/src/version.ts` (TypeScript)
 
 **Current Version:** 2.18.0
 

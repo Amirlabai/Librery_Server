@@ -52,9 +52,9 @@ def create_app():
     # When serving Angular from Flask, CORS is less restrictive (same origin)
     # Still allow ngrok and dev origins for flexibility
     allowed_origins = [
-        "http://localhost:4200",
-        "http://localhost:8000",  # Same port when serving Angular from Flask
-        "http://127.0.0.1:4200",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:8000",
         "http://127.0.0.1:8000",
         r"https://.*\.ngrok-free\.dev",
         r"https://.*\.ngrok-free\.app",
@@ -82,10 +82,10 @@ def create_app():
     
     # Configure static file serving for Angular build (AFTER API routes)
     project_root = get_project_root()
-    frontend_dist_path = os.path.join(project_root, "merkaz-frontend", "dist", "angular", "browser")
+    frontend_dist_path = os.path.join(project_root, "client", "dist")
     
     if os.path.exists(frontend_dist_path):
-        logger.info(f"Angular build found at: {frontend_dist_path}")
+        logger.info(f"Client build found at: {frontend_dist_path}")
         
         # Serve static files from Angular build directory
         @app.route('/assets/<path:filename>')
@@ -124,8 +124,8 @@ def create_app():
             """Serve Angular application."""
             return send_file(os.path.join(frontend_dist_path, 'index.html'))
     else:
-        logger.warning(f"Angular build not found at: {frontend_dist_path}")
-        logger.warning("Run 'ng build' in merkaz-frontend directory first")
+        logger.warning(f"Client build not found at: {frontend_dist_path}")
+        logger.warning("Run 'npm run build' in client directory first")
         
         # Fallback root route if build doesn't exist
         @app.route("/", methods=["GET"])
@@ -134,7 +134,7 @@ def create_app():
             return jsonify({
                 "message": "Merkaz Server API",
                 "status": "running",
-                "note": "Angular build not found. Run 'ng build' in merkaz-frontend directory.",
+                "note": "Client build not found. Run 'npm run build' in client directory first.",
                 "endpoints": {
                     "auth": "/login, /register, /logout, /forgot-password, /reset-password",
                     "files": "/browse, /download/file, /download/folder, /delete, /create_folder",

@@ -43,14 +43,14 @@ jobs:
           npm install
 
       - name: 📦 Install Frontend Dependencies
-        working-directory: merkaz-frontend
+        working-directory: client
         run: |
           npm install
           
       - name: 🏗️ Build Angular Application
-        working-directory: merkaz-frontend
+        working-directory: client
         run: |
-          npm run build -- --configuration production
+          npm run build
           
       - name: 🏷️ Semantic Release (Version Control)
         # This action automatically versions the software.

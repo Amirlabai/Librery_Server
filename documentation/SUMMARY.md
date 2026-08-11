@@ -173,7 +173,7 @@ When adding new features:
 ## Additional Resources
 
 - **Main README**: See project root `README.md` for project overview
-- **Frontend Documentation**: See `merkaz-frontend/README.md`
+- **Frontend Documentation**: See `client/README.md`
 - **Configuration Template**: See `server/config_template.py`
 
 ## Support
