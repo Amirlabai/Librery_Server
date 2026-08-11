@@ -1,4 +1,4 @@
-# Module `merkaz_backend/dev_toolkit/dev_log_share_files.py`
+# Module `server/dev_toolkit/dev_log_share_files.py`
 
 Development script to log all server share files that are not already logged.
 Assigns upload IDs to files that don't have them yet.

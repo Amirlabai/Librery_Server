@@ -1,8 +1,12 @@
-# Module `merkaz_backend/services/mail_service.py`
+# Module `server/services/mail_service.py`
 
 Mail service - Email sending and notifications.
 
 ## Functions
+
+### `_public_base_url()`
+
+No description provided.
 
 ### `_send_new_user_notification_sync(app, user_email, pending_url)`
 

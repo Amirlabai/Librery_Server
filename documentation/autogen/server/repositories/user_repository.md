@@ -1,4 +1,4 @@
-# Module `merkaz_backend/repositories/user_repository.py`
+# Module `server/repositories/user_repository.py`
 
 User repository - Data access layer for user data (CSV or DB).
 
@@ -32,6 +32,13 @@ Repository for user data operations.
   - Save all authenticated users.
   - Arguments:
     - `users`
+
+- `set_challenge(email: str, challenge_value: str)`
+  - Set challenge field for a user. Returns (status, error).
+status: 'success' | 'already_activated' | 'not_found'
+  - Arguments:
+    - `email` : `str`
+    - `challenge_value` : `str`
 
 - `get_pending()`
   - Get all pending users.

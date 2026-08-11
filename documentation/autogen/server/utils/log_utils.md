@@ -1,4 +1,4 @@
-# Module `merkaz_backend/utils/log_utils.py`
+# Module `server/utils/log_utils.py`
 
 ## Functions
 

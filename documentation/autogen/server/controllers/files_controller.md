@@ -1,4 +1,4 @@
-# Module `merkaz_backend/controllers/files_controller.py`
+# Module `server/controllers/files_controller.py`
 
 ## Functions
 

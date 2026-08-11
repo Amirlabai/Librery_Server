@@ -1,15 +1,7 @@
-# Repository exports
-from .user_repository import UserRepository
-from .upload_repository import UploadRepository
-from .download_repository import DownloadRepository
-from .session_repository import SessionRepository
-from .suggestion_repository import SuggestionRepository
+"""Repositories package.
 
-__all__ = [
-    'UserRepository',
-    'UploadRepository',
-    'DownloadRepository',
-    'SessionRepository',
-    'SuggestionRepository'
-]
+Submodules should be imported explicitly, e.g. `from repositories.user_repository import UserRepository`.
+"""
+
+__all__: list[str] = []
 

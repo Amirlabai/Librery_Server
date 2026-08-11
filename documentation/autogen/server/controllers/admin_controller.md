@@ -1,4 +1,4 @@
-# Module `merkaz_backend/controllers/admin_controller.py`
+# Module `server/controllers/admin_controller.py`
 
 ## Functions
 

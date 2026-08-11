@@ -1,4 +1,4 @@
-# Module `merkaz_backend/migrate_user_ids.py`
+# Module `server/dev_toolkit/migrate_user_ids.py`
 
 Migration script to add unique IDs to existing users in CSV files.
 

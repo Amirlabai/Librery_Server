@@ -8,7 +8,7 @@ This guide explains how to run the application in development mode without build
 
 ```bash
 # Navigate to backend directory
-cd merkaz_backend
+cd server
 
 # Activate virtual environment (if using one)
 # Windows:
@@ -63,7 +63,7 @@ The preview feature works in development mode:
 
 ## Using Flask Dev Server (Optional)
 
-For automatic backend reload on code changes, modify `merkaz_backend/app.py`:
+For automatic backend reload on code changes, modify `server/app.py`:
 
 **Replace this:**
 ```python

@@ -12,8 +12,6 @@ from utils.file_utils import allowed_file, is_file_malicious
 from utils.path_utils import get_project_root, is_path_under, get_root_search_cache_dir, resolve_config_path
 from utils.log_utils import log_event
 from utils.logger_config import get_logger
-from repositories.download_repository import DownloadRepository
-from repositories.suggestion_repository import SuggestionRepository
 from repositories.upload_repository import UploadRepository
 import config.config as config
 import time
@@ -243,7 +241,7 @@ class FileService:
         
         try:
             shutil.move(source_path, dest_path)
-            log_event(DownloadRepository.get_download_log_path(), [
+            log_event(resolve_config_path(config.DOWNLOAD_LOG_FILE), [
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 email,
                 "DELETE",
@@ -287,7 +285,7 @@ class FileService:
         try:
             os.makedirs(new_folder_path)
             folder_path_url = os.path.join(safe_parent_path, folder_name).replace('\\', '/') if safe_parent_path else folder_name
-            log_event(DownloadRepository.get_download_log_path(), [
+            log_event(resolve_config_path(config.DOWNLOAD_LOG_FILE), [
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 email,
                 "CREATE_FOLDER",
@@ -657,7 +655,7 @@ class FileService:
                 logger.warning(f"Suggestion submission failed - Cooldown active, User: {email}, Remaining: {remaining_str}")
                 return False, f"You must wait another {remaining_str} before submitting again."
         
-        log_event(SuggestionRepository.get_suggestion_log_path(), [
+        log_event(resolve_config_path(config.SUGGESTION_LOG_FILE), [
             now.strftime("%Y-%m-%d %H:%M:%S"),
             email,
             suggestion_text

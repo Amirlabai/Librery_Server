@@ -8,6 +8,7 @@ from utils.logger_config import get_logger
 from services.mail_service import send_approval_email, send_denial_email
 from services.auth_service import AuthService, mark_user_online, mark_user_offline, get_active_users
 from services.admin_service import AdminService
+from utils.path_utils import resolve_config_path
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 logger = get_logger(__name__)
@@ -270,15 +271,12 @@ def download_metrics_xlsx(log_type):
         logger.warning(f"Access denied to download metrics - User: {admin_email}")
         return jsonify({"error": "Access denied"}), 403
 
-    from repositories.session_repository import SessionRepository
-    from repositories.download_repository import DownloadRepository
-    from repositories.suggestion_repository import SuggestionRepository
     from repositories.upload_repository import UploadRepository
     
     log_map = {
-        "session": (SessionRepository.get_session_log_path(), "Session_Log"),
-        "download": (DownloadRepository.get_download_log_path(), "Download_Log"),
-        "suggestion": (SuggestionRepository.get_suggestion_log_path(), "Suggestion_Log"),
+        "session": (resolve_config_path(config.SESSION_LOG_FILE), "Session_Log"),
+        "download": (resolve_config_path(config.DOWNLOAD_LOG_FILE), "Download_Log"),
+        "suggestion": (resolve_config_path(config.SUGGESTION_LOG_FILE), "Suggestion_Log"),
         "upload": (UploadRepository.get_pending_log_path(), "Upload_Log"),
         "declined": (UploadRepository.get_declined_log_path(), "Declined_Upload_Log"),
     }

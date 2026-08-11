@@ -1,4 +1,4 @@
-# Module `merkaz_backend/models/user_entity.py`
+# Module `server/models/user_entity.py`
 
 ## Classes
 
@@ -96,11 +96,6 @@ Base class for all user types. Implements common functionality.
 
 - `get_admin_emails()`
   - Returns a list of all admin email addresses.
-
-- `login_response(self)`
-  - Returns a login response for the user.
-  - Arguments:
-    - `self`
 
 - `find_pending_by_email(email)`
   - Finds a user by email in the pending database.

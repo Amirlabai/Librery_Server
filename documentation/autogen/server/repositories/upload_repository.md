@@ -1,4 +1,4 @@
-# Module `merkaz_backend/repositories/upload_repository.py`
+# Module `server/repositories/upload_repository.py`
 
 Upload repository - Manage upload logs and data.
 

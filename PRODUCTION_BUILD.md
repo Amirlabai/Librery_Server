@@ -16,7 +16,7 @@ This creates the production build in `merkaz-frontend/dist/angular/browser/`
 ### Step 2: Run Flask Server
 
 ```bash
-cd merkaz_backend
+cd server
 python app.py
 ```
 
@@ -141,7 +141,7 @@ For production deployment:
 
 2. **Run Flask with production settings:**
    ```bash
-   cd merkaz_backend
+   cd server
    python app.py
    ```
 

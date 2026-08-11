@@ -1,4 +1,4 @@
-# Module `merkaz_backend/utils/csv_utils.py`
+# Module `server/utils/csv_utils.py`
 
 ## Functions
 
@@ -42,7 +42,11 @@ Uses absolute paths based on project root.
 
 Returns the absolute path to the upload_id_sequence.txt file.
 
+### `_max_upload_id_from_logs()`
+
+Scan pending and completed upload logs for the highest upload_id.
+
 ### `get_next_upload_id()`
 
 Generates and returns the next unique upload ID.
-Uses a sequence file to ensure uniqueness across restarts.
+Uses max of sequence file and log scan for consistency.

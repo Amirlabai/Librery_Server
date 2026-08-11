@@ -59,7 +59,7 @@ pip install openpyxl
 
 ### 4. Configure the Application
 
-Edit `merkaz_backend/config/config.py`:
+Edit `server/config/config.py`:
 
 1. **Set Secret Keys**:
    ```python
@@ -79,7 +79,7 @@ See [Configuration Guide](./configuration.md) for detailed configuration options
 ### 5. Run the Server
 
 ```bash
-cd merkaz_backend
+cd server
 python app.py
 ```
 

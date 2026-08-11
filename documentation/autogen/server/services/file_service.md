@@ -1,4 +1,4 @@
-# Module `merkaz_backend/services/file_service.py`
+# Module `server/services/file_service.py`
 
 File service - File management and validation.
 

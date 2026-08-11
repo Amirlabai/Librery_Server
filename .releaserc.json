@@ -5,14 +5,14 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz_backend/version.py && python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz-frontend/src/app/version.ts && python3 scripts/generate_docs.py merkaz_backend --output-dir documentation/autogen && python3 scripts/generate_frontend_docs.py"
+        "prepareCmd": "python3 scripts/write_version_file.py ${nextRelease.version} --target server/version.py && python3 scripts/write_version_file.py ${nextRelease.version} --target merkaz-frontend/src/app/version.ts && python3 scripts/generate_docs.py server --output-dir documentation/autogen && python3 scripts/generate_frontend_docs.py"
       }
     ],
     [
       "@semantic-release/git",
       {
         "assets": [
-          "merkaz_backend/version.py",
+          "server/version.py",
           "merkaz-frontend/src/app/version.ts",
           "documentation/**/*.md",
           "documentation/autogen/merkaz-frontend/**/*"

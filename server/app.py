@@ -4,13 +4,13 @@ backend made by Amir Labay
 frontend made by Yosef Nago
 """
 
-import sys, os
+import os
 import logging
 
 from flask import Flask, jsonify, send_from_directory, send_file
 from werkzeug.exceptions import NotFound
 from waitress import serve
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import config.config as config
 from utils import create_file_with_header, get_project_root
@@ -23,8 +23,6 @@ from controllers.auth_controller import auth_bp
 from controllers.files_controller import files_bp
 from controllers.uploads_controller import uploads_bp
 from controllers.admin_controller import admin_bp
-from controllers.ee_controller import easter_egg_bp
-import dev_toolkit.run_ngrok as run_ngrok
 
 # Initialize logging
 _debug = getattr(config, 'DEBUG', False)
@@ -80,7 +78,6 @@ def create_app():
     app.register_blueprint(files_bp)
     app.register_blueprint(uploads_bp)
     app.register_blueprint(admin_bp)
-    app.register_blueprint(easter_egg_bp, url_prefix="/api")
     logger.info("All blueprints registered successfully")
     
     # Configure static file serving for Angular build (AFTER API routes)
@@ -155,7 +152,7 @@ if __name__ == "__main__":
     
     #run_ngrok.main()
     # --- Directory and File Initialization ---
-    # Get project root (one level up from merkaz_backend directory)
+    # Get project root (one level up from server directory)
     project_root = get_project_root()
     logger.debug(f"Project root: {project_root}")
     

@@ -1,4 +1,4 @@
-# Module `merkaz_backend/utils/logger_config.py`
+# Module `server/utils/logger_config.py`
 
 Logging configuration module.
 Sets up Python logging with timestamp, file, line number, and message format.

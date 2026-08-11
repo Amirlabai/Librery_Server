@@ -1,4 +1,4 @@
-# Module `merkaz_backend/app.py`
+# Module `server/app.py`
 
 Merkaz Server Application - Main entry point.
 backend made by Amir Labay

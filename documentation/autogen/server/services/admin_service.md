@@ -1,4 +1,4 @@
-# Module `merkaz_backend/services/admin_service.py`
+# Module `server/services/admin_service.py`
 
 Admin service - Admin operations, approvals, and reports.
 

@@ -1,21 +1,19 @@
 /.venv
 /__pycache__
-/merkaz_backend/routes/__pycache__
-/merkaz_backend/__pycache__
+/server/routes/__pycache__
+/server/__pycache__
 /merkaz-frontend/.angular
 /data
 /logs
 *.pyc
-merkaz_backend/merkaz_server/server_files/uploads/*.mp4
-bash
-Copy code
-merkaz_backend/merkaz_server/
+server/merkaz_server/server_files/uploads/*.mp4
+server/merkaz_server/
 
-/merkaz_backend/__pycache__/
-/merkaz_backend/routes/__pycache__/
-/merkaz_backend/.pytest_cache/
-/merkaz_backend/logs/
-/merkaz_backend/data/
+/server/__pycache__/
+/server/routes/__pycache__/
+/server/.pytest_cache/
+/server/logs/
+/server/data/
 
 /node_modules/
 
@@ -27,14 +25,14 @@ merkaz_backend/merkaz_server/
 .logs/
 .DS_Store
 /files_to_share
-merkaz_backend/ngrok.yml
+server/ngrok.yml
 /uploads
 /trash
 /merkaz_server
 vite.config.ts
-merkaz_backend/config/config.py
-merkaz_backend/large logo.ico
-merkaz_backend/favicon.ico
+server/config/config.py
+server/large logo.ico
+server/favicon.ico
 merkaz-frontend/src/assets/icons/to-be-logo.jpeg
 merkaz-frontend/src/assets/icons/to-be-logo-256x.png
 merkaz-frontend/src/assets/icons/to-be-logo.ico

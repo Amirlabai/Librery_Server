@@ -2,7 +2,7 @@
 
 ## Configuration File
 
-The main configuration file is located at: `merkaz_backend/config/config.py`
+The main configuration file is located at: `server/config/config.py`
 
 ## Configuration Options
 
@@ -293,7 +293,7 @@ On startup, `app.py` automatically:
 
 ## Configuration Template
 
-A template file is available at `merkaz_backend/config_template.py` for reference.
+A template file is available at `server/config_template.py` for reference.
 
 ---
 

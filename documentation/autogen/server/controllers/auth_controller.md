@@ -1,4 +1,4 @@
-# Module `merkaz_backend/controllers/auth_controller.py`
+# Module `server/controllers/auth_controller.py`
 
 ## Functions
 

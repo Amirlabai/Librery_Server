@@ -26,7 +26,7 @@ Welcome to the Merkaz_lib backend documentation. This documentation provides com
 ## Project Structure
 
 ```
-merkaz_backend/
+server/
 ├── app.py                        # Main application entry point
 ├── config/
 │   └── config.py                 # Application configuration

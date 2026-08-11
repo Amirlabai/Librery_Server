@@ -1,1 +1,1 @@
-# Module `merkaz_backend/config/config.py`
+# Module `server/config/config.py`

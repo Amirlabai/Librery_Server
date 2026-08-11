@@ -1,4 +1,4 @@
-# Module `merkaz_backend/services/upload_service.py`
+# Module `server/services/upload_service.py`
 
 Upload service - File upload logic and workflow.
 
@@ -99,12 +99,23 @@ Returns:
     - `target_path_str`
     - `email`
 
-- `decline_upload(upload_id, filename, email, user_id)`
+- `_rollback_move_logs(upload_id, original_timestamp, email, user_id, filename, path, pending_entry)`
+  - Re-add pending row and remove completed row after a failed file move.
+  - Arguments:
+    - `upload_id`
+    - `original_timestamp`
+    - `email`
+    - `user_id`
+    - `filename`
+    - `path`
+    - `pending_entry`
+
+- `decline_upload(upload_id, filename, admin_email, user_id)`
   - Decline an upload and remove it.
   - Arguments:
     - `upload_id`
     - `filename`
-    - `email`
+    - `admin_email`
     - `user_id`
 
 - `move_file_for_edit(upload_id, old_path, new_path)`

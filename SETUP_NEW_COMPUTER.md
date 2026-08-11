@@ -125,10 +125,10 @@ pip install openpyxl==3.1.5
 
 1. **Copy configuration template** (if `config.py` doesn't exist):
    ```bash
-   cp merkaz_backend/config/config_template.py merkaz_backend/config/config.py
+   cp server/config/config_template.py server/config/config.py
    ```
 
-2. **Edit `merkaz_backend/config/config.py`**:
+2. **Edit `server/config/config.py`**:
    - Set secret keys (or leave as-is for auto-generation)
    - Configure email settings if you need email functionality:
      ```python
@@ -143,7 +143,7 @@ pip install openpyxl==3.1.5
 ### Step 5: Test Backend
 
 ```bash
-cd merkaz_backend
+cd server
 python app.py
 ```
 
@@ -206,7 +206,7 @@ Press `Ctrl+C` to stop the dev server.
 
 ### Backend Configuration
 
-**File:** `merkaz_backend/config/config.py`
+**File:** `server/config/config.py`
 
 Key settings:
 - `SUPER_SECRET_KEY`: Session encryption key (auto-generated if not set)
@@ -240,7 +240,7 @@ Key settings:
 source .venv/bin/activate  # Linux/Mac
 
 # Start backend
-cd merkaz_backend
+cd server
 python app.py
 ```
 
@@ -322,7 +322,7 @@ ngrok version
 
 1. **Get your authtoken** from: https://dashboard.ngrok.com/get-started/your-authtoken
 
-2. **Update `merkaz_backend/ngrok.yml`**:
+2. **Update `server/ngrok.yml`**:
    ```yaml
    version: 3
    agent:
@@ -344,7 +344,7 @@ ngrok version
 
 2. **Start ngrok:**
    ```bash
-   python merkaz_backend/run_ngrok.py 8000 4200
+   python server/run_ngrok.py 8000 4200
    ```
 
 3. **Check ngrok console** or web interface (http://127.0.0.1:4040) for URLs:
@@ -372,7 +372,7 @@ ngrok version
   ```
 
 **Issue: Port 8000 already in use**
-- **Solution:** Change port in `merkaz_backend/app.py`:
+- **Solution:** Change port in `server/app.py`:
   ```python
   serve(app, host="0.0.0.0", port=8001)  # Change to 8001
   ```
@@ -459,7 +459,7 @@ ngrok version
 ```
 NagoAmir_Server/
 ├── .venv/                    # Python virtual environment
-├── merkaz_backend/           # Backend code
+├── server/           # Backend code
 │   ├── config/
 │   │   └── config.py        # Configuration (edit this)
 │   ├── controllers/          # API endpoints
@@ -488,7 +488,7 @@ NagoAmir_Server/
 
 ```bash
 # Backend
-cd merkaz_backend
+cd server
 python app.py
 
 # Frontend
@@ -496,7 +496,7 @@ cd merkaz-frontend
 ng serve
 
 # Ngrok
-python merkaz_backend/run_ngrok.py 8000 4200
+python server/run_ngrok.py 8000 4200
 
 # Activate virtual environment
 .venv\Scripts\Activate.ps1  # Windows

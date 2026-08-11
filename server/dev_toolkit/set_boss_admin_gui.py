@@ -9,7 +9,7 @@ import os
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-# Add parent directory (merkaz_backend) to path to import modules
+# Add parent directory (server) to path to import modules
 _backend_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, _backend_dir)
 

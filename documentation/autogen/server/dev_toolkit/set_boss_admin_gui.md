@@ -1,4 +1,4 @@
-# Module `merkaz_backend/dev_toolkit/set_boss_admin_gui.py`
+# Module `server/dev_toolkit/set_boss_admin_gui.py`
 
 Tkinter GUI for managing boss admin status.
 Shows a list of users and allows setting/revoking boss admin status.

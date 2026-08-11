@@ -1,4 +1,4 @@
-# Module `merkaz_backend/controllers/uploads_controller.py`
+# Module `server/controllers/uploads_controller.py`
 
 ## Functions
 

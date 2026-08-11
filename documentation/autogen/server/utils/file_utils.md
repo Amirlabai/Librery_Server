@@ -1,4 +1,4 @@
-# Module `merkaz_backend/utils/file_utils.py`
+# Module `server/utils/file_utils.py`
 
 File operations and MIME validation utilities.
 

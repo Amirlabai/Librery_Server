@@ -1,4 +1,4 @@
-# Module `merkaz_backend/run_ngrok.py`
+# Module `server/dev_toolkit/run_ngrok.py`
 
 ## Functions
 

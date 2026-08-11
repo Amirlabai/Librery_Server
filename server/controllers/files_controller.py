@@ -2,12 +2,12 @@ from flask import Blueprint, session, send_from_directory, send_file, jsonify, r
 from utils.logger_config import get_logger
 from services.file_service import FileService
 from services.auth_service import AuthService, mark_user_online
-from repositories.download_repository import DownloadRepository
 from utils.log_utils import log_event
 from datetime import datetime
 from flask_cors import cross_origin
 from urllib.parse import quote
 import config.config as config
+from utils.path_utils import resolve_config_path
 import json
 import os
 import csv
@@ -119,7 +119,7 @@ def download_file(file_path):
         logger.warning("File download failed - User not logged in")
         return jsonify({"error": "Not logged in"}), 401
     
-    log_event(DownloadRepository.get_download_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FILE", file_path])
+    log_event(resolve_config_path(config.DOWNLOAD_LOG_FILE), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FILE", file_path])
     
     safe_dir, filename, error = FileService.get_download_file_path(file_path)
     
@@ -143,7 +143,7 @@ def download_folder(folder_path):
         return jsonify({"error": "Not logged in"}), 401
     
     import os
-    log_event(DownloadRepository.get_download_log_path(), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FOLDER", folder_path])
+    log_event(resolve_config_path(config.DOWNLOAD_LOG_FILE), [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_email, "FOLDER", folder_path])
     
     absolute_folder_path, error = FileService.get_download_folder_path(folder_path)
     
