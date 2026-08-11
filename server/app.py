@@ -6,9 +6,9 @@ frontend made by Yosef Nago
 
 import os
 import logging
-import re
+from urllib.parse import urlparse
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 from waitress import serve
 from datetime import timedelta
 
@@ -16,7 +16,6 @@ import config.config as config
 from utils import create_file_with_header, get_project_root
 from utils.logger_config import setup_logging, get_logger
 from services.mail_service import mail
-from flask_cors import CORS
 
 # Import and register blueprints
 from controllers.auth_controller import auth_bp
@@ -29,6 +28,53 @@ from dev_toolkit import run_ngrok
 _debug = getattr(config, 'DEBUG', False)
 setup_logging(logging.DEBUG if _debug else logging.INFO)
 logger = get_logger(__name__)
+
+_LOCAL_ORIGINS = frozenset({
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+})
+_CORS_HOST_SUFFIXES = (
+    ".vercel.app",
+    ".ngrok-free.dev",
+    ".ngrok-free.app",
+    ".ngrok.dev",
+    ".ngrok.app",
+)
+
+
+def _cors_origin_allowed(origin: str) -> bool:
+    if not origin:
+        return False
+    origin = origin.rstrip("/")
+    if origin in _LOCAL_ORIGINS:
+        return True
+    for extra in getattr(config, "CORS_EXTRA_ORIGINS", None) or []:
+        if extra and origin == extra.rstrip("/"):
+            return True
+    host = (urlparse(origin).hostname or "").lower()
+    if not host:
+        return False
+    return any(host == suf.lstrip(".") or host.endswith(suf) for suf in _CORS_HOST_SUFFIXES)
+
+
+def _apply_cors_headers(response):
+    origin = request.headers.get("Origin")
+    if not origin or not _cors_origin_allowed(origin):
+        return response
+    response.headers["Access-Control-Allow-Origin"] = origin.rstrip("/")
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    response.headers["Access-Control-Expose-Headers"] = "Content-Disposition"
+    response.headers["Vary"] = "Origin"
+    if request.method == "OPTIONS":
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = (
+            "Content-Type, Authorization, ngrok-skip-browser-warning"
+        )
+        response.headers["Access-Control-Max-Age"] = "86400"
+    return response
+
 
 def create_app():
     """Create and configure the Flask API (no client static hosting)."""
@@ -49,42 +95,19 @@ def create_app():
     mail.init_app(app)
     logger.info("Mail service initialized")
 
-    logger.debug("Configuring CORS")
-    # Exact hosts + compiled regex (Vercel / ngrok). Credentials need a concrete Allow-Origin echo.
-    allowed_origins = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-        re.compile(r"^https://[\w.-]+\.ngrok-free\.dev$"),
-        re.compile(r"^https://[\w.-]+\.ngrok-free\.app$"),
-        re.compile(r"^https://[\w.-]+\.ngrok\.dev$"),
-        re.compile(r"^https://[\w.-]+\.ngrok\.app$"),
-        re.compile(r"^https://[\w.-]+\.vercel\.app$"),
-    ]
-    # Optional exact UI origins, e.g. ["https://my-app.vercel.app"]
-    for extra in getattr(config, "CORS_EXTRA_ORIGINS", []) or []:
-        if extra:
-            allowed_origins.append(extra.rstrip("/"))
-
-    CORS(
-        app,
-        resources={r"/*": {
-            "origins": allowed_origins,
-            "allow_headers": ["Content-Type", "Authorization", "ngrok-skip-browser-warning"],
-            "expose_headers": ["Content-Disposition"],
-            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        }},
-        supports_credentials=True,
-        always_send=True,
-    )
-    logger.info("CORS configured")
-
     @app.before_request
-    def _log_cors_origin():
+    def _cors_preflight():
         origin = request.headers.get("Origin")
         if origin:
-            logger.debug(f"CORS request Origin: {origin} {request.method} {request.path}")
+            logger.info(f"CORS Origin: {origin} {request.method} {request.path}")
+        if request.method == "OPTIONS":
+            return _apply_cors_headers(make_response(("", 204)))
+
+    @app.after_request
+    def _cors_after(response):
+        return _apply_cors_headers(response)
+
+    logger.info("CORS configured (manual Origin echo for Vercel/ngrok/localhost)")
 
     logger.debug("Registering blueprints")
     app.register_blueprint(auth_bp)
