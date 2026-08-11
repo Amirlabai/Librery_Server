@@ -1,52 +1,60 @@
-/.venv
-/__pycache__
-/server/routes/__pycache__
-/server/__pycache__
-/merkaz-frontend/.angular
-/data
-/logs
+# Python
+.venv/
+**/__pycache__/
 *.pyc
-server/merkaz_server/server_files/uploads/*.mp4
-server/merkaz_server/
+.pytest_cache/
+server/.pytest_cache/
 
-/server/__pycache__/
-/server/routes/__pycache__/
-/server/.pytest_cache/
-/server/logs/
-/server/data/
+# Node
+node_modules/
 
-/node_modules/
+# Frontend build (Vercel / local build artifacts)
+client/dist/
 
-# Vite local env (keep .env.example tracked)
-client/.env
+# Graphify / codegen caches
+graphify-out/
+**/graphify-out/
+
+# Env and secrets (keep *.example tracked)
+.env
+.env.*
+!.env.example
+!**/.env.example
 client/.env.local
 client/.env.*.local
 
-/merkaz-frontend/.angular/
-/merkaz-frontend/node_modules/
-/merkaz-frontend/.cache/
-/merkaz-frontend/src/assets/icons
-/data/
-.logs/
-.DS_Store
-/files_to_share
-server/ngrok.yml
-/uploads
-/trash
-/merkaz_server
-vite.config.ts
+# Local Flask config (copy from config_template.py)
 server/config/config.py
+
+# Ngrok local config
+server/ngrok.yml
+**/ngrok.yml
+
+# Runtime data on disk (keep puzzle assets only)
+/merkaz_server/**
+!/merkaz_server/data/
+!/merkaz_server/data/puzzles.csv
+!/merkaz_server/data/user_solutions.csv
+!/merkaz_server/puzzles/
+!/merkaz_server/puzzles/**
+
+# Legacy / local folders
+/merkaz-frontend/
+/data/
+/logs/
+.logs/
+/uploads/
+/trash/
+/files_to_share/
+server/logs/
+server/data/
+server/merkaz_server/
+
+# IDE / OS
+.idea/
+.DS_Store
+Thumbs.db
+
+# Optional local icons
 server/large logo.ico
 server/favicon.ico
-merkaz-frontend/src/assets/icons/to-be-logo.jpeg
-merkaz-frontend/src/assets/icons/to-be-logo-256x.png
-merkaz-frontend/src/assets/icons/to-be-logo.ico
-
-
-# but keep specific puzzle files
-!/data/puzzles.csv
-!/data/user_solutions.csv
-
-# if puzzles is a directory you want to track
-!/data/puzzles/
-!/data/puzzles/**

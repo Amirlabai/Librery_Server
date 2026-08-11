@@ -1,1 +1,0 @@
-{"nodes": [{"id": "version_versioninfo", "label": "versionInfo", "file_type": "code", "source_file": "client/src/version.ts", "source_location": null, "source_url": null, "captured_at": null, "author": null, "contributor": null, "rationale": "Placeholder kept so local builds never break; intended to be generated/updated by semantic-release"}], "edges": [], "hyperedges": []}
